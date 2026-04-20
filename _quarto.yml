@@ -5,7 +5,7 @@ project:
 book:
   title: "From Prompt to Response"
   subtitle: "An End-to-End Journey Inside LLM and RAG Systems"
-  site-url: "mohsenh17.github.io/From-Prompt-to-Response"
+  site-url: "https://mohsenh17.github.io/From-Prompt-to-Response"
   repo-url: "https://github.com/mohsenh17/From-Prompt-to-Response"
 
   chapters:
