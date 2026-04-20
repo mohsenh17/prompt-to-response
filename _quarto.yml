@@ -1,0 +1,71 @@
+project:
+  type: book    
+  output-dir: build
+
+book:
+  title: "From Prompt to Response"
+  subtitle: "An End-to-End Journey Inside LLM and RAG Systems"
+  site-url: "https://mohsenh17.github.io/From-Prompt-to-Response"
+  repo-url: "https://github.com/mohsenh17/From-Prompt-to-Response"
+
+  chapters:
+    - index.md
+    - part: "When the Word is Spoken Into the Void"
+      chapters: 
+        - book/part1/chapter1/introduction.md
+
+    - part: "The Summoning of the Request"
+      chapters: []
+
+    - part: "Beyond the Gate of Words"
+      chapters: []
+
+    - part: "In the Halls of the Thinking Machine"
+      chapters: []
+
+    - part: "The Hidden Archive Beneath Tokens"
+      chapters: []
+
+    - part: "The Crafting of Intelligence"
+      chapters: []
+
+    - part: "The Trial of the Answer"
+      chapters: []
+
+    - part: "Where Systems Walk Among Men"
+      chapters: []    
+# --------------------------------------------------
+# Output formats
+# --------------------------------------------------
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-copy: true
+    smooth-scroll: true
+
+  pdf:
+    documentclass: book
+    toc: true
+    number-sections: true
+
+  epub: default
+
+# --------------------------------------------------
+# Cross references & numbering
+# --------------------------------------------------
+crossref:
+  chapters: true
+
+# --------------------------------------------------
+# Execution options
+# --------------------------------------------------
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+  message: false
