@@ -1,0 +1,77 @@
+<svg width="720" height="950" viewBox="0 0 720 900"
+     xmlns="http://www.w3.org/2000/svg"
+     font-family="Segoe UI, Helvetica, Arial, sans-serif">
+
+<style>
+.title { font-size:18px; font-weight:600; fill:#1f2937; }
+.text { font-size:14px; fill:#374151; }
+.box { fill:#f8fafc; stroke:#6366f1; stroke-width:2; rx:16; }
+.core { fill:#eef2ff; stroke:#4f46e5; stroke-width:2; rx:18; }
+.arrow { stroke:#6b7280; stroke-width:2; marker-end:url(#arrow); }
+</style>
+
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10"
+        refX="10" refY="3" orient="auto">
+  <path d="M0,0 L10,3 L0,6 Z" fill="#6b7280"/>
+</marker>
+</defs>
+
+<!-- USER -->
+<rect x="210" y="10" width="300" height="60" class="box"/>
+<text x="360" y="45" text-anchor="middle" class="title">
+User / Application
+</text>
+
+<line x1="360" y1="70" x2="360" y2="110" class="arrow"/>
+
+<!-- API GATEWAY -->
+<rect x="120" y="110" width="480" height="240" class="core"/>
+<text x="360" y="140" text-anchor="middle" class="title">
+API Gateway
+</text>
+
+<text x="150" y="175" class="text">• Authentication (API key validation)</text>
+<text x="150" y="200" class="text">• Rate limiting (RPM / token quotas)</text>
+<text x="150" y="225" class="text">• Request validation</text>
+<text x="150" y="250" class="text">• Routing (model + serving instance)</text>
+<text x="150" y="275" class="text">• Input filtering (safety classifiers)</text>
+<text x="150" y="300" class="text">• Logging &amp; observability</text>
+
+<line x1="360" y1="350" x2="360" y2="390" class="arrow"/>
+
+<!-- LOAD BALANCER -->
+<rect x="210" y="390" width="300" height="70" class="box"/>
+<text x="360" y="430" text-anchor="middle" class="title">
+Load Balancer
+</text>
+
+<line x1="360" y1="460" x2="360" y2="500" class="arrow"/>
+
+<!-- INFERENCE -->
+<rect x="160" y="500" width="400" height="80" class="core"/>
+<text x="360" y="545" text-anchor="middle" class="title">
+Inference Server Cluster
+</text>
+
+<line x1="360" y1="580" x2="360" y2="620" class="arrow"/>
+
+<!-- POST PROCESS -->
+<rect x="120" y="620" width="480" height="180" class="core"/>
+<text x="360" y="650" text-anchor="middle" class="title">
+Response Post-Processing
+</text>
+
+<text x="150" y="685" class="text">• Output filtering (safety classifiers)</text>
+<text x="150" y="710" class="text">• Token counting</text>
+<text x="150" y="735" class="text">• Response formatting</text>
+
+<line x1="360" y1="800" x2="360" y2="840" class="arrow"/>
+
+<!-- USER RETURN -->
+<rect x="210" y="840" width="300" height="60" class="box"/>
+<text x="360" y="875" text-anchor="middle" class="title">
+User / Application
+</text>
+
+</svg>
