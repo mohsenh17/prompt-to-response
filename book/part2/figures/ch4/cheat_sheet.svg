@@ -1,0 +1,178 @@
+<svg width="1100" height="1400" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 28px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+.arrow { stroke:#888; stroke-width:2; marker-end:url(#arrowhead); }
+</style>
+
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="7" 
+refX="9" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#888"/>
+</marker>
+</defs>
+
+<!-- TITLE -->
+<text x="50" y="50" class="title">
+Tokenization at Inference, Cheat Sheet
+</text>
+
+<!-- ================================================= -->
+<!-- ENCODING PIPELINE -->
+<!-- ================================================= -->
+
+<rect x="50" y="90" width="1000" height="170" class="box"/>
+<text x="70" y="120" class="section">Encoding Pipeline</text>
+
+<text x="80" y="150" class="text">
+1. Apply chat template → flatten structured messages
+</text>
+
+<text x="80" y="175" class="code">
+&lt;system&gt; ... &lt;user&gt; ... &lt;assistant&gt;
+</text>
+
+<text x="80" y="205" class="text">
+2. Tokenizer converts text → token IDs
+</text>
+
+<text x="80" y="230" class="code">
+"Paris is capital" → [1512, 374, 279]
+</text>
+
+<!-- ================================================= -->
+<!-- SPECIAL TOKENS -->
+<!-- ================================================= -->
+
+<rect x="50" y="280" width="480" height="170" class="box"/>
+<text x="70" y="310" class="section">Critical Special Tokens</text>
+
+<text x="80" y="340" class="text">• BOS token must exist at position 0</text>
+<text x="80" y="365" class="text">• End-of-turn markers define roles</text>
+<text x="80" y="390" class="text">• Tool tokens required for function calling</text>
+<text x="80" y="415" class="text">• Assistant prompt signals generation start</text>
+
+<!-- ================================================= -->
+<!-- CONTEXT WINDOW -->
+<!-- ================================================= -->
+
+<rect x="570" y="280" width="480" height="170" class="box"/>
+<text x="590" y="310" class="section">Context Window Budget</text>
+
+<text x="600" y="340" class="text">System prompt</text>
+<text x="600" y="365" class="text">Conversation history</text>
+<text x="600" y="390" class="text">RAG context</text>
+<text x="600" y="415" class="text">User message + completion tokens</text>
+
+<text x="600" y="440" class="text">
+Always count tokens using tokenizer, never estimate.
+</text>
+
+<!-- ================================================= -->
+<!-- HISTORY MANAGEMENT -->
+<!-- ================================================= -->
+
+<rect x="50" y="470" width="1000" height="160" class="box"/>
+<text x="70" y="500" class="section">History Management Strategies</text>
+
+<text x="80" y="530" class="text">
+Rolling window → keep recent tokens only
+</text>
+
+<text x="80" y="555" class="text">
+Summarization → compress earlier turns
+</text>
+
+<text x="80" y="580" class="text">
+Hierarchical retrieval → fetch relevant past context
+</text>
+
+<!-- ================================================= -->
+<!-- DECODING PIPELINE -->
+<!-- ================================================= -->
+
+<rect x="50" y="650" width="1000" height="170" class="box"/>
+<text x="70" y="680" class="section">Decoding Pipeline</text>
+
+<text x="80" y="710" class="text">
+Model outputs token IDs → detokenizer reconstructs UTF-8 text
+</text>
+
+<text x="80" y="735" class="code">
+[15223, 374, 279] → "Paris is the capital"
+</text>
+
+<text x="80" y="765" class="text">
+Byte-level tokenizers require buffering before emitting characters.
+</text>
+
+<!-- ================================================= -->
+<!-- STREAMING -->
+<!-- ================================================= -->
+
+<rect x="50" y="840" width="480" height="150" class="box"/>
+<text x="70" y="870" class="section">Streaming Decoding</text>
+
+<text x="80" y="900" class="text">
+• Tokens arrive one at a time
+</text>
+
+<text x="80" y="925" class="text">
+• Partial UTF-8 bytes must be buffered
+</text>
+
+<text x="80" y="950" class="text">
+• Emit text only when character completes
+</text>
+
+<!-- ================================================= -->
+<!-- LOGPROBS -->
+<!-- ================================================= -->
+
+<rect x="570" y="840" width="480" height="150" class="box"/>
+<text x="590" y="870" class="section">Logprobs Uses</text>
+
+<text x="600" y="900" class="text">
+• Confidence estimation
+</text>
+
+<text x="600" y="925" class="text">
+• Classification without generation
+</text>
+
+<text x="600" y="950" class="text">
+• Perplexity ≈ uncertainty signal
+</text>
+
+<!-- ================================================= -->
+<!-- FAILURE MODES -->
+<!-- ================================================= -->
+
+<rect x="50" y="1010" width="1000" height="220" class="box"/>
+<text x="70" y="1040" class="section">Common Failure Modes</text>
+
+<text x="80" y="1070" class="text">
+• Wrong tokenizer for model
+</text>
+
+<text x="80" y="1095" class="text">
+• Wrong chat template → silent quality loss
+</text>
+
+<text x="80" y="1120" class="text">
+• Double BOS token
+</text>
+
+<text x="80" y="1145" class="text">
+• Context overflow / silent truncation
+</text>
+
+<text x="80" y="1170" class="text">
+• encode(decode(x)) != x due to normalization
+</text>
+
+</svg>

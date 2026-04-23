@@ -17,6 +17,7 @@ book:
     - part: "The Summoning of the Request"
       chapters:
         - book/part2/APIs_and_serving.md
+        - book/part2/Tokenization.md
 
     - part: "Beyond the Gate of Words"
       chapters: []
