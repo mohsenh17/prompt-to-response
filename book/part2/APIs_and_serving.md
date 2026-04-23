@@ -413,6 +413,8 @@ latency targets for different user tiers).
 - Prefill is compute bound and decode is memory bandwidth bound, so they have fundamentally different performance profiles and can be optimized independently
 - TTFT and throughput trade off against each other, and the appropriate balance depends on whether the system serves interactive applications or batch workloads
 
+![Cheat sheet.](figures/ch3/cheat_sheet.svg){#fig-progress width="100%"}
+
 ---
 
 ## Further reading

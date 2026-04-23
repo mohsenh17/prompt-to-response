@@ -1,0 +1,109 @@
+<svg width="1200" height="900" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: bold 26px Arial; fill:#111; }
+.section { font: bold 16px Arial; fill:#222; }
+.text { font: 13px Arial; fill:#333; }
+.small { font: 12px Arial; fill:#444; }
+.box { fill:white; stroke:#cccccc; stroke-width:1; rx:10; }
+.flowbox { fill:#f5f5f5; stroke:#bbbbbb; rx:6; }
+.arrow { stroke:#888; stroke-width:1.5; marker-end:url(#arrow); }
+</style>
+
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10"
+refX="10" refY="3" orient="auto">
+<path d="M0,0 L10,3 L0,6 Z" fill="#888"/>
+</marker>
+</defs>
+
+
+<!-- API -->
+<rect x="40" y="70" width="340" height="170" class="box"/>
+<text x="60" y="95" class="section">API</text>
+<text x="60" y="120" class="text">POST /v1/chat/completions</text>
+<text x="60" y="140" class="small">messages: system / user / assistant</text>
+<text x="60" y="160" class="small">stream → token streaming</text>
+<text x="60" y="180" class="small">finish_reason: stop | length</text>
+<text x="60" y="200" class="small">usage = prompt + completion tokens</text>
+
+<!-- PARAMETERS -->
+<rect x="420" y="70" width="340" height="200" class="box"/>
+<text x="440" y="95" class="section">Key Parameters</text>
+<text x="440" y="120" class="small">temperature > randomness</text>
+<text x="440" y="140" class="small">top_p > nucleus sampling</text>
+<text x="440" y="160" class="small">max_tokens > latency/cost cap</text>
+<text x="440" y="180" class="small">stop > halt generation</text>
+<text x="440" y="200" class="small">presence_penalty > topic diversity</text>
+<text x="440" y="220" class="small">frequency_penalty > repetition control</text>
+
+<!-- PIPELINE -->
+<rect x="40" y="280" width="720" height="140" class="box"/>
+<text x="60" y="295" class="section">Checkpoint → Production</text>
+
+<rect x="60" y="310" width="100" height="28" class="flowbox"/>
+<text x="70" y="328" class="small">Checkpoint</text>
+
+<rect x="180" y="310" width="100" height="28" class="flowbox"/>
+<text x="200" y="328" class="small">Quantize</text>
+
+<rect x="300" y="310" width="110" height="28" class="flowbox"/>
+<text x="315" y="328" class="small">Multi-GPU</text>
+
+<rect x="430" y="310" width="110" height="28" class="flowbox"/>
+<text x="450" y="328" class="small">Inference</text>
+
+<rect x="560" y="310" width="90" height="28" class="flowbox"/>
+<text x="575" y="328" class="small">API</text>
+
+<line x1="160" y1="324" x2="180" y2="324" class="arrow"/>
+<line x1="280" y1="324" x2="300" y2="324" class="arrow"/>
+<line x1="410" y1="324" x2="430" y2="324" class="arrow"/>
+<line x1="540" y1="324" x2="560" y2="324" class="arrow"/>
+
+<!-- INFERENCE -->
+<rect x="800" y="70" width="340" height="160" class="box"/>
+<text x="820" y="95" class="section">Inference Servers</text>
+<text x="820" y="120" class="small">vLLM > continuous batching</text>
+<text x="820" y="140" class="small">TensorRT-LLM > max NVIDIA speed</text>
+<text x="820" y="160" class="small">llama.cpp > local deployment</text>
+<text x="820" y="180" class="small">Gateway: auth · routing · logging</text>
+
+<!-- PREFILL / DECODE -->
+<rect x="40" y="440" width="340" height="170" class="box"/>
+<text x="60" y="465" class="section">Prefill vs Decode</text>
+<text x="60" y="490" class="small">Prefill → parallel prompt compute</text>
+<text x="60" y="510" class="small">Compute-bound</text>
+<text x="60" y="540" class="small">Decode → 1 token/step</text>
+<text x="60" y="560" class="small">Memory-bandwidth bound</text>
+
+<!-- BATCHING -->
+<rect x="420" y="440" width="340" height="170" class="box"/>
+<text x="440" y="465" class="section">Batching</text>
+<text x="440" y="490" class="small">Static > wait full batch</text>
+<text x="440" y="510" class="small">Continuous > swap every token</text>
+<text x="440" y="530" class="small">PagedAttention enables sharing</text>
+<text x="440" y="550" class="small">Unit = token step</text>
+
+<!-- KV CACHE -->
+<rect x="800" y="260" width="340" height="170" class="box"/>
+<text x="820" y="285" class="section">KV Cache</text>
+<text x="820" y="310" class="small">Memory grows with tokens</text>
+<text x="820" y="330" class="small">≈320KB/token (70B)</text>
+<text x="820" y="350" class="small">PagedAttention avoids fragmentation</text>
+
+<!-- LATENCY -->
+<rect x="800" y="460" width="340" height="160" class="box"/>
+<text x="820" y="485" class="section">Latency vs Throughput</text>
+<text x="820" y="510" class="small">TTFT > first token delay</text>
+<text x="820" y="530" class="small">TBT > decode speed</text>
+<text x="820" y="550" class="small">Large batch ↑ throughput ↑ latency</text>
+
+<!-- MEMORY -->
+<rect x="40" y="640" width="720" height="160" class="box"/>
+<text x="60" y="665" class="section">Memory Quick Reference</text>
+<text x="60" y="690" class="small">7B → 14GB BF16 | 7GB INT8 | 3.5GB INT4</text>
+<text x="60" y="710" class="small">70B → 140GB BF16 | 35GB INT4</text>
+<text x="60" y="730" class="small">Decode: ~20–60 tok/s on A100</text>
+
+</svg>
