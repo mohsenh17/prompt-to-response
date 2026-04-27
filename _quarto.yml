@@ -18,6 +18,7 @@ book:
       chapters:
         - book/part2/APIs_and_serving.md
         - book/part2/Tokenization.md
+        - book/part2/Embeddings_and_meaning.md
 
     - part: "Beyond the Gate of Words"
       chapters: []

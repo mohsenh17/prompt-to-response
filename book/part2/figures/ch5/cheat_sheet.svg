@@ -1,0 +1,118 @@
+<svg width="1200" height="1400" xmlns="http://www.w3.org/2000/svg"
+     font-family="Inter, Arial, sans-serif">
+
+<style>
+.title { font-size:34px; font-weight:700; }
+.section { font-size:22px; font-weight:600; }
+.text { font-size:18px; }
+.box { fill:#f7f7f7; stroke:#222; stroke-width:2; rx:14; }
+.arrow { stroke:#222; stroke-width:2; marker-end:url(#arrow); }
+.code { font-family:monospace; font-size:16px; }
+</style>
+
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10"
+ refX="10" refY="3" orient="auto">
+ <path d="M0,0 L10,3 L0,6 Z" fill="#222"/>
+</marker>
+</defs>
+
+<!-- TITLE -->
+<text x="600" y="60" text-anchor="middle" class="title">
+Embeddings &amp; Meaning Representation — Cheat Sheet
+</text>
+
+<!-- TOKENIZATION -->
+<rect x="60" y="120" width="1080" height="130" class="box"/>
+<text x="80" y="160" class="section">1. Tokenization → Integer IDs</text>
+<text x="80" y="195" class="text">
+Text → tokens → arbitrary indices (no meaning)
+</text>
+<text x="80" y="225" class="code">
+"Paris" → 15342
+</text>
+
+<!-- EMBEDDING LOOKUP -->
+<rect x="60" y="280" width="1080" height="160" class="box"/>
+<text x="80" y="320" class="section">2. Embedding Lookup</text>
+<text x="80" y="355" class="text">
+Embedding table E ∈ R[vocab_size × d_model]
+</text>
+<text x="80" y="385" class="code">
+embedding = E[token_id]
+</text>
+<text x="80" y="415" class="text">
+Discrete tokens → continuous vectors
+</text>
+
+<!-- GEOMETRY -->
+<rect x="60" y="470" width="1080" height="190" class="box"/>
+<text x="80" y="510" class="section">3. Geometry of Meaning</text>
+<text x="80" y="545" class="text">
+• Similar words cluster together
+</text>
+<text x="80" y="575" class="text">
+• Directions encode semantic relations
+</text>
+<text x="80" y="605" class="code">
+king − man + woman ≈ queen
+</text>
+<text x="80" y="635" class="text">
+Cosine similarity measures semantic closeness
+</text>
+
+<!-- CONTEXTUALIZATION -->
+<rect x="60" y="690" width="1080" height="200" class="box"/>
+<text x="80" y="730" class="section">4. Contextual Embeddings (Transformer)</text>
+<text x="80" y="765" class="text">
+Residual stream progressively refines representation:
+</text>
+
+<text x="80" y="800" class="code">
+x₀ = token_embedding + position
+</text>
+<text x="80" y="830" class="code">
+xₗ₊₁ = xₗ + Attention + FFN
+</text>
+
+<text x="80" y="860" class="text">
+Meaning evolves layer-by-layer.
+</text>
+
+<!-- EMBEDDING MODELS -->
+<rect x="60" y="920" width="1080" height="170" class="box"/>
+<text x="80" y="960" class="section">5. Embedding Models vs Generative Models</text>
+<text x="80" y="995" class="text">
+Generative LLMs → next-token prediction
+</text>
+<text x="80" y="1025" class="text">
+Embedding models → contrastive learning (InfoNCE)
+</text>
+<text x="80" y="1055" class="text">
+Goal: similar texts → nearby vectors
+</text>
+
+<!-- MRL -->
+<rect x="60" y="1120" width="1080" height="200" class="box"/>
+<text x="80" y="1160" class="section">6. Matryoshka Representation Learning (MRL)</text>
+
+<text x="80" y="1195" class="text">
+Single embedding usable at multiple dimensions:
+</text>
+
+<text x="80" y="1225" class="code">
+L = L(e[:64]) + L(e[:128]) + ... + L(e[:1536])
+</text>
+
+<text x="80" y="1255" class="text">
+Dimensionality becomes a deployment parameter.
+</text>
+
+<!-- FLOW ARROWS -->
+<line x1="600" y1="250" x2="600" y2="280" class="arrow"/>
+<line x1="600" y1="440" x2="600" y2="470" class="arrow"/>
+<line x1="600" y1="660" x2="600" y2="690" class="arrow"/>
+<line x1="600" y1="890" x2="600" y2="920" class="arrow"/>
+<line x1="600" y1="1090" x2="600" y2="1120" class="arrow"/>
+
+</svg>
