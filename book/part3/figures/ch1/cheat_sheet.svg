@@ -1,0 +1,104 @@
+<svg width="1200" height="1700" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+<!-- TITLE -->
+<text x="50" y="55" class="title">Transformer Architecture — Cheat Sheet</text>
+
+<!-- WHY TRANSFORMER -->
+<rect x="50" y="80" width="1100" height="150" class="box"/>
+<text x="70" y="110" class="section">Why Transformers Won</text>
+<text x="80" y="140" class="text">• RNNs: sequential → no parallelism</text>
+<text x="80" y="165" class="text">• Long-range info bottleneck in hidden state</text>
+<text x="80" y="190" class="text">• Transformers: attention → full parallelism + direct token interaction</text>
+
+<!-- PIPELINE -->
+<rect x="50" y="250" width="1100" height="140" class="box"/>
+<text x="70" y="280" class="section">High-Level Pipeline</text>
+<text x="80" y="310" class="text">Tokens → Embeddings → Positional Encoding → Transformer Blocks → Logits → Softmax</text>
+<text x="80" y="340" class="code">P(next token | context)</text>
+
+<!-- EMBEDDINGS -->
+<rect x="50" y="410" width="540" height="200" class="box"/>
+<text x="70" y="440" class="section">Embeddings &amp; Position</text>
+<text x="80" y="470" class="text">Token embedding: lookup table (vocab → vectors)</text>
+<text x="80" y="495" class="text">Weight tying: input embedding = output projection</text>
+
+<text x="80" y="530" class="text">Positional encodings:</text>
+<text x="90" y="555" class="text">• Sinusoidal (fixed, original transformer)</text>
+<text x="90" y="575" class="text">• Learned embeddings</text>
+<text x="90" y="595" class="text">• RoPE: rotates Q/K → relative position</text>
+
+<!-- SELF ATTENTION -->
+<rect x="610" y="410" width="540" height="200" class="box"/>
+<text x="630" y="440" class="section">Self-Attention</text>
+
+<text x="640" y="470" class="code">Q = XWq, K = XWk, V = XWv</text>
+<text x="640" y="495" class="code">Attention = softmax(QKᵀ / √d) V</text>
+
+<text x="640" y="530" class="text">Each token attends to all previous tokens</text>
+<text x="640" y="555" class="text">Creates contextualized representation</text>
+
+<!-- MASKS -->
+<rect x="50" y="630" width="1100" height="170" class="box"/>
+<text x="70" y="660" class="section">Attention Masks</text>
+
+<text x="80" y="690" class="text">• Causal (decoder): only past tokens visible</text>
+<text x="80" y="715" class="text">• Bidirectional (encoder): full sequence visible (BERT)</text>
+<text x="80" y="740" class="text">• Encoder-decoder: cross-attention between memory + generation</text>
+<text x="80" y="765" class="text">• Prefix LM: prefix bidirectional, suffix causal</text>
+
+<!-- MULTI HEAD -->
+<rect x="50" y="820" width="540" height="170" class="box"/>
+<text x="70" y="850" class="section">Multi-Head Attention</text>
+<text x="80" y="880" class="text">Multiple parallel attention heads</text>
+<text x="80" y="905" class="text">Each head learns different relation type</text>
+<text x="80" y="930" class="text">Outputs concatenated + projected</text>
+
+<text x="80" y="955" class="code">Specialization emerges from training</text>
+
+<!-- FFN -->
+<rect x="610" y="820" width="540" height="170" class="box"/>
+<text x="630" y="850" class="section">Feed-Forward Network</text>
+
+<text x="640" y="880" class="code">FFN(x) = W2 · activation(W1 x)</text>
+<text x="640" y="905" class="text">Per-token independent transformation</text>
+
+<text x="640" y="935" class="text">Modern activations:</text>
+<text x="650" y="960" class="text">• GELU (default GPT/BERT)</text>
+<text x="650" y="980" class="text">• SwiGLU (modern LLaMA, Mistral)</text>
+
+<!-- RESIDUAL -->
+<rect x="50" y="1010" width="540" height="170" class="box"/>
+<text x="70" y="1040" class="section">Residual + Normalization</text>
+
+<text x="80" y="1070" class="text">x = x + Sublayer(LayerNorm(x)) (Pre-LN)</text>
+<text x="80" y="1095" class="text">Stabilizes deep training</text>
+
+<text x="80" y="1125" class="text">LayerNorm → RMSNorm (modern models)</text>
+<text x="80" y="1150" class="text">Pre-LN = stable gradients at scale</text>
+
+<!-- VARIANTS -->
+<rect x="610" y="1010" width="540" height="170" class="box"/>
+<text x="630" y="1040" class="section">Modern Variants</text>
+
+<text x="640" y="1070" class="text">• RoPE: relative position encoding</text>
+<text x="640" y="1095" class="text">• GQA: shared K/V across heads</text>
+<text x="640" y="1120" class="text">• MoE: sparse expert FFNs</text>
+<text x="640" y="1145" class="text">• Sliding window attention (Mistral)</text>
+
+<!-- OUTPUT -->
+<rect x="50" y="1200" width="1100" height="130" class="box"/>
+<text x="70" y="1230" class="section">Output Layer</text>
+
+<text x="80" y="1260" class="code">logits = h Wᵀ → softmax → P(next token)</text>
+<text x="80" y="1290" class="text">Training objective: next-token prediction only</text>
+
+</svg>
