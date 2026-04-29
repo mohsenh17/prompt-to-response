@@ -32,7 +32,7 @@
   </defs>
 
   <rect x="50" y="60" width="900" height="2" rx="1" fill="#F1F5F9" />
-  <rect x="50" y="60" width="140" height="2" rx="1" fill="#3B82F6" />
+  <rect x="50" y="60" width="295" height="2" rx="1" fill="#3B82F6" />
 
   <g transform="translate(50, 60)">
     <circle r="5" fill="#3B82F6" />
@@ -41,20 +41,21 @@
   </g>
 
   <g transform="translate(200, 60)">
-    <circle r="8" fill="#fff" stroke="#3B82F6" stroke-width="2.5" />
+    <circle r="4" fill="#3B82F6" />
+    <text y="-35" class="part-tag completed">PART II</text>
+  </g>
+
+  <g transform="translate(350, 60)">
+  <circle r="8" fill="#fff" stroke="#3B82F6" stroke-width="2.5" />
     <circle r="3" fill="#3B82F6" />
-    <text y="-35" class="part-tag active">PART II</text>
-    <text y="-20" class="part-title active">The Summoning of the Request</text>
+    <text y="-35" class="part-tag active">PART III</text>
+    <text y="-20" class="part-title active">Beyond the Gate of Words</text>
     <g transform="translate(0, 30)">
-      <rect x="-115" y="0" width="230" height="34" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
-      <text x="0" y="21" class="current-chapter">Embeddings and meaning representation</text>
+      <rect x="-85" y="0" width="170" height="34" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+      <text x="0" y="21" class="current-chapter">Transformer Architecture</text>
       <path d="M -6 0 L 0 -8 L 6 0" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
       <rect x="-7" y="0" width="14" height="2" fill="#F8FAFC" />
     </g>
-  </g>
-
-  <g transform="translate(350, 60)"><circle r="4" fill="#E2E8F0" /><text y="-35" class="part-tag">PART III</text>
-    <!-- <text y="-20" class="part-title future">Beyond the Gate of Words</text> -->
   </g>
   <g transform="translate(500, 60)"><circle r="4" fill="#F1F5F9" /><text y="-35" class="part-tag">IV</text></g>
   <g transform="translate(650, 60)"><circle r="4" fill="#F1F5F9" /><text y="-35" class="part-tag">V</text></g>
