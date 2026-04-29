@@ -10,32 +10,30 @@ book:
 
   chapters:
     - index.md
-    - part: "When the Word is Spoken Into the Void"
+    - part: "The Art of the True Name"
       chapters: 
         - book/part1/chapter1/introduction.md
 
-    - part: "The Summoning of the Request"
+    - part: "The Runes Beneath Language"
       chapters:
         - book/part2/APIs_and_serving.md
         - book/part2/Tokenization.md
         - book/part2/Embeddings_and_meaning.md
 
-    - part: "Beyond the Gate of Words"
-      chapters: []
-
-    - part: "In the Halls of the Thinking Machine"
-      chapters: []
+    - part: "The Labyrinth of Attention"
+      chapters: 
+        - book/part3/transformer-architecture.md
 
     - part: "The Forbidden Archive"
       chapters: []
 
-    - part: "The Crafting of Intelligence"
+    - part: "The Forging of Intelligence"
       chapters: []
 
     - part: "The Trial of the Answer"
       chapters: []
 
-    - part: "Where Systems Walk Among Men"
+    - part: "The Keepers of the Waking Engine"
       chapters: []    
 # --------------------------------------------------
 # Output formats
