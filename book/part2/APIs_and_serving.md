@@ -10,7 +10,7 @@ The prompt has been written and structured. Now it needs to travel somewhere.
 This chapter covers everything between the user pressing Enter and the model
 receiving the request: the wire format, the serving infrastructure, and the
 engineering decisions that make large-scale LLM deployment economical.
-:::
+
 
 ---
 
