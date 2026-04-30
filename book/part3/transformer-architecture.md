@@ -323,37 +323,33 @@ It is particularly useful for:
 
 #### Encoder–decoder (cross-attention masking)
 
-Used in models like T5 and BART.
+The encoder–decoder transformer is designed for tasks where an input
+sequence must be *understood* before a new sequence is generated.
+Models such as **T5** and **BART** follow this structure.
 
-- Encoder self-attention → bidirectional (no causal mask)
+The architecture separates the model into two cooperating systems:
 
-- Decoder self-attention → causal mask (like GPT)
+- The **encoder** reads the entire input at once using bidirectional
+self-attention. Every token can attend to every other token, allowing
+the model to construct a contextual representation which is often described
+as a *memory* of the input.
 
-- Cross-attention → Decoder attends to encoder outputs:
+- The **decoder** then generates the output sequence step by step.
+Unlike the encoder, its self-attention is **causally masked**, meaning
+each token can only attend to previously generated tokens.
+This preserves autoregressive generation.
 
-  - decoder queries
-  - encoder keys/values
+  A second attention mechanism (**cross-attention**) connects the two
+halves of the model. Here, the decoder forms queries while the encoder
+provides keys and values, allowing generation to remain grounded in
+the encoded input representation.
 
+This separation of *understanding* and *generation* makes the
+encoder–decoder architecture especially effective for transformation
+tasks such as translation, summarization, and structured rewriting.
 This creates a structured information flow:
 
-```
-1. ENCODER BLOCKS
-   - self-attention (bidirectional)
-   - builds "memory of input"
-
-        ↓
-
-2. DECODER BLOCKS
-   a) self-attention (causal)
-      - looks at what has been generated so far
-
-   b) cross-attention
-      - looks at encoder memory
-      - aligns output with input meaning
-```
-
-This design is ideal for transformation tasks (translation, summarization) because the model separates understanding (encoder) and generation (decoder).
-
+![encoder-decoder information flow](figures/ch1/encoder_decoder.svg){width="60%"}
 
 ---
 
@@ -624,13 +620,13 @@ SwiGLU combines the smooth, self-gated nonlinearity of Swish with the multiplica
 A useful way to build intuition for modern activation functions is to see how they evolve from simple bounded nonlinearities into smooth, ReLU-like gating mechanisms that combine stability with adaptive feature control.
 
 
-![Tanh to GELU.](figures/ch1/tanh_to_gelu.pdf){width="100%"}
+![Tanh to GELU.](figures/ch1/tanh_to_gelu.svg){width="100%"}
 
 #### Visual intuition: from sigmoid to Swish-like behavior
 
 A useful way to build intuition for modern activation functions is to see how they evolve from simple probabilistic gating functions into smooth, self-modulated nonlinearities. Sigmoid starts as a soft on–off switch, squeezing inputs into ((0,1)), while Swish generalizes this idea by letting the input itself be modulated by a smooth gate, producing a function that behaves like a continuous, input-dependent scaling mechanism rather than a fixed probabilistic filter.
 
-![Tanh to GELU.](figures/ch1/sigmoid_to_swish.pdf){width="70%"}
+![Sigmoid to swish.](figures/ch1/sigmoid_to_swish.svg){width="70%"}
 
 
 ### Mixture of Experts (MoE)
