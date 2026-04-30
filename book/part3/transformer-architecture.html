@@ -648,31 +648,20 @@ on            0.2   0.1   0.3   0.4</code></pre>
 </section>
 <section id="encoderdecoder-cross-attention-masking" class="level4" data-number="6.5.3.3">
 <h4 data-number="6.5.3.3" class="anchored" data-anchor-id="encoderdecoder-cross-attention-masking"><span class="header-section-number">6.5.3.3</span> Encoder–decoder (cross-attention masking)</h4>
-<p>Used in models like T5 and BART.</p>
+<p>The encoder–decoder transformer is designed for tasks where an input sequence must be <em>understood</em> before a new sequence is generated. Models such as <strong>T5</strong> and <strong>BART</strong> follow this structure.</p>
+<p>The architecture separates the model into two cooperating systems:</p>
 <ul>
-<li><p>Encoder self-attention → bidirectional (no causal mask)</p></li>
-<li><p>Decoder self-attention → causal mask (like GPT)</p></li>
-<li><p>Cross-attention → Decoder attends to encoder outputs:</p>
-<ul>
-<li>decoder queries</li>
-<li>encoder keys/values</li>
-</ul></li>
+<li><p>The <strong>encoder</strong> reads the entire input at once using bidirectional self-attention. Every token can attend to every other token, allowing the model to construct a contextual representation which is often described as a <em>memory</em> of the input.</p></li>
+<li><p>The <strong>decoder</strong> then generates the output sequence step by step. Unlike the encoder, its self-attention is <strong>causally masked</strong>, meaning each token can only attend to previously generated tokens. This preserves autoregressive generation.</p>
+<p>A second attention mechanism (<strong>cross-attention</strong>) connects the two halves of the model. Here, the decoder forms queries while the encoder provides keys and values, allowing generation to remain grounded in the encoded input representation.</p></li>
 </ul>
-<p>This creates a structured information flow:</p>
-<pre><code>1. ENCODER BLOCKS
-   - self-attention (bidirectional)
-   - builds "memory of input"
-
-        ↓
-
-2. DECODER BLOCKS
-   a) self-attention (causal)
-      - looks at what has been generated so far
-
-   b) cross-attention
-      - looks at encoder memory
-      - aligns output with input meaning</code></pre>
-<p>This design is ideal for transformation tasks (translation, summarization) because the model separates understanding (encoder) and generation (decoder).</p>
+<p>This separation of <em>understanding</em> and <em>generation</em> makes the encoder–decoder architecture especially effective for transformation tasks such as translation, summarization, and structured rewriting. This creates a structured information flow:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/ch1/encoder_decoder.svg" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>encoder-decoder information flow</figcaption>
+</figure>
+</div>
 <hr>
 </section>
 </section>
@@ -885,7 +874,7 @@ x = LayerNorm(x)</code></pre>
 <p>A useful way to build intuition for modern activation functions is to see how they evolve from simple bounded nonlinearities into smooth, ReLU-like gating mechanisms that combine stability with adaptive feature control.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><embed src="figures/ch1/tanh_to_gelu.pdf" class="img-fluid" style="width:100.0%"></p>
+<p><img src="figures/ch1/tanh_to_gelu.svg" class="img-fluid figure-img" style="width:100.0%"></p>
 <figcaption>Tanh to GELU.</figcaption>
 </figure>
 </div>
@@ -895,8 +884,8 @@ x = LayerNorm(x)</code></pre>
 <p>A useful way to build intuition for modern activation functions is to see how they evolve from simple probabilistic gating functions into smooth, self-modulated nonlinearities. Sigmoid starts as a soft on–off switch, squeezing inputs into ((0,1)), while Swish generalizes this idea by letting the input itself be modulated by a smooth gate, producing a function that behaves like a continuous, input-dependent scaling mechanism rather than a fixed probabilistic filter.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><embed src="figures/ch1/sigmoid_to_swish.pdf" class="img-fluid" style="width:70.0%"></p>
-<figcaption>Tanh to GELU.</figcaption>
+<p><img src="figures/ch1/sigmoid_to_swish.svg" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption>Sigmoid to swish.</figcaption>
 </figure>
 </div>
 </section>
