@@ -49,7 +49,7 @@
   <circle r="8" fill="#fff" stroke="#3B82F6" stroke-width="2.5" />
     <circle r="3" fill="#3B82F6" />
     <text y="-35" class="part-tag active">PART III</text>
-    <text y="-20" class="part-title active">Beyond the Gate of Words</text>
+    <text y="-20" class="part-title active">The Labyrinth of Attention</text>
     <g transform="translate(0, 30)">
       <rect x="-85" y="0" width="170" height="34" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
       <text x="0" y="21" class="current-chapter">Transformer Architecture</text>

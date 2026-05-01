@@ -471,5 +471,137 @@
       "The Labyrinth of Attention",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Transformer Architecture</span>"
     ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html",
+    "href": "book/part3/attention-computation.html",
+    "title": "7  Attention Computation",
+    "section": "",
+    "text": "7.1 The quadratic problem\nStandard self-attention has a fundamental scaling property where both computation and memory grow quadratically with sequence length. For a sequence of n tokens:\n\\[\n\\begin{array}{l l}\n\\text{Attention score matrix:} & n \\times n \\\\\n\\text{Memory for scores:}     & n^2 \\times 2\\ \\text{bytes (BF16)} \\\\\n\\text{Compute for scores:}    & n^2 \\times d_k\\ \\text{multiplications (}QK^\\top\\text{)} \\\\\n\\text{Compute for output:}    & n^2 \\times d_v\\ \\text{multiplications (scores} \\times V\\text{)}\n\\end{array}\n\\]\nAt small sequence lengths this is manageable:\nAt 128k tokens on the other hand which is currently supported by several models the attention score matrix alone would require 32 GB of GPU memory per layer per head which means a model with 96-layer and 96 heads would need 96 × 96 × 32 GB = 295 TB and that is clearly impossible.\nIn reality the score matrix is never actually materializes in practice with the help of FlashAttention but the compute still scales quadratically. Doubling the sequence length quadruples the attention computation and it is central cost driver for long-context inference.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#the-quadratic-problem",
+    "href": "book/part3/attention-computation.html#the-quadratic-problem",
+    "title": "7  Attention Computation",
+    "section": "",
+    "text": "Sequence length\nScore matrix\nMemory\n\n\n\n\n512 tokens\n512 × 512\n0.5 MB\n\n\n2,048 tokens\n2,048 × 2,048\n8 MB\n\n\n8,192 tokens\n8,192 × 8,192\n128 MB\n\n\n32,768 tokens\n32,768 × 32,768\n2 GB\n\n\n131,072 tokens\n131,072 × 131,072\n32 GB",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#what-the-gpu-actually-does-during-attention",
+    "href": "book/part3/attention-computation.html#what-the-gpu-actually-does-during-attention",
+    "title": "7  Attention Computation",
+    "section": "7.2 What the GPU actually does during attention",
+    "text": "7.2 What the GPU actually does during attention\nUnderstanding attention at the hardware level requires understanding two main bottlenecks in GPU computation, arithmetic throughput and memory bandwidth. Arithmetic throughput refers to how many floating-point operations per second the GPU can perform (an H100 delivers approximately 1,000 TFLOPS for BF16 matrix multiplications). Memory bandwidth refers to how fast data can be read/write from/to GPU high bandwidth memory (an H100 provides approximately 3.35 TB/s). The ratio between these, known as arithmetic intensity, determines whether a computation is compute-bound or memory-bandwidth-bound.\nFor matrix multiplication, the main operation in attention and FFNs, large matrices have high arithmetic intensity and are compute-bound, while small matrices or element-wise operations have low arithmetic intensity and are memory-bandwidth-bound.\nDuring the decoding phase (processing one new token against the KV cache), attention is severely memory-bandwidth-bound. In this phase GPU must read the entire KV cache (potentially gigabytes of data) to compute attention scores for a single new token. The arithmetic work is tiny relative to the memory access while the GPU’s massive arithmetic throughput sits idle, waiting for data. This is the reason why decoding throughput scales with memory bandwidth, not arithmetic throughput and why increasing sequence length primarily increases memory pressure and not the compute pressure, during generation.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#standard-attention-the-naive-computation",
+    "href": "book/part3/attention-computation.html#standard-attention-the-naive-computation",
+    "title": "7  Attention Computation",
+    "section": "7.3 Standard attention: the naive computation",
+    "text": "7.3 Standard attention: the naive computation\nBefore FlashAttention, attention was computed in the obvious way:\n# Standard attention (naive)\n# Q: [seq_len, d_k]\n# K: [seq_len, d_k]\n# V: [seq_len, d_v]\n\nscores = Q @ K.T                          # [seq_len, seq_len] — written to HBM\nscores = scores / math.sqrt(d_k)          # scaling — read/write from/to HBM\nscores = scores + causal_mask             # masking — read/write from/to HBM\nscores = softmax(scores, dim=-1)          # softmax — read/write from/to HBM\noutput = scores @ V                       # [seq_len, d_v] — read/write from/to HBM\nEach step read/write from/to HBM. The score matrix of shape [seq_len, seq_len] is materialized in HBM multiple times during scaling, masking, and softmax.\nFor a sequence of 8,192 tokens in BF16:\n\nScore matrix: 8,192 × 8,192 × 2 bytes = 128 MB\nEach read/write of the score matrix: 128 MB / 3.35 TB/s ≈ 38 microseconds\nAcross multiple reads and writes: hundreds of microseconds in memory traffic alone\n\nThe actual arithmetic is fast, while the movement of data between compute units and HBM is the bottleneck, which making this a classic I/O-bound computation.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#flashattention",
+    "href": "book/part3/attention-computation.html#flashattention",
+    "title": "7  Attention Computation",
+    "section": "7.4 FlashAttention",
+    "text": "7.4 FlashAttention\nFlashAttention (Dao et al., 2022) computes exact attention which is basically same numerical result as standard attention, while using dramatically less memory and running significantly faster. The trick is reorganizing the computation to minimize HBM traffic.\n\n7.4.1 The key insight: tiling\nFlashAttention divides the Q, K, and V matrices into tiles that fit in SRAM, the fast on-chip memory sitting directly next to the compute units, with much higher bandwidth than HBM but much smaller capacity:\nSRAM bandwidth:  ~20 TB/s   (fast, ~50 MB on H100)\nHBM bandwidth:   ~3.35 TB/s (slower, 80 GB on H100)\nBy loading tiles into SRAM and performing the full attention computation on those tiles before writing results back to HBM, FlashAttention reduces HBM reads and writes from O(n²) to O(n) while the score matrix is never written to HBM at all.\n\n\n7.4.2 Online softmax\nThe challenge: softmax requires knowing the maximum value across all scores in a row before normalizing while in the tiled computation, you process one tile at a time without seeing the full row. How do you compute correct softmax without materializing the full score matrix?\nFlashAttention uses an online softmax algorithm that maintains running statistics (the running maximum and running sum of exponentials) and updates them as each tile is processed. After all tiles, the statistics are complete and the output is correctly normalized:\nrunning_max = -infinity\nrunning_sum = 0\nrunning_output = zeros(d_v)\n\nfor each key/value tile (K_tile, V_tile):\n    scores_tile = Q_row @ K_tile.T / sqrt(d_k)\n    tile_max = max(scores_tile)\n\n    # Update running statistics\n    new_max = max(running_max, tile_max)\n    running_sum = (running_sum * exp(running_max - new_max)\n                  + sum(exp(scores_tile - new_max)))\n    running_output = (running_output * exp(running_max - new_max)\n                     + exp(scores_tile - new_max) @ V_tile)\n    running_max = new_max\n\n# Final normalization\noutput = running_output / running_sum\nThis procedure produces the identical result to naive attention while never storing more than one tile’s worth of scores at a time.\n\n\n7.4.3 FlashAttention in practice\nFlashAttention is \\(2\\text{--}4×\\) faster than standard attention on typical sequence lengths, with the speedup increasing as sequences grow longer and more importantly, its memory usage is O(n) rather than O(n²).",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#multi-head-attention-at-inference",
+    "href": "book/part3/attention-computation.html#multi-head-attention-at-inference",
+    "title": "7  Attention Computation",
+    "section": "7.5 Multi-head attention at inference",
+    "text": "7.5 Multi-head attention at inference\nMulti-head attention runs h independent attention operations in parallel. For a model with h = 96 heads and d_model = 12,288:\n\\[\n\\begin{aligned}\nd_k = d_v &= \\frac{d_{\\text{model}}}{h} = 128 \\quad \\text{(per head)}\n\\\\[14pt]\n\\textbf{Projections:} \\quad & \\\\\nQ &: [n,\\, 12288] \\;@\\; [12288,\\, 96 \\times 128] \\;\\to\\; [n,\\, 96,\\, 128] \\\\\nK &: [n,\\, 12288] \\;@\\; [12288,\\, 96 \\times 128] \\;\\to\\; [n,\\, 96,\\, 128] \\\\\nV &: [n,\\, 12288] \\;@\\; [12288,\\, 96 \\times 128] \\;\\to\\; [n,\\, 96,\\, 128]\n\\\\[14pt]\n\\textbf{Per-head attention:} \\quad & \\\\\n\\text{scores} &= \\frac{Q_h K_h^\\top}{\\sqrt{128}} \\;\\to\\; [n,\\, n] \\\\[6pt]\n\\text{output} &= \\text{softmax}(\\text{scores})\\, V_h \\;\\to\\; [n,\\, 128]\n\\\\[14pt]\n\\textbf{Concatenate:} \\quad & [n,\\, 96,\\, 128] \\;\\to\\; [n,\\, 12288] \\\\[4pt]\n\\textbf{Output proj:} \\quad & [n,\\, 12288] \\;@\\; [12288,\\, 12288] \\;\\to\\; [n,\\, 12288]\n\\end{aligned}\n\\]\nIn practice, all 96 heads are computed in parallel by treating the head dimension as a batch dimension. The Q, K, V projections produce batched tensors processed simultaneously by the matrix multiplication kernel.\n\n7.5.1 MHA vs. MQA vs. GQA\nMulti-Head Attention (MHA) uses separate Q, K, and V projection matrices for each head. While this increases expressiveness, it is memory-intensive because each head requires its own stored K and V tensors in the KV cache.\nMulti-Query Attention (MQA) (Shazeer, 2019): All attention heads share a single set of K and V projections, while Q remains separate per head. This significantly reduces KV cache usage by a factor of h, for example, a 96-head model achieves a ~96× smaller cache and in general, this comes with only a modest impact on output quality.\n\\[\n\\begin{aligned}\n\\textbf{MHA:}\\quad & Q \\in \\mathbb{R}^{n \\times h \\times d_k},\\; K \\in \\mathbb{R}^{n \\times h \\times d_k},\\; V \\in \\mathbb{R}^{n \\times h \\times d_v} \\;\\Rightarrow\\; \\text{KV cache} \\propto 2 \\cdot h \\cdot d_k \\\\[8pt]\n\\textbf{MQA:}\\quad & Q \\in \\mathbb{R}^{n \\times h \\times d_k},\\; K \\in \\mathbb{R}^{n \\times 1 \\times d_k},\\; V \\in \\mathbb{R}^{n \\times 1 \\times d_v} \\;\\Rightarrow\\; \\text{KV cache} \\propto 2 \\cdot d_k\n\\end{aligned}\n\\]\nGrouped-Query Attention (GQA) (Ainslie et al., 2023): the middle ground in which Heads are divided into groups; each group shares one K and V projection:\n\n\n\n\n\n\n\n\nComponent\nShape\nDetails\n\n\n\n\nQ (Query)\n\\([n, 96, d_k]\\)\nper head\n\n\nK (Key)\n\\([n, 8, d_k]\\)\nper group\n\n\nV (Value)\n\\([n, 8, d_v]\\)\nper group\n\n\nKV Cache\n\\(\\propto 2 × 8 × d_k\\)\n12× smaller than MHA\n\n\n\nLLaMA 2 70B uses GQA with 8 KV heads and Mistral 7B uses GQA with 8 KV heads. Quality loss compared to MHA is negligible on standard benchmarks while the KV cache reduction is significant for serving.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#the-kv-cache-at-inference",
+    "href": "book/part3/attention-computation.html#the-kv-cache-at-inference",
+    "title": "7  Attention Computation",
+    "section": "7.6 The KV cache at inference",
+    "text": "7.6 The KV cache at inference\nDuring decoding, the model generates one token at a time and at each step, this new token must attend to all previous tokens. Recomputing the K and V vectors for all previous tokens at every step would be extremely wasteful due to the fact that those tokens have not changed, so their projections have not changed either.\nThe KV cache stores K and V tensors for all previous tokens and reuses them at each generation step. Only the new token’s Q, K, V vectors need to be computed fresh. This is covered in full detail in chapter REFF nevertheless the momory cost understanding will be discussed here\n\n7.6.1 KV cache memory per token\nFor LLaMA 2 70B (L=80 layers, 8 KV heads, d_k=128, BF16):\nPer token per layer: \\(2 × 8 × 128 × 2\\) bytes = 4 KB\nPer token total: \\(4 × 80\\) layers = 320 KB\nFor a 4,096-token sequence: 320 KB \\(×\\) 4,096 ≈ 1.28 GB of KV cache per sequence. At batch size 64 concurrent sequences: 64 × 1.28 GB = 82 GB which is more than the 80 GB on an H100. This is the reason KV cache management is the central serving constraint for long-context workloads.\n\n\n7.6.2 Prefill vs. decode attention\nDuring prefill (processing the input prompt), all tokens’ K and V vectors are computed simultaneously and written to the KV cache it is a batch matrix multiplication, efficient and compute-bound. On the othe hand during decoding (generating output), each new token’s K and V are computed and appended to the cache, then attention is computed between that single new token’s Q and the full KV cacheand it is a vector-matrix multiply, memory-bandwidth-bound:\nPrefill: [n_prompt, d_k] @ [d_k, n_prompt]      → large matmul, compute-bound\nDecode:  [1, d_k] @ [d_k, n_prompt + n_gen]     → vector-matrix, bandwidth-bound\nThis asymmetry is why decoding is slower per token than prefill, and why disaggregated serving (separate hardware for prefill and decode phases) is considered as an active area of optimization.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#sparse-and-linear-attention",
+    "href": "book/part3/attention-computation.html#sparse-and-linear-attention",
+    "title": "7  Attention Computation",
+    "section": "7.7 Sparse and linear attention",
+    "text": "7.7 Sparse and linear attention\nThe quadratic cost of standard attention has motivated significant research into more efficient alternatives yet None has been able to displace full attention in frontier models, but several are worth understanding.\n\n7.7.1 Sparse attention\nInstead of every token attending to every other token, sparse attention restricts each token to a subset of positions:\nLocal window attention: each token attends only to the surrounding w tokens which reduces the complexity to O(n × w). With this approach the information still can propagate across long distances through multiple layers of local attention.\nStrided attention: alternating layers use different patterns in which some layers use local windows and some use strided patterns (attend every k steps) allowing attention to distant tokens. Used in Longformer and BigBird.\nSliding window with global tokens: certain tokens (typically the first ones) attend to all other tokens and are attended to by all others. These global tokens propagate long-range information while the rest of the sequence uses local attention.\nThe limitation: the sparsity pattern must be specified in advance. If it does not match the actual information dependencies in the data, quality degrades. Full attention is flexible that helps the model to learn any pattern which is why it has remained dominant.\n\n\n7.7.2 Linear attention\nThe key idea behind linear attention is to reinterpret softmax attention as a kernel operation whose structure allows the order of computation to change.\nIgnoring scaling and normalization constants for clarity, the softmax attention weight between tokens can be written as\n\\[\nA_{ij} = \\exp(q_i^\\top k_j).\n\\]\nThe attention output for token \\(i\\) therefore becomes\n\\[\n\\text{output}_i\n=\n\\frac{\n\\sum_j \\exp(q_i^\\top k_j)\\, v_j\n}{\n\\sum_j \\exp(q_i^\\top k_j)\n}.\n\\]\nThis reveals that attention is fundamentally a kernel similarity \\(\\kappa(q_i,k_j) = \\exp(q_i^\\top k_j)\\) meaning attention computes a weighted kernel regression over values.\nWith linear attention we can assume that this exponential kernel can be approximated by an inner product in a feature space, \\(\\exp(q^\\top k) \\approx \\phi(q)^\\top \\phi(k)\\), where the feature map \\(\\phi:\\mathbb{R}^d \\rightarrow \\mathbb{R}^{d_\\phi}\\) embeds queries and keys into a space where their similarity become linear and substituting this approximation into attention gives\n\\[\n\\text{output}_i\n=\n\\frac{\n\\sum_j\n\\phi(q_i)^\\top \\phi(k_j)\\, v_j\n}{\n\\sum_j\n\\phi(q_i)^\\top \\phi(k_j)\n}.\n\\]\nBecause \\(\\phi(q_i)\\) does not depend on \\(j\\), it can be factored outside the sums:\n\\[\n\\text{output}_i\n=\n\\frac{\n\\phi(q_i)^\\top\n\\sum_j \\phi(k_j) v_j^\\top\n}{\n\\phi(q_i)^\\top\n\\sum_j \\phi(k_j)\n}.\n\\]\nAll interactions with the sequence are now contained in two global statistics,\n\\[\nS=\\sum_j \\phi(k_j)v_j^\\top,\n\\qquad\nz=\\sum_j \\phi(k_j),\n\\]\nso the output becomes\n\\[\n\\text{output}_i\n=\n\\frac{\\phi(q_i)^\\top S}{\\phi(q_i)^\\top z}.\n\\]\nStacking all queries yields the linear attention form\n\\[\n\\boxed{\n\\text{Attn}(Q,K,V)\n=\n\\phi(Q)\\big(\\phi(K)^\\top V\\big)\n}\n\\quad\\text{(up to normalization)}.\n\\]\nThe crucial consequence is that computation can be reordered:\n\\[\n(QK^\\top)V \\;\\;\\longrightarrow\\;\\;\n\\phi(Q)\\big(\\phi(K)^\\top V\\big),\n\\]\nallowing the key-value product to be computed once and reused for all queries.\n\n\n\n\n\n\n\n\nMethod\nFormula\nComplexity\n\n\n\n\nStandard attention\n\\(\\mathrm{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right)V\\)\n\\(O(n^2)\\)\n\n\nLinear attention\n\\(\\phi(Q)\\big(\\phi(K)^\\top V\\big)\\)\n\\(O(n)\\)\n\n\n\nThe limitation is that the approximation works for some tasks but degrades on others, particularly tasks requiring precise comparison of specific tokens. Softmax produces a peaky distribution (concentrating attention on a small number of tokens) which is important for retrieval-like tasks that linear approximations cannot replicate faithfully.\n\n\n7.7.3 State space models and hybrid architectures\nAnother direction for scaling sequence models is to move away from attention completely and instead model sequences through learned dynamical systems. State space models (SSMs) replace pairwise token interaction with a recurrent state that evolves over time, allowing sequences to be processed in linear time.\nRather than computing interactions between all tokens, an SSM maintains a compact hidden state updated sequentially,\n\\[\nh_t = A h_{t-1} + B x_t, \\qquad\ny_t = C h_t,\n\\]\nso information is carried forward through the state instead of recomputed via an attention matrix. Models such as Mamba achieve \\(O(n)\\) computation and memory while retaining long-range dependency modeling, since past context is compressed into the evolving state.\nHybrid architectures combine both paradigms. Instead of choosing between attention and recurrence, models like Jamba and Griffin interleave attention layers with SSM layers. Attention provides flexible global reasoning when precise token interactions matter, while SSM blocks handle long-context processing efficiently by propagating information through state updates.\nThese hybrid designs represent an active research direction: as context lengths grow, future architectures may rely less on dense attention and more on mixtures of attention, recurrence, and continuous-time sequence modeling.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#ring-attention-and-sequence-parallelism",
+    "href": "book/part3/attention-computation.html#ring-attention-and-sequence-parallelism",
+    "title": "7  Attention Computation",
+    "section": "7.8 Ring attention and sequence parallelism",
+    "text": "7.8 Ring attention and sequence parallelism\nFor extremely long sequences, even FlashAttention with \\(O(n)\\) memory may exceed a single GPU’s capacity with the help of Ring attention the sequence distributions can go across multiple GPUs.\nEach GPU holds a slice of the Q, K, and V matrices. The attention computation proceeds in a ring: each GPU computes a partial attention using its local Q slice against the current K/V slice, then passes the K/V to the next GPU while receiving the previous GPU’s K/V:\nRing of 4 GPUs:\n\nStep 1: GPU0 computes Q0×K0V0, GPU1 computes Q1×K1V1, ...\n        K/V rotate: K0V0 → GPU1, K1V1 → GPU2, ...\n\nStep 2: GPU0 computes Q0×K3V3 (received from GPU3)\n        GPU1 computes Q1×K0V0 (received from GPU0), ...\n\nStep 4: Each GPU has accumulated contributions from all K/V slices\n        → complete attention output for its Q slice\nAfter one full revolution, each GPU has computed its complete attention output using K/V from all other GPUs and enables sequence lengths that scale linearly with the number of GPUs.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#attention-in-the-decode-loop-step-by-step",
+    "href": "book/part3/attention-computation.html#attention-in-the-decode-loop-step-by-step",
+    "title": "7  Attention Computation",
+    "section": "7.9 Attention in the decode loop: step by step",
+    "text": "7.9 Attention in the decode loop: step by step\nHere is exactly what happens during one attention computation step during decoding, after prefill is complete and the model is generating token by token:\nState at step t:\n  KV cache contains K, V for tokens 0 through t-1\n  New token t has been embedded with positional encoding applied\n\n1. Compute Q, K, V for token t:\n   Q_t = x_t @ W_Q    → [1, d_k] per head\n   K_t = x_t @ W_K    → [1, d_k] per head  (stored in KV cache)\n   V_t = x_t @ W_V    → [1, d_v] per head  (stored in KV cache)\n\n2. Append K_t, V_t to KV cache:\n   K_cache[:t+1] = [K_0, K_1, ..., K_{t-1}, K_t]\n\n3. Compute attention scores:\n   scores = Q_t @ K_cache[:t+1].T / sqrt(d_k)    → [1, t+1] per head\n\n4. Softmax:\n   attn_weights = softmax(scores)    → [1, t+1] per head\n\n5. Weighted sum:\n   attn_output = attn_weights @ V_cache[:t+1]    → [1, d_v] per head\n\n6. Concatenate heads and project:\n   output = concat(attn_output_per_head) @ W_O    → [1, d_model]\n\n7. Add to residual stream:\n   x_t = x_t + output\nStep 3 is the memory-bandwidth bottleneck: it reads the entire KV cache from HBM. At 4,096 tokens for LLaMA 2 70B, step 3 reads approximately 1.28 GB of KV cache per generation step. At 3.35 TB/s bandwidth, that is 0.38 milliseconds per step (for attention alone, before FFN and other operations). This is why long-context generation is slower per token than short-context generation.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#key-takeaways",
+    "href": "book/part3/attention-computation.html#key-takeaways",
+    "title": "7  Attention Computation",
+    "section": "7.10 Key takeaways",
+    "text": "7.10 Key takeaways\n\nAttention computation scales quadratically with sequence length in both memory and compute; this is the central cost driver for long-context inference, at 128k tokens, the naive score matrix would require 32 GB per layer per head\nStandard attention materializes the full \\(n×n\\) score matrix in HBM, causing excessive memory traffic; FlashAttention eliminates this by tiling the computation into SRAM and using online softmax, reducing HBM access from \\(O(n^2)\\) to \\(O(n)\\)\nDuring decode, attention is memory-bandwidth-bound: the GPU reads the entire KV cache for a single new token; throughput scales with HBM bandwidth, not arithmetic throughput\nGQA shares K and V projections across groups of heads, reducing KV cache by the ratio of total heads to KV heads, the primary reason GQA is now the default for new models\nPrefill is compute-bound (large batch matrix multiply); decode is memory- bandwidth-bound (vector-matrix multiply against the growing KV cache), the same model, two different hardware bottlenecks\nSparse attention and linear attention reduce \\(O(n^2)\\) cost but sacrifice flexibility; state space models and hybrid architectures are competitive alternatives for extreme sequence lengths\n\n\n\n\n\n\n\nFigure 7.1: Cheat sheet.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/attention-computation.html#further-reading",
+    "href": "book/part3/attention-computation.html#further-reading",
+    "title": "7  Attention Computation",
+    "section": "7.11 Further reading",
+    "text": "7.11 Further reading\n\nDao et al. (2022). FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.: The foundational paper.\nShazeer (2019). Fast Transformer Decoding: One Write-Head is All You Need.: The original Multi-Query Attention paper.\nAinslie et al. (2023). GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints.: Grouped-Query Attention.\nLiu et al. (2023). Ring Attention with Blockwise Transformers for Near-Infinite Context.: Ring attention for distributed long-context computation.\nGu & Dao (2023). Mamba: Linear-Time Sequence Modeling with Selective State Spaces.: The leading SSM alternative to attention.\n\n\n← Previous: 07 — Transformer architecture\nNext: 09 — KV cache →",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
+    ]
   }
 ]

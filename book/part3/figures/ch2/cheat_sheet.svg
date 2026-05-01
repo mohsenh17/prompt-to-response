@@ -1,0 +1,106 @@
+<svg width="1130" height="1200" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+<!-- CORE FORMULA -->
+<g transform="translate(-40, -240)">
+    <rect x="50" y="250" width="1100" height="150" class="box"/>
+    <text x="70" y="280" class="section">Core Attention Equation</text>
+    <text x="80" y="310" class="code">Attention(Q,K,V) = softmax(QKᵀ / √dₖ) V</text>
+    <text x="80" y="340" class="text">QKᵀ → similarity scores between tokens</text>
+    <text x="80" y="365" class="text">softmax → attention weights (probability distribution)</text>
+    <text x="80" y="390" class="text">V → content being mixed based on weights</text>
+
+    <!-- SHAPES -->
+    <rect x="50" y="420" width="540" height="200" class="box"/>
+    <text x="70" y="450" class="section">Tensor Shapes</text>
+    <text x="80" y="480" class="text">Q: [n, dₖ]</text>
+    <text x="80" y="505" class="text">K: [n, dₖ]</text>
+    <text x="80" y="530" class="text">V: [n, dᵥ]</text>
+    <text x="80" y="555" class="text">QKᵀ: [n, n] (attention matrix)</text>
+    <text x="80" y="580" class="text">Output: [n, dᵥ]</text>
+
+    <!-- INTUITION -->
+    <rect x="610" y="420" width="540" height="200" class="box"/>
+    <text x="630" y="450" class="section">Intuition</text>
+    <text x="640" y="480" class="text">Each token asks: “what should I look at?”</text>
+    <text x="640" y="505" class="text">Q = query (what I want)</text>
+    <text x="640" y="530" class="text">K = key (what I offer)</text>
+    <text x="640" y="555" class="text">V = value (content to pass)</text>
+    <text x="640" y="580" class="text">Output = weighted memory retrieval</text>
+
+    <!-- CAUSAL MASK -->
+    <rect x="50" y="640" width="1100" height="170" class="box"/>
+    <text x="70" y="670" class="section">Causal Mask (Decoder Attention)</text>
+
+    <text x="80" y="700" class="text">Prevents access to future tokens</text>
+    <text x="80" y="725" class="text">Implemented by adding −∞ to invalid positions before softmax</text>
+
+    <text x="80" y="755" class="code">j > i → mask(i,j) = −∞ → softmax = 0</text>
+
+    <text x="80" y="785" class="text">Ensures autoregressive generation: predict next token only from past</text>
+
+    <!-- GPU VIEW -->
+    <rect x="50" y="830" width="1100" height="170" class="box"/>
+    <text x="70" y="860" class="section">GPU Reality</text>
+
+    <text x="80" y="890" class="text">Two bottlenecks:</text>
+    <text x="90" y="915" class="text">• Compute (TFLOPS) → fast matrix math</text>
+    <text x="90" y="940" class="text">• Memory bandwidth → KV cache dominates decode</text>
+
+    <text x="80" y="970" class="text">Decode is memory-bound: GPU waits for KV cache, not compute</text>
+
+    <!-- KV CACHE -->
+    <rect x="50" y="1020" width="540" height="210" class="box"/>
+    <text x="70" y="1050" class="section">KV Cache</text>
+
+    <text x="80" y="1080" class="text">Stores past Keys &amp; Values</text>
+    <text x="80" y="1105" class="text">Avoids recomputation every step</text>
+
+    <text x="80" y="1135" class="text">Memory grows with sequence length:</text>
+    <text x="90" y="1160" class="text">O(n × layers × heads × dₖ)</text>
+
+    <text x="80" y="1190" class="text">Bottleneck for long-context inference</text>
+
+    <!-- FLASH ATTENTION -->
+    <rect x="610" y="1020" width="540" height="210" class="box"/>
+    <text x="630" y="1050" class="section">FlashAttention</text>
+
+    <text x="640" y="1080" class="text">Key idea: never store full n×n matrix</text>
+
+    <text x="640" y="1110" class="text">Tiling into SRAM (fast on-chip memory)</text>
+
+    <text x="640" y="1140" class="text">Online softmax computes statistics incrementally</text>
+
+    <text x="640" y="1170" class="text">Result: same output, much less memory traffic</text>
+
+    <text x="640" y="1200" class="text">O(n² memory → O(n) HBM traffic)</text>
+
+    <!-- MULTI HEAD -->
+    <rect x="50" y="1250" width="540" height="170" class="box"/>
+    <text x="70" y="1280" class="section">Multi-Head Attention</text>
+
+    <text x="80" y="1310" class="text">Parallel attention heads</text>
+    <text x="80" y="1335" class="text">Each head learns different relation type</text>
+
+    <text x="80" y="1360" class="text">Concat heads → linear projection</text>
+
+    <text x="80" y="1385" class="code">Specialization emerges from training</text>
+
+    <!-- VARIANTS -->
+    <rect x="610" y="1250" width="540" height="170" class="box"/>
+    <text x="630" y="1280" class="section">Attention Variants</text>
+
+    <text x="640" y="1310" class="text">• MHA: full expressivity, high KV cost</text>
+    <text x="640" y="1335" class="text">• MQA: shared K/V, minimal cache</text>
+    <text x="640" y="1360" class="text">• GQA: grouped sharing (LLaMA, Mistral)</text>
+    <text x="640" y="1385" class="text">• Sparse/Linear: efficiency vs quality tradeoff</text>
+</g>
+</svg>
