@@ -23,6 +23,7 @@ book:
     - part: "The Labyrinth of Attention"
       chapters: 
         - book/part3/transformer-architecture.md
+        - book/part3/attention-computation.md
 
     - part: "The Forbidden Archive"
       chapters: []

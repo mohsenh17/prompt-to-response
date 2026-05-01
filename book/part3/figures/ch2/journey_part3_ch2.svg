@@ -52,7 +52,7 @@
     <text y="-20" class="part-title active">The Labyrinth of Attention</text>
     <g transform="translate(0, 30)">
       <rect x="-85" y="0" width="170" height="34" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
-      <text x="0" y="21" class="current-chapter">Transformer Architecture</text>
+      <text x="0" y="21" class="current-chapter">Attention computation</text>
       <path d="M -6 0 L 0 -8 L 6 0" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
       <rect x="-7" y="0" width="14" height="2" fill="#F8FAFC" />
     </g>
