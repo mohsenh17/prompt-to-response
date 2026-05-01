@@ -6,21 +6,12 @@
 
 ---
 
-::: {.callout-note appearance="minimal"}
-**Where are we?**
-
-```
-[Prompt] → [Prompt structure] → [API & serving] → [Tokenization] → [Context] → [Embeddings]
-
-                                                   → [Transformer] → ▶ [Attention] → [KV cache]
-                                                         → [GPU] → [Decoding] → [Streaming]
-```
+ ![The journey through the Model Mind.](figures/ch2/journey_part3_ch2.svg){#fig-progress width="100%"}
 
 In the previous chapter we introduced attention conceptually: queries, keys, values, dot
 products, softmax, weighted sum. This chapter covers what attention computation
 actually looks like on real hardware, under the constraints
 of latency, memory bandwidth, and concurrent requests.
-:::
 
 ---
 
