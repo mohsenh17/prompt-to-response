@@ -486,21 +486,17 @@ window.Quarto = {
 <p><strong>The canonical question for this chapter:</strong> <em>When the model processes your prompt, how does each token decide what to look at and what does the hardware actually do to compute that?</em></p>
 </blockquote>
 <hr>
-<div class="callout callout-style-simple callout-note no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch2/journey_part3_ch2.svg" class="img-fluid figure-img" style="width:100.0%">
 </div>
-<div class="callout-body-container">
-<p><strong>Where are we?</strong></p>
-<pre><code>[Prompt] → [Prompt structure] → [API &amp; serving] → [Tokenization] → [Context] → [Embeddings]
-
-                                                   → [Transformer] → ▶ [Attention] → [KV cache]
-                                                         → [GPU] → [Decoding] → [Streaming]</code></pre>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
 <p>In the previous chapter we introduced attention conceptually: queries, keys, values, dot products, softmax, weighted sum. This chapter covers what attention computation actually looks like on real hardware, under the constraints of latency, memory bandwidth, and concurrent requests.</p>
-</div>
-</div>
-</div>
 <hr>
 <section id="the-quadratic-problem" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="the-quadratic-problem"><span class="header-section-number">7.1</span> The quadratic problem</h2>
@@ -564,16 +560,16 @@ window.Quarto = {
 <section id="standard-attention-the-naive-computation" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="standard-attention-the-naive-computation"><span class="header-section-number">7.3</span> Standard attention: the naive computation</h2>
 <p>Before FlashAttention, attention was computed in the obvious way:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard attention (naive)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Q: [seq_len, d_k]</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># K: [seq_len, d_k]</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># V: [seq_len, d_v]</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> Q <span class="op">@</span> K.T                          <span class="co"># [seq_len, seq_len] — written to HBM</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">/</span> math.sqrt(d_k)          <span class="co"># scaling — read/write from/to HBM</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">+</span> causal_mask             <span class="co"># masking — read/write from/to HBM</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> softmax(scores, dim<span class="op">=-</span><span class="dv">1</span>)          <span class="co"># softmax — read/write from/to HBM</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> scores <span class="op">@</span> V                       <span class="co"># [seq_len, d_v] — read/write from/to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard attention (naive)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Q: [seq_len, d_k]</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># K: [seq_len, d_k]</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># V: [seq_len, d_v]</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> Q <span class="op">@</span> K.T                          <span class="co"># [seq_len, seq_len] — written to HBM</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">/</span> math.sqrt(d_k)          <span class="co"># scaling — read/write from/to HBM</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">+</span> causal_mask             <span class="co"># masking — read/write from/to HBM</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> softmax(scores, dim<span class="op">=-</span><span class="dv">1</span>)          <span class="co"># softmax — read/write from/to HBM</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> scores <span class="op">@</span> V                       <span class="co"># [seq_len, d_v] — read/write from/to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Each step read/write from/to HBM. The score matrix of shape <code>[seq_len, seq_len]</code> is materialized in HBM multiple times during scaling, masking, and softmax.</p>
 <p>For a sequence of 8,192 tokens in BF16:</p>
 <ul>
@@ -598,24 +594,24 @@ HBM bandwidth:   ~3.35 TB/s (slower, 80 GB on H100)</code></pre>
 <h3 data-number="7.4.2" class="anchored" data-anchor-id="online-softmax"><span class="header-section-number">7.4.2</span> Online softmax</h3>
 <p>The challenge: softmax requires knowing the maximum value across all scores in a row before normalizing while in the tiled computation, you process one tile at a time without seeing the full row. How do you compute correct softmax without materializing the full score matrix?</p>
 <p>FlashAttention uses an online softmax algorithm that maintains running statistics (the running maximum and running sum of exponentials) and updates them as each tile is processed. After all tiles, the statistics are complete and the output is correctly normalized:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>running_max <span class="op">=</span> <span class="op">-</span>infinity</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>running_sum <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>running_output <span class="op">=</span> zeros(d_v)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> each key<span class="op">/</span>value tile (K_tile, V_tile):</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    scores_tile <span class="op">=</span> Q_row <span class="op">@</span> K_tile.T <span class="op">/</span> sqrt(d_k)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    tile_max <span class="op">=</span> <span class="bu">max</span>(scores_tile)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update running statistics</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    new_max <span class="op">=</span> <span class="bu">max</span>(running_max, tile_max)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    running_sum <span class="op">=</span> (running_sum <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                  <span class="op">+</span> <span class="bu">sum</span>(exp(scores_tile <span class="op">-</span> new_max)))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    running_output <span class="op">=</span> (running_output <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                     <span class="op">+</span> exp(scores_tile <span class="op">-</span> new_max) <span class="op">@</span> V_tile)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    running_max <span class="op">=</span> new_max</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Final normalization</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> running_output <span class="op">/</span> running_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>running_max <span class="op">=</span> <span class="op">-</span>infinity</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_sum <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>running_output <span class="op">=</span> zeros(d_v)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> each key<span class="op">/</span>value tile (K_tile, V_tile):</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    scores_tile <span class="op">=</span> Q_row <span class="op">@</span> K_tile.T <span class="op">/</span> sqrt(d_k)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    tile_max <span class="op">=</span> <span class="bu">max</span>(scores_tile)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update running statistics</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    new_max <span class="op">=</span> <span class="bu">max</span>(running_max, tile_max)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    running_sum <span class="op">=</span> (running_sum <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                  <span class="op">+</span> <span class="bu">sum</span>(exp(scores_tile <span class="op">-</span> new_max)))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    running_output <span class="op">=</span> (running_output <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                     <span class="op">+</span> exp(scores_tile <span class="op">-</span> new_max) <span class="op">@</span> V_tile)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    running_max <span class="op">=</span> new_max</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Final normalization</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> running_output <span class="op">/</span> running_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This procedure produces the identical result to naive attention while never storing more than one tile’s worth of scores at a time.</p>
 </section>
 <section id="flashattention-in-practice" class="level3" data-number="7.4.3">
@@ -903,7 +899,7 @@ Step 4: Each GPU has accumulated contributions from all K/V slices
 <img src="figures/ch2/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: Cheat sheet.
+Figure&nbsp;7.2: Cheat sheet.
 </figcaption>
 </figure>
 </div>
