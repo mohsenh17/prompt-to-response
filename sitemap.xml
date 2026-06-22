@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/index.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/index.html</loc>
     <lastmod>2026-05-01T13:52:28.126Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part1/chapter1/introduction.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part1/chapter1/introduction.html</loc>
     <lastmod>2026-04-20T22:01:24.050Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part2/APIs_and_serving.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part2/APIs_and_serving.html</loc>
     <lastmod>2026-04-29T21:24:46.778Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part2/Tokenization.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part2/Tokenization.html</loc>
     <lastmod>2026-04-23T16:27:06.058Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part2/Embeddings_and_meaning.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part2/Embeddings_and_meaning.html</loc>
     <lastmod>2026-04-27T21:51:16.578Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part3/transformer-architecture.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part3/transformer-architecture.html</loc>
     <lastmod>2026-04-30T13:39:44.590Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/book/part3/attention-computation.html</loc>
+    <loc>https://mohsenh17.github.io/prompt-to-response/book/part3/attention-computation.html</loc>
     <lastmod>2026-05-01T14:33:37.105Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/prompt-to-response.pdf</loc>
-    <lastmod>2026-06-22T15:40:21.335Z</lastmod>
+    <loc>https://mohsenh17.github.io/prompt-to-response/From-Prompt-to-Response.pdf</loc>
+    <lastmod>2026-06-22T15:45:46.753Z</lastmod>
   </url>
   <url>
-    <loc>https://mohsenh17.github.io/From-Prompt-to-Response/prompt-to-response.epub</loc>
-    <lastmod>2026-06-22T15:40:22.643Z</lastmod>
+    <loc>https://mohsenh17.github.io/prompt-to-response/From-Prompt-to-Response.epub</loc>
+    <lastmod>2026-06-22T15:45:48.024Z</lastmod>
   </url>
 </urlset>
