@@ -1,11 +1,17 @@
 project:
   type: book    
   output-dir: build  
+
 book:
   title: "From Prompt to Response"
   subtitle: "An End-to-End Journey Inside LLM and RAG Systems"
   site-url: "https://mohsenh17.github.io/From-Prompt-to-Response"
   repo-url: "https://github.com/mohsenh17/From-Prompt-to-Response"
+
+  favicon: images/favicon.png
+  open-graph: true
+  twitter-card: true
+  image: images/metadata.png
   
 
   chapters:
