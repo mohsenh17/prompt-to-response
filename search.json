@@ -603,5 +603,137 @@
       "The Labyrinth of Attention",
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Attention Computation</span>"
     ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html",
+    "href": "book/part3/kv-cache.html",
+    "title": "8  KV Cache",
+    "section": "",
+    "text": "8.1 The problem that KV cache solves\nAutoregressive generation is fundamentally sequential and generating each token requires attending to all previously generated tokens. To generate token t, the model must attend to all preceding tokens 0 through t−1, and generating each subsequent token expands the context by one, requiring the model to repeatedly process the entire accumulated sequence.\nWithout caching, generating a 500 token response to a 100 token prompt would require:\nTotal compute proportional to \\(101 + 102 + ... + 600 ≈ 175,000\\) token processing steps. For large models, this process is highly inefficient: by step 500, most of the computation power is spent to reprocess tokens that were already handled at step 1, recomputing the same key and value vectors even though the underlying inputs have not changed.\nThe KV cache eliminates this redundancy by computing key and value vectors only once and stores them in memory. At each new generation step, the model computes the new token’s Q, K, and V vectors, retrieves the cached keys and values for all previous tokens, and performs attention over the full cached context.\nWith the KV cache:\nThe savings grow with sequence length. Without the KV cache, practical LLM deployment at today’s context lengths would be economically infeasible.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#the-problem-that-kv-cache-solves",
+    "href": "book/part3/kv-cache.html#the-problem-that-kv-cache-solves",
+    "title": "8  KV Cache",
+    "section": "",
+    "text": "Step 1:   process 101 tokens → generate token 101\nStep 2:   process 102 tokens → generate token 102\n...\nStep 500: process 600 tokens → generate token 600\n\n\n\nPrefill:          process all 100 prompt tokens once, store their K and V\nEach decode step: compute K, V for one new token, append to cache, attend\nTotal work:       proportional to 100 (prefill) + 500 (one step per token)",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#what-is-stored",
+    "href": "book/part3/kv-cache.html#what-is-stored",
+    "title": "8  KV Cache",
+    "section": "8.2 What is stored",
+    "text": "8.2 What is stored\nFor each token in the sequence, for each transformer layer, for each KV head, the cache stores two vectors: the key and value produced by the linear projections of that token’s hidden state.\nKV cache structure:\n\nLayer 0:\n  K: [seq_len, n_kv_heads, d_k]   ← key vectors for all tokens so far\n  V: [seq_len, n_kv_heads, d_v]   ← value vectors for all tokens so far\n\nLayer 1:\n  K: [seq_len, n_kv_heads, d_k]\n  V: [seq_len, n_kv_heads, d_v]\n\n...\n\nLayer L-1:\n  K: [seq_len, n_kv_heads, d_k]\n  V: [seq_len, n_kv_heads, d_v]\nQuery vectors are not cached because they are used only once: the query for token t is needed solely to compute attention at generation step t and becomes irrelevant afterward. On the other hand, the key and value vectors for token t are reused at every subsequent step until generation ends. The KV cache exploit this asymmetry by storing persistent keys and values while recomputing only the transient query vectors.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#attention-with-and-without-a-kv-cache",
+    "href": "book/part3/kv-cache.html#attention-with-and-without-a-kv-cache",
+    "title": "8  KV Cache",
+    "section": "8.3 Attention with and without a KV cache",
+    "text": "8.3 Attention with and without a KV cache\nConsider a single attention head. After processing a sequence of length (t),\n\\[\nK_t =\n\\begin{bmatrix}\nk_1 \\\\\nk_2 \\\\\n\\vdots \\\\\nk_t\n\\end{bmatrix},\n\\quad\nV_t =\n\\begin{bmatrix}\nv_1 \\\\\nv_2 \\\\\n\\vdots \\\\\nv_t\n\\end{bmatrix}.\n\\]\nTo generate the next token, the model first computes the hidden state (\\(h_{t+1}\\)) and projects it to\n\\[\nq_{t+1} = W_Q h_{t+1}, \\quad\nk_{t+1} = W_K h_{t+1}, \\quad\nv_{t+1} = W_V h_{t+1}.\n\\]\nThe attention output is\n\\[\no_{t+1} =\n\\text{softmax}\\!\\left(\\frac{1}{\\sqrt{d_k}} q_{t+1}\n\\begin{bmatrix}\nK_t & k_{t+1}\n\\end{bmatrix}^T\n\\right)\n\\begin{bmatrix}\nV_t & v_{t+1}\n\\end{bmatrix}.\n\\]\nThe important observation is that all previous keys and values already exist:\n\\[\nK_t = [k_1, \\dots, k_t], \\quad V_t = [v_1, \\dots, v_t].\n\\]\nOnly the final column \\(k_{t+1}, v_{t+1}\\) must be computed and appended.\n\n\n8.3.1 Without caching\nAt step \\(t+1\\), the model recomputes\n\\[\n\\{k_1, \\dots, k_t, k_{t+1}\\}, \\quad \\{v_1, \\dots, v_t, v_{t+1}\\}.\n\\]\nThe cost of the key/value projections is therefore \\(O(t+1)\\). Across an entire generation of length \\(T\\),\n\\[\n\\sum_{t=1}^{T} O(t) = O(T^2).\n\\]\n\n\n\n8.3.2 With caching\nThe projections\n\\[\nk_i = W_K h_i, \\quad v_i = W_V h_i\n\\]\nare computed only once when token \\(i\\) is created. During generation of step \\(t+1\\), the model only needs to compute the new projections \\(k_{t+1}, v_{t+1}\\) which results in \\(O(1)\\) projection cost per step. Over a full sequence of length T, this accumulates to \\(\\sum_{t=1}^{T} O(1) = O(T).\\)\nThe attention computation itself still grows linearly with context length, but the repeated projection cost has been eliminated.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#memory-arithmetic",
+    "href": "book/part3/kv-cache.html#memory-arithmetic",
+    "title": "8  KV Cache",
+    "section": "8.4 Memory arithmetic",
+    "text": "8.4 Memory arithmetic\nKV cache memory is deterministic and computable from model hyperparameters and sequence length:\nKV cache bytes = 2 × L × n_kv_heads × d_k × seq_len × bytes_per_element\nWhere 2 is for K and V, L is the number of transformer layers, n_kv_heads is the number of KV heads (equals n_heads for MHA, fewer for GQA), d_k is the key/value dimension per head, and bytes_per_element is 2 for BF16.\n\n8.4.1 Examples\nLLaMA 2 7B (L=32, n_kv_heads=32, d_k=128, BF16):\nPer token: 2 × 32 × 32 × 128 × 2 = 524,288 bytes = 512 KB\n4,096 tokens: 512 KB × 4,096 = 2 GB\nLLaMA 2 70B (L=80, n_kv_heads=8, d_k=128, BF16):\nPer token: 2 × 80 × 8 × 128 × 2 = 327,680 bytes = 320 KB\n4,096 tokens:  320 KB × 4,096  = 1.28 GB\n32,768 tokens: 320 KB × 32,768 = 10 GB\nGPT-3 175B (L=96, n_kv_heads=96, d_k=128, BF16):\nPer token: 2 × 96 × 96 × 128 × 2 = 4,718,592 bytes ≈ 4.5 MB\n4,096 tokens: 4.5 MB × 4,096 = 18 GB\nThe GPT-3 numbers explain why GQA was adopted: reducing n_kv_heads from 96 to 8 reduces the per-token cache from 4.5 MB to 375 KB (12 times reduction) with modest quality loss. GQA is now standard in nearly every new model architecture for exactly this reason.\n\n\n8.4.2 The memory budget\nA serving instance has a fixed GPU memory budget, divided between competing claims:\nTotal GPU memory (e.g., 80 GB H100)\n├── Model weights     (fixed, e.g., ~35 GB for LLaMA 2 70B in BF16 with GQA)\n├── Activation memory (fixed per batch, ~1–3 GB)\n├── KV cache          (variable that grow with sequence length and batch size)\n└── Reserved          (CUDA overhead, fragmentation buffer, ~3 GB)\n\nAvailable for KV cache: 80 - 35 - 2 - 3 ≈ 40 GB\nFor LLaMA 2 70B with 40 GB available:\nMax tokens in cache: 40 GB / 320 KB ≈ 125,000 tokens\n\nBatch size 32, avg sequence 4,096 tokens:\n  32 × 4,096 = 131,072 tokens → barely fits\n\nBatch size 32, avg sequence 8,192 tokens:\n  32 × 8,192 = 262,144 tokens → does not fit\nThis is the core serving constraint: KV cache capacity limits concurrency at long sequence lengths. Every additional token in context competes directly with additional concurrent users for the same GPU memory.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#the-lifecycle-of-a-kv-cache-entry",
+    "href": "book/part3/kv-cache.html#the-lifecycle-of-a-kv-cache-entry",
+    "title": "8  KV Cache",
+    "section": "8.5 The lifecycle of a KV cache entry",
+    "text": "8.5 The lifecycle of a KV cache entry\nUnderstanding the sequence of operations that touch the KV cache during a single request makes the memory management problem concrete.\n\n8.5.1 Prefill\nWhen a request arrives, the full prompt is tokenized and processed in a single forward pass (the prefill phase). For each layer, K and V are computed for every prompt token simultaneously and written to the KV cache:\nInput:  [tok_0, tok_1, tok_2, ..., tok_n]  ← full prompt\nOutput: KV cache populated for positions 0 through n\n        Model output: logits at position n → first generated token\nPrefill is compute-bound and processing all prompt tokens in parallel is a large batch matrix multiply that saturates GPU arithmetic throughput. It is the phase where prompt length most directly affects latency: time to first token scales with prompt length.\n\n\n8.5.2 Decode\nEach decode step generates exactly one new token:\n1. Embed new token → hidden state\n2. Compute K, V for new token → append to KV cache\n3. Compute Q for new token\n4. Attend: Q against full KV cache (all positions 0 through current)\n5. FFN and residual → logits → sample next token\nStep 4 is memory-bandwidth-bound. The GPU reads the entire KV cache to compute attention for a single query vector. Arithmetic work is trivial compared to the memory transfer. This is why decode throughput is limited by HBM bandwidth, not by compute, and why longer sequences are slower per token.\n\n\n8.5.3 Request completion\nWhen generation ends (stop token, max_tokens, stop sequence), the KV cache entries for that request are freed. In a naive contiguous allocator this means marking a region of memory as available. In PagedAttention it means returning individual pages to the free pool.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#naive-allocation-and-its-problems",
+    "href": "book/part3/kv-cache.html#naive-allocation-and-its-problems",
+    "title": "8  KV Cache",
+    "section": "8.6 Naive allocation and its problems",
+    "text": "8.6 Naive allocation and its problems\nThe simplest KV cache allocation strategy: at request admission, allocate a contiguous block of memory sized for the maximum possible output length. Hold it until generation completes, then free it.\nThis produces two forms of waste:\nInternal fragmentation. If the request was allocated 8,192 token positions but only generated 200 tokens, the remaining 7,992 positions were reserved but unused for the lifetime of the request. At 320 KB per token for LLaMA 2 70B, that is 2.55 GB of unusable memory per such request.\nExternal fragmentation. As requests arrive and complete with variable lengths, the free memory becomes fragmented into non-contiguous gaps. A new request requiring 1 GB may fail to be admitted even if 2 GB is technically free, because no single contiguous 1 GB region is available.\nOn real workloads with variable request lengths, naive allocation wastes 60–80% of available KV cache memory.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#pagedattention",
+    "href": "book/part3/kv-cache.html#pagedattention",
+    "title": "8  KV Cache",
+    "section": "8.7 PagedAttention",
+    "text": "8.7 PagedAttention\nPagedAttention (Kwon et al., 2023) solves the fragmentation problem by borrowing the virtual memory paging idea from operating systems.\nInstead of allocating a contiguous block per request, PagedAttention divides the KV cache into fixed-size pages which typically has 16 tokens per page. A page table maps logical token positions to physical page locations. Pages are allocated on demand as generation proceeds and freed immediately on completion.\nPage table for three concurrent requests:\n\nRequest A (generating, 48 tokens so far):\n  Logical positions 0–15  → Physical page 3\n  Logical positions 16–31 → Physical page 7\n  Logical positions 32–47 → Physical page 12\n\nRequest B (generating, 32 tokens so far):\n  Logical positions 0–15  → Physical page 1\n  Logical positions 16–31 → Physical page 9\n\nRequest C (generating, 64 tokens so far):\n  Logical positions 0–15  → Physical page 2\n  Logical positions 16–31 → Physical page 4\n  Logical positions 32–47 → Physical page 5\n  Logical positions 48–63 → Physical page 11\n\nFree pages: [0, 6, 8, 10, 13, 14, 15, ...]\nPhysical pages are non-contiguous. Logical positions map to whatever physical page is available. A new request needs four pages for a 64-token sequence; it gets four pages from the free pool regardless of where they are in physical memory.\nInternal fragmentation is bounded to at most one partially filled page per request (the current page being written). External fragmentation is eliminated entirely and all free pages are usable regardless of their physical location. PagedAttention achieves over 90% KV cache utilization on typical workloads, compared to 20–40% for naive contiguous allocation.\n\n8.7.1 Prefix sharing\nPagedAttention enables a further optimization: memory sharing between requests with a common prefix.\nIf two requests share the same system prompt like a 1,000-token system prompt that appears in every request to a production API, their KV cache pages for that prefix are identical. There is no reason to store them twice.\nWith prefix sharing, the pages for the common prefix are marked as shared and reference-counted. Multiple requests point to the same physical pages via their page tables:\nRequest A page table:\n  Positions 0–15   → Physical page 7  (shared system prompt, page 1)\n  Positions 16–31  → Physical page 8  (shared system prompt, page 2)\n  Positions 32–47  → Physical page 12 (private request A's user message)\n\nRequest B page table:\n  Positions 0–15   → Physical page 7  (shared same physical pages)\n  Positions 16–31  → Physical page 8\n  Positions 48–63  → Physical page 15 (private request B's user message)\nWhen both requests complete, the shared pages are not freed until all references are released. This is copy-on-write semantics: pages are shared until a write is required, at which point a private copy is made.\nFor a 1,000-token system prompt with 16 tokens per page: 63 pages of KV cache are shared across all concurrent requests using that prompt. At 320 KB per token for LLaMA 2 70B, this is 320 MB of KV cache that does not need to be recomputed or stored per-request.\n\n\n8.7.2 Radix attention\nRadix attention (SGLang, Zheng et al., 2023) generalizes prefix sharing to arbitrary prefix trees rather than just common prefixes.\nIn applications with structured multi-step prompts system like agentic workflows, few-shot templates, and multi-document retrieval, requests may share prefixes at multiple points in their structure, not just at the beginning. Radix attention maintains a trie (prefix tree) of all cached KV sequences. When a new request arrives, the longest matching prefix in the trie is found and reused:\nPrefix tree:\n  [System prompt] → shared by all requests\n    ├── [Document A] → shared by requests querying document A\n    │   ├── [Query 1] → private to request 1\n    │   └── [Query 2] → private to request 2\n    └── [Document B] → shared by requests querying document B\n        └── [Query 3] → private to request 3\nThis turns prefix sharing from a single-level optimization into a general caching system for the KV cache. For agentic applications where many requests share substantial common context, radix attention can dramatically reduce both memory and compute.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#kv-cache-quantization",
+    "href": "book/part3/kv-cache.html#kv-cache-quantization",
+    "title": "8  KV Cache",
+    "section": "8.8 KV cache quantization",
+    "text": "8.8 KV cache quantization\nThe KV cache can be stored in reduced precision to trade a small amount of quality for significant memory savings.\nINT8 KV cache stores key and value vectors as 8-bit integers rather than 16-bit floats. This provides a 2× memory reduction. Quality loss is typically negligible for standard generation tasks K and V vectors have bounded ranges as outputs of linear projections of layer-normalized hidden states, making them well-suited to quantization.\nFP8 KV cache uses 8-bit floating point rather than integer quantization. H100 GPUs have native FP8 support. Better precision characteristics than INT8 for values with non-uniform distributions, with the same 2× memory reduction.\nINT4 KV cache reduces to 4 bits for a 4× memory reduction. More quality loss; requires careful calibration. Used in memory-constrained scenarios where the alternative is rejecting requests.\nThe quality tradeoff for KV cache quantization is typically smaller than for weight quantization for two reasons: quantization errors in the KV cache are averaged across many attention heads (reducing their impact), and modern calibration techniques can minimize the effect on attention score distributions.\nINT8 KV cache quantization is now standard in production and is supported by vLLM, TensorRT-LLM, and most major inference frameworks. The 2× memory savings effectively doubles serving concurrency on fixed hardware.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#kv-cache-eviction",
+    "href": "book/part3/kv-cache.html#kv-cache-eviction",
+    "title": "8  KV Cache",
+    "section": "8.9 KV cache eviction",
+    "text": "8.9 KV cache eviction\nSome applications require sequences longer than the KV cache can hold. Rather than rejecting these requests, The serving system can evict cached entries to make room for new ones, at the cost of a quality trade-off.\n\n8.9.1 Eviction policies\nSliding window evicts the oldest tokens, keeping only the most recent w token positions in cache. Simple to implement. Degrades quality for any task requiring long-range context, the model simply cannot attend to evicted positions.\nH2O (Heavy-Hitter Oracle) evicts tokens with the lowest cumulative attention scores. Tokens that have received little attention weight in recent steps are unlikely to be needed in future steps. Empirically preserves quality better than sliding window eviction at the same cache budget.\nAttention sink preservation always keeps the BOS (beginning of sequence) token regardless of other eviction decisions. The BOS token functions as an attention sink and many heads route excess attention weight to it when no other token is highly relevant. Evicting the BOS token causes attention distributions to become erratic and output quality to degrade unpredictably. Any eviction policy should treat the BOS token as eviction-exempt.\nSnapKV identifies important KV vectors per head using attention patterns from a recent observation window, then evicts the remaining positions. Can maintain quality at 10–20% of the full KV cache size for long documents make it useful for very long context workloads where even INT8 quantization is insufficient.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#key-takeaways",
+    "href": "book/part3/kv-cache.html#key-takeaways",
+    "title": "8  KV Cache",
+    "section": "8.10 Key takeaways",
+    "text": "8.10 Key takeaways\n\nThe KV cache stores key and value vectors for all previous tokens, avoiding quadratic recomputation cost; query vectors are not cached because they are used exactly once per step\nKV cache memory is precisely computable: 2 × L × n_kv_heads × d_k × seq_len × bytes_per_element; GQA’s reduction in KV heads is the primary architectural lever for reducing this cost\nNaive contiguous allocation wastes 60–80% of KV cache memory through internal and external fragmentation; PagedAttention eliminates both by allocating fixed-size pages on demand, achieving 90%+ utilization\nPrefix sharing lets multiple requests reference the same physical KV cache pages for a shared prompt prefix — identical K/V vectors computed once, stored once; radix attention generalizes this to arbitrary shared structure\nINT8 KV cache quantization provides a 2× memory reduction with negligible quality loss, effectively doubling serving concurrency on fixed hardware\nEviction policies (sliding window, H2O, SnapKV) enable sequences longer than the cache capacity; attention sink preservation is mandatory — evicting the BOS token causes unpredictable quality degradation\nStreamingLLM enables unbounded generation on a fixed cache budget by combining BOS token preservation with a sliding recent window\nCPU offloading moves inactive request caches to DRAM, freeing GPU HBM for active requests at the cost of PCIe transfer latency on resumption\nKV cache metrics — utilization, prefix hit rate, eviction rate, throughput vs. sequence length — are the primary production signals for diagnosing memory pressure and serving efficiency\n\n\n\n\n\n\n\nFigure 8.2: Cheat sheet.",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
+  },
+  {
+    "objectID": "book/part3/kv-cache.html#further-reading",
+    "href": "book/part3/kv-cache.html#further-reading",
+    "title": "8  KV Cache",
+    "section": "8.11 Further reading",
+    "text": "8.11 Further reading\n\nKwon et al. (2023). Efficient Memory Management for Large Language Model Serving with PagedAttention. — the foundational work on paged KV cache management.\nZheng et al. (2023). SGLang: Efficient Execution of Structured Language Model Programs. — Introduces radix attention for generalized prefix tree sharing.\nXiao et al. (2023). Efficient Streaming Language Models with Attention Sinks. — StreamingLLM and the attention sink phenomenon; directly relevant to eviction strategy design.\nZhang et al. (2023). H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models. — Attention-score-based eviction.\n\n\n\n← Previous: 08 — Attention computation\nNext: 10 — GPU execution →",
+    "crumbs": [
+      "The Labyrinth of Attention",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>KV Cache</span>"
+    ]
   }
 ]
