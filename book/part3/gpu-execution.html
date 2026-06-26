@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; APIs and Model Serving – From Prompt to Response</title>
+<title>9&nbsp; GPU Execution – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -58,27 +58,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -88,8 +68,7 @@ div.csl-indent {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part2/Tokenization.html" rel="next">
-<link href="../../book/part1/chapter1/introduction.html" rel="prev">
+<link href="../../book/part3/kv-cache.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -164,13 +143,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="3&nbsp; APIs and Model Serving – From Prompt to Response">
+<meta property="og:title" content="9&nbsp; GPU Execution – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://mohsenh17.github.io/prompt-to-response/book/part2/figures/ch3/journey_part2_ch3.svg">
+<meta property="og:image" content="https://mohsenh17.github.io/prompt-to-response/book/part3/figures/ch4/journey_part3_ch4.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="3&nbsp; APIs and Model Serving – From Prompt to Response">
+<meta name="twitter:title" content="9&nbsp; GPU Execution – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://mohsenh17.github.io/prompt-to-response/book/part2/figures/ch3/journey_part2_ch3.svg">
+<meta name="twitter:image" content="https://mohsenh17.github.io/prompt-to-response/book/part3/figures/ch4/journey_part3_ch4.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -345,7 +324,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -408,7 +387,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
   </div>
 </li>
@@ -455,7 +434,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
   </div>
 </li>
@@ -487,15 +466,16 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-gap-between-training-and-deployment" id="toc-the-gap-between-training-and-deployment" class="nav-link active" data-scroll-target="#the-gap-between-training-and-deployment"><span class="header-section-number">3.1</span> The gap between training and deployment</a></li>
-  <li><a href="#the-anatomy-of-an-llm-api" id="toc-the-anatomy-of-an-llm-api" class="nav-link" data-scroll-target="#the-anatomy-of-an-llm-api"><span class="header-section-number">3.2</span> The anatomy of an LLM API</a></li>
-  <li><a href="#from-checkpoint-to-serving-the-loading-pipeline" id="toc-from-checkpoint-to-serving-the-loading-pipeline" class="nav-link" data-scroll-target="#from-checkpoint-to-serving-the-loading-pipeline"><span class="header-section-number">3.3</span> From checkpoint to serving: the loading pipeline</a></li>
-  <li><a href="#the-serving-architecture" id="toc-the-serving-architecture" class="nav-link" data-scroll-target="#the-serving-architecture"><span class="header-section-number">3.4</span> The serving architecture</a></li>
-  <li><a href="#batching-the-key-to-serving-efficiently" id="toc-batching-the-key-to-serving-efficiently" class="nav-link" data-scroll-target="#batching-the-key-to-serving-efficiently"><span class="header-section-number">3.5</span> Batching: the key to serving efficiently</a></li>
-  <li><a href="#kv-cache-management" id="toc-kv-cache-management" class="nav-link" data-scroll-target="#kv-cache-management"><span class="header-section-number">3.6</span> KV cache management</a></li>
-  <li><a href="#latency-and-throughput-tradeoffs" id="toc-latency-and-throughput-tradeoffs" class="nav-link" data-scroll-target="#latency-and-throughput-tradeoffs"><span class="header-section-number">3.7</span> Latency and throughput tradeoffs</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">3.8</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.9</span> Further reading</a></li>
+  <li><a href="#why-gpu-execution-deserves-its-own-chapter" id="toc-why-gpu-execution-deserves-its-own-chapter" class="nav-link active" data-scroll-target="#why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">9.1</span> Why GPU execution deserves its own chapter</a></li>
+  <li><a href="#gpu-architecture-fundamentals" id="toc-gpu-architecture-fundamentals" class="nav-link" data-scroll-target="#gpu-architecture-fundamentals"><span class="header-section-number">9.2</span> GPU architecture fundamentals</a></li>
+  <li><a href="#the-roofline-model" id="toc-the-roofline-model" class="nav-link" data-scroll-target="#the-roofline-model"><span class="header-section-number">9.3</span> The roofline model</a></li>
+  <li><a href="#prefill-vs.-decode-two-different-regimes" id="toc-prefill-vs.-decode-two-different-regimes" class="nav-link" data-scroll-target="#prefill-vs.-decode-two-different-regimes"><span class="header-section-number">9.4</span> Prefill vs.&nbsp;decode: two different regimes</a></li>
+  <li><a href="#kernel-fusion" id="toc-kernel-fusion" class="nav-link" data-scroll-target="#kernel-fusion"><span class="header-section-number">9.5</span> Kernel fusion</a></li>
+  <li><a href="#precision-and-quantization-at-the-kernel-level" id="toc-precision-and-quantization-at-the-kernel-level" class="nav-link" data-scroll-target="#precision-and-quantization-at-the-kernel-level"><span class="header-section-number">9.6</span> Precision and quantization at the kernel level</a></li>
+  <li><a href="#tensor-parallelism-at-the-kernel-level" id="toc-tensor-parallelism-at-the-kernel-level" class="nav-link" data-scroll-target="#tensor-parallelism-at-the-kernel-level"><span class="header-section-number">9.7</span> Tensor parallelism at the kernel level</a></li>
+  <li><a href="#cuda-graph-capture" id="toc-cuda-graph-capture" class="nav-link" data-scroll-target="#cuda-graph-capture"><span class="header-section-number">9.8</span> CUDA graph capture</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">9.9</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.10</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -503,9 +483,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">GPU Execution</span></h1>
 </div>
 
 
@@ -523,258 +503,309 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>A trained model is a file on a disk. How does it become something millions of people can query simultaneously, with low latency, high reliability, and predictable cost?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>When the model runs, what is GPU actually doing? Why does the same operation take wildly different amounts of time depending on how it is scheduled, and how the data is laid out in memory?</em></p>
 </blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/journey_part2_ch3.svg" class="img-fluid figure-img" style="width:100.0%">
+<img src="figures/ch4/journey_part3_ch4.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.1: The journey through the Model Mind.
+Figure&nbsp;9.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The prompt has been written and structured. Now it needs to travel somewhere. This chapter covers everything between the user pressing Enter and the model receiving the request: the wire format, the serving infrastructure, and the engineering decisions that make large-scale LLM deployment economical.</p>
+<p>The previous chapters established what the model computes: embeddings, attention, feed-forward networks, the KV cache. This chapter covers <em>where</em> that computation actually happens and why it behaves the way it does. Every optimization discussed so far (FlashAttention, PageAttention, continuous batching, quantization) exists because of specific GPU execution constraints. This chapter makes those constraints explicit.</p>
+</div>
+</div>
+</div>
 <hr>
-<section id="the-gap-between-training-and-deployment" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="the-gap-between-training-and-deployment"><span class="header-section-number">3.1</span> The gap between training and deployment</h2>
-<p>Training produces a checkpoint: a collection of weight tensors saved to disk. At this point, the model can do nothing on its own. It has no interface. It cannot receive requests. It does not know what a user is.</p>
-<p>Turning that checkpoint into a production service requires solving a completely different set of engineering problems from those that were involved in training. During training, we try to optimize for producing as many tokens as possible per second. On the other hand, during serving, the optimization focuses on latency, concurrency, reliability, and cost, which means we want to respond to requests quickly, serve many users simultaneously, remain available under failure, and do all of this economically.</p>
-<p>These requirements require a different approach. The same GPU cluster that runs training efficiently is not automatically an efficient serving infrastructure. Serving is its own engineering discipline, with its own abstractions, its own failure modes, and its own optimization techniques.</p>
-<p>This chapter covers the full stack from trained checkpoint to the API endpoint a user or application calls.</p>
-<hr>
-</section>
-<section id="the-anatomy-of-an-llm-api" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="the-anatomy-of-an-llm-api"><span class="header-section-number">3.2</span> The anatomy of an LLM API</h2>
-<p>The standard interface for production LLM services is an HTTP API, almost universally following the conventions established by OpenAI’s API.</p>
-<section id="the-chat-completions-endpoint" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="the-chat-completions-endpoint"><span class="header-section-number">3.2.1</span> The chat completions endpoint</h3>
-<p>The primary endpoint for most production use:</p>
-<pre><code>POST /v1/chat/completions</code></pre>
-<p>Request body:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-4o"</span><span class="fu">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"messages"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"role"</span><span class="fu">:</span> <span class="st">"system"</span><span class="fu">,</span> <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"You are a helpful assistant."</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"role"</span><span class="fu">:</span> <span class="st">"user"</span><span class="fu">,</span> <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"What is the capital of France?"</span><span class="fu">}</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"max_tokens"</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"temperature"</span><span class="fu">:</span> <span class="fl">0.7</span><span class="fu">,</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"stream"</span><span class="fu">:</span> <span class="kw">false</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Response:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"chatcmpl-abc123"</span><span class="fu">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"object"</span><span class="fu">:</span> <span class="st">"chat.completion"</span><span class="fu">,</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"created"</span><span class="fu">:</span> <span class="dv">1699000000</span><span class="fu">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-4o"</span><span class="fu">,</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"choices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"index"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"message"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"role"</span><span class="fu">:</span> <span class="st">"assistant"</span><span class="fu">,</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"The capital of France is Paris."</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"finish_reason"</span><span class="fu">:</span> <span class="st">"stop"</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"usage"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prompt_tokens"</span><span class="fu">:</span> <span class="dv">26</span><span class="fu">,</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"completion_tokens"</span><span class="fu">:</span> <span class="dv">9</span><span class="fu">,</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"total_tokens"</span><span class="fu">:</span> <span class="dv">35</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Several design decisions in this interface iluminates the realities of LLM serving:</p>
-<p><strong>Messages array instead of a single string.</strong> Conversations have a clear structure consisting of a system prompt, user turns, and assistant turns. The API explicitly defines the structure, instead of relying on concatenated strings and expecting the model to interpret the formatting correctly.</p>
-<p><strong>Token counts in the response.</strong> Because LLM cost and latency are proportional to token count, the API reports exactly how many tokens were consumed allowing costs to be monitored and controlled programmatically.</p>
-<p><strong><code>finish_reason</code>.</strong> Why did the model stop generating? <code>stop</code> means it produced an end-of-sequence token. <code>length</code> means it reached the <code>max_tokens</code>. <code>content_filter</code> means the response was filtered. These signals help to determine whether the response is complete</p>
-<p><strong><code>stream</code> parameter.</strong> Whether to stream tokens as they are generated or return the complete response when done. Streaming is architecturally significant and covered in detail in chapter “REFF”.</p>
-</section>
-<section id="the-completions-endpoint-legacy" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="the-completions-endpoint-legacy"><span class="header-section-number">3.2.2</span> The completions endpoint (legacy)</h3>
-<p>An older interface that takes the raw string prompt rather than the structured messages array:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-3.5-turbo-instruct"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"prompt"</span><span class="fu">:</span> <span class="st">"The capital of France is"</span><span class="fu">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"max_tokens"</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This endpoint represents an earlier era of LLM deployment, when models were not chat tuned and the interface was closer to a text continuation service. It is still useful for non-chat use cases but has been superseded by chat completions for most applications.</p>
-</section>
-<section id="key-parameters" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="key-parameters"><span class="header-section-number">3.2.3</span> Key parameters</h3>
-<p><strong><code>temperature</code></strong> controls the randomness of sampling. At temperature 0, the model always selects the most likely next token (greedy decoding). At temperature 1, it samples from a full distribution. Above 1, the distribution flattens, producing more random and unstable outputs. Temperature interacts with the decoding strategy covered in chapter “REFF”.</p>
-<p><strong><code>top_p</code> (nucleus sampling)</strong> this is an alternative to temperature for controlling randomness. The model samples from the smallest set of tokens in which the cumulative probability exceeds <code>top_p</code>. Setting <code>top_p = 0.9</code> restricts sampling to tokens that together account for 90% of the probability mass that means the long tail of unlikely tokens is ignored.</p>
-<p><strong><code>max_tokens</code></strong> sets the maximum number of tokens to generate. It functions as a cost and latency cap. If the model reaches this limit before producing a stop token, <code>finish_reason</code> is <code>length</code> and the response may be end mid-sentence.</p>
-<p><strong>Stop sequences</strong> are one or more strings that cause halt in generation immediately if the model produces them. They are useful for structured generation where you know the output should end at a specific delimiter.</p>
-<p><strong><code>frequency_penalty</code> and <code>presence_penalty</code></strong> discourage repetition. <code>frequency_penalty</code> applies a penalty proportional to how many time a token has already appeared. <code>presence_penalty</code> applies a flat penalty to any token that has appeared at all. Both help the model to prevent from getting stuck in repetitive loops.</p>
-<p><strong><code>n</code></strong> specifies how many independent completions to generate for a single prompt. Useful for best-of-n sampling where you generate multiple responses and select the best one.</p>
-<p><strong><code>logprobs</code></strong> returns the log probabilities of the selected tokens and also the top-k most likely tokens at each position. It is used for calibration, analysis, and classification tasks where you care more about the model’s confidence, not just its output.</p>
+<section id="why-gpu-execution-deserves-its-own-chapter" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">9.1</span> Why GPU execution deserves its own chapter</h2>
+<p>Every previous chapter has mentioned GPU constraints in passing: memory bandwidth, arithmetic throughput, HBM capacity. This chapter makes those concepts precise.</p>
+<p>Understanding GPU execution has direct impact ob system performance and it is not just an academic exercise for LLM engineers. A serving system operating at 60% of a GPU’s theoretical peak throughput can deliver 50% more throughput than one running at just 40%, without any additional hardware. This knowledge also explains why certain operations become bottlenecks, why quantization improves performance, why kernel fusion is so effective, and why the prefill and decode phases show different latency characteristics.</p>
+<p>More directly: every optimization technique in serving (FlashAttention, continuous batching, tensor parallelism) exists because of specific GPU execution constraints. Understanding those constraints explains why the optimizations take the form they do, rather than appearing as a collection of unrelated tricks.</p>
 <hr>
 </section>
+<section id="gpu-architecture-fundamentals" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="gpu-architecture-fundamentals"><span class="header-section-number">9.2</span> GPU architecture fundamentals</h2>
+<p>A modern GPU is not a fast CPU. It is a fundamentally different compute architecture optimized for a different class of problems.</p>
+<section id="the-execution-model" class="level3" data-number="9.2.1">
+<h3 data-number="9.2.1" class="anchored" data-anchor-id="the-execution-model"><span class="header-section-number">9.2.1</span> The execution model</h3>
+<p>A CPU has a small number of powerful cores (typically 8–128), each capable of complex out-of-order execution, branch prediction, and deep caches. CPUs are optimized for latency and completing a single thread of execution as fast as possible.</p>
+<p>A GPU has a massive number of simpler cores (an H100 has 16,896 CUDA cores) organized into streaming multiprocessors (SMs). Each SM is not particularly fast for a single operation, but thousands of them executing simultaneously produce enormous total throughput. GPUs are optimized to complete as many simple operations as possible per second, not completing any one operation quickly.</p>
+<p>The programming model reflects on this: GPU programs are written as kernels that execute the same operation on many data elements simultaneously. A matrix multiplication kernel runs the same multiply operation on thousands of elements in parallel. If there is data parallelism in your problem, a GPU exploits it. If there is not, a GPU is slower than a CPU for that specific task.</p>
+<p>LLM inference has enormous data parallelism: the same transformer operations apply to every token in the sequence, and every element of every weight matrix participates in the same type of computation. This structural match is why GPUs dominate LLM inference.</p>
 </section>
-<section id="from-checkpoint-to-serving-the-loading-pipeline" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="from-checkpoint-to-serving-the-loading-pipeline"><span class="header-section-number">3.3</span> From checkpoint to serving: the loading pipeline</h2>
-<p>Before a model can serve requests, it must be loaded. For a model with hundreds of billions of parameters, this is a nontrivial task.</p>
-<section id="checkpoint-format-and-sharding" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="checkpoint-format-and-sharding"><span class="header-section-number">3.3.1</span> Checkpoint format and sharding</h3>
-<p>Training checkpoints are often sharded due to the fact that the full model does not fit in the memory of a single storage node or loading process. A 70B parameter model in BF16 requires approximately 140 GB of storage and Loading it into a GPU memory requires careful orchestration.</p>
-<p>Common checkpoint formats:</p>
+<section id="the-memory-hierarchy" class="level3" data-number="9.2.2">
+<h3 data-number="9.2.2" class="anchored" data-anchor-id="the-memory-hierarchy"><span class="header-section-number">9.2.2</span> The memory hierarchy</h3>
+<p>GPU memory has multiple tiers with very different bandwidth and capacity:</p>
+<pre><code>Memory tier       Bandwidth        Capacity      Latency
+──────────────────────────────────────────────────────────
+Registers         ~80 TB/s         256 KB/SM     ~1 cycle
+L1/SRAM           ~20 TB/s         256 KB/SM     ~30 cycles
+L2 cache          ~5 TB/s          50 MB         ~200 cycles
+HBM (VRAM)        ~3.35 TB/s       80 GB         ~600 cycles
+PCIe (CPU RAM)    ~64 GB/s         TBs           ~microseconds
+NVLink (GPU-GPU)  ~900 GB/s        —             ~microseconds</code></pre>
+<p>SRAM (often called shared memory or L1 cache) is the GPU’s fast on-chip memory. It offers extremely low latency but limited capacity. HBM (High Bandwidth Memory), is the GPU’s large off-chip memory although it provides massive bandwidth, accessing HBM is still significantly more expensive than accessing on-chip memory.</p>
+<p>Every GPU computation ultimately reads data from HBM and writes results back to it. As a result, the central challenge of GPU kernel optimization is reducing HBM traffic by keeping frequently accessed data in SRAM for as long as possible which is the exact key insight behind FlashAttention.</p>
+</section>
+<section id="streaming-multiprocessors-and-warps" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="streaming-multiprocessors-and-warps"><span class="header-section-number">9.2.3</span> Streaming multiprocessors and warps</h3>
+<p>The Streaming Multiprocessor (SM) is the fundamental compute unit of an NVIDIA GPU. An H100 GPU contains many SMs operating in parallel, with each SM responsible for executing thousands of lightweight threads concurrently.</p>
+<p>Each SM on an H100 contains:</p>
 <ul>
-<li><strong>PyTorch <code>.pt</code> / <code>.bin</code></strong>: the standard PyTorch format which can be slow to load due to pickle deserialization</li>
-<li><strong>SafeTensors</strong>: a faster and safer alternative which can be loaded significantly faster via memory-mapped files</li>
-<li><strong>GGUF</strong>: a format used by llama.cpp, optimized for inference on consumer hardware and it is able to quantize weights natively</li>
+<li>128 CUDA cores for FP32 arithmetic operations.</li>
+<li>4 Tensor Cores specialized for matrix multiplication.</li>
+<li>256 KB of registers for storing temporary values used by active threads.</li>
+<li>228 KB of on-chip SRAM, configurable between:
+<ul>
+<li>L1 cache for automatically caching memory accesses.</li>
+<li>Shared memory for explicitly sharing data between threads in the same thread block.</li>
+</ul></li>
+<li>Warp schedulers that determine which groups of threads execute next.</li>
 </ul>
+<p>GPU threads execute in groups called warps, where each warp consists of 32 threads. Unlike CPU threads, which execute independently, all threads within a warp execute the same instruction at the same time on different pieces of data. NVIDIA refers to this execution model as SIMT (Single Instruction, Multiple Threads).</p>
+<p>For example, consider the following code executed by a warp:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> c <span class="op">+</span> d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Suppose that among the 32 threads in the warp 20 threads satisfy <span class="math inline">\(x &gt; 0\)</span> and 12 threads satisfy <span class="math inline">\(x &lt;= 0\)</span> The GPU cannot execute both branches simultaneously within the same warp. Instead, it execute <span class="math inline">\(y = a + b\)</span> for the 20 relevant threads while the other 12 threads remain temporarily inactive and than execute <span class="math inline">\(y = c + d\)</span> for the remaining 12 threads while the first 20 threads remain inactive. Conceptually, execution looks like:</p>
+<pre><code>Cycle 1:
+[Active]   Threads 0-19  -&gt; y = a + b
+[Inactive] Threads 20-31
+
+Cycle 2:
+[Inactive] Threads 0-19
+[Active]   Threads 20-31 -&gt; y = c + d</code></pre>
+<p>Although each thread only needs one branch, the warp executes both branches sequentially, reducing parallel efficiency whcih is known as branch divergence.</p>
+<p>An H100 has 132 SMs. With 4 warp schedulers per SM and 32 threads per warp, the H100 can keep 132 × 4 × 32 = 16,896 threads active simultaneously.</p>
 </section>
-<section id="quantization-for-serving" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="quantization-for-serving"><span class="header-section-number">3.3.2</span> Quantization for serving</h3>
-<p>Training typically utilizes BF16 weights (2 bytes per parameter). For serving, quantization reduces this further:</p>
-<p><strong>INT8 quantization</strong> stores weights as 8-bit integers (1 byte per parameter). This achieves a 2× memory reduction which causes a small quality loss that is mostly negligible for generation tasks.</p>
-<p><strong>INT4 quantization</strong> uses 4-bit integers (0.5 bytes per parameter) for a 4× memory reduction. Causes more quality loss and needs careful calibration. Enables running 70B models on consumer GPUs that could not otherwise fit them.</p>
-<p><strong>GPTQ</strong> is a post-training quantization technique that calibrates 4-bit quantization using a small dataset, minimizing quality loss from reduced precision.</p>
-<p><strong>AWQ (Activation-aware Weight Quantization)</strong> quantizes weights while accounting for the distribution of activations, producing better results than naive quantization at the same bit width.</p>
-<p>The tradeoff is consistent: the quantization reduces memory requirements while increase throughput, at the cost of some output quality. For production serving where cost matters, INT8 is nearly universal. INT4 is used when memory is severely constrained or when we want to serve on consumer hardware.</p>
-</section>
-<section id="tensor-parallelism-for-large-models" class="level3" data-number="3.3.3">
-<h3 data-number="3.3.3" class="anchored" data-anchor-id="tensor-parallelism-for-large-models"><span class="header-section-number">3.3.3</span> Tensor parallelism for large models</h3>
-<p>A 405B parameter model in BF16 requires approximately 810 GB of GPU memory that is far beyond a single GPU’s capacity. In these scenarios, loading requires distributing the model across multiple GPUs using tensor parallelism (splitting individual weight matrices across GPUs) or pipeline parallelism (assigning different layers to different GPUs).</p>
-<p>The same parallelism strategies used in training apply to serving, but with different constraints: training prioritizes throughput (large batches, high utilization), while serving prioritizes latency (fast first-token generation, smaller batches).</p>
-<hr>
+<section id="tensor-cores" class="level3" data-number="9.2.4">
+<h3 data-number="9.2.4" class="anchored" data-anchor-id="tensor-cores"><span class="header-section-number">9.2.4</span> Tensor cores</h3>
+<p>Standard CUDA cores perform scalar floating point operations. Tensor cores perform matrix multiplications directly in hardware, at much higher throughput.</p>
+<p>An H100 tensor core performs a 16×16×16 matrix multiplication in a single operation. The H100 has 528 tensor cores, delivering approximately:</p>
+<ul>
+<li>1,000 TFLOPS for BF16/FP16 matrix multiplications</li>
+<li>1,979 TFLOPS for FP8 matrix multiplications</li>
+<li>66 TFLOPS for FP32 scalar operations</li>
+</ul>
+<p>The gap between tensor core throughput and scalar throughput explains why matrix multiplication is fast and why all other operations are relatively expensive on modern GPUs.</p>
 </section>
 </section>
-<section id="the-serving-architecture" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="the-serving-architecture"><span class="header-section-number">3.4</span> The serving architecture</h2>
-<section id="the-inference-server" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="the-inference-server"><span class="header-section-number">3.4.1</span> The inference server</h3>
-<p>The core component: a process that holds the model weights in GPU memory and handles requests. The major implementations:</p>
-<p><strong>vLLM</strong> is the dominant open-source inference server. It introduces PagedAttention (covered in detail in chapter “REFF”) for efficient KV cache management, and supports tensor parallelism, continuous batching, and most major model architectures.</p>
-<p><strong>TensorRT-LLM (NVIDIA)</strong> is NVIDIA’s inference optimization library. It applies kernel fusion, INT8/FP8 quantization, and hardware-specific optimizations. Typically the fastest option on NVIDIA hardware but requires compilation for specific model shapes which is a trade between flexibility and performance.</p>
-<p><strong>llama.cpp</strong> is a pure C++ implementation of LLaMA-family models, optimized for CPU and consumer GPU inference. Not competitive with vLLM for high-throughput serving, but it is unmatched for accessibility and local deployment.</p>
-</section>
-<section id="the-api-gateway" class="level3" data-number="3.4.2">
-<h3 data-number="3.4.2" class="anchored" data-anchor-id="the-api-gateway"><span class="header-section-number">3.4.2</span> The API gateway</h3>
-<p>In front of the inference server sits the API layer:</p>
+<section id="the-roofline-model" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="the-roofline-model"><span class="header-section-number">9.3</span> The roofline model</h2>
+<p>The roofline model is a simple framework for understanding whether a given operation is compute-bound or memory-bandwidth-bound, and what the theoretical maximum performance is:</p>
+<pre><code>Attainable performance = min(Peak FLOPS, Memory bandwidth × Arithmetic intensity)</code></pre>
+<p>Where arithmetic intensity = FLOPs executed / bytes read from memory.</p>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/api_gateway.svg" class="img-fluid figure-img" style="width:50.0%">
+<img src="figures/ch4/roofline_model.svg" class="img-fluid figure-img" style="width:70.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.2: The API gateway.
+Figure&nbsp;9.2: The roofline Model.
 </figcaption>
 </figure>
 </div>
-<p>The API gateway is not a performance bottleneck what it does is to process the metadata. It is critical for security (authentication prevents unauthorized access), cost control (rate limiting prevents abuse), reliability (routing distributes traffic and handles failures), and observability (logging every request enables debugging and billing).</p>
+<p>The ridge point is where the roofline transitions from memory-bound to compute-bound which is approximately 300 FLOPs/byte for the H100 (1,000 TFLOPS / 3.35 TB/s). Operations with arithmetic intensity above 300 are compute-bound and those below are memory-bandwidth-bound.</p>
+<section id="llm-operations-on-the-roofline" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="llm-operations-on-the-roofline"><span class="header-section-number">9.3.1</span> LLM operations on the roofline</h3>
+<p>Different operations in LLM inference have very different arithmetic intensities:</p>
+<p><strong>Large matrix multiplications</strong> (prefill, large batches): Matrix multiplication achieves high arithmetic intensity by reusing each byte of weight data for every sequence in the batch. For example, with a batch size of 32 and <span class="math inline">\(d_model = 4,096\)</span>, the arithmetic intensity is approximately 32 FLOPs/byte. This value approaches the roofline model’s ridge point, indicating that performance is primarily limited by computational throughput rather than memory bandwidth.</p>
+<p><strong>Vector-matrix products</strong> (decode, batch size 1): The Q projection at a batch size of 1 exhibits low arithmetic intensity because each byte of weight data is used in only one multiply operation. Consequently, the arithmetic intensity is approximately 1 FLOP/byte, which is about 300× below the roofline model’s ridge point. As a result, performance is severely limited by memory bandwidth, leaving the tensor cores underutilized.</p>
+<p><strong>Attention with KV cache</strong> (decode): extremely low arithmetic intensity. Reading the full KV cache and computing a dot product with the query vector. Memory- bandwidth-bound with near-zero compute utilization.</p>
+<p><strong>Softmax, layer norm, element-wise ops</strong>: essentially zero arithmetic intensity. Read data, apply a simple function, write it back. Pure memory bandwidth operations. No tensor core involvement.</p>
+<p>The practical implication: for decode at small batch sizes, the GPU is almost entirely idle arithmetically, waiting for data from HBM. Increasing batch size is the primary lever for improving GPU utilization during decode, because it amortizes weight reads across multiple sequences and increases arithmetic intensity toward the ridge point.</p>
 <hr>
 </section>
 </section>
-<section id="batching-the-key-to-serving-efficiently" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="batching-the-key-to-serving-efficiently"><span class="header-section-number">3.5</span> Batching: the key to serving efficiently</h2>
-<p>A single inference server instance can handle many requests simultaneously. How it batches those requests together affects throughput and GPU utilization.</p>
-<section id="naive-static-batching" class="level3" data-number="3.5.1">
-<h3 data-number="3.5.1" class="anchored" data-anchor-id="naive-static-batching"><span class="header-section-number">3.5.1</span> Naive static batching</h3>
-<p>The simplest approach is to wait until you have <code>batch_size</code> requests, process them together, return all results.</p>
-<p>The problem is that LLM generation is variable length. On request might generate 10 tokens while the other might generate 500. In a static batch, all requests must wait for the longest one to finish. GPU utilization drops as shorter requests complete and their slots sit idle, waiting.</p>
+<section id="prefill-vs.-decode-two-different-regimes" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="prefill-vs.-decode-two-different-regimes"><span class="header-section-number">9.4</span> Prefill vs.&nbsp;decode: two different regimes</h2>
+<p>The roofline analysis explains why prefill and decode behave so differently and they are not just slow and fast versions of the same operation. They are different hardware bottlenecks entirely.</p>
+<section id="prefill-compute-bound" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="prefill-compute-bound"><span class="header-section-number">9.4.1</span> Prefill: compute-bound</h3>
+<p>During prefill, all prompt tokens are processed simultaneously. The Q projection operates on a matrix of shape <code>[n_prompt, d_model]</code>:</p>
+<pre><code>Q projection: [n_prompt, d_model] @ [d_model, d_model]
+FLOPs:        2 × n_prompt × d_model²
+Bytes:        d_model² × 2    (weight matrix, loaded once)
+
+Arithmetic intensity = n_prompt FLOPs/byte</code></pre>
+<p>For n_prompt = 1,024 and d_model = 4,096: arithmetic intensity = 1,024 FLOPs/byte which is above the ridge point. Prefill is compute-bound. The H100 runs near its theoretical FLOPs ceiling. In order to make prefill faster it requires more FLOPs (more GPUs, higher clock speeds, or more efficient kernels).</p>
 </section>
-<section id="continuous-batching" class="level3" data-number="3.5.2">
-<h3 data-number="3.5.2" class="anchored" data-anchor-id="continuous-batching"><span class="header-section-number">3.5.2</span> Continuous batching</h3>
-<p>The key innovation for efficient LLM serving, introduced by <span class="citation" data-cites="yu2022orca"><a href="#ref-yu2022orca" role="doc-biblioref">[1]</a></span> and popularized by vLLM.</p>
-<p>Instead of batching at the request level, continuous batching operates at the iteration level meaning it happens at every token generation step. After each token is generated:</p>
-<ol type="1">
-<li>Check which sequences in the current batch have finished</li>
-<li>Remove finished sequences from the batch</li>
-<li>Add new incoming requests to fill the freed slots</li>
-<li>Run the next generation step on the updated batch</li>
-</ol>
-<pre><code>Step 1: [A₁, B₁, C₁]         ← three requests, first token
-Step 2: [A₂, B₂, C₂]
-Step 3: [A₃, B₃, C_stop]     ← C finishes after 3 tokens
-Step 3: [A₃, B₃, D₁]         ← D immediately fills C's slot
-Step 4: [A₄, B₄, D₂]
-Step 5: [A_stop, B₅, D₃]     ← A finishes
-Step 5: [E₁, B₅, D₃]         ← E fills A's slot</code></pre>
-<p>The GPU is always processing a full batch. None of the slots sit idle waiting for the longest sequence to finish. On real workloads, this approach can improve throughput by 2 to 3 times compared to a naive static batching. Continuous batching requires careful KV cache management which explains why PagedAttention exists.</p>
-</section>
-<section id="prefill-and-decode-phases" class="level3" data-number="3.5.3">
-<h3 data-number="3.5.3" class="anchored" data-anchor-id="prefill-and-decode-phases"><span class="header-section-number">3.5.3</span> Prefill and decode phases</h3>
-<p>LLM generation has two distinct phases with different compute profiles:</p>
-<p><strong>Prefill</strong>: processing the input prompt. All prompt tokens are processed in parallel. This phase is compute bound and the bottleneck is GPU arithmetic throughput.</p>
-<p><strong>Decode</strong>: generating output tokens one at a time. Each step processes one single new token, attending to all previous tokens via the KV cache. This phase is memory-bandwidth-bound and the bottleneck is reading the model weights and KV cache from GPU memory.</p>
-<p>Because prefill and decode have different bottlenecks, mixing them in the same batch is not optimal. <strong>Chunked prefill</strong> and <strong>disaggregated serving</strong> are emerging techniques that separate prefill and decode across different hardware or batch slots to maximize utilization of each phase independently.</p>
+<section id="decode-memory-bandwidth-bound" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="decode-memory-bandwidth-bound"><span class="header-section-number">9.4.2</span> Decode: memory-bandwidth-bound</h3>
+<p>During decode, only one new token is processed at a time. The Q projection operates on a vector of shape <code>[1, d_model]</code>:</p>
+<pre><code>Q projection: [1, d_model] @ [d_model, d_model]
+FLOPs:        2 × 1 × d_model²
+Bytes:        d_model² × 2    (same weight matrix)
+
+Arithmetic intensity = 1 FLOPs/byte</code></pre>
+<p>For d_model = 4,096: arithmetic intensity = 1 FLOPs/byte which makes decode memory-bandwidth-bound. The H100 runs at approximately 1/300th of its peak FLOPs utilization. Making decode faster requires loading weights faster, higher bandwidth memory, quantization (fewer bytes per parameter), or larger batches (sharing weight reads across sequences).</p>
 <hr>
 </section>
 </section>
-<section id="kv-cache-management" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="kv-cache-management"><span class="header-section-number">3.6</span> KV cache management</h2>
-<p>The KV cache stores the key and value tensors computed for each previous token, avoiding recomputation on every generation step. It is the central memory management challenge in serving, and will be explained in chapter “REFF”.</p>
-<p>A brief introduction here, because it directly constrains serving architecture:</p>
-<p>For a model with <code>L</code> layers, <code>h</code> KV heads, <code>d_k</code> key/value dimension, and a sequence of length <code>n</code>:</p>
-<pre><code>KV cache size = 2 × L × h × d_k × n × bytes_per_element</code></pre>
-<p>For LLaMA 2 70B (L=80, h=8 GQA heads, d_k=128) in BF16:</p>
-<pre><code>Per token: 2 × 80 × 8 × 128 × 2 = 327,680 bytes ≈ 320 KB
-4,096 tokens: 320 KB × 4,096 ≈ 1.3 GB
-32,768 tokens: 320 KB × 32,768 ≈ 10.5 GB</code></pre>
-<p>At high concurrency with long contexts, KV cache competes directly with model weights for GPU memory.</p>
-<section id="pagedattention" class="level3" data-number="3.6.1">
-<h3 data-number="3.6.1" class="anchored" data-anchor-id="pagedattention"><span class="header-section-number">3.6.1</span> PagedAttention</h3>
-<p>The key innovation in vLLM, inspired by virtual memory paging in operating systems.</p>
-<p>Traditional KV cache reserves a contiguous memory block for each sequence, sized to accommodate the maximum possible length. This causes internal fragmentation (reserved memory that goes unused when sequences are shorter than expected) and external fragmentation (free memory that cannot be used because it is not contiguous).</p>
-<p>PagedAttention allocates KV cache in fixed-size pages of tokens, with a page table mapping logical sequence positions to physical memory locations. Memory is allocated and freed one page at a time as sequences grow and complete:</p>
-<pre><code>Sequence A: [Page 3, Page 7, Page 12]     ← pages need not be contiguous
-Sequence B: [Page 1, Page 9]
-Sequence C: [Page 2, Page 4, Page 5, Page 11]
-Free pages: [Page 6, Page 8, Page 10, ...]</code></pre>
-<p>This will eliminates fragmentation and enables an almost perfect memory utilization. It also enables prefix sharing which means if two requests share a common system prompt, the KV cache for that prefix can be shared across both sequences without duplication.</p>
-<hr>
+<section id="kernel-fusion" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="kernel-fusion"><span class="header-section-number">9.5</span> Kernel fusion</h2>
+<p>Each operation in a transformer block, such as layer normalization, Q/K/V projection, softmax, and residual addition, can be implemented as a separate CUDA kernel. In this approach, every kernel reads its inputs from HBM and writes its outputs back to HBM before the next kernel executes. While this design is straightforward to implement, it is inefficient because intermediate results are repeatedly transferred to and from HBM despite being needed only by subsequent operations.</p>
+<p>Kernel fusion addresses this inefficiency by combining multiple operations into a single CUDA kernel. Intermediate results are retained in registers or on-chip shared memory (SRAM) rather than being written to HBM after each operation. Only the final output is stored in HBM, reducing memory traffic, increasing arithmetic intensity, and improving overall performance.</p>
+<section id="example-fused-layer-norm-and-linear-projection" class="level3" data-number="9.5.1">
+<h3 data-number="9.5.1" class="anchored" data-anchor-id="example-fused-layer-norm-and-linear-projection"><span class="header-section-number">9.5.1</span> Example: fused layer norm and linear projection</h3>
+<p>Without fusion:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x_norm <span class="op">=</span> layer_norm(x)     <span class="co"># read x from HBM, write x_norm to HBM</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> x_norm <span class="op">@</span> W_Q           <span class="co"># read x_norm from HBM, write q to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Two HBM reads, two HBM writes, for data that is only an intermediate result.</p>
+<p>With fusion:</p>
+<pre><code>Single kernel:
+  Read x from HBM once
+  Compute layer norm in registers/SRAM
+  Apply W_Q projection immediately
+  Write q to HBM once</code></pre>
+<p>One HBM read, one HBM write. Memory traffic halved for this pair of operations. The intermediate <code>x_norm</code> never leaves the chip.</p>
 </section>
+<section id="flashattention-as-kernel-fusion" class="level3" data-number="9.5.2">
+<h3 data-number="9.5.2" class="anchored" data-anchor-id="flashattention-as-kernel-fusion"><span class="header-section-number">9.5.2</span> FlashAttention as kernel fusion</h3>
+<p>FlashAttention is the most impactful example of kernel fusion in LLM inference. The naive attention computation reads and writes the n×n score matrix multiple times (scaling, masking, softmax, and the final weighted sum). FlashAttention fuses all of these into a single kernel that keeps intermediate scores in SRAM.</p>
+<p>The memory traffic reduction is from O(n²) to O(n). At long sequence lengths, this is the difference between attention fitting in available memory and not fitting at all. Chapter REFF covers FlashAttention in detail; the point here is that it is fundamentally a kernel fusion optimization, not an algorithmic approximation. The result is mathematically identical to naive attention.</p>
 </section>
-<section id="latency-and-throughput-tradeoffs" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="latency-and-throughput-tradeoffs"><span class="header-section-number">3.7</span> Latency and throughput tradeoffs</h2>
-<p>Serving performance is characterized by two metrics that pull against each other:</p>
-<p><strong>Time to first token (TTFT)</strong> is how long the user waits before seeing any output. This is determined primarily by prefill time and since longer prompts take longer to prefill it is the metric users perceive most directly.</p>
-<p><strong>Time between tokens (TBT)</strong> is how fast tokens arrive after the first one. This is determined by decode speed. For a 70B model on a single A100, 20 to 60 tokens per second is typically expected.</p>
-<p><strong>Throughput</strong> is total tokens processed per second across all concurrent requests. Maximized by large batch sizes, which directly conflict with low TTFT.</p>
-<p>Production systems manage this tradeoff through maximum batch size limits (cap batch size to maintain acceptable latency), priority queuing (prioritize interactive requests over batch workloads), and SLA-based scheduling (different latency targets for different user tiers).</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">3.8</span> Key takeaways</h2>
+<section id="kernel-fusion-in-practice" class="level3" data-number="9.5.3">
+<h3 data-number="9.5.3" class="anchored" data-anchor-id="kernel-fusion-in-practice"><span class="header-section-number">9.5.3</span> Kernel fusion in practice</h3>
+<p>Production inference frameworks apply kernel fusion throughout the model:</p>
 <ul>
-<li>A trained model checkpoint becomes a production service through a pipeline involving quantization, multi-GPU loading, an inference server, and an API gateway, since training and serving are distinct engineering disciplines</li>
-<li>The chat completions API format, including the messages array, key parameters, and token usage reporting, reflects the practical realities of LLM serving rather than arbitrary design choices</li>
-<li>Continuous batching operates at the token level rather than the request level, keeping GPUs fully utilized despite variable-length generation and serving as the main efficiency improvement for high-throughput systems</li>
-<li>KV cache memory is the central serving constraint because it grows with sequence length and batch size and competes directly with model weights for GPU memory, while PagedAttention manages it using virtual memory paging</li>
-<li>Prefill is compute bound and decode is memory bandwidth bound, so they have fundamentally different performance profiles and can be optimized independently</li>
-<li>TTFT and throughput trade off against each other, and the appropriate balance depends on whether the system serves interactive applications or batch workloads</li>
+<li>Layer norm fused into linear projections (Q, K, V, output projections)</li>
+<li>Attention scores, masking, and softmax fused (FlashAttention)</li>
+<li>Residual addition fused with layer norm</li>
+<li>Activation functions fused into FFN computation</li>
+<li>RoPE application fused into Q and K projection</li>
+</ul>
+<p>The cumulative impact is typically 1.5–2× throughput improvement over naively separate kernels, primarily by reducing HBM traffic.</p>
+<hr>
+</section>
+</section>
+<section id="precision-and-quantization-at-the-kernel-level" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="precision-and-quantization-at-the-kernel-level"><span class="header-section-number">9.6</span> Precision and quantization at the kernel level</h2>
+<p>Quantization affects GPU execution at the kernel level, not just memory footprint. Understanding this distinction separates knowing what quantization does from knowing why it helps.</p>
+<section id="weight-only-quantization" class="level3" data-number="9.6.1">
+<h3 data-number="9.6.1" class="anchored" data-anchor-id="weight-only-quantization"><span class="header-section-number">9.6.1</span> Weight-only quantization</h3>
+<p>The most common serving quantization scheme: model weights are stored in INT4 or INT8, but computation happens in BF16/FP16.</p>
+<p>During a weight-only quantized matrix multiplication:</p>
+<pre><code>1. Load INT4 weights from HBM          (4× fewer bytes than BF16)
+2. Dequantize to BF16 in registers     (fast, negligible compute overhead)
+3. Multiply with BF16 activations via tensor cores
+4. Accumulate in FP32, write BF16 output to HBM</code></pre>
+<p>The benefit: decode is memory-bandwidth-bound. Reducing weight bytes by 4× means 4× more weights can be streamed per second, directly improving decode throughput by approximately 4× for bandwidth-limited operations.</p>
+<p>The cost: dequantization adds compute overhead. For bandwidth-bound operations (decode), this overhead is negligible. For compute-bound operations (prefill, large batches), dequantization adds meaningful overhead. Weight-only quantization therefore improves decode more than prefill, which is precisely where the improvement is most needed.</p>
+</section>
+<section id="activation-quantization-int8-and-fp8" class="level3" data-number="9.6.2">
+<h3 data-number="9.6.2" class="anchored" data-anchor-id="activation-quantization-int8-and-fp8"><span class="header-section-number">9.6.2</span> Activation quantization: INT8 and FP8</h3>
+<p>For compute-bound operations, quantizing both weights and activations to INT8 or FP8 allows tensor cores to operate at higher throughput:</p>
+<ul>
+<li>BF16 tensor cores: 1,000 TFLOPS</li>
+<li>FP8 tensor cores: 1,979 TFLOPS on H100 (approximately 2× faster)</li>
+</ul>
+<p>Activation quantization is more complex than weight quantization because activations have more dynamic range and they can contain outlier values that cause large quantization errors when mapped to a narrow integer range.</p>
+<p><strong>The outlier problem.</strong> LLM activations contain outlier values in a small fraction of channels, values that are orders of magnitude larger than typical. These outliers are consistent across inputs and are a known property of large language models. Naive quantization sets the scale by the outlier, compressing all normal values to near-zero and destroying information.</p>
+<p><strong>LLM.int8()</strong> (Dettmers et al., 2022) addresses this by decomposing the matrix multiplication: outlier channels are computed in full BF16 precision, and the remaining channels (typically 99%+) are computed in INT8. The results are combined. Quality is preserved while most of the memory savings are retained.</p>
+<p><strong>SmoothQuant</strong> (Xiao et al., 2023) migrates the quantization difficulty from activations to weights, mathematically equivalent to scaling the activation channels down and the corresponding weight rows up before quantization. The result is more uniform activation distributions that quantize cleanly to INT8 without special outlier handling.</p>
+<p><strong>FP8 inference</strong> is available on H100 GPUs and has become the recommended precision for large-scale serving: near-BF16 quality at roughly 2× the arithmetic throughput. The H100’s Transformer Engine handles FP8 scaling automatically, making it practical without manual calibration.</p>
+<hr>
+</section>
+</section>
+<section id="tensor-parallelism-at-the-kernel-level" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="tensor-parallelism-at-the-kernel-level"><span class="header-section-number">9.7</span> Tensor parallelism at the kernel level</h2>
+<p>When a model is too large for a single GPU, tensor parallelism distributes weight matrices across multiple GPUs. The kernel-level implementation requires communication between GPUs at each layer.</p>
+<section id="column-and-row-parallelism" class="level3" data-number="9.7.1">
+<h3 data-number="9.7.1" class="anchored" data-anchor-id="column-and-row-parallelism"><span class="header-section-number">9.7.1</span> Column and row parallelism</h3>
+<p>A linear projection <code>Y = X @ W</code> can be split in two ways:</p>
+<p><strong>Column parallelism</strong> splits W by columns:</p>
+<pre><code>W split into [W₁ | W₂] across 2 GPUs
+GPU 0: Y₁ = X @ W₁    (partial output — subset of output dimensions)
+GPU 1: Y₂ = X @ W₂    (partial output — complementary subset)
+Combine: Y = [Y₁ | Y₂]    (concatenation, no communication needed here)</code></pre>
+<p><strong>Row parallelism</strong> splits W by rows and requires split input:</p>
+<pre><code>W split into [W₁; W₂], X split into [X₁, X₂] across 2 GPUs
+GPU 0: Y_partial₀ = X₁ @ W₁
+GPU 1: Y_partial₁ = X₂ @ W₂
+Combine: Y = Y_partial₀ + Y_partial₁    (all-reduce required)</code></pre>
+<p>In a transformer layer: Q, K, V projections use column parallelism, each GPU computes a subset of attention heads. The output projection uses row parallelism. Attention within each GPU is independent; an all-reduce synchronizes after the output projection. The FFN follows the same pattern: column parallelism on the first layer, row parallelism on the second, with one all-reduce between them.</p>
+</section>
+<section id="pipeline-parallelism-and-bubble-overhead" class="level3" data-number="9.7.2">
+<h3 data-number="9.7.2" class="anchored" data-anchor-id="pipeline-parallelism-and-bubble-overhead"><span class="header-section-number">9.7.2</span> Pipeline parallelism and bubble overhead</h3>
+<p>Pipeline parallelism splits a transformer model across multiple GPUs by assigning different sets of layers to different devices. Instead of each GPU holding the full model, computation flows through GPUs sequentially, like an assembly line and each GPU processes a contiguous block of layers. To keep all GPUs busy, the input batch is divided into microbatches, which are then streamed through the pipeline:</p>
+<pre><code>Time step:        1    2    3  |  4    5    6    7    8  | 9   10   11
+                 &lt;-- Fill --&gt;  | &lt;---- Steady state ---&gt; | &lt;-- Drain --&gt;
+
+GPU 0 (L0 –L24): [1]  [2]  [3]   [4]  [5]  [6]  [7]  [8]   ·    ·    ·
+GPU 1 (L25–L48):  ·   [1]  [2]   [3]  [4]  [5]  [6]  [7]  [8]   ·    ·
+GPU 2 (L49–L72):  ·    ·   [1]   [2]  [3]  [4]  [5]  [6]  [7]  [8]   ·
+GPU 3 (L73–L96):  ·    ·    ·    [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]</code></pre>
+<p>This creates a wave-like execution pattern where different GPUs work on different microbatches at different stages of the model. However, pipeline parallelism introduces idle time, known as the pipeline bubble. This occurs during pipeline fill (startup) and pipeline drain (shutdown), when not all GPUs are fully utilized.</p>
+<p>Increasing the number of microbatches reduces bubble overhead by improving pipeline utilization, but it also increases memory usage and scheduling complexity. In practice, systems use 8–32 microbatches to keep bubble overhead under 10% while maintaining efficiency.</p>
+<hr>
+</section>
+</section>
+<section id="cuda-graph-capture" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="cuda-graph-capture"><span class="header-section-number">9.8</span> CUDA graph capture</h2>
+<p>Every GPU operation requires a kernel launch: the CPU sends an instruction to the GPU specifying which kernel to run with which parameters. For small operations, kernel launch overhead can dominate the actual execution time.</p>
+<p>For a transformer decode step at batch size 1:</p>
+<ul>
+<li>Total arithmetic work: small (bandwidth-bound, most of step time is HBM reads)</li>
+<li>Number of kernel launches: hundreds (one per operation across all layers)</li>
+<li>Kernel launch overhead: ~5–10 microseconds per launch</li>
+</ul>
+<p>Hundreds of launches × 5–10 microseconds = milliseconds of CPU overhead per decode step, for a step that may itself take only a few milliseconds of actual GPU work. The CPU becomes the bottleneck.</p>
+<p>CUDA graphs capture the sequence of kernel launches and their data dependencies as a static graph, replayed without CPU involvement for each step. After the initial capture, subsequent replays bypass CPU overhead entirely.</p>
+<p>For decode at batch size 1, CUDA graph capture reduces per-step latency by 30–50%. The tradeoff: the graph is captured for a specific batch size and sequence length; changing these requires recapture. Production inference frameworks use CUDA graphs for decode (fixed batch size and one new token per step) and not for prefill (variable sequence length per request).</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">9.9</span> Key takeaways</h2>
+<ul>
+<li>GPUs are throughput-optimized processors with thousands of simple cores; LLM inference maps well to GPUs because transformer operations are highly data- parallel — the same computation applied to every token and every weight element</li>
+<li>The GPU memory hierarchy spans registers (80 TB/s) to HBM (3.35 TB/s) to PCIe (64 GB/s); kernel optimization is the art of keeping hot data in fast memory and minimizing HBM round trips</li>
+<li>Tensor cores perform 16×16×16 matrix multiplications in hardware at ~15× the throughput of scalar CUDA cores; every operation expressible as matrix multiplication should be</li>
+<li>The roofline model predicts whether an operation is compute-bound (arithmetic intensity above ~300 FLOPs/byte for H100) or memory-bandwidth-bound (below); prefill is compute-bound, decode is severely memory-bandwidth-bound at ~1 FLOPs/byte</li>
+<li>MFU for decode at batch size 1 is approximately 0.3% — the GPU is nearly idle arithmetically; batching and quantization are the primary levers for improving this</li>
+<li>Kernel fusion eliminates intermediate HBM reads and writes between operations; FlashAttention reduces attention memory traffic from O(n²) to O(n) by keeping scores in SRAM throughout computation</li>
+<li>Weight-only INT4/INT8 quantization reduces decode latency proportionally to the bit reduction, with negligible dequantization overhead when bandwidth-bound; FP8 activation quantization improves prefill throughput by ~2×</li>
+<li>CUDA graph capture eliminates CPU kernel launch overhead — 30–50% latency reduction for decode at small batch sizes — by replaying a static kernel sequence without CPU involvement</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/cheat_sheet.svg" class="img-fluid figure-img" style="width:100.0%">
+<img src="figures/ch1/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.3: Cheat sheet.
+Figure&nbsp;9.3: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="3.9">
-<h2 data-number="3.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.9</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.10</span> Further reading</h2>
 <ul>
-<li>Yu et al.&nbsp;(2022). <em>Orca: A Distributed Serving System for Transformer-Based Generative Models.</em>: Introduces continuous batching.</li>
-<li>Kwon et al.&nbsp;(2023). <em>Efficient Memory Management for Large Language Model Serving with PagedAttention.</em>: The vLLM paper; foundational for modern serving.</li>
+<li>Williams et al.&nbsp;(2009). <em>Roofline: An Insightful Visual Performance Model for Multicore Architectures.</em> — The roofline model; essential reading for GPU performance analysis regardless of domain.</li>
+<li>Dao et al.&nbsp;(2022). <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.</em> — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.</li>
+<li>Dettmers et al.&nbsp;(2022). <em>LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale.</em> — The outlier problem and mixed-precision INT8 quantization.</li>
+<li>Xiao et al.&nbsp;(2023). <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models.</em> — Migrating quantization difficulty from activations to weights for clean INT8 inference.</li>
+<li>Shoeybi et al.&nbsp;(2019). <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism.</em> — Tensor and pipeline parallelism; the foundational implementation reference.</li>
 </ul>
 <hr>
-<p><em>← Previous: <a href="02-prompt-engineering-and-structure.md">02 — Prompt engineering and structure</a></em><br>
-<em>Next: <a href="04-tokenization.md">04 — Tokenization →</a></em></p>
+<p><em>← Previous: <a href="09-kv-cache.md">09 — KV cache</a></em><br>
+<em>Next: <a href="11-decoding-and-sampling.md">11 — Decoding and sampling →</a></em></p>
 
 
-<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
-<div id="ref-yu2022orca" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">G.-I. Yu, J. S. Jeong, G.-W. Kim, S. Kim, and B.-G. Chun, <span>“Orca: A distributed serving system for <span class="math inline">\(\{\)</span>transformer-based<span class="math inline">\(\}\)</span> generative models,”</span> in <em>16th USENIX symposium on operating systems design and implementation (OSDI 22)</em>, 2022, pp. 521–538.</div>
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -1193,14 +1224,11 @@ Figure&nbsp;3.3: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part1/chapter1/introduction.html" class="pagination-link" aria-label="the intro">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">the intro</span></span>
+      <a href="../../book/part3/kv-cache.html" class="pagination-link" aria-label="KV Cache">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">KV Cache</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part2/Tokenization.html" class="pagination-link" aria-label="Tokenization">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tokenization</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
