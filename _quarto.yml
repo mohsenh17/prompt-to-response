@@ -33,6 +33,7 @@ book:
         - book/part3/transformer-architecture.md
         - book/part3/attention-computation.md
         - book/part3/kv-cache.md
+        - book/part3/gpu-execution.md
 
     - part: "The Forbidden Archive"
       chapters: []
