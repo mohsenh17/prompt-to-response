@@ -1,0 +1,112 @@
+<svg width="1200" height="1550" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+
+<!-- CORE IDEA -->
+<rect x="50" y="80" width="1100" height="160" class="box"/>
+<text x="70" y="110" class="section">Core Idea</text>
+<text x="80" y="140" class="text">• Autoregressive decoding recomputes attention over all previous tokens</text>
+<text x="80" y="165" class="text">• KV cache stores Keys &amp; Values once and reuses them for all future steps</text>
+<text x="80" y="190" class="text">• Eliminates redundant projection + recomputation during generation</text>
+<text x="80" y="215" class="code">Without cache: O(T²) recomputation → With cache: O(T)</text>
+
+<!-- WHY IT MATTERS -->
+<rect x="50" y="260" width="1100" height="150" class="box"/>
+<text x="70" y="290" class="section">Why It Matters in Production</text>
+<text x="80" y="320" class="text">Each new token attends to all previous tokens in KV cache</text>
+<text x="80" y="345" class="text">Decode cost becomes memory-bandwidth bound (HBM), not compute bound</text>
+<text x="80" y="370" class="text">Long context → KV cache dominates GPU memory and throughput</text>
+
+<!-- STRUCTURE -->
+<rect x="50" y="430" width="540" height="230" class="box"/>
+<text x="70" y="460" class="section">What is Stored</text>
+
+<text x="80" y="490" class="text">For each layer:</text>
+<text x="90" y="515" class="code">K: [seq_len, heads, d_k]</text>
+<text x="90" y="540" class="code">V: [seq_len, heads, d_v]</text>
+
+<text x="80" y="575" class="text">Stored per token, per layer, per head</text>
+<text x="80" y="600" class="text">Q is NOT stored (used once per step)</text>
+
+<text x="80" y="630" class="text">Growth: linear in sequence length</text>
+
+<!-- ATTENTION VIEW -->
+<rect x="610" y="430" width="540" height="230" class="box"/>
+<text x="630" y="460" class="section">Attention with KV Cache</text>
+
+<text x="640" y="490" class="code">o_t = softmax(Q_t K_cacheᵀ) V_cache</text>
+
+<text x="640" y="525" class="text">At step t:</text>
+<text x="650" y="550" class="text">• Q_t computed fresh</text>
+<text x="650" y="575" class="text">• K/V appended once per token</text>
+<text x="650" y="600" class="text">• All past K/V reused</text>
+
+<text x="640" y="630" class="text">No recomputation of history</text>
+
+<!-- WITHOUT VS WITH -->
+<rect x="50" y="680" width="1100" height="170" class="box"/>
+<text x="70" y="710" class="section">Without vs With KV Cache</text>
+
+<text x="80" y="740" class="text">Without cache:</text>
+<text x="90" y="765" class="code">Recompute K,V for all tokens at every step → O(T²)</text>
+
+<text x="80" y="800" class="text">With cache:</text>
+<text x="90" y="825" class="code">Compute K,V once → reuse → O(T)</text>
+
+<!-- MEMORY FORMULA -->
+<rect x="50" y="870" width="1100" height="170" class="box"/>
+<text x="70" y="900" class="section">Memory Cost</text>
+
+<text x="80" y="930" class="code">KV bytes = 2 × L × n_kv_heads × d_k × seq_len × bytes</text>
+
+<text x="80" y="960" class="text">Key drivers:</text>
+<text x="90" y="985" class="text">• Layers (L)</text>
+<text x="90" y="1010" class="text">• KV heads (GQA reduces this)</text>
+<text x="90" y="1035" class="text">• Context length (linear growth)</text>
+
+<!-- BOTTLENECK -->
+<rect x="50" y="1060" width="540" height="220" class="box"/>
+<text x="70" y="1090" class="section">Decode Bottleneck</text>
+
+<text x="80" y="1120" class="text">Each token requires reading full KV cache</text>
+<text x="80" y="1145" class="text">→ HBM bandwidth bound (not FLOPs)</text>
+
+<text x="80" y="1175" class="text">At long context:</text>
+<text x="90" y="1200" class="code">1–10 GB memory read per token step</text>
+
+<text x="80" y="1230" class="text">Result: longer context = slower generation</text>
+
+<!-- PREFILL VS DECODE -->
+<rect x="610" y="1060" width="540" height="220" class="box"/>
+<text x="630" y="1090" class="section">Prefill vs Decode</text>
+
+<text x="640" y="1120" class="text">Prefill:</text>
+<text x="650" y="1145" class="code">Parallel matmul → compute-bound</text>
+
+<text x="640" y="1180" class="text">Decode:</text>
+<text x="650" y="1205" class="code">Vector × matrix → bandwidth-bound</text>
+
+<text x="640" y="1240" class="text">Same model, different bottleneck regime</text>
+
+<!-- OPTIMIZATIONS -->
+<rect x="50" y="1300" width="1100" height="200" class="box"/>
+<text x="70" y="1330" class="section">Key Optimizations</text>
+
+<text x="80" y="1360" class="text">• GQA: reduce KV heads → smaller cache</text>
+<text x="80" y="1385" class="text">• PagedAttention: avoid fragmentation (paging instead of contiguous memory)</text>
+<text x="80" y="1410" class="text">• Prefix sharing: reuse KV for shared prompts</text>
+<text x="80" y="1435" class="text">• INT8/FP8 KV cache: 2× memory reduction</text>
+<text x="80" y="1460" class="text">• Eviction policies: sliding window / H2O / SnapKV</text>
+
+<text x="80" y="1490" class="code">Goal: maximize GPU utilization under fixed HBM budget</text>
+
+
+</svg>
