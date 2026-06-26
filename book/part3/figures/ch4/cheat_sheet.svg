@@ -1,0 +1,127 @@
+<svg width="1200" height="1700" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+<!-- TITLE -->
+<text x="50" y="55" class="title">GPU Execution — LLM Inference Cheat Sheet</text>
+
+<!-- WHY GPU EXECUTION -->
+<rect x="50" y="80" width="1100" height="150" class="box"/>
+<text x="70" y="110" class="section">Why GPU Execution Matters</text>
+<text x="80" y="140" class="text">• Same model → 2× throughput difference depending on scheduling</text>
+<text x="80" y="165" class="text">• Bottlenecks: memory bandwidth, kernel launches, data layout</text>
+<text x="80" y="190" class="text">• LLM inference = GPU efficiency problem, not just model design</text>
+
+<!-- GPU ARCH -->
+<rect x="50" y="250" width="1100" height="180" class="box"/>
+<text x="70" y="280" class="section">GPU Architecture (H100 mental model)</text>
+<text x="80" y="310" class="text">• Many SMs (Streaming Multiprocessors) running in parallel</text>
+<text x="80" y="335" class="text">• Each SM: CUDA cores + Tensor Cores + shared memory (SRAM)</text>
+<text x="80" y="360" class="text">• Execution unit = warp (32 threads, SIMT execution)</text>
+<text x="80" y="385" class="text">• Goal: maximize occupancy + hide memory latency</text>
+
+<!-- MEMORY HIERARCHY -->
+<rect x="50" y="450" width="1100" height="200" class="box"/>
+<text x="70" y="480" class="section">Memory Hierarchy (speed vs size)</text>
+
+<text x="80" y="510" class="code">Registers (~80 TB/s) → L1/SRAM (~20 TB/s) → L2 (~5 TB/s) → HBM (~3.3 TB/s)</text>
+<text x="80" y="540" class="text">• Registers/SRAM: fast, tiny (keep hot data here)</text>
+<text x="80" y="565" class="text">• HBM (VRAM): large but slow → main bottleneck for decode</text>
+<text x="80" y="590" class="text">• PCIe/NVLink: cross-device / CPU communication (very expensive)</text>
+
+<text x="80" y="625" class="text">Key idea: performance = minimize HBM traffic</text>
+
+<!-- WARP EXECUTION -->
+<rect x="50" y="670" width="540" height="200" class="box"/>
+<text x="70" y="700" class="section">Warps &amp; Divergence</text>
+
+<text x="80" y="730" class="text">• 32 threads execute same instruction together</text>
+<text x="80" y="755" class="text">• Branch divergence → serialized execution</text>
+
+<text x="80" y="785" class="code">if (x > 0): A else: B</text>
+
+<text x="80" y="815" class="text">Warp splits → both paths executed sequentially</text>
+<text x="80" y="840" class="text">Result: lost parallel efficiency</text>
+
+<!-- TENSOR CORES -->
+<rect x="610" y="670" width="540" height="200" class="box"/>
+<text x="630" y="700" class="section">Tensor Cores</text>
+
+<text x="640" y="730" class="text">• Specialized matrix-multiply hardware</text>
+<text x="640" y="755" class="text">• ~1000 TFLOPS (BF16), ~2× FP8 performance</text>
+<text x="640" y="780" class="text">• Core reason transformers are fast on GPUs</text>
+
+<text x="640" y="815" class="code">16×16×16 matmul per instruction</text>
+
+<!-- ROOFLINE -->
+<rect x="50" y="890" width="1100" height="170" class="box"/>
+<text x="70" y="920" class="section">Roofline Model</text>
+
+<text x="80" y="950" class="code">Performance = min(FLOPs, Bandwidth × Arithmetic Intensity)</text>
+
+<text x="80" y="980" class="text">• Compute-bound: high reuse (prefill, large batches)</text>
+<text x="80" y="1005" class="text">• Memory-bound: low reuse (decode, batch size 1, attention)</text>
+<text x="80" y="1030" class="text">• Decode ≈ 1 FLOP/byte → severely bandwidth limited</text>
+
+<!-- PREFILL VS DECODE -->
+<rect x="50" y="1080" width="540" height="200" class="box"/>
+<text x="70" y="1110" class="section">Prefill vs Decode</text>
+
+<text x="80" y="1140" class="text">Prefill:</text>
+<text x="90" y="1165" class="text">• Batch matrix multiply</text>
+<text x="90" y="1190" class="text">• Compute-bound (tensor cores fully used)</text>
+
+<text x="80" y="1220" class="text">Decode:</text>
+<text x="90" y="1245" class="text">• One token at a time</text>
+<text x="90" y="1270" class="text">• Memory-bound (HBM dominates)</text>
+
+<!-- KERNEL FUSION -->
+<rect x="610" y="1080" width="540" height="200" class="box"/>
+<text x="630" y="1110" class="section">Kernel Fusion</text>
+
+<text x="640" y="1140" class="text">• Merge ops → reduce HBM reads/writes</text>
+<text x="640" y="1165" class="text">• Keep intermediates in SRAM/registers</text>
+
+<text x="640" y="1200" class="code">LayerNorm + Linear + Activation fused</text>
+
+<text x="640" y="1230" class="text">FlashAttention = fused attention kernel</text>
+<text x="640" y="1255" class="text">O(n²) memory → O(n)</text>
+
+<!-- QUANTIZATION -->
+<rect x="50" y="1300" width="540" height="200" class="box"/>
+<text x="70" y="1330" class="section">Quantization</text>
+
+<text x="80" y="1360" class="text">• INT8 / FP8 activations → ~2× throughput</text>
+<text x="80" y="1385" class="text">• INT4 weights → 4× bandwidth reduction</text>
+
+<text x="80" y="1420" class="text">Key idea:</text>
+<text x="90" y="1445" class="text">Decode is bandwidth-bound → quantization helps a lot</text>
+
+<!-- PARALLELISM -->
+<rect x="610" y="1300" width="540" height="200" class="box"/>
+<text x="630" y="1330" class="section">Parallelism</text>
+
+<text x="640" y="1360" class="text">Tensor parallel:</text>
+<text x="650" y="1385" class="text">Split weights across GPUs</text>
+
+<text x="640" y="1415" class="text">Pipeline parallel:</text>
+<text x="650" y="1440" class="text">Layer chunks across GPUs (bubble overhead)</text>
+
+<text x="640" y="1465" class="text">Goal: keep all GPUs busy</text>
+
+<!-- CUDA GRAPHS -->
+<rect x="50" y="1520" width="1100" height="150" class="box"/>
+<text x="70" y="1550" class="section">CUDA Graphs</text>
+
+<text x="80" y="1580" class="text">• Kernel launch overhead: ~5–10 μs per op</text>
+<text x="80" y="1605" class="text">• Decode = many small kernels → CPU becomes bottleneck</text>
+<text x="80" y="1630" class="text">• CUDA graphs: pre-capture execution → replay without CPU</text>
+
+</svg>
