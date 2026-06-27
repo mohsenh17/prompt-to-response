@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://llm.hoseini.work/index.html</loc>
+    <loc>https://llm.hosseini.work/index.html</loc>
     <lastmod>2026-06-27T00:47:04.294Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part1/chapter1/introduction.html</loc>
+    <loc>https://llm.hosseini.work/book/part1/chapter1/introduction.html</loc>
     <lastmod>2026-06-26T18:17:59.516Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part2/APIs_and_serving.html</loc>
+    <loc>https://llm.hosseini.work/book/part2/APIs_and_serving.html</loc>
     <lastmod>2026-04-29T21:24:46.778Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part2/Tokenization.html</loc>
+    <loc>https://llm.hosseini.work/book/part2/Tokenization.html</loc>
     <lastmod>2026-04-23T16:27:06.058Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part2/Embeddings_and_meaning.html</loc>
+    <loc>https://llm.hosseini.work/book/part2/Embeddings_and_meaning.html</loc>
     <lastmod>2026-04-27T21:51:16.578Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part3/transformer-architecture.html</loc>
+    <loc>https://llm.hosseini.work/book/part3/transformer-architecture.html</loc>
     <lastmod>2026-04-30T13:39:44.590Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part3/attention-computation.html</loc>
+    <loc>https://llm.hosseini.work/book/part3/attention-computation.html</loc>
     <lastmod>2026-05-01T14:33:37.105Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part3/kv-cache.html</loc>
+    <loc>https://llm.hosseini.work/book/part3/kv-cache.html</loc>
     <lastmod>2026-06-26T11:41:40.177Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/book/part3/gpu-execution.html</loc>
+    <loc>https://llm.hosseini.work/book/part3/gpu-execution.html</loc>
     <lastmod>2026-06-26T16:44:15.004Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-06-27T00:55:43.831Z</lastmod>
+    <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
+    <lastmod>2026-06-27T00:57:11.098Z</lastmod>
   </url>
   <url>
-    <loc>https://llm.hoseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-06-27T00:55:45.562Z</lastmod>
+    <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
+    <lastmod>2026-06-27T00:57:12.784Z</lastmod>
   </url>
 </urlset>
