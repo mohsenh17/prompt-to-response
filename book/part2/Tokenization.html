@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Tokenization – From Prompt to Response</title>
+<title>3&nbsp; Tokenization – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -115,11 +115,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<meta property="og:title" content="4&nbsp; Tokenization – From Prompt to Response">
+<meta property="og:title" content="3&nbsp; Tokenization – From Prompt to Response">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://mohsenh17.github.io/prompt-to-response/book/part2/figures/ch4/journey_part2_ch4.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="4&nbsp; Tokenization – From Prompt to Response">
+<meta name="twitter:title" content="3&nbsp; Tokenization – From Prompt to Response">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="https://mohsenh17.github.io/prompt-to-response/book/part2/figures/ch4/journey_part2_ch4.svg">
 <meta name="twitter:card" content="summary_large_image">
@@ -296,7 +296,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -328,7 +328,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Prompt to Response</span></span></a>
+ <span class="menu-text">Welcome</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -343,7 +343,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
   </div>
 </li>
       </ul>
@@ -360,19 +360,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
   </div>
 </li>
       </ul>
@@ -389,25 +389,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
   </div>
 </li>
       </ul>
@@ -438,14 +438,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#two-tokenization-chapters-two-different-problems" id="toc-two-tokenization-chapters-two-different-problems" class="nav-link active" data-scroll-target="#two-tokenization-chapters-two-different-problems"><span class="header-section-number">4.1</span> Two tokenization chapters, two different problems</a></li>
-  <li><a href="#the-encoding-pipeline" id="toc-the-encoding-pipeline" class="nav-link" data-scroll-target="#the-encoding-pipeline"><span class="header-section-number">4.2</span> The encoding pipeline</a></li>
-  <li><a href="#token-continuation-and-context-window-management" id="toc-token-continuation-and-context-window-management" class="nav-link" data-scroll-target="#token-continuation-and-context-window-management"><span class="header-section-number">4.3</span> Token continuation and context window management</a></li>
-  <li><a href="#the-decoding-pipeline-from-numbers-back-to-text" id="toc-the-decoding-pipeline-from-numbers-back-to-text" class="nav-link" data-scroll-target="#the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">4.4</span> The decoding pipeline: from numbers back to text</a></li>
-  <li><a href="#logprobs-and-their-uses-at-inference-time" id="toc-logprobs-and-their-uses-at-inference-time" class="nav-link" data-scroll-target="#logprobs-and-their-uses-at-inference-time"><span class="header-section-number">4.5</span> Logprobs and their uses at inference time</a></li>
-  <li><a href="#common-failure-modes" id="toc-common-failure-modes" class="nav-link" data-scroll-target="#common-failure-modes"><span class="header-section-number">4.6</span> Common failure modes</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">4.7</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">4.8</span> Further reading</a></li>
+  <li><a href="#two-tokenization-chapters-two-different-problems" id="toc-two-tokenization-chapters-two-different-problems" class="nav-link active" data-scroll-target="#two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</a></li>
+  <li><a href="#the-encoding-pipeline" id="toc-the-encoding-pipeline" class="nav-link" data-scroll-target="#the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</a></li>
+  <li><a href="#token-continuation-and-context-window-management" id="toc-token-continuation-and-context-window-management" class="nav-link" data-scroll-target="#token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</a></li>
+  <li><a href="#the-decoding-pipeline-from-numbers-back-to-text" id="toc-the-decoding-pipeline-from-numbers-back-to-text" class="nav-link" data-scroll-target="#the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</a></li>
+  <li><a href="#logprobs-and-their-uses-at-inference-time" id="toc-logprobs-and-their-uses-at-inference-time" class="nav-link" data-scroll-target="#logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</a></li>
+  <li><a href="#common-failure-modes" id="toc-common-failure-modes" class="nav-link" data-scroll-target="#common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.8</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -453,9 +453,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tokenization</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></h1>
 </div>
 
 
@@ -482,24 +482,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <img src="figures/ch4/journey_part2_ch4.svg" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.1: The journey through the Model Mind.
+Figure&nbsp;3.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
 <p>The request has arrived at the inference server. Before the model sees a single character, the text must be converted to numbers. This chapter covers that conversion in both directions and describes everything that can go wrong in between.</p>
 <hr>
-<section id="two-tokenization-chapters-two-different-problems" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="two-tokenization-chapters-two-different-problems"><span class="header-section-number">4.1</span> Two tokenization chapters, two different problems</h2>
+<section id="two-tokenization-chapters-two-different-problems" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</h2>
 <p>If you read the training section first, you have already seen tokenization as in a batch preprocessing environment which means a corpus is tokenized once, offline, before training begins. The vocabulary is fixed. The inputs are known and errors are caught early.</p>
 <p>Tokenization at inference is a different story. It runs on arbitrary user input, in real time, and on every request. It supposed to handle every string a user might type which could be multilingual text, source code, emoji, adversarial inputs, or a combination of all four. The encoded output feeds directly into a running model. The decoded output appears on a user’s screen, sometimes token by token while they watch.</p>
 <p>The concerns here are mostly operational, not theoretical. Understanding them is the difference between shipping reliable LLM applications or debugging corruption failures at 2am.</p>
 <hr>
 </section>
-<section id="the-encoding-pipeline" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="the-encoding-pipeline"><span class="header-section-number">4.2</span> The encoding pipeline</h2>
+<section id="the-encoding-pipeline" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</h2>
 <p>When a request arrives, the first operation is encoding: converting the messages array into a flat sequence of token IDs ready for the model. This happens in two steps that are easy to confuse but are conceptually different.</p>
-<section id="step-1-chat-template-application" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="step-1-chat-template-application"><span class="header-section-number">4.2.1</span> Step 1: chat template application</h3>
+<section id="step-1-chat-template-application" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="step-1-chat-template-application"><span class="header-section-number">3.2.1</span> Step 1: chat template application</h3>
 <p>The messages array has structure which includes roles, turns, and system prompts. The model has no concept of a dictionary. Before tokenization, the structured input must be flattened into a single string using a chat template.</p>
 <p>Each model family has its own template. For LLaMA 3:</p>
 <pre><code>&lt;|begin_of_text|&gt;
@@ -520,8 +520,8 @@ What is the capital of France?&lt;|im_end|&gt;
 &lt;|im_start|&gt;assistant</code></pre>
 <p>The special tokens (<code>&lt;|begin_of_text|&gt;</code>, <code>&lt;|eot_id|&gt;</code>, <code>&lt;|im_start|&gt;</code>) are part of the model’s vocabulary and were added during fine-tuning. The model learns to associate these markers with role transitions. Feeding the wrong template to the model causes it to sees an unexpected token sequence which in turn may cause the model to ignore the system prompt, and fail to complete the turn correctly, or produces outputs that look almost right but are systematically wrong in ways that can be hard to diagnose. This is one of the most common sources of bugs: no error is thrown yet the model just quietly misbehaves.</p>
 </section>
-<section id="step-2-token-encoding" class="level3" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="step-2-token-encoding"><span class="header-section-number">4.2.2</span> Step 2: token encoding</h3>
+<section id="step-2-token-encoding" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="step-2-token-encoding"><span class="header-section-number">3.2.2</span> Step 2: token encoding</h3>
 <p>Once the flat string is constructed, the tokenizer converts it to integer IDs. This is a deterministic step in which the same string always produces the same IDs given the same tokenizer.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"You are a helpful assistant."</span>},</span>
@@ -540,8 +540,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>logits <span class="op">=</span> model.forward(token_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The tokenizer runs on CPU and for typical prompt lengths it is fast enough to be negligible relative to model inference time. On the other hand, for very long prompts (100k+ tokens) it can become measurable and there are some inference frameworks that cache tokenized system prompts to avoid repeating this work on every request.</p>
 </section>
-<section id="special-tokens-that-require-explicit-handling" class="level3" data-number="4.2.3">
-<h3 data-number="4.2.3" class="anchored" data-anchor-id="special-tokens-that-require-explicit-handling"><span class="header-section-number">4.2.3</span> Special tokens that require explicit handling</h3>
+<section id="special-tokens-that-require-explicit-handling" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="special-tokens-that-require-explicit-handling"><span class="header-section-number">3.2.3</span> Special tokens that require explicit handling</h3>
 <p>Several special tokens need attention beyond the template:</p>
 <p><strong>Beginning of sequence (BOS).</strong> Many models expect a BOS token at position 0 and the tokenizer typically adds it automatically while some serving configurations require manual insertion. A missing BOS token causes silent quality degradation which means the model’s input distribution does not match training, and early tokens may be erratic.</p>
 <p><strong>End of turn markers.</strong> The template includes tokens marking the end of each turn and it must appear in the correct positions or the model misidentifies role boundaries.</p>
@@ -550,11 +550,11 @@ What is the capital of France?&lt;|im_end|&gt;
 <hr>
 </section>
 </section>
-<section id="token-continuation-and-context-window-management" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="token-continuation-and-context-window-management"><span class="header-section-number">4.3</span> Token continuation and context window management</h2>
+<section id="token-continuation-and-context-window-management" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</h2>
 <p>The context window is the maximum sequence length the model can process in a single forward pass which is typically a range between 8k to 128k tokens for current models. Managing what fits in this window is a critical operational concern.</p>
-<section id="count-with-the-tokenizer-not-your-intuition" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="count-with-the-tokenizer-not-your-intuition"><span class="header-section-number">4.3.1</span> Count with the tokenizer, not your intuition</h3>
+<section id="count-with-the-tokenizer-not-your-intuition" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="count-with-the-tokenizer-not-your-intuition"><span class="header-section-number">3.3.1</span> Count with the tokenizer, not your intuition</h3>
 <p>Token counts are not characters divided by four, or words divided by 0.75. They are the actual output of the tokenizer on the specific input string. Heuristics are inaccurate enough to cause real failures:</p>
 <ul>
 <li>Code tokenizes very differently from prose which means identifiers, operators, and whitespace have their own patterns</li>
@@ -576,8 +576,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> num_tokens</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The exact overhead is varied by model and template. Always validate against the API’s reported token counts on a representative sample.</p>
 </section>
-<section id="the-context-window-budget" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="the-context-window-budget"><span class="header-section-number">4.3.2</span> The context window budget</h3>
+<section id="the-context-window-budget" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="the-context-window-budget"><span class="header-section-number">3.3.2</span> The context window budget</h3>
 <p>In a typical production request, the context window is shared between several competing claims:</p>
 <pre><code>Total context window (e.g., 128k tokens)
 ├── System prompt              (fixed, e.g., 500–2,000 tokens)
@@ -590,18 +590,18 @@ What is the capital of France?&lt;|im_end|&gt;
 <p><strong>Summarization</strong> uses the model to compress earlier turns into a compact representation when history approaches the limit. With this approach it preserves semantic content at the cost of an additional model call.</p>
 <p><strong>Hierarchical retrieval</strong> stores full history externally and only retrieve the most relevant portions for the current turn. This approach requires a retrieval component but it can scale to arbitrarily long conversations.</p>
 </section>
-<section id="prompt-caching-and-its-token-implications" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="prompt-caching-and-its-token-implications"><span class="header-section-number">4.3.3</span> Prompt caching and its token implications</h3>
+<section id="prompt-caching-and-its-token-implications" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="prompt-caching-and-its-token-implications"><span class="header-section-number">3.3.3</span> Prompt caching and its token implications</h3>
 <p>Some APIs (Anthropic’s Claude, Google’s Gemini) offer explicit prompt caching: mark a portion of the prompt as cacheable, and subsequent requests that share the same prefix reuse the KV cache from the first request, charged at a reduced rate.</p>
 <p>For cost management, structure prompts with the stable content (system prompt, long documents) first and variable content (user messages, dynamic context) in the end. Token counting for cached prompts will distinguishs between newly processed tokens and cache-read tokens, as the API reports these separately and they have completely different cost implications.</p>
 <hr>
 </section>
 </section>
-<section id="the-decoding-pipeline-from-numbers-back-to-text" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">4.4</span> The decoding pipeline: from numbers back to text</h2>
+<section id="the-decoding-pipeline-from-numbers-back-to-text" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</h2>
 <p>After the model selects the next token ID (the selection process is covered in chapter “REFF”), the serving layer converts that ID back to text. This is less straightforward than it appears.</p>
-<section id="detokenization" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="detokenization"><span class="header-section-number">4.4.1</span> Detokenization</h3>
+<section id="detokenization" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="detokenization"><span class="header-section-number">3.4.1</span> Detokenization</h3>
 <p>The inverse operation: token IDs to string.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> [<span class="dv">15223</span>, <span class="dv">374</span>, <span class="dv">279</span>, <span class="dv">6864</span>, <span class="dv">315</span>, <span class="dv">9822</span>, <span class="dv">13</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> tokenizer.decode(token_ids)</span>
@@ -610,8 +610,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <p><strong>Byte-level BPE and UTF-8 reconstruction.</strong> In byte-level tokenizers, tokens represent raw bytes rather than complete characters. Because UTF-8 characters are able to span multiple bytes, a single character (many Chinese characters or emojis) may be splited across several tokens. Decoding each token independently can therefore produce invalid text or replacement symbols. The correct procedure is to concatenate all token bytes first and then perform a single UTF-8 decode, ensuring the original characters are correctly reconstructed.</p>
 <p><strong>Special tokens in output.</strong> If the model produces a special token (end of text, role marker, tool call token), detokenization must strip it, convert it to a meaningful representation, or treat it as a halt signal. Which action is correct totally depends on context and must be handled explicitly.</p>
 </section>
-<section id="streaming-detokenization" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="streaming-detokenization"><span class="header-section-number">4.4.2</span> Streaming detokenization</h3>
+<section id="streaming-detokenization" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="streaming-detokenization"><span class="header-section-number">3.4.2</span> Streaming detokenization</h3>
 <p>In streaming mode, tokens arrive one at a time and must be decoded incrementally which creates a specific problem: a byte sequence that spans multiple tokens cannot be decoded until all of its bytes have arrived.</p>
 <p>Consider a Chinese character requiring 3 UTF-8 bytes, split across three tokens of 1 byte each:</p>
 <ul>
@@ -623,11 +623,11 @@ What is the capital of France?&lt;|im_end|&gt;
 <hr>
 </section>
 </section>
-<section id="logprobs-and-their-uses-at-inference-time" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="logprobs-and-their-uses-at-inference-time"><span class="header-section-number">4.5</span> Logprobs and their uses at inference time</h2>
+<section id="logprobs-and-their-uses-at-inference-time" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</h2>
 <p>Most APIs can optionally return the log probabilities of generated tokens which is more useful than it might initially appear.</p>
-<section id="what-logprobs-tell-you" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="what-logprobs-tell-you"><span class="header-section-number">4.5.1</span> What logprobs tell you</h3>
+<section id="what-logprobs-tell-you" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="what-logprobs-tell-you"><span class="header-section-number">3.5.1</span> What logprobs tell you</h3>
 <p>For each generated token, logprobs report the log probability the model assigned to the chosen token, and optionally the top-k alternatives with their probabilities:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Paris"</span><span class="fu">,</span></span>
@@ -640,8 +640,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A logprob of -0.0023 means the model assigned probability <code>exp(-0.0023) ≈ 0.998</code> to this token which means the model is essentially certain. A logprob of -6.12 means <code>exp(-6.12) ≈ 0.002</code> and represent a distant second choice.</p>
 </section>
-<section id="classification-without-generation" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="classification-without-generation"><span class="header-section-number">4.5.2</span> Classification without generation</h3>
+<section id="classification-without-generation" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="classification-without-generation"><span class="header-section-number">3.5.2</span> Classification without generation</h3>
 <p>For binary or multiple-choice tasks, logprobs let you skip generating a full response and instead read the probabilities of specific tokens directly which is faster and cheaper:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.completions.create(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-4o"</span>,</span>
@@ -657,8 +657,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>is_positive <span class="op">=</span> yes_logprob <span class="op">&gt;</span> no_logprob</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="calibration-and-uncertainty-estimation" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="calibration-and-uncertainty-estimation"><span class="header-section-number">4.5.3</span> Calibration and uncertainty estimation</h3>
+<section id="calibration-and-uncertainty-estimation" class="level3" data-number="3.5.3">
+<h3 data-number="3.5.3" class="anchored" data-anchor-id="calibration-and-uncertainty-estimation"><span class="header-section-number">3.5.3</span> Calibration and uncertainty estimation</h3>
 <p>The perplexity of a generated response which is represented by the average negative log probability per token is a rough proxy for the model’s confidence:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -669,8 +669,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <hr>
 </section>
 </section>
-<section id="common-failure-modes" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="common-failure-modes"><span class="header-section-number">4.6</span> Common failure modes</h2>
+<section id="common-failure-modes" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</h2>
 <p>Tokenization at inference produces specific, reproducible failure patterns. Knowing them saves significant debugging time.</p>
 <p><strong>Wrong tokenizer for the model.</strong> Using the GPT-2 tokenizer with a LLaMA model produces completely wrong token ID sequences. The model interprets unrelated IDs as completely different tokens which in turn leads to a garbage output.</p>
 <p><strong>Wrong chat template.</strong> Applying the wrong template produces subtly wrong token sequences. The model may ignore the system prompt, continue the user turn instead of starting an assistant turn, or generate role labels as content. This also fails silently and is especially confusing because outputs look almost right but are systematically off.</p>
@@ -679,8 +679,8 @@ What is the capital of France?&lt;|im_end|&gt;
 <p><strong>Encoding/decoding asymmetry.</strong> <code>decode(encode(s))</code> may not equal <code>s</code> for strings containing Unicode normalization differences, special tokens with non-standard decoding, or whitespace that the tokenizer normalizes.</p>
 <hr>
 </section>
-<section id="key-takeaways" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">4.7</span> Key takeaways</h2>
+<section id="key-takeaways" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</h2>
 <ul>
 <li>Chat template application: flattening the messages array into a string with model-specific role delimiters it happens before tokenization and is model-specific; the wrong template produces silent quality degradation</li>
 <li>Token counting must use the actual tokenizer, not character or word heuristics; accurate counting is essential for context window management and cost control</li>
@@ -696,14 +696,14 @@ What is the capital of France?&lt;|im_end|&gt;
 <img src="figures/ch4/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.2: Cheat sheet.
+Figure&nbsp;3.2: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">4.8</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.8</span> Further reading</h2>
 <ul>
 <li>HuggingFace Tokenizers documentation: Fast tokenizers and chat templates.</li>
 <li>OpenAI Cookbook: How to count tokens with tiktoken.</li>
@@ -1133,12 +1133,12 @@ Figure&nbsp;4.2: Cheat sheet.
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../../book/part2/APIs_and_serving.html" class="pagination-link" aria-label="APIs and Model Serving">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../../book/part2/Embeddings_and_meaning.html" class="pagination-link" aria-label="Embeddings and Meaning Representation">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
