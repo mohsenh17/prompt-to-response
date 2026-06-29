@@ -561,6 +561,3 @@ very long context workloads where even INT8 quantization is insufficient.
 - 
 
 ---
-
-*← Previous: [08 — Attention computation](08-attention-computation.md)*  
-*Next: [10 — GPU execution →](10-gpu-execution.md)*

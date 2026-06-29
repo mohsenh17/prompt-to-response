@@ -556,5 +556,3 @@ long-context generation is slower per token than short-context generation.
 
 ---
 
-*← Previous: [07 — Transformer architecture](07-transformer-architecture.md)*  
-*Next: [09 — KV cache →](09-kv-cache.md)*

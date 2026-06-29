@@ -723,6 +723,3 @@ syntactic rules.
   explanation of the architecture available. Essential companion to this chapter.
 
 ---
-
-*← Previous: [06 — Embeddings and meaning representation](../part1-prompt-layer/06-embeddings-and-meaning.md)*  
-*Next: [08 — Attention computation →](08-attention-computation.md)*
