@@ -546,5 +546,3 @@ step) and not for prefill (variable sequence length per request).
 
 ---
 
-*← Previous: [09 — KV cache](09-kv-cache.md)*  
-*Next: [11 — Decoding and sampling →](11-decoding-and-sampling.md)*

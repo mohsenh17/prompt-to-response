@@ -425,6 +425,3 @@ latency targets for different user tiers).
   Serving with PagedAttention.*: The vLLM paper; foundational for modern serving.
 
 ---
-
-*← Previous: [02 — Prompt engineering and structure](02-prompt-engineering-and-structure.md)*  
-*Next: [04 — Tokenization →](04-tokenization.md)*

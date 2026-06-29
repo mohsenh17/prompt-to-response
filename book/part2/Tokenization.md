@@ -406,6 +406,3 @@ non-standard decoding, or whitespace that the tokenizer normalizes.
 - HuggingFace (2023): Chat Templating Guide. 
 
 ---
-
-*← Previous: [03 — APIs and model serving](03-apis-and-serving.md)*  
-*Next: [05 — Context windows →](05-context-windows.md)*

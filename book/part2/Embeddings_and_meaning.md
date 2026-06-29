@@ -605,6 +605,3 @@ subject of chapter "REFF".
   standard benchmark for comparing embedding models across tasks and domains.
 
 ---
-
-*← Previous: [05 — Context windows](05-context-windows.md)*  
-*Next: [07 — Transformer architecture →](../part2-model-mind/07-transformer-architecture.md)*

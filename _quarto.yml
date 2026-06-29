@@ -59,6 +59,7 @@ format:
     number-sections: true
     code-copy: true
     smooth-scroll: true
+    page-navigation: true
 
   pdf:
     documentclass: book
@@ -72,6 +73,7 @@ format:
       - right=0.7in
     fontsize: 10pt
     linestretch: 1
+    page-navigation: false
 
   epub: default
 
