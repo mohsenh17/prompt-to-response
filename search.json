@@ -102,7 +102,7 @@
     "href": "book/part2/APIs_and_serving.html#further-reading",
     "title": "2  APIs and Model Serving",
     "section": "2.9 Further reading",
-    "text": "2.9 Further reading\n\nYu et al. (2022). Orca: A Distributed Serving System for Transformer-Based Generative Models.: Introduces continuous batching.\nKwon et al. (2023). Efficient Memory Management for Large Language Model Serving with PagedAttention.: The vLLM paper; foundational for modern serving.\n\n\n← Previous: 02 — Prompt engineering and structure\nNext: 04 — Tokenization →\n\n\n\n\n[1] G.-I. Yu, J. S. Jeong, G.-W. Kim, S. Kim, and B.-G. Chun, “Orca: A distributed serving system for \\(\\{\\)transformer-based\\(\\}\\) generative models,” in 16th USENIX symposium on operating systems design and implementation (OSDI 22), 2022, pp. 521–538.",
+    "text": "2.9 Further reading\n\nYu et al. (2022). Orca: A Distributed Serving System for Transformer-Based Generative Models.: Introduces continuous batching.\nKwon et al. (2023). Efficient Memory Management for Large Language Model Serving with PagedAttention.: The vLLM paper; foundational for modern serving.\n\n\n\n\n\n\n[1] G.-I. Yu, J. S. Jeong, G.-W. Kim, S. Kim, and B.-G. Chun, “Orca: A distributed serving system for \\(\\{\\)transformer-based\\(\\}\\) generative models,” in 16th USENIX symposium on operating systems design and implementation (OSDI 22), 2022, pp. 521–538.",
     "crumbs": [
       "The Runes Beneath Language",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>APIs and Model Serving</span>"
@@ -190,7 +190,7 @@
     "href": "book/part2/Tokenization.html#further-reading",
     "title": "3  Tokenization",
     "section": "3.8 Further reading",
-    "text": "3.8 Further reading\n\nHuggingFace Tokenizers documentation: Fast tokenizers and chat templates.\nOpenAI Cookbook: How to count tokens with tiktoken.\nHuggingFace (2023): Chat Templating Guide.\n\n\n← Previous: 03 — APIs and model serving\nNext: 05 — Context windows →",
+    "text": "3.8 Further reading\n\nHuggingFace Tokenizers documentation: Fast tokenizers and chat templates.\nOpenAI Cookbook: How to count tokens with tiktoken.\nHuggingFace (2023): Chat Templating Guide.",
     "crumbs": [
       "The Runes Beneath Language",
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Tokenization</span>"
@@ -322,7 +322,7 @@
     "href": "book/part2/Embeddings_and_meaning.html#further-reading",
     "title": "4  Embeddings and Meaning Representation",
     "section": "4.12 Further reading",
-    "text": "4.12 Further reading\n\nElhage et al. (2021). A Mathematical Framework for Transformer Circuits.: The residual stream model and how information flows through transformer layers.\nWang et al. (2022). Text Embeddings by Weakly-Supervised Contrastive Pre-training.: The E5 paper; representative of modern embedding model training with hard negatives.\nKusupati et al. (2022). Matryoshka Representation Learning.: MRL for flexible-dimension embeddings from a single model.\nMuennighoff et al. (2023). MTEB: Massive Text Embedding Benchmark.: The standard benchmark for comparing embedding models across tasks and domains.\n\n\n← Previous: 05 — Context windows\nNext: 07 — Transformer architecture →",
+    "text": "4.12 Further reading\n\nElhage et al. (2021). A Mathematical Framework for Transformer Circuits.: The residual stream model and how information flows through transformer layers.\nWang et al. (2022). Text Embeddings by Weakly-Supervised Contrastive Pre-training.: The E5 paper; representative of modern embedding model training with hard negatives.\nKusupati et al. (2022). Matryoshka Representation Learning.: MRL for flexible-dimension embeddings from a single model.\nMuennighoff et al. (2023). MTEB: Massive Text Embedding Benchmark.: The standard benchmark for comparing embedding models across tasks and domains.",
     "crumbs": [
       "The Runes Beneath Language",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Embeddings and Meaning Representation</span>"
@@ -476,7 +476,7 @@
     "href": "book/part3/transformer-architecture.html#further-reading",
     "title": "5  Transformer Architecture",
     "section": "5.14 Further reading",
-    "text": "5.14 Further reading\n\nVaswani et al. (2017). Attention Is All You Need.: The original transformer paper.\nAlammar, J. (2018). The Illustrated Transformer.: The clearest visual explanation of the architecture available. Essential companion to this chapter.\n\n\n← Previous: 06 — Embeddings and meaning representation\nNext: 08 — Attention computation →",
+    "text": "5.14 Further reading\n\nVaswani et al. (2017). Attention Is All You Need.: The original transformer paper.\nAlammar, J. (2018). The Illustrated Transformer.: The clearest visual explanation of the architecture available. Essential companion to this chapter.",
     "crumbs": [
       "The Labyrinth of Attention",
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Transformer Architecture</span>"
@@ -608,7 +608,7 @@
     "href": "book/part3/attention-computation.html#further-reading",
     "title": "6  Attention Computation",
     "section": "6.11 Further reading",
-    "text": "6.11 Further reading\n\nDao et al. (2022). FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.: The foundational paper.\nShazeer (2019). Fast Transformer Decoding: One Write-Head is All You Need.: The original Multi-Query Attention paper.\nAinslie et al. (2023). GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints.: Grouped-Query Attention.\nLiu et al. (2023). Ring Attention with Blockwise Transformers for Near-Infinite Context.: Ring attention for distributed long-context computation.\nGu & Dao (2023). Mamba: Linear-Time Sequence Modeling with Selective State Spaces.: The leading SSM alternative to attention.\n\n\n← Previous: 07 — Transformer architecture\nNext: 09 — KV cache →",
+    "text": "6.11 Further reading\n\nDao et al. (2022). FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.: The foundational paper.\nShazeer (2019). Fast Transformer Decoding: One Write-Head is All You Need.: The original Multi-Query Attention paper.\nAinslie et al. (2023). GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints.: Grouped-Query Attention.\nLiu et al. (2023). Ring Attention with Blockwise Transformers for Near-Infinite Context.: Ring attention for distributed long-context computation.\nGu & Dao (2023). Mamba: Linear-Time Sequence Modeling with Selective State Spaces.: The leading SSM alternative to attention.",
     "crumbs": [
       "The Labyrinth of Attention",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Attention Computation</span>"
@@ -740,7 +740,7 @@
     "href": "book/part3/kv-cache.html#further-reading",
     "title": "7  KV Cache",
     "section": "7.11 Further reading",
-    "text": "7.11 Further reading\n\nKwon et al. (2023). Efficient Memory Management for Large Language Model Serving with PagedAttention. — the foundational work on paged KV cache management.\nZheng et al. (2023). SGLang: Efficient Execution of Structured Language Model Programs. — Introduces radix attention for generalized prefix tree sharing.\nXiao et al. (2023). Efficient Streaming Language Models with Attention Sinks. — StreamingLLM and the attention sink phenomenon; directly relevant to eviction strategy design.\nZhang et al. (2023). H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models. — Attention-score-based eviction.\n\n\n\n← Previous: 08 — Attention computation\nNext: 10 — GPU execution →",
+    "text": "7.11 Further reading\n\nKwon et al. (2023). Efficient Memory Management for Large Language Model Serving with PagedAttention. — the foundational work on paged KV cache management.\nZheng et al. (2023). SGLang: Efficient Execution of Structured Language Model Programs. — Introduces radix attention for generalized prefix tree sharing.\nXiao et al. (2023). Efficient Streaming Language Models with Attention Sinks. — StreamingLLM and the attention sink phenomenon; directly relevant to eviction strategy design.\nZhang et al. (2023). H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models. — Attention-score-based eviction.",
     "crumbs": [
       "The Labyrinth of Attention",
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>KV Cache</span>"
@@ -850,7 +850,7 @@
     "href": "book/part3/gpu-execution.html#further-reading",
     "title": "8  GPU Execution",
     "section": "8.10 Further reading",
-    "text": "8.10 Further reading\n\nWilliams et al. (2009). Roofline: An Insightful Visual Performance Model for Multicore Architectures. — The roofline model; essential reading for GPU performance analysis regardless of domain.\nDao et al. (2022). FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness. — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.\nDettmers et al. (2022). LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale. — The outlier problem and mixed-precision INT8 quantization.\nXiao et al. (2023). SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models. — Migrating quantization difficulty from activations to weights for clean INT8 inference.\nShoeybi et al. (2019). Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism. — Tensor and pipeline parallelism; the foundational implementation reference.\n\n\n← Previous: 09 — KV cache\nNext: 11 — Decoding and sampling →",
+    "text": "8.10 Further reading\n\nWilliams et al. (2009). Roofline: An Insightful Visual Performance Model for Multicore Architectures. — The roofline model; essential reading for GPU performance analysis regardless of domain.\nDao et al. (2022). FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness. — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.\nDettmers et al. (2022). LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale. — The outlier problem and mixed-precision INT8 quantization.\nXiao et al. (2023). SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models. — Migrating quantization difficulty from activations to weights for clean INT8 inference.\nShoeybi et al. (2019). Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism. — Tensor and pipeline parallelism; the foundational implementation reference.",
     "crumbs": [
       "The Labyrinth of Attention",
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>GPU Execution</span>"
