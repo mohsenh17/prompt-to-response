@@ -37,7 +37,8 @@ book:
         - book/part3/decoding-and-sampling.md
 
     - part: "The Forbidden Archive"
-      chapters: []
+      chapters: 
+        - book/part4/parametric-vs-external-memory.md
 
     - part: "The Forging of Intelligence"
       chapters: []
