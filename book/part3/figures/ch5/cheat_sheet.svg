@@ -1,0 +1,119 @@
+<svg width="1200" height="1350" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+
+<!-- WHY DECODING MATTERS -->
+<rect x="50" y="75" width="1100" height="150" class="box"/>
+<text x="70" y="110" class="section">Why Decoding Matters</text>
+<text x="80" y="140" class="text">• Same logits → different text depending on sampling strategy</text>
+<text x="80" y="165" class="text">• 100k-token distribution → repeated decisions shape output quality</text>
+<text x="80" y="190" class="text">• Tradeoff: accuracy vs diversity vs coherence vs cost</text>
+
+<!-- LOGITS PROBLEM -->
+<rect x="50" y="245" width="1100" height="179" class="box"/>
+<text x="70" y="280" class="section">The Decoding Problem</text>
+
+<text x="80" y="310" class="text">Model output = probability distribution over vocabulary</text>
+
+<text x="80" y="340" class="code">logits → softmax → p(token)</text>
+
+<text x="80" y="370" class="text">• Greedy = argmax → repetitive / deterministic</text>
+<text x="80" y="395" class="text">• Full sampling = noisy → incoherent</text>
+<text x="80" y="420" class="text">Goal: controlled stochasticity</text>
+
+<!-- GREEDY + BEAM -->
+<rect x="50" y="440" width="540" height="200" class="box"/>
+<text x="70" y="470" class="section">Greedy &amp; Beam Search</text>
+
+<text x="80" y="500" class="text">Greedy:</text>
+<text x="90" y="525" class="text">• argmax at each step</text>
+<text x="90" y="550" class="text">• fast, deterministic</text>
+<text x="90" y="575" class="text">• repetition-prone</text>
+
+<text x="80" y="605" class="text">Beam Search:</text>
+<text x="90" y="630" class="text">• keep top-k sequences</text>
+<text x="90" y="655" class="text">• higher likelihood, less diversity</text>
+
+<!-- TEMPERATURE -->
+<rect x="610" y="440" width="540" height="200" class="box"/>
+<text x="630" y="470" class="section">Temperature Scaling</text>
+
+<text x="640" y="500" class="code">softmax(logits / T)</text>
+
+<text x="640" y="530" class="text">• T &amp;lt; 1 → sharper distribution</text>
+<text x="640" y="555" class="text">• T = 1 → model distribution</text>
+<text x="640" y="580" class="text">• T &amp;gt; 1 → more randomness</text>
+
+<text x="640" y="610" class="text">Controls entropy of sampling</text>
+
+<!-- TOP-K / TOP-P -->
+<rect x="50" y="660" width="540" height="200" class="box"/>
+<text x="70" y="690" class="section">Top-k / Top-p Sampling</text>
+
+<text x="80" y="720" class="text">Top-k:</text>
+<text x="90" y="745" class="text">• keep k most likely tokens</text>
+<text x="90" y="770" class="text">• fixed cutoff</text>
+
+<text x="80" y="800" class="text">Top-p (nucleus):</text>
+<text x="90" y="825" class="text">• smallest set with mass ≥ p</text>
+<text x="90" y="850" class="text">• adaptive cutoff</text>
+
+<!-- MIN-P + REPETITION -->
+<rect x="610" y="660" width="540" height="200" class="box"/>
+<text x="630" y="690" class="section">Min-p &amp; Repetition Control</text>
+
+<text x="640" y="720" class="text">Min-p:</text>
+<text x="650" y="745" class="text">• threshold = min_p × max_prob</text>
+<text x="650" y="770" class="text">• removes long tail noise</text>
+
+<text x="640" y="800" class="text">Repetition penalties:</text>
+<text x="650" y="825" class="text">• frequency / presence / multiplicative</text>
+<text x="650" y="850" class="text">• reduces looping behavior</text>
+
+<!-- CONSTRAINED + BEST OF N -->
+<rect x="50" y="880" width="540" height="210" class="box"/>
+<text x="70" y="910" class="section">Constrained &amp; Best-of-n</text>
+
+<text x="80" y="940" class="text">Constrained decoding:</text>
+<text x="90" y="965" class="text">• mask invalid tokens (FSM / grammar)</text>
+<text x="90" y="990" class="text">• guarantees valid JSON / schema</text>
+
+<text x="80" y="1020" class="text">Best-of-n:</text>
+<text x="90" y="1045" class="text">• sample n outputs</text>
+<text x="90" y="1070" class="text">• rerank with reward/verifier</text>
+
+<!-- SPECULATIVE + CoT -->
+<rect x="610" y="880" width="540" height="210" class="box"/>
+<text x="630" y="910" class="section">Speculative + Chain-of-Thought</text>
+
+<text x="640" y="940" class="text">Speculative decoding:</text>
+<text x="650" y="965" class="text">• draft model proposes k tokens</text>
+<text x="650" y="990" class="text">• target accepts/rejects</text>
+
+<text x="640" y="1020" class="text">Chain-of-thought:</text>
+<text x="650" y="1045" class="text">• generate reasoning steps first</text>
+<text x="650" y="1070" class="text">• KV cache = working memory</text>
+
+<!-- STRATEGY TABLE -->
+<rect x="50" y="1110" width="1100" height="220" class="box"/>
+<text x="70" y="1140" class="section">Strategy Selection (Practical Guide)</text>
+
+<text x="80" y="1170" class="code">Factual: greedy / low-T (0–0.3)</text>
+<text x="80" y="1195" class="code">Code: low-T + top-p (0.2–0.4, p=0.95)</text>
+<text x="80" y="1220" class="code">Chat: T=0.7–0.9, p=0.9</text>
+<text x="80" y="1245" class="code">Creative: T=1.0–1.2, p=0.95</text>
+
+<text x="80" y="1275" class="text">• Lower temperature = accuracy ↑, diversity ↓</text>
+<text x="80" y="1300" class="text">• Top-p controls tail risk</text>
+<text x="80" y="1325" class="text">• Sampling choices dominate output behavior</text>
+
+<!-- KEY TAKEAWAYS -->
+</svg>

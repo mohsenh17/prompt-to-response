@@ -34,6 +34,7 @@ book:
         - book/part3/attention-computation.md
         - book/part3/kv-cache.md
         - book/part3/gpu-execution.md
+        - book/part3/decoding-and-sampling.md
 
     - part: "The Forbidden Archive"
       chapters: []
