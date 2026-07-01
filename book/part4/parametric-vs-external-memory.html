@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Tokenization – From Prompt to Response</title>
+<title>10&nbsp; Parametric Memory vs External Memory – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -68,8 +33,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part2/Embeddings_and_meaning.html" rel="next">
-<link href="../../book/part2/APIs_and_serving.html" rel="prev">
+<link href="../../book/part3/decoding-and-sampling.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -115,13 +79,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<meta property="og:title" content="3&nbsp; Tokenization – From Prompt to Response">
+<meta property="og:title" content="10&nbsp; Parametric Memory vs External Memory – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part2/figures/ch4/journey_part2_ch4.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part4/figures/ch2/journey_part4_ch2.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="3&nbsp; Tokenization – From Prompt to Response">
+<meta name="twitter:title" content="10&nbsp; Parametric Memory vs External Memory – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part2/figures/ch4/journey_part2_ch4.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part4/figures/ch2/journey_part4_ch2.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -296,7 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -365,7 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
   </div>
 </li>
@@ -429,7 +393,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
   </div>
 </li>
@@ -457,14 +421,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#two-tokenization-chapters-two-different-problems" id="toc-two-tokenization-chapters-two-different-problems" class="nav-link active" data-scroll-target="#two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</a></li>
-  <li><a href="#the-encoding-pipeline" id="toc-the-encoding-pipeline" class="nav-link" data-scroll-target="#the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</a></li>
-  <li><a href="#token-continuation-and-context-window-management" id="toc-token-continuation-and-context-window-management" class="nav-link" data-scroll-target="#token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</a></li>
-  <li><a href="#the-decoding-pipeline-from-numbers-back-to-text" id="toc-the-decoding-pipeline-from-numbers-back-to-text" class="nav-link" data-scroll-target="#the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</a></li>
-  <li><a href="#logprobs-and-their-uses-at-inference-time" id="toc-logprobs-and-their-uses-at-inference-time" class="nav-link" data-scroll-target="#logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</a></li>
-  <li><a href="#common-failure-modes" id="toc-common-failure-modes" class="nav-link" data-scroll-target="#common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.8</span> Further reading</a></li>
+  <li><a href="#two-different-ways-of-knowing" id="toc-two-different-ways-of-knowing" class="nav-link active" data-scroll-target="#two-different-ways-of-knowing"><span class="header-section-number">10.1</span> Two different ways of knowing</a></li>
+  <li><a href="#what-parametric-memory-is" id="toc-what-parametric-memory-is" class="nav-link" data-scroll-target="#what-parametric-memory-is"><span class="header-section-number">10.2</span> What parametric memory is</a></li>
+  <li><a href="#what-external-memory-is" id="toc-what-external-memory-is" class="nav-link" data-scroll-target="#what-external-memory-is"><span class="header-section-number">10.3</span> What external memory is</a></li>
+  <li><a href="#the-complementary-structure" id="toc-the-complementary-structure" class="nav-link" data-scroll-target="#the-complementary-structure"><span class="header-section-number">10.4</span> The complementary structure</a></li>
+  <li><a href="#when-to-rely-on-parametric-memory" id="toc-when-to-rely-on-parametric-memory" class="nav-link" data-scroll-target="#when-to-rely-on-parametric-memory"><span class="header-section-number">10.5</span> When to rely on parametric memory</a></li>
+  <li><a href="#when-to-rely-on-external-memory" id="toc-when-to-rely-on-external-memory" class="nav-link" data-scroll-target="#when-to-rely-on-external-memory"><span class="header-section-number">10.6</span> When to rely on external memory</a></li>
+  <li><a href="#the-interaction-between-the-two" id="toc-the-interaction-between-the-two" class="nav-link" data-scroll-target="#the-interaction-between-the-two"><span class="header-section-number">10.7</span> The interaction between the two</a></li>
+  <li><a href="#forms-of-external-memory-beyond-rag" id="toc-forms-of-external-memory-beyond-rag" class="nav-link" data-scroll-target="#forms-of-external-memory-beyond-rag"><span class="header-section-number">10.8</span> Forms of external memory beyond RAG</a></li>
+  <li><a href="#designing-the-memory-split" id="toc-designing-the-memory-split" class="nav-link" data-scroll-target="#designing-the-memory-split"><span class="header-section-number">10.9</span> Designing the memory split</a></li>
+  <li><a href="#the-emerging-continuum" id="toc-the-emerging-continuum" class="nav-link" data-scroll-target="#the-emerging-continuum"><span class="header-section-number">10.10</span> The emerging continuum</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">10.11</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">10.12</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -472,9 +440,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></h1>
 </div>
 
 
@@ -492,241 +460,236 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>A user sends a message while a model receive and returns numbers. How does text become numbers on the way in, and how do numbers become text on the way out?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>A language model knows things. A retrieval system finds things. These are different cognitive acts and understanding exactly how they differ is what lets you design systems that use each one where it works best.</em></p>
 </blockquote>
 <hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/journey_part2_ch4.svg" class="img-fluid figure-img" style="width:100.0%">
+<img src="figures/ch2/journey_part4_ch2.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.1: The journey through the Model Mind.
+Figure&nbsp;10.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The request has arrived at the inference server. Before the model sees a single character, the text must be converted to numbers. This chapter covers that conversion in both directions and describes everything that can go wrong in between.</p>
-<hr>
-<section id="two-tokenization-chapters-two-different-problems" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</h2>
-<p>If you read the training section first, you have already seen tokenization as in a batch preprocessing environment which means a corpus is tokenized once, offline, before training begins. The vocabulary is fixed. The inputs are known and errors are caught early.</p>
-<p>Tokenization at inference is a different story. It runs on arbitrary user input, in real time, and on every request. It supposed to handle every string a user might type which could be multilingual text, source code, emoji, adversarial inputs, or a combination of all four. The encoded output feeds directly into a running model. The decoded output appears on a user’s screen, sometimes token by token while they watch.</p>
-<p>The concerns here are mostly operational, not theoretical. Understanding them is the difference between shipping reliable LLM applications or debugging corruption failures at 2am.</p>
-<hr>
-</section>
-<section id="the-encoding-pipeline" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</h2>
-<p>When a request arrives, the first operation is encoding: converting the messages array into a flat sequence of token IDs ready for the model. This happens in two steps that are easy to confuse but are conceptually different.</p>
-<section id="step-1-chat-template-application" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="step-1-chat-template-application"><span class="header-section-number">3.2.1</span> Step 1: chat template application</h3>
-<p>The messages array has structure which includes roles, turns, and system prompts. The model has no concept of a dictionary. Before tokenization, the structured input must be flattened into a single string using a chat template.</p>
-<p>Each model family has its own template. For LLaMA 3:</p>
-<pre><code>&lt;|begin_of_text|&gt;
-&lt;|start_header_id|&gt;system&lt;|end_header_id|&gt;
-
-You are a helpful assistant.&lt;|eot_id|&gt;
-&lt;|start_header_id|&gt;user&lt;|end_header_id|&gt;
-
-What is the capital of France?&lt;|eot_id|&gt;
-&lt;|start_header_id|&gt;assistant&lt;|end_header_id|&gt;</code></pre>
-<p>For Mistral:</p>
-<pre><code>&lt;s&gt;[INST] What is the capital of France? [/INST]</code></pre>
-<p>For ChatML (OpenAI and many others):</p>
-<pre><code>&lt;|im_start|&gt;system
-You are a helpful assistant.&lt;|im_end|&gt;
-&lt;|im_start|&gt;user
-What is the capital of France?&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant</code></pre>
-<p>The special tokens (<code>&lt;|begin_of_text|&gt;</code>, <code>&lt;|eot_id|&gt;</code>, <code>&lt;|im_start|&gt;</code>) are part of the model’s vocabulary and were added during fine-tuning. The model learns to associate these markers with role transitions. Feeding the wrong template to the model causes it to sees an unexpected token sequence which in turn may cause the model to ignore the system prompt, and fail to complete the turn correctly, or produces outputs that look almost right but are systematically wrong in ways that can be hard to diagnose. This is one of the most common sources of bugs: no error is thrown yet the model just quietly misbehaves.</p>
-</section>
-<section id="step-2-token-encoding" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="step-2-token-encoding"><span class="header-section-number">3.2.2</span> Step 2: token encoding</h3>
-<p>Once the flat string is constructed, the tokenizer converts it to integer IDs. This is a deterministic step in which the same string always produces the same IDs given the same tokenizer.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"You are a helpful assistant."</span>},</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"role"</span>: <span class="st">"user"</span>,   <span class="st">"content"</span>: <span class="st">"What is the capital of France?"</span>}</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: flatten with chat template</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>flat_string <span class="op">=</span> apply_chat_template(messages, tokenizer)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># → "&lt;|im_start|&gt;system\nYou are a helpful assistant.&lt;|im_end|&gt;\n..."</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: convert to integers</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> tokenizer.encode(flat_string)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># → [151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, ...]</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: pass to model</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>logits <span class="op">=</span> model.forward(token_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The tokenizer runs on CPU and for typical prompt lengths it is fast enough to be negligible relative to model inference time. On the other hand, for very long prompts (100k+ tokens) it can become measurable and there are some inference frameworks that cache tokenized system prompts to avoid repeating this work on every request.</p>
-</section>
-<section id="special-tokens-that-require-explicit-handling" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="special-tokens-that-require-explicit-handling"><span class="header-section-number">3.2.3</span> Special tokens that require explicit handling</h3>
-<p>Several special tokens need attention beyond the template:</p>
-<p><strong>Beginning of sequence (BOS).</strong> Many models expect a BOS token at position 0 and the tokenizer typically adds it automatically while some serving configurations require manual insertion. A missing BOS token causes silent quality degradation which means the model’s input distribution does not match training, and early tokens may be erratic.</p>
-<p><strong>End of turn markers.</strong> The template includes tokens marking the end of each turn and it must appear in the correct positions or the model misidentifies role boundaries.</p>
-<p><strong>Tool call tokens.</strong> Models fine-tuned for function calling have additional special tokens called tool call syntax. These must be in the tokenizer vocabulary and correctly placed in the template.</p>
-<p><strong>The generation prompt.</strong> The template typically ends with the opening of the assistant turn (e.g., <code>&lt;|im_start|&gt;assistant\n</code>) without closing it. This will signal the model that it should continue from here and omitting it causes the model to generate an incorrect turn structure.</p>
-<hr>
-</section>
-</section>
-<section id="token-continuation-and-context-window-management" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</h2>
-<p>The context window is the maximum sequence length the model can process in a single forward pass which is typically a range between 8k to 128k tokens for current models. Managing what fits in this window is a critical operational concern.</p>
-<section id="count-with-the-tokenizer-not-your-intuition" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="count-with-the-tokenizer-not-your-intuition"><span class="header-section-number">3.3.1</span> Count with the tokenizer, not your intuition</h3>
-<p>Token counts are not characters divided by four, or words divided by 0.75. They are the actual output of the tokenizer on the specific input string. Heuristics are inaccurate enough to cause real failures:</p>
-<ul>
-<li>Code tokenizes very differently from prose which means identifiers, operators, and whitespace have their own patterns</li>
-<li>Non-English text is often less efficient than English for most tokenizers</li>
-<li>Special tokens (role markers, tool tokens) add counts that character estimates miss entirely</li>
-</ul>
-<p>Every production system that needs to stay within a context window must count tokens using the actual tokenizer, not an approximation:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tiktoken</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>enc <span class="op">=</span> tiktoken.encoding_for_model(<span class="st">"gpt-4o"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_tokens(messages: <span class="bu">list</span>[<span class="bu">dict</span>]) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    num_tokens <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> message <span class="kw">in</span> messages:</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        num_tokens <span class="op">+=</span> <span class="dv">4</span>  <span class="co"># role, content, separators overhead</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> value <span class="kw">in</span> message.values():</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            num_tokens <span class="op">+=</span> <span class="bu">len</span>(enc.encode(value))</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    num_tokens <span class="op">+=</span> <span class="dv">2</span>  <span class="co"># reply priming tokens</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> num_tokens</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The exact overhead is varied by model and template. Always validate against the API’s reported token counts on a representative sample.</p>
-</section>
-<section id="the-context-window-budget" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="the-context-window-budget"><span class="header-section-number">3.3.2</span> The context window budget</h3>
-<p>In a typical production request, the context window is shared between several competing claims:</p>
-<pre><code>Total context window (e.g., 128k tokens)
-├── System prompt              (fixed, e.g., 500–2,000 tokens)
-├── Conversation history       (grows with each turn)
-├── Retrieved context (RAG)    (variable, e.g., 2,000–10,000 tokens)
-├── Current user message       (variable)
-└── Reserved for completion    (max_tokens parameter)</code></pre>
-<p>The sum must not exceed the window and if it does, the request will fail or the serving layer silently truncates something which is usually the earliest conversation history, that could be the exact context the user needs the most. Applications must actively manage this budget rather than hoping it fits.</p>
-<p><strong>Rolling window</strong> keeps only the most recent N tokens of history. While it is simple, it loses early context which can be fine for short tasks and problematic for long conversations.</p>
-<p><strong>Summarization</strong> uses the model to compress earlier turns into a compact representation when history approaches the limit. With this approach it preserves semantic content at the cost of an additional model call.</p>
-<p><strong>Hierarchical retrieval</strong> stores full history externally and only retrieve the most relevant portions for the current turn. This approach requires a retrieval component but it can scale to arbitrarily long conversations.</p>
-</section>
-<section id="prompt-caching-and-its-token-implications" class="level3" data-number="3.3.3">
-<h3 data-number="3.3.3" class="anchored" data-anchor-id="prompt-caching-and-its-token-implications"><span class="header-section-number">3.3.3</span> Prompt caching and its token implications</h3>
-<p>Some APIs (Anthropic’s Claude, Google’s Gemini) offer explicit prompt caching: mark a portion of the prompt as cacheable, and subsequent requests that share the same prefix reuse the KV cache from the first request, charged at a reduced rate.</p>
-<p>For cost management, structure prompts with the stable content (system prompt, long documents) first and variable content (user messages, dynamic context) in the end. Token counting for cached prompts will distinguishs between newly processed tokens and cache-read tokens, as the API reports these separately and they have completely different cost implications.</p>
-<hr>
-</section>
-</section>
-<section id="the-decoding-pipeline-from-numbers-back-to-text" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</h2>
-<p>After the model selects the next token ID (the selection process is covered in chapter “REFF”), the serving layer converts that ID back to text. This is less straightforward than it appears.</p>
-<section id="detokenization" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="detokenization"><span class="header-section-number">3.4.1</span> Detokenization</h3>
-<p>The inverse operation: token IDs to string.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> [<span class="dv">15223</span>, <span class="dv">374</span>, <span class="dv">279</span>, <span class="dv">6864</span>, <span class="dv">315</span>, <span class="dv">9822</span>, <span class="dv">13</span>]</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> tokenizer.decode(token_ids)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → "Paris is the capital of France."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>While it seems that detokenization simply involves looking up each token’s string and concatenating them together, several complications exist:</p>
-<p><strong>Byte-level BPE and UTF-8 reconstruction.</strong> In byte-level tokenizers, tokens represent raw bytes rather than complete characters. Because UTF-8 characters are able to span multiple bytes, a single character (many Chinese characters or emojis) may be splited across several tokens. Decoding each token independently can therefore produce invalid text or replacement symbols. The correct procedure is to concatenate all token bytes first and then perform a single UTF-8 decode, ensuring the original characters are correctly reconstructed.</p>
-<p><strong>Special tokens in output.</strong> If the model produces a special token (end of text, role marker, tool call token), detokenization must strip it, convert it to a meaningful representation, or treat it as a halt signal. Which action is correct totally depends on context and must be handled explicitly.</p>
-</section>
-<section id="streaming-detokenization" class="level3" data-number="3.4.2">
-<h3 data-number="3.4.2" class="anchored" data-anchor-id="streaming-detokenization"><span class="header-section-number">3.4.2</span> Streaming detokenization</h3>
-<p>In streaming mode, tokens arrive one at a time and must be decoded incrementally which creates a specific problem: a byte sequence that spans multiple tokens cannot be decoded until all of its bytes have arrived.</p>
-<p>Consider a Chinese character requiring 3 UTF-8 bytes, split across three tokens of 1 byte each:</p>
-<ul>
-<li>After token 1: 1 byte received and it is not a valid UTF-8 codepoint yet and cannot emit</li>
-<li>After token 2: 2 bytes received and it is still incomplete</li>
-<li>After token 3: 3 bytes received finally it is completed, decode and emit the character</li>
-</ul>
-<p>A streaming decoder must buffer incomplete byte sequences and emit characters only once a complete Unicode codepoint is available. A naive implementations that pass <code>errors="ignore"</code> or <code>errors="replace"</code> will silently corrupt non-ASCII output while the HuggingFace <code>TextStreamer</code> and similar utilities handle this correctly.</p>
-<hr>
-</section>
-</section>
-<section id="logprobs-and-their-uses-at-inference-time" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</h2>
-<p>Most APIs can optionally return the log probabilities of generated tokens which is more useful than it might initially appear.</p>
-<section id="what-logprobs-tell-you" class="level3" data-number="3.5.1">
-<h3 data-number="3.5.1" class="anchored" data-anchor-id="what-logprobs-tell-you"><span class="header-section-number">3.5.1</span> What logprobs tell you</h3>
-<p>For each generated token, logprobs report the log probability the model assigned to the chosen token, and optionally the top-k alternatives with their probabilities:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Paris"</span><span class="fu">,</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-0.0023</span><span class="fu">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"top_logprobs"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Paris"</span><span class="fu">,</span> <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-0.0023</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Lyon"</span><span class="fu">,</span>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-6.12</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Nice"</span><span class="fu">,</span>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-7.88</span><span class="fu">}</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>A logprob of -0.0023 means the model assigned probability <code>exp(-0.0023) ≈ 0.998</code> to this token which means the model is essentially certain. A logprob of -6.12 means <code>exp(-6.12) ≈ 0.002</code> and represent a distant second choice.</p>
-</section>
-<section id="classification-without-generation" class="level3" data-number="3.5.2">
-<h3 data-number="3.5.2" class="anchored" data-anchor-id="classification-without-generation"><span class="header-section-number">3.5.2</span> Classification without generation</h3>
-<p>For binary or multiple-choice tasks, logprobs let you skip generating a full response and instead read the probabilities of specific tokens directly which is faster and cheaper:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.completions.create(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-4o"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    prompt<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>text<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">Is this sentiment positive? Answer with yes or no."</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    max_tokens<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    logprobs<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    top_logprobs<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> response.choices[<span class="dv">0</span>].logprobs.top_logprobs[<span class="dv">0</span>]</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>yes_logprob <span class="op">=</span> <span class="bu">next</span>(t.logprob <span class="cf">for</span> t <span class="kw">in</span> top <span class="cf">if</span> t.token.strip().lower() <span class="op">==</span> <span class="st">"yes"</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>no_logprob  <span class="op">=</span> <span class="bu">next</span>(t.logprob <span class="cf">for</span> t <span class="kw">in</span> top <span class="cf">if</span> t.token.strip().lower() <span class="op">==</span> <span class="st">"no"</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>is_positive <span class="op">=</span> yes_logprob <span class="op">&gt;</span> no_logprob</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="calibration-and-uncertainty-estimation" class="level3" data-number="3.5.3">
-<h3 data-number="3.5.3" class="anchored" data-anchor-id="calibration-and-uncertainty-estimation"><span class="header-section-number">3.5.3</span> Calibration and uncertainty estimation</h3>
-<p>The perplexity of a generated response which is represented by the average negative log probability per token is a rough proxy for the model’s confidence:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>logprobs <span class="op">=</span> [token.logprob <span class="cf">for</span> token <span class="kw">in</span> response.choices[<span class="dv">0</span>].logprobs.content]</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>perplexity <span class="op">=</span> np.exp(<span class="op">-</span>np.mean(logprobs))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># High perplexity → model was uncertain about this response</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is not a hallucination detector which means the model can be confidently wrong, and often is. But it is a useful routing signal: responses with high perplexity can be flagged for human review or follow-up verification without running a separate evaluation model.</p>
-<hr>
-</section>
-</section>
-<section id="common-failure-modes" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</h2>
-<p>Tokenization at inference produces specific, reproducible failure patterns. Knowing them saves significant debugging time.</p>
-<p><strong>Wrong tokenizer for the model.</strong> Using the GPT-2 tokenizer with a LLaMA model produces completely wrong token ID sequences. The model interprets unrelated IDs as completely different tokens which in turn leads to a garbage output.</p>
-<p><strong>Wrong chat template.</strong> Applying the wrong template produces subtly wrong token sequences. The model may ignore the system prompt, continue the user turn instead of starting an assistant turn, or generate role labels as content. This also fails silently and is especially confusing because outputs look almost right but are systematically off.</p>
-<p><strong>BOS token doubling.</strong> Some serving frameworks add BOS automatically while some expect the caller to add it. If BOS appears twice, the model sees an unexpected sequence at position 0 and may behave erratically.</p>
-<p><strong>Context overflow without truncation.</strong> If the total token count exceeds the context window and the serving layer does not truncate explicitly, some APIs return an error while some silently truncate from the beginning.</p>
-<p><strong>Encoding/decoding asymmetry.</strong> <code>decode(encode(s))</code> may not equal <code>s</code> for strings containing Unicode normalization differences, special tokens with non-standard decoding, or whitespace that the tokenizer normalizes.</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</h2>
-<ul>
-<li>Chat template application: flattening the messages array into a string with model-specific role delimiters it happens before tokenization and is model-specific; the wrong template produces silent quality degradation</li>
-<li>Token counting must use the actual tokenizer, not character or word heuristics; accurate counting is essential for context window management and cost control</li>
-<li>The context window budget must be actively managed across system prompt, conversation history, retrieved context, and completion reservation</li>
-<li>Streaming detokenization must buffer incomplete UTF-8 byte sequences and emit characters only once a complete codepoint is available; naive implementations corrupt non-ASCII output</li>
-<li>Stop sequence detection operates on decoded strings, not token IDs, and must handle sequences that span token boundaries and appear at buffer edges</li>
-<li>Token healing solves the boundary problem for prompts ending at arbitrary character positions, improving completion quality for structured generation</li>
-<li>Logprobs enable efficient classification, uncertainty estimation, and confidence- based routing without generating full responses</li>
-</ul>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<p>Retrieval exists because parametric memory has fundamental limits. This chapter explores those limits in greater depth by examining the nature of parametric memory, the role of external memory, how the two interact, and how to design systems that leverage both effectively.</p>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.2: Cheat sheet.
-</figcaption>
-</figure>
+</div>
 </div>
 <hr>
+<section id="two-different-ways-of-knowing" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="two-different-ways-of-knowing"><span class="header-section-number">10.1</span> Two different ways of knowing</h2>
+<p>Consider two employees at a company. The first has been there for twenty years. He knows the company’s history, culture, and procedures intuitively. When someone asks a question, he answers from internalized understanding, he does not need to look anything up. Her knowledge is fast, fluid, and deeply integrated. It is also frozen: she knows things as they were when she last learned them, and it takes effort to update.</p>
+<p>The second is a researcher who joined last week. She does not know the company’s history, but she has access to every document the company has ever produced. When someone asks a question, she searches the archives, finds the relevant documents, and reads the answer. Her knowledge is current, precise, and verifiable but it depends entirely on what is in the archives and whether she can find it.</p>
+<p>A language model with retrieval is both employees working together.</p>
+<p>The first employee is <strong>parametric memory</strong> (knowledge encoded in the model’s weights through training). The second is <strong>external memory</strong> (knowledge stored in a document corpus, retrieved at inference time). Neither is sufficient alone. Together, they cover each other’s weaknesses.</p>
+<hr>
 </section>
-<section id="further-reading" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.8</span> Further reading</h2>
+<section id="what-parametric-memory-is" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="what-parametric-memory-is"><span class="header-section-number">10.2</span> What parametric memory is</h2>
+<p>Parametric memory is the knowledge encoded in a model’s parameters basically its weights. It is everything the model learned by predicting the next token across a training corpus of trillions of words.</p>
+<p>This knowledge is not stored as facts in labeled locations. It is distributed across billions of floating-point numbers, each contributing fractionally to the model’s behavior. When the model “knows” that Paris is the capital of France, that knowledge is not a database entry, it is a statistical pattern spread across the embedding table, the attention heads, and the feed-forward layers of every transformer block.</p>
+<section id="properties-of-parametric-memory" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="properties-of-parametric-memory"><span class="header-section-number">10.2.1</span> Properties of parametric memory</h3>
+<p><strong>Always available.</strong> Parametric memory requires no lookup. Every piece of knowledge the model has is accessible on every forward pass, with no retrieval latency.</p>
+<p><strong>Deeply integrated.</strong> Parametric knowledge is woven into the model’s reasoning. When the model answers a question about French geography, it can simultaneously apply its knowledge of European history, political structures, and linguistic patterns without explicit retrieval of any of them. The integration is seamless because all of it lives in the same substrate.</p>
+<p><strong>Compressed and approximate.</strong> The training corpus contains far more information than fits in the parameter count. What gets encoded is statistical regularities, patterns that appeared consistently enough across training examples to survive gradient descent. Specific facts, especially rare ones, are encoded imprecisely. The model reconstructs them from learned patterns rather than retrieving them verbatim.</p>
+<p><strong>Fixed at training time.</strong> Parametric memory cannot be updated without retraining. Events after the training cutoff, information not in the training corpus, corrections to facts the model learned incorrectly, none of these can be incorporated without a new training run.</p>
+<p><strong>Opaque.</strong> There is no mechanism to ask parametric memory for its source. When the model produces a fact, it cannot say which document that fact came from. The provenance is lost in the compression.</p>
+<p><strong>Confident under uncertainty.</strong> When the model does not know something, its parametric memory does not respond with silence. It responds with whatever continuation is statistically plausible in context. This is hallucination, the model generating text that sounds like knowledge but is not grounded in actual facts.</p>
+<hr>
+</section>
+</section>
+<section id="what-external-memory-is" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="what-external-memory-is"><span class="header-section-number">10.3</span> What external memory is</h2>
+<p>External memory is a structured store of information that the model can query at inference time (a vector database, a document corpus, a knowledge graph, or a traditional database). It is external to the model: stored separately, maintained independently, and accessed through a retrieval interface.</p>
+<p>In a RAG system, the external memory is typically a collection of documents chunked into passages, embedded as vectors, and stored in a vector database. A query arrives, it is embedded, the most similar passages are retrieved, and they are inserted into the prompt as context.</p>
+<section id="properties-of-external-memory" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="properties-of-external-memory"><span class="header-section-number">10.3.1</span> Properties of external memory</h3>
+<p><strong>Updatable in real time.</strong> New documents can be added, old documents expired, and corrections made without touching the model’s weights. The knowledge base can be current as of minutes ago.</p>
+<p><strong>Precise and verbatim.</strong> Retrieved documents contain exact text from the source. The model does not reconstruct the content, it reads it. Specific numbers, dates, names, and quotations can be retrieved and cited exactly as they appear in the source.</p>
+<p><strong>Verifiable and citable.</strong> Every retrieved passage has a source. The system knows which document a fact came from, can provide citations, and can display the source for user verification. The provenance is preserved.</p>
+<p><strong>Bounded by what was indexed.</strong> External memory can only surface what is in the corpus. Knowledge not indexed (information not added, documents not processed) is invisible to retrieval. The corpus boundary defines the limits of what can be found.</p>
+<p><strong>Quality-dependent on retrieval.</strong> If retrieval fails to surface the relevant passage, the model has no external knowledge to work with. A RAG system is only as good as its retrieval.</p>
+<p><strong>Slower than parametric access.</strong> External memory requires embedding the query, searching the index, and retrieving documents before the model can use the information. This adds latency (typically 50–500ms) that is absent for parametric knowledge.</p>
+<hr>
+</section>
+</section>
+<section id="the-complementary-structure" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="the-complementary-structure"><span class="header-section-number">10.4</span> The complementary structure</h2>
+<p>Parametric and external memory have complementary strength profiles. A well- designed system delegates to each where it excels:</p>
+<pre><code>                    Parametric    External
+                    Memory        Memory
+                    ──────────────────────
+Speed               Fast          Slower
+Update cost         High          Low
+Currency            Stale         Current
+Coverage            Training data Indexed corpus
+Precision           Approximate   Exact
+Verifiability       None          Full
+Private data        No            Yes
+Reasoning ability   High          None (the model reasons)
+Integration depth   Deep          Shallow
+Failure mode        Hallucination Retrieval miss</code></pre>
+<hr>
+</section>
+<section id="when-to-rely-on-parametric-memory" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="when-to-rely-on-parametric-memory"><span class="header-section-number">10.5</span> When to rely on parametric memory</h2>
+<p>Certain categories of knowledge are better served by parametric memory than by retrieval.</p>
+<section id="general-reasoning-and-language" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="general-reasoning-and-language"><span class="header-section-number">10.5.1</span> General reasoning and language</h3>
+<p>Grammar, syntax, logical inference, mathematical operations, programming patterns, writing style, none of these are facts to be retrieved. They are capabilities that emerged from training and are deeply integrated into the model’s generation process. Retrieval cannot help with “write a recursive function” in the way it helps with “what is the current interest rate.”</p>
+</section>
+<section id="stable-well-documented-knowledge" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="stable-well-documented-knowledge"><span class="header-section-number">10.5.2</span> Stable, well-documented knowledge</h3>
+<p>The capital of France, the speed of light, the date of World War II, the syntax of Python, facts that are stable, widely documented, and unlikely to have changed since training. For these, retrieval adds latency and complexity without adding information. The model’s parametric memory is sufficient.</p>
+</section>
+<section id="synthesis-and-inference" class="level3" data-number="10.5.3">
+<h3 data-number="10.5.3" class="anchored" data-anchor-id="synthesis-and-inference"><span class="header-section-number">10.5.3</span> Synthesis and inference</h3>
+<p>When a question requires combining multiple pieces of knowledge in ways that are not explicitly stated in any document, parametric memory’s deep integration is an advantage. “What are the implications of X for Y?” may not have a document that answers it directly. The model’s ability to reason across integrated knowledge (drawing on history, economics, and science simultaneously) is a parametric capability.</p>
+</section>
+<section id="common-knowledge-about-common-things" class="level3" data-number="10.5.4">
+<h3 data-number="10.5.4" class="anchored" data-anchor-id="common-knowledge-about-common-things"><span class="header-section-number">10.5.4</span> Common knowledge about common things</h3>
+<p>Facts about widely documented subjects that appeared many times in the training corpus are more reliably stored in parametric memory than rare or specialized facts. The model’s reconstruction of common knowledge is accurate; its reconstruction of rare knowledge is not.</p>
+<hr>
+</section>
+</section>
+<section id="when-to-rely-on-external-memory" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="when-to-rely-on-external-memory"><span class="header-section-number">10.6</span> When to rely on external memory</h2>
+<section id="current-information" class="level3" data-number="10.6.1">
+<h3 data-number="10.6.1" class="anchored" data-anchor-id="current-information"><span class="header-section-number">10.6.1</span> Current information</h3>
+<p>Anything that changes after the training cutoff: news, prices, personnel, policies, software versions, research findings. Parametric memory cannot help here. External memory with regular updates is the only option.</p>
+</section>
+<section id="private-and-proprietary-data" class="level3" data-number="10.6.2">
+<h3 data-number="10.6.2" class="anchored" data-anchor-id="private-and-proprietary-data"><span class="header-section-number">10.6.2</span> Private and proprietary data</h3>
+<p>Enterprise documents, customer records, internal policies, proprietary research, none of this is in the training corpus. Retrieval is the only mechanism to give the model access to organization-specific knowledge.</p>
+</section>
+<section id="precise-facts-and-citations" class="level3" data-number="10.6.3">
+<h3 data-number="10.6.3" class="anchored" data-anchor-id="precise-facts-and-citations"><span class="header-section-number">10.6.3</span> Precise facts and citations</h3>
+<p>Specific numbers, quotations, contractual terms, regulatory requirements, cases where “approximately right” is not acceptable. External memory provides the exact text; parametric memory approximates.</p>
+</section>
+<section id="accountability-and-auditability" class="level3" data-number="10.6.4">
+<h3 data-number="10.6.4" class="anchored" data-anchor-id="accountability-and-auditability"><span class="header-section-number">10.6.4</span> Accountability and auditability</h3>
+<p>Cases where the source of information matters, legal, medical, financial, regulatory. External memory provides citable sources. Parametric memory provides assertions without provenance.</p>
+</section>
+<section id="long-tail-and-specialized-knowledge" class="level3" data-number="10.6.5">
+<h3 data-number="10.6.5" class="anchored" data-anchor-id="long-tail-and-specialized-knowledge"><span class="header-section-number">10.6.5</span> Long-tail and specialized knowledge</h3>
+<p>Domain-specific jargon, rare technical standards, specialized procedures, topics underrepresented in the training corpus. The model’s parametric knowledge of these is unreliable. A well-indexed specialized corpus outperforms parametric reconstruction for niche domains.</p>
+<hr>
+</section>
+</section>
+<section id="the-interaction-between-the-two" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="the-interaction-between-the-two"><span class="header-section-number">10.7</span> The interaction between the two</h2>
+<p>When both memories are available (a model with access to a retrieval system) they interact in ways that require careful system design.</p>
+<section id="which-memory-does-the-model-prefer" class="level3" data-number="10.7.1">
+<h3 data-number="10.7.1" class="anchored" data-anchor-id="which-memory-does-the-model-prefer"><span class="header-section-number">10.7.1</span> Which memory does the model prefer?</h3>
+<p>Research shows that the model’s preference for parametric vs.&nbsp;retrieved knowledge depends on the relevance and quality of the retrieved context:</p>
 <ul>
-<li>HuggingFace Tokenizers documentation: Fast tokenizers and chat templates.</li>
-<li>OpenAI Cookbook: How to count tokens with tiktoken.</li>
-<li>HuggingFace (2023): Chat Templating Guide.</li>
+<li>When retrieved context is highly relevant and clearly addresses the question, the model generally uses it</li>
+<li>When retrieved context is irrelevant or contradicts the model’s parametric memory, the model may ignore the retrieved content and answer from parametric knowledge</li>
+<li>When parametric memory is strong (the subject was well-represented in training), the model may underweight retrieved context even when it is relevant</li>
+</ul>
+<p>This is not a binary choice the model makes consciously. It is an emergent property of how attention weights retrieved context against parametric associations. The model does not “decide” to trust one over the other it attends to the full context and generates the most likely continuation.</p>
+</section>
+<section id="parametric-memory-as-noise" class="level3" data-number="10.7.2">
+<h3 data-number="10.7.2" class="anchored" data-anchor-id="parametric-memory-as-noise"><span class="header-section-number">10.7.2</span> Parametric memory as noise</h3>
+<p>A counterintuitive failure mode: for questions where the correct answer is in the retrieved context, a model with strong parametric associations to a different answer may generate the wrong answer despite the retrieved evidence.</p>
+<p>Example: a company changed its refund policy. The new policy is in the retrieved document. The old policy appeared many times in the training data. The model may generate the old policy from parametric memory rather than the new one from the retrieved document.</p>
+<p>This is one of the strongest arguments for grounded generation techniques explicitly instructing the model to prefer retrieved context over internal assumptions. But even with careful prompting, the failure mode persists for strongly-encoded parametric beliefs.</p>
+</section>
+<section id="parametric-memory-as-context-interpreter" class="level3" data-number="10.7.3">
+<h3 data-number="10.7.3" class="anchored" data-anchor-id="parametric-memory-as-context-interpreter"><span class="header-section-number">10.7.3</span> Parametric memory as context interpreter</h3>
+<p>The model’s parametric knowledge is also what allows it to use retrieved context intelligently. When a retrieved document contains technical jargon, the model can interpret it because of parametric knowledge of the domain. When a document is ambiguous, the model uses parametric context to resolve the ambiguity. External memory provides the raw content; parametric memory provides the interpretive framework.</p>
+<p>A model with poor parametric knowledge of a domain will retrieve relevant documents and still answer poorly, because it cannot reason about the content effectively. This is why domain-specific fine-tuning (to improve parametric knowledge of the domain) and domain-specific retrieval are complementary rather than substitutes.</p>
+<hr>
+</section>
+</section>
+<section id="forms-of-external-memory-beyond-rag" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="forms-of-external-memory-beyond-rag"><span class="header-section-number">10.8</span> Forms of external memory beyond RAG</h2>
+<p>RAG (retrieving passages from a vector database) is one form of external memory. Others exist and are increasingly used in production systems.</p>
+<section id="structured-databases" class="level3" data-number="10.8.1">
+<h3 data-number="10.8.1" class="anchored" data-anchor-id="structured-databases"><span class="header-section-number">10.8.1</span> Structured databases</h3>
+<p>SQL databases, key-value stores, and graph databases provide structured external memory. A model with tool use can query a SQL database to retrieve exact records (sales figures, customer attributes, product specifications) with guarantees of precision that vector search cannot provide.</p>
+<p>For questions with exact, structured answers, a database query is superior to vector search: “What was the revenue in Q3 2024?” is better answered by a database query than by retrieving a passage that mentions Q3 revenue.</p>
+</section>
+<section id="episodic-memory-stores" class="level3" data-number="10.8.2">
+<h3 data-number="10.8.2" class="anchored" data-anchor-id="episodic-memory-stores"><span class="header-section-number">10.8.2</span> Episodic memory stores</h3>
+<p>For agentic systems that operate over extended periods, episodic memory stores record what the agent has done, observed, and learned in previous sessions. This is a form of external memory that accumulates over time and can be retrieved to inform current decisions.</p>
+</section>
+<section id="tool-accessed-knowledge" class="level3" data-number="10.8.3">
+<h3 data-number="10.8.3" class="anchored" data-anchor-id="tool-accessed-knowledge"><span class="header-section-number">10.8.3</span> Tool-accessed knowledge</h3>
+<p>Search engines, APIs, calculators, and code executors are forms of external memory accessed through tools rather than vector retrieval. A model that can search the web has access to a form of external memory that is more current and more comprehensive than any prebuilt corpus. The tradeoff is latency, reliability, and the need to process retrieved results rather than receiving them in a controlled format.</p>
+</section>
+<section id="the-knowledge-graph" class="level3" data-number="10.8.4">
+<h3 data-number="10.8.4" class="anchored" data-anchor-id="the-knowledge-graph"><span class="header-section-number">10.8.4</span> The knowledge graph</h3>
+<p>Knowledge graphs represent facts as typed relationships between entities: (Paris, capital_of, France), (France, located_in, Europe). They are more structured than document corpora and support logical inference over stored relationships.</p>
+<hr>
+</section>
+</section>
+<section id="designing-the-memory-split" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="designing-the-memory-split"><span class="header-section-number">10.9</span> Designing the memory split</h2>
+<p>For any application, the decision of what goes in parametric memory and what goes in external memory is an architectural one that affects quality, cost, maintainability, and update frequency.</p>
+<section id="the-update-frequency-heuristic" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="the-update-frequency-heuristic"><span class="header-section-number">10.9.1</span> The update frequency heuristic</h3>
+<p>Knowledge that changes frequently → external memory. Knowledge that is stable → parametric memory (or cached retrieval).</p>
+<p>A customer support application for a product with rapidly evolving features needs product documentation in external memory which changes with every release. The general reasoning and communication style it needs from the model is parametric.</p>
+</section>
+<section id="the-precision-heuristic" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="the-precision-heuristic"><span class="header-section-number">10.9.2</span> The precision heuristic</h3>
+<p>Knowledge that must be exact (legal terms, financial figures, technical specs) → external memory. Knowledge that can be approximate (general explanations, background context) → parametric memory.</p>
+</section>
+<section id="the-privacy-heuristic" class="level3" data-number="10.9.3">
+<h3 data-number="10.9.3" class="anchored" data-anchor-id="the-privacy-heuristic"><span class="header-section-number">10.9.3</span> The privacy heuristic</h3>
+<p>Knowledge that is confidential or proprietary → external memory with access controls. Knowledge that is public and stable → parametric memory is fine.</p>
+</section>
+<section id="the-volume-heuristic" class="level3" data-number="10.9.4">
+<h3 data-number="10.9.4" class="anchored" data-anchor-id="the-volume-heuristic"><span class="header-section-number">10.9.4</span> The volume heuristic</h3>
+<p>A small number of highly-accessed facts can be effectively encoded through fine-tuning (moving them into parametric memory). A large, diverse, or growing corpus must go in external memory, there is no practical way to encode millions of documents into model weights through fine-tuning.</p>
+</section>
+<section id="the-accountability-heuristic" class="level3" data-number="10.9.5">
+<h3 data-number="10.9.5" class="anchored" data-anchor-id="the-accountability-heuristic"><span class="header-section-number">10.9.5</span> The accountability heuristic</h3>
+<p>When the source of information must be traceable → external memory. When the answer is general knowledge without attribution requirement → parametric memory.</p>
+<hr>
+</section>
+</section>
+<section id="the-emerging-continuum" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="the-emerging-continuum"><span class="header-section-number">10.10</span> The emerging continuum</h2>
+<p>The sharp distinction between parametric and external memory is increasingly a simplification. Several techniques blur the boundary:</p>
+<p><strong>Fine-tuning for domain knowledge</strong> moves external knowledge into parametric memory through additional training. A model fine-tuned on a company’s internal documentation partially encodes that documentation into its weights. The result is faster access and deeper integration, but at the cost of update agility.</p>
+<p><strong>Memory-augmented models</strong> like RETRO (Borgeaud et al., 2022) integrate retrieval directly into the model architecture, retrieved documents are processed by dedicated cross-attention layers rather than being inserted into the context. The line between the model’s parameters and the retrieval corpus is architecturally blurred.</p>
+<p><strong>Caching retrieved content in the context</strong> creates a form of working memory that persists across turns, more dynamic than parametric memory (it can change with each session) but more structured than ad-hoc retrieval (it is explicitly managed). Long-context models with large KV caches make this increasingly practical.</p>
+<p><strong>Continuous learning</strong> progressively updates parametric memory from new data, approaching the update agility of external memory while maintaining the access speed of parametric memory. This remains computationally expensive but is an active research direction.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">10.11</span> Key takeaways</h2>
+<ul>
+<li>Parametric memory is knowledge encoded in model weights — always available, deeply integrated, fast, but fixed at training time, approximate, and opaque</li>
+<li>External memory is knowledge stored in a retrieval corpus — current, precise, verifiable, and updatable, but dependent on retrieval quality and slower to access</li>
+<li>The two memory types have complementary strength profiles: parametric memory handles reasoning, stable knowledge, and synthesis; external memory handles current information, private data, precise facts, and citable sources</li>
+<li>When both are available, the model does not make a binary choice — it attends to both, and strong parametric associations can override retrieved evidence even when retrieval is correct; grounded generation techniques address but do not fully eliminate this</li>
+<li>Structured databases, episodic memory stores, tool-accessed knowledge, and knowledge graphs are forms of external memory beyond vector search, each better suited to different knowledge types</li>
+<li>The decision of what goes in parametric vs.&nbsp;external memory is an architectural one driven by update frequency, required precision, privacy constraints, volume, and accountability requirements</li>
+<li>The boundary is blurring: fine-tuning moves external knowledge into parametric memory; memory-augmented architectures integrate retrieval into the model; long-context caching creates working memory that spans the two</li>
+</ul>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">10.12</span> Further reading</h2>
+<ul>
+<li>Lewis et al.&nbsp;(2020). <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.</em> — The original RAG paper; frames the parametric/non-parametric distinction explicitly and demonstrates complementarity.</li>
+<li>Borgeaud et al.&nbsp;(2022). <em>Improving Language Models by Retrieving from Trillions of Tokens (RETRO).</em> — Memory-augmented architecture integrating retrieval into the model rather than the context.</li>
+<li>Mallen et al.&nbsp;(2023). <em>When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories.</em> — Empirical study of when models rely on which memory type and when each is more accurate.</li>
+<li>Shi et al.&nbsp;(2023). <em>Large Language Models Can Be Easily Distracted by Irrelevant Context.</em> — Retrieved context is not always used; irrelevant retrieval can degrade performance below the parametric-only baseline.</li>
+<li>Guu et al.&nbsp;(2020). <em>REALM: Retrieval-Augmented Language Model Pre-Training.</em> — Integrating retrieval into pre-training itself; the predecessor to RAG.</li>
 </ul>
 <hr>
 
@@ -1149,14 +1112,11 @@ Figure&nbsp;3.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part2/APIs_and_serving.html" class="pagination-link" aria-label="APIs and Model Serving">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span>
+      <a href="../../book/part3/decoding-and-sampling.html" class="pagination-link" aria-label="Decoding and Sampling">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part2/Embeddings_and_meaning.html" class="pagination-link" aria-label="Embeddings and Meaning Representation">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
