@@ -10,38 +10,42 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/APIs_and_serving.html</loc>
-    <lastmod>2026-06-29T17:19:13.037Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/Tokenization.html</loc>
-    <lastmod>2026-06-29T17:18:57.798Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/Embeddings_and_meaning.html</loc>
-    <lastmod>2026-06-29T17:19:05.443Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/transformer-architecture.html</loc>
-    <lastmod>2026-06-29T17:18:42.842Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/attention-computation.html</loc>
-    <lastmod>2026-06-29T17:18:49.381Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/kv-cache.html</loc>
-    <lastmod>2026-06-29T17:17:40.661Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/gpu-execution.html</loc>
-    <lastmod>2026-06-29T17:17:33.104Z</lastmod>
+    <lastmod>2026-06-29T17:33:04.320Z</lastmod>
+  </url>
+  <url>
+    <loc>https://llm.hosseini.work/book/part3/decoding-and-sampling.html</loc>
+    <lastmod>2026-07-01T16:16:14.188Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-06-29T17:24:23.648Z</lastmod>
+    <lastmod>2026-07-01T16:26:50.557Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-06-29T17:24:25.269Z</lastmod>
+    <lastmod>2026-07-01T16:26:52.422Z</lastmod>
   </url>
 </urlset>

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Decoding and Sampling – From Prompt to Response</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../book/part3/gpu-execution.html" rel="prev">
+<link href="../../images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4e5c8a923c97ced843d0652dafb23d7b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="9&nbsp; Decoding and Sampling – From Prompt to Response">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch5/journey_part3_ch5.svg">
+<meta property="og:site_name" content="From Prompt to Response">
+<meta name="twitter:title" content="9&nbsp; Decoding and Sampling – From Prompt to Response">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch5/journey_part3_ch5.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">From Prompt to Response</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mohsenh17/prompt-to-response" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Art of the True Name</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Runes Beneath Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Labyrinth of Attention</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Forbidden Archive</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Forging of Intelligence</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Trial of the Answer</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Keepers of the Waking Engine</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-decoding-problem" id="toc-the-decoding-problem" class="nav-link active" data-scroll-target="#the-decoding-problem"><span class="header-section-number">9.1</span> The decoding problem</a></li>
+  <li><a href="#greedy-decoding" id="toc-greedy-decoding" class="nav-link" data-scroll-target="#greedy-decoding"><span class="header-section-number">9.2</span> Greedy decoding</a></li>
+  <li><a href="#beam-search" id="toc-beam-search" class="nav-link" data-scroll-target="#beam-search"><span class="header-section-number">9.3</span> Beam search</a></li>
+  <li><a href="#temperature-sampling" id="toc-temperature-sampling" class="nav-link" data-scroll-target="#temperature-sampling"><span class="header-section-number">9.4</span> Temperature sampling</a></li>
+  <li><a href="#top-k-sampling" id="toc-top-k-sampling" class="nav-link" data-scroll-target="#top-k-sampling"><span class="header-section-number">9.5</span> Top-k sampling</a></li>
+  <li><a href="#nucleus-top-p-sampling" id="toc-nucleus-top-p-sampling" class="nav-link" data-scroll-target="#nucleus-top-p-sampling"><span class="header-section-number">9.6</span> Nucleus (top-p) sampling</a></li>
+  <li><a href="#min-p-sampling" id="toc-min-p-sampling" class="nav-link" data-scroll-target="#min-p-sampling"><span class="header-section-number">9.7</span> Min-p sampling</a></li>
+  <li><a href="#repetition-penalties" id="toc-repetition-penalties" class="nav-link" data-scroll-target="#repetition-penalties"><span class="header-section-number">9.8</span> Repetition penalties</a></li>
+  <li><a href="#structured-decoding-and-constrained-generation" id="toc-structured-decoding-and-constrained-generation" class="nav-link" data-scroll-target="#structured-decoding-and-constrained-generation"><span class="header-section-number">9.9</span> Structured decoding and constrained generation</a></li>
+  <li><a href="#best-of-n-sampling" id="toc-best-of-n-sampling" class="nav-link" data-scroll-target="#best-of-n-sampling"><span class="header-section-number">9.10</span> Best-of-n sampling</a></li>
+  <li><a href="#speculative-sampling" id="toc-speculative-sampling" class="nav-link" data-scroll-target="#speculative-sampling"><span class="header-section-number">9.11</span> Speculative sampling</a></li>
+  <li><a href="#chain-of-thought-and-reasoning-tokens" id="toc-chain-of-thought-and-reasoning-tokens" class="nav-link" data-scroll-target="#chain-of-thought-and-reasoning-tokens"><span class="header-section-number">9.12</span> Chain-of-thought and reasoning tokens</a></li>
+  <li><a href="#decoding-strategy-selection-guide" id="toc-decoding-strategy-selection-guide" class="nav-link" data-scroll-target="#decoding-strategy-selection-guide"><span class="header-section-number">9.13</span> Decoding strategy selection guide</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">9.14</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.15</span> Further reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>The canonical question for this chapter:</strong> <em>The model produces a probability distribution over 100,000 tokens. How do you turn that distribution into the actual text the user sees, and how does that choice shape everything from creativity to factuality to cost?</em></p>
+</blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch5/journey_part3_ch5.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
+<p>The transformer forward pass is complete. The model has produced a vector of logits one score per vocabulary token. This chapter covers what happens next: how those logits become a token, and how that single choice, made thousands of times, produces the text the user reads. The decoding strategy is the last step before output also one of the most consequential.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="the-decoding-problem" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="the-decoding-problem"><span class="header-section-number">9.1</span> The decoding problem</h2>
+<p>After the transformer forward pass, the output is a vector of logits one score per token in the vocabulary. Applying softmax converts these to a probability distribution:</p>
+<pre><code>logits:        [2.3,  -1.2,  0.8,  4.1,  -0.3,  ...]   shape: [vocab_size]
+probabilities: [0.04,  0.001, 0.01, 0.33,  0.004, ...]   shape: [vocab_size]</code></pre>
+<p>The highest-probability token is not always the right choice. Selecting it every time known as greedy decoding produces text that is repetitive, overconfident, and often worse than sampling from the distribution. Nevertheless sampling randomly from the full distribution produces incoherent text that assigns probability to every token, including terrible ones.</p>
+<p>Decoding is the set of strategies for navigating this tradeoff: selecting a token (or sequence of tokens) from the distribution in a way that produces output that is coherent, diverse, and appropriate for the task. It runs once per generated token, which for a 500 token response means it runs 500 times. Small differences in strategy compound into large differences in output.</p>
+<hr>
+</section>
+<section id="greedy-decoding" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="greedy-decoding"><span class="header-section-number">9.2</span> Greedy decoding</h2>
+<p>The simplest strategy: always select the token with the highest probability.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> greedy_decode(logits):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> logits.argmax(dim<span class="op">=-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Greedy decoding is deterministic the same prompt always produces the same output. It is fast (no sampling required) and produces coherent local choices at each step.</p>
+<p>The problem: local optimality does not imply the global optimality. The highest- probability token at step <code>t</code> may lead to a sequence that is less probable overall than a sequence that takes a lower probability token at step <code>t</code> and recovers. As a result, greedy decoding can become trapped in a local optimum.</p>
+<p>The most visible symptom is repetition. Once a model enters a repetitive pattern, greedy decoding has no escape mechanism, the most likely next token at each step continues the pattern. The model knows, in some sense, that it is repeating itself (it assigns lower probability to the repetition than to alternatives), but greedy decoding ignores that signal and repeats anyway.</p>
+<p>Greedy decoding is appropriate for tasks with a single correct answer (extracting specific information, classification, structured output generation where diversity is undesirable) and for debugging, where the deterministic output makes it easier to isolate model behavior from sampling noise.</p>
+<hr>
+</section>
+<section id="beam-search" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="beam-search"><span class="header-section-number">9.3</span> Beam search</h2>
+<p>Beam search maintains a set of <code>k</code> candidate sequences and extends all of them at each step, keeping only the <code>k</code> most probable overall:</p>
+<pre><code>Beam width k=2, step 1:
+  Candidates: ["The cat", "A dog"]
+  Scores:     [log P("The") + log P("cat"|"The"),
+               log P("A") + log P("dog"|"A")]
+
+Step 2: extend each candidate:
+  "The cat sat", "The cat ran", "The cat is", ...   (vocab_size options)
+  "A dog ran",   "A dog sat",   "A dog is", ...     (vocab_size options)
+
+Keep top k=2 by cumulative log probability:
+  ["The cat sat", "A dog ran"]</code></pre>
+<p>At the end of generation, the candidate with the highest cumulative log probability is returned. Beam search finds sequences with higher overall probability than greedy decoding because it can recover from locally suboptimal choices.</p>
+<section id="the-beam-search-curse" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="the-beam-search-curse"><span class="header-section-number">9.3.1</span> The beam search curse</h3>
+<p>Beam search dominated sequence-to-sequence tasks (translation, summarization) from roughly 2015 to 2020. For tasks with constrained output spaces, it performs well. For open-ended generation, it has a well-documented failure mode: it produces output that is generic and boring.</p>
+<p>High-probability sequences tend to be safe, common phrases. The beam converges to the statistical mean of training data rather than producing specific, vivid text. This is the beam search curse: the sequences with highest probability under the model are not the sequences humans prefer. Human language is not the highest- probability sequence, people regularly choose moderately probable, interesting words over the most probable, expected ones.</p>
+<p>Beam search is still used for translation (k=4 is typical), structured data extraction, and code generation with hard constraints. For conversational and creative generation, sampling-based methods have largely replaced it.</p>
+<hr>
+</section>
+</section>
+<section id="temperature-sampling" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="temperature-sampling"><span class="header-section-number">9.4</span> Temperature sampling</h2>
+<p>Temperature is one of the most important hyperparameters in decoding. It adjusts the probability distribution over the next token before sampling, making the distribution either sharper or flatter.</p>
+<section id="the-temperature-transformation" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="the-temperature-transformation"><span class="header-section-number">9.4.1</span> The temperature transformation</h3>
+<p>Before sampling, the logits are divided by a temperature parameter (T):</p>
+<pre><code>adjusted_probs = softmax(logits / T)</code></pre>
+<p><strong>T &lt; 1.0 (cold):</strong> the distribution become sharper and high-probability tokens receive relatively more probability mass, while low-probability tokens receive less. At T → 0, the distribution approaches a point mass on the highest-probability token. Consequently, stochastic sampling becomes deterministic, recovering the behavior of greedy decoding.</p>
+<p><strong>T = 1.0:</strong> the distribution is unchanged from the model’s output.</p>
+<p><strong>T &gt; 1.0 (hot):</strong> the distribution becomes flatter and probabilities are spread more evenly across tokens. At T → ∞, the distribution becomes uniform.</p>
+<pre><code>Logits:          [4.0,  2.0,  1.0,  0.5]
+
+T=0.5 (cold):    softmax([8.0, 4.0, 2.0, 1.0]) → [0.86, 0.12, 0.02, 0.01]
+T=1.0 (normal):  softmax([4.0, 2.0, 1.0, 0.5]) → [0.68, 0.17, 0.08, 0.07]
+T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</code></pre>
+</section>
+<section id="choosing-temperature" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="choosing-temperature"><span class="header-section-number">9.4.2</span> Choosing temperature</h3>
+<p><strong>T = 0 (greedy):</strong> factual retrieval, classification, structured output. Maximizes accuracy for tasks with correct answers.</p>
+<p><strong>T = 0.1–0.4:</strong> code generation, factual Q&amp;A, tasks where accuracy matters but some flexibility is useful. Concentrated distribution that rarely samples improbable tokens.</p>
+<p><strong>T = 0.7–1.0:</strong> conversational responses, general-purpose assistants. Balanced diversity and coherence. Most production systems operate in this range.</p>
+<p><strong>T = 1.0–1.4:</strong> creative writing, brainstorming, poetry. Higher diversity, more surprising choices. Coherence may occasionally suffer.</p>
+<p><strong>T &gt; 1.5:</strong> experimental. Useful for exploring the model’s probability space, not for production output.</p>
+<p>Temperature is not a global constant and it should vary by task. A system that writes creative fiction and also answers factual questions should use different temperatures for each, ideally set automatically based on query classification.</p>
+<hr>
+</section>
+</section>
+<section id="top-k-sampling" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="top-k-sampling"><span class="header-section-number">9.5</span> Top-k sampling</h2>
+<p>Temperature sampling from the full distribution can still sample very unlikely tokens. If there are 100,000 tokens in the vocabulary, even after temperature adjustment there may be thousands of tokens with non-negligible probability, including tokens that produce incoherent output.</p>
+<p>Top-k sampling restricts sampling to the <code>k</code> most probable tokens:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> top_k_sample(logits, k, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> logits <span class="op">/</span> temperature</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    top_k_values, top_k_indices <span class="op">=</span> torch.topk(logits, k)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    filtered_logits <span class="op">=</span> torch.full_like(logits, <span class="bu">float</span>(<span class="st">'-inf'</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    filtered_logits.scatter_(<span class="dv">0</span>, top_k_indices, top_k_values)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> torch.softmax(filtered_logits, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> torch.multinomial(probs, num_samples<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The remaining probability mass is renormalized across the top-k tokens before sampling. Tokens outside the top-k are masked with <code>-inf</code>, giving them zero probability after softmax.</p>
+<p>Top-k has a structural limitation: <code>k</code> is fixed regardless of the distribution shape. When the model is very confident (one token at probability 0.95, the rest near zero) top-k=50 forces sampling from 50 tokens when 49 of them are clearly wrong choices. When the model is genuinely uncertain (500 tokens each at probability ~0.002) top-k=50 discards 450 plausible options. A fixed <code>k</code> handles neither scenario well. This motivates nucleus sampling.</p>
+<hr>
+</section>
+<section id="nucleus-top-p-sampling" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="nucleus-top-p-sampling"><span class="header-section-number">9.6</span> Nucleus (top-p) sampling</h2>
+<p>Nucleus sampling adapts the number of candidates to the distribution shape. Instead of a fixed count <code>k</code>, it takes the smallest set of tokens whose cumulative probability exceeds <code>p</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nucleus_sample(logits, p, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> logits <span class="op">/</span> temperature</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> torch.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    sorted_probs, sorted_indices <span class="op">=</span> torch.sort(probs, descending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    cumulative_probs <span class="op">=</span> torch.cumsum(sorted_probs, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    sorted_indices_to_remove <span class="op">=</span> cumulative_probs <span class="op">-</span> sorted_probs <span class="op">&gt;</span> p</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    sorted_probs[sorted_indices_to_remove] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    sorted_probs <span class="op">/=</span> sorted_probs.<span class="bu">sum</span>()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    sampled_index <span class="op">=</span> torch.multinomial(sorted_probs, num_samples<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sorted_indices[sampled_index]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <code>p = 0.9</code>: include the fewest tokens whose probabilities sum to at least 0.9. Renormalize and sample from those tokens only.</p>
+<p>When the model is confident (one token at 0.95 probability), the nucleus contains only that token which is effectively greedy decoding. When the model is uncertain (probability spread widely), the nucleus includes many tokens and sampling is diverse. The nucleus size adapts to the situation rather than being fixed in advance which makes it ideal for production.</p>
+<section id="choosing-p" class="level3" data-number="9.6.1">
+<h3 data-number="9.6.1" class="anchored" data-anchor-id="choosing-p"><span class="header-section-number">9.6.1</span> Choosing p</h3>
+<p><strong>p = 0.9–0.95:</strong> the most common range. Excludes the long tail of implausible tokens while preserving diversity for plausible choices.</p>
+<p><strong>p = 1.0:</strong> sample from the full distribution there aren’t any nucleus restriction. Equivalent to pure temperature sampling.</p>
+<p><strong>p = 0.5:</strong> very concentrated. Appropriate for high-accuracy tasks but risks becoming too deterministic.</p>
+<p>Top-p and temperature are typically used together. Temperature shapes the distribution; top-p determines the cutoff. A common production configuration: <code>temperature=0.7, top_p=0.9</code>.</p>
+<hr>
+</section>
+</section>
+<section id="min-p-sampling" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="min-p-sampling"><span class="header-section-number">9.7</span> Min-p sampling</h2>
+<p>A more recent alternative to top-p that addresses a subtle failure mode.</p>
+<p>Top-p’s cutoff is cumulative: if the nucleus already covers 90% of probability mass, tokens beyond that are excluded regardless of their absolute probability. In practice, this can include tokens with very low absolute probability if they accumulate to push the total past <code>p</code>, especially when the distribution is flat.</p>
+<p>Min-p sets a minimum absolute probability threshold instead: only sample from tokens whose probability exceeds <code>min_p × max_token_probability</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> min_p_sample(logits, min_p, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    probs <span class="op">=</span> torch.softmax(logits <span class="op">/</span> temperature, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    max_prob <span class="op">=</span> probs.<span class="bu">max</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    threshold <span class="op">=</span> min_p <span class="op">*</span> max_prob</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    filtered_probs <span class="op">=</span> probs.clone()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    filtered_probs[probs <span class="op">&lt;</span> threshold] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    filtered_probs <span class="op">/=</span> filtered_probs.<span class="bu">sum</span>()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> torch.multinomial(filtered_probs, num_samples<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <code>min_p = 0.05</code>: if the most likely token has probability 0.4, only tokens with probability <span class="math inline">\(\geq\)</span> 0.02 are considered. If the most likely token has probability 0.9, the threshold rises to 0.045 automatically restricting sampling when the model is confident.</p>
+<p>Min-p adapts to distribution shape like top-p but uses the maximum token probability as the reference rather than the cumulative sum. Empirically, it produces more coherent output than top-p for creative tasks while maintaining diversity.</p>
+<hr>
+</section>
+<section id="repetition-penalties" class="level2" data-number="9.8">
+<h2 data-number="9.8" class="anchored" data-anchor-id="repetition-penalties"><span class="header-section-number">9.8</span> Repetition penalties</h2>
+<p>A common failure mode of sampling is that the model becomes trapped in repetitive loops. This issue is not solely caused by the decoding algorithm, it often reflects the model operating in a low-quality mode or producing a poorly calibrated probability distribution. Nevertheless, appropriate decoding strategies can help mitigate this problem.</p>
+<section id="frequency-penalty" class="level3" data-number="9.8.1">
+<h3 data-number="9.8.1" class="anchored" data-anchor-id="frequency-penalty"><span class="header-section-number">9.8.1</span> Frequency penalty</h3>
+<p>Reduces the logit of any token proportional to how many times it has appeared in the generated output so far:</p>
+<pre><code>adjusted_logit[t] = logit[t] - frequency_penalty × count(t, generated_so_far)</code></pre>
+<p>A token that has appeared 5 times with <code>frequency_penalty = 0.5</code> has its logit reduced by 2.5. Frequently used tokens become progressively less likely.</p>
+</section>
+<section id="presence-penalty" class="level3" data-number="9.8.2">
+<h3 data-number="9.8.2" class="anchored" data-anchor-id="presence-penalty"><span class="header-section-number">9.8.2</span> Presence penalty</h3>
+<p>Reduces the logit of any token that has appeared at all, by a flat amount:</p>
+<pre><code>adjusted_logit[t] = logit[t] - presence_penalty × (1 if t in generated_so_far else 0)</code></pre>
+<p>Unlike frequency penalty, presence penalty does not scale with count, it applies a flat reduction on first appearance and no additional reduction after that. It discourages reusing any token at all, not repeatedly using a token many times.</p>
+</section>
+<section id="repetition-penalty-multiplicative" class="level3" data-number="9.8.3">
+<h3 data-number="9.8.3" class="anchored" data-anchor-id="repetition-penalty-multiplicative"><span class="header-section-number">9.8.3</span> Repetition penalty (multiplicative)</h3>
+<p>Used in HuggingFace and most open-source implementations:</p>
+<pre><code>adjusted_logit[t] = logit[t] / repetition_penalty    if logit[t] &gt; 0
+adjusted_logit[t] = logit[t] × repetition_penalty    if logit[t] &lt; 0</code></pre>
+<p>For <code>repetition_penalty &gt; 1.0</code>, this divides positive logits and multiplies negative logits, making previously generated tokens less likely regardless of their sign.</p>
+</section>
+<section id="practical-considerations" class="level3" data-number="9.8.4">
+<h3 data-number="9.8.4" class="anchored" data-anchor-id="practical-considerations"><span class="header-section-number">9.8.4</span> Practical considerations</h3>
+<p>Repetition penalties must be carefully calibrated. If the penalty is too strong, the model may avoid repeating necessary words, including common function words such as the, is, and and, which naturally occur multiple times in fluent text. Conversely, if the penalty is too weak, repetitive outputs may persist.</p>
+<p>Most production systems apply penalties only to the generated portion, not the prompt, you do not want tokens appearing in the prompt to be penalized in the response. Context window position also matters: penalizing tokens from many turns ago that have no relationship to the current generation is rarely useful.</p>
+<hr>
+</section>
+</section>
+<section id="structured-decoding-and-constrained-generation" class="level2" data-number="9.9">
+<h2 data-number="9.9" class="anchored" data-anchor-id="structured-decoding-and-constrained-generation"><span class="header-section-number">9.9</span> Structured decoding and constrained generation</h2>
+<p>For many production use cases, the output must conform to a specific format ( a valid JSON, a Python function, a response matching, a defined schema). Unconstrained sampling may produce syntactically invalid output, requiring expensive retry loops. Structured decoding guarantees valid output by constraining the logits at each step.</p>
+<section id="how-constrained-generation-works" class="level3" data-number="9.9.1">
+<h3 data-number="9.9.1" class="anchored" data-anchor-id="how-constrained-generation-works"><span class="header-section-number">9.9.1</span> How constrained generation works</h3>
+<p>At each decoding step, a parser tracks the current state of the partially generated output and computes the set of tokens that are valid at this position, tokens that would not cause the output to become unparseable. All invalid tokens are masked out (their logits set to <code>-inf</code>) before sampling.</p>
+<pre><code>Target format: JSON object with "name" (string) and "age" (integer)
+
+After generating: {"name": "
+  Valid next tokens:   any character that could appear in a JSON string
+  Invalid next tokens: }, ], :, numbers, structural tokens
+
+After generating: {"name": "Alice", "age":
+  Valid next tokens:   digits (0–9), negative sign
+  Invalid next tokens: letters, quotes, braces</code></pre>
+<p>The parser can be regex-based (valid tokens match the regex at the current position), grammar-based (tokens permitted by a context-free grammar at the current parse state), or schema-based (tokens consistent with a JSON schema or Pydantic model).</p>
+</section>
+<section id="implementations" class="level3" data-number="9.9.2">
+<h3 data-number="9.9.2" class="anchored" data-anchor-id="implementations"><span class="header-section-number">9.9.2</span> Implementations</h3>
+<p><strong>Outlines</strong> (Willard &amp; Louf, 2023): builds a finite state machine from the schema or regex at compile time. At inference, the FSM advances after each token and the valid next-token set is read from the FSM in O(1). The precomputed FSM makes constraint checking negligible overhead.</p>
+<p><strong>Guidance</strong> (Microsoft): the earlier widely-used structured generation library. Intercepts the generation loop and applies constraints at each step with a broader feature set including branching and conditional generation.</p>
+<p><strong>llama.cpp GBNF grammars</strong>: built-in grammar-based constrained generation using a BNF-like notation. Ships with llama.cpp without additional dependencies.</p>
+</section>
+<section id="overhead" class="level3" data-number="9.9.3">
+<h3 data-number="9.9.3" class="anchored" data-anchor-id="overhead"><span class="header-section-number">9.9.3</span> Overhead</h3>
+<p>Constrained generation adds overhead in logit masking (computing the valid token set and applying the mask which is O(1) per step with precomputed FSMs) and in reduced sampling diversity (smaller effective vocabulary). Latency overhead is typically 5–15% relative to unconstrained generation with FSM-based approaches. The alternative (parsing failures and retry loops) is far more expensive.</p>
+<hr>
+</section>
+</section>
+<section id="best-of-n-sampling" class="level2" data-number="9.10">
+<h2 data-number="9.10" class="anchored" data-anchor-id="best-of-n-sampling"><span class="header-section-number">9.10</span> Best-of-n sampling</h2>
+<p>Generate <code>n</code> independent completions for the same prompt and select the best one according to some criterion:</p>
+<pre><code>Generate n=8 completions for the same prompt
+Score each:
+  - Reward model score (human preference prediction)
+  - Verifier (run the code, check the math)
+  - Self-consistency (most common answer across completions)
+  - Model perplexity (model's own confidence in its output)
+Return the highest-scoring completion</code></pre>
+<p>Best-of-n is a simple yet effective strategy for improving output quality by allocating additional computation during inference. The model generates n candidate outputs and selects the best one according to a scoring criterion. Performance typically scales log-linearly with n: increasing the number of samples from 1 to 4 often yields substantial improvements, whereas increasing it from 8 to 16 provides smaller, diminishing gains.</p>
+<p><strong>Verifiable tasks</strong> are where best-of-n works best. For math problems, the answer can be verified for correctness. For code, it can be executed and tested. Generate <code>n</code> solutions, keep those that pass verification, return the best or majority-vote answer.</p>
+<p><strong>Reward model reranking</strong> generates <code>n</code> responses and scores them with a reward model trained to predict human preference, effectively the RLHF reward signal applied at inference time rather than training time.</p>
+<p><strong>Self-consistency</strong> (Wang et al., 2023) generates <code>n</code> answers with chain-of- thought, returns the most common final answer. This improves accuracy on multi- step reasoning tasks significantly without requiring a separate verifier.</p>
+<hr>
+</section>
+<section id="speculative-sampling" class="level2" data-number="9.11">
+<h2 data-number="9.11" class="anchored" data-anchor-id="speculative-sampling"><span class="header-section-number">9.11</span> Speculative sampling</h2>
+<p>Autoregressive generation has an uncomfortable property: producing token 50 requires having already produced tokens 1 through 49, one at a time, each requiring a full forward pass through the model.</p>
+<p>Speculative decoding is a way to avoid paying that tax token-by-token. A small, cheap <strong>draft model</strong> runs ahead and proposes a candidate sequence of <code>k</code> tokens. The target model then evaluates all <code>k</code> candidates in a <em>single</em> forward pass. The target model isn’t generating here; it’s grading a draft that’s already been written.</p>
+<p>Drafting versus grading raises the obvious question: how does the target model decide which of the draft’s guesses to keep? The naive answer is a threshold: keep what the target model agrees with and discard the rest. This naive answer is wrong, and understanding <em>why</em> it’s wrong is the key to understanding the whole algorithm.</p>
+<section id="the-acceptance-rule" class="level3" data-number="9.11.1">
+<h3 data-number="9.11.1" class="anchored" data-anchor-id="the-acceptance-rule"><span class="header-section-number">9.11.1</span> The acceptance rule</h3>
+<p>For each draft token <code>x_t</code>, accept it with probability:</p>
+<pre><code>P(accept x_t) = min(1, p_target(x_t) / p_draft(x_t))</code></pre>
+<p>Two regimes:</p>
+<ul>
+<li><strong>The target model likes the token at least as much as the draft did</strong> (<span class="math inline">\(p_{target} \geq p_{draft}\)</span>): accept with probability 1.</li>
+<li><strong>The target model likes it less</strong> (<span class="math inline">\(p_{target} &lt; p_{draft}\)</span>): accept only with probability <span class="math inline">\(p_{target} / p_{draft}\)</span>. The draft model was, in effect, overconfident relative to the target, so the token survives only in proportion to how much the target actually endorses it.</li>
+</ul>
+</section>
+<section id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong" class="level3" data-number="9.11.2">
+<h3 data-number="9.11.2" class="anchored" data-anchor-id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong"><span class="header-section-number">9.11.2</span> What happens on rejection and why the obvious fix is wrong</h3>
+<p>Suppose a draft token is rejected. The intuitive move is to sample a replacement directly from <code>p_target</code> at that position after all, the target model already computed that full distribution during verification. This turns out to <em>distort</em> the final output, and a small numeric example makes the distortion concrete.</p>
+<p>Take a two-token vocabulary, <code>{A, B}</code>, where:</p>
+<pre><code>p_target(A) = 0.5,  p_target(B) = 0.5
+p_draft(A)  = 0.9,  p_draft(B)  = 0.1</code></pre>
+<p>The draft model samples from its own distribution, so it proposes A 90% of the time. When it does, the acceptance probability is <code>min(1, 0.5/0.9) = 0.556</code>. If we reject and then naively resample straight from <code>p_target</code>:</p>
+<pre><code>P(final = A) = P(draft=A)·P(accept) + P(draft=A)·P(reject)·P(naive resample = A)
+             = 0.9 × 0.556 + 0.9 × 0.444 × 0.5
+             = 0.5 + 0.2 = 0.7</code></pre>
+<p>The final probability of A comes out to <strong>0.7</strong>, even though the target model only wanted A 50% of the time. Token A is getting double-counted: it wins a first chance through acceptance, and then (because a naive resample doesn’t know that) a second, independent chance through rejection. Any token the draft model over-favored relative to the target ends up over-represented in the output. This is precisely the kind of quality drift speculative decoding is supposed to avoid.</p>
+</section>
+<section id="the-residual-distribution" class="level3" data-number="9.11.3">
+<h3 data-number="9.11.3" class="anchored" data-anchor-id="the-residual-distribution"><span class="header-section-number">9.11.3</span> The residual distribution</h3>
+<p>The fix is to correct only into the probability mass that acceptance <em>hasn’t already claimed</em>:</p>
+<pre><code>p_correction(x) = max(0, p_target(x) - p_draft(x)) / Z</code></pre>
+<p>This is <strong>not</strong> the target’s raw distribution, it is the target’s distribution with the draft’s contribution subtracted out, clipped at zero, and renormalized by <code>Z</code>. Any token the draft over-proposed is zeroed out here, since it already had its fair shot via acceptance and cannot be picked a second time. Any token the draft under-proposed keeps some mass, since that’s the only place where the target’s true preference hasn’t yet been accounted for.</p>
+<p>Reworking the example: <code>p_correction(A) = max(0, 0.5 − 0.9) = 0</code>, so A can never be selected on correction. <code>p_correction(B) = max(0, 0.5 − 0.1) = 0.4</code>, and since it’s the only token with nonzero mass, <code>Z = 0.4</code> and correction always yields B. Recomputing:</p>
+<pre><code>P(final = A) = 0.9 × 0.556 = 0.5                              matches p_target(A)
+P(final = B) = 0.1 × 1 (direct accept) + 0.9 × 0.444 × 1 (correction) = 0.1 + 0.4 = 0.5   matches p_target(B)</code></pre>
+<p>Both tokens land exactly on the target’s true probabilities.</p>
+</section>
+<section id="walking-through-a-full-sequence" class="level3" data-number="9.11.4">
+<h3 data-number="9.11.4" class="anchored" data-anchor-id="walking-through-a-full-sequence"><span class="header-section-number">9.11.4</span> Walking through a full sequence</h3>
+<p>The acceptance/correction step happens <em>per position</em>, scanned left to right, and stops at the first rejection. Suppose the draft model proposes five tokens continuing “The cat sat on the”:</p>
+<pre><code>Draft sequence:  x1="mat"   x2="and"   x3="looked"  x4="very"   x5="happy"</code></pre>
+<p>One target-model forward pass over the prompt plus all five draft tokens yields the target’s distribution at every position simultaneously, thanks to causal masking position 1 conditioned only on the real prompt, position 2 on the real prompt plus <code>x1</code>, and so on.</p>
+<pre><code>Position 1: x1="mat"     p_draft=0.7, p_target=0.8  → accept (prob. 1)
+Position 2: x2="and"     p_draft=0.5, p_target=0.5  → accept (prob. 1)
+Position 3: x3="looked"  p_draft=0.6, p_target=0.2  → accept w.p. 0.33 → suppose REJECTED</code></pre>
+<p>Once position 3 is rejected, positions 4 and 5 are discarded without ever being checked <code>x4</code> and <code>x5</code> were drafted under the assumption that “looked” was the accepted prefix, and that assumption no longer holds. Position 3 is then resolved by drawing from the residual distribution at that position, which excludes “looked” (already rejected) and favors whatever the target under-weighted relative to the draft say this yields “leapt.”</p>
+<pre><code>Accepted this round:   "mat", "and", "leapt"
+Discarded:              "looked", "very", "happy"</code></pre>
+<p>Three tokens survive from five drafted, produced by a single target forward pass rather than three sequential ones. The next round starts fresh: the draft model proposes another <code>k</code> tokens continuing from “…sat on the mat and leapt,” and the cycle repeats.</p>
+<hr>
+</section>
+</section>
+<section id="chain-of-thought-and-reasoning-tokens" class="level2" data-number="9.12">
+<h2 data-number="9.12" class="anchored" data-anchor-id="chain-of-thought-and-reasoning-tokens"><span class="header-section-number">9.12</span> Chain-of-thought and reasoning tokens</h2>
+<p>A decoding-time technique that improves performance on reasoning tasks: before producing the final answer, the model generates intermediate reasoning steps.</p>
+<pre><code>Without chain-of-thought:
+  Q: "If a train travels 120 miles in 2 hours, what is its speed?"
+  A: "60 miles per hour."
+
+With chain-of-thought:
+  Q: "If a train travels 120 miles in 2 hours, what is its speed?"
+  A: "To find speed, I divide distance by time.
+      Speed = 120 miles / 2 hours = 60 miles per hour."</code></pre>
+<p>Chain-of-thought is a decoding strategy in that it requires generating more tokens before reaching the answer. The intermediate tokens are not just scaffolding, they change the probability distribution over the final answer. When the model writes out an intermediate calculation, that calculation is encoded into the KV cache. Subsequent tokens attend to it. The final answer is generated with the full reasoning chain as context, information that was not available at the first token.</p>
+<p>This is in-context computation: the model uses its own generated text as working memory, offloading complex reasoning to the sequence rather than encoding it entirely within the forward pass. The context window is not just for input but also it is the model’s scratch pad.</p>
+<hr>
+</section>
+<section id="decoding-strategy-selection-guide" class="level2" data-number="9.13">
+<h2 data-number="9.13" class="anchored" data-anchor-id="decoding-strategy-selection-guide"><span class="header-section-number">9.13</span> Decoding strategy selection guide</h2>
+<p>A practical reference for choosing decoding parameters by task:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Strategy</th>
+<th>Temperature</th>
+<th>Top-p</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Factual Q&amp;A</td>
+<td>Greedy or low-T</td>
+<td>0–0.3</td>
+<td>1.0</td>
+<td>Consistency over diversity</td>
+</tr>
+<tr class="even">
+<td>Code generation</td>
+<td>Low temperature</td>
+<td>0.2–0.4</td>
+<td>0.95</td>
+<td>Correctness matters; some diversity for alternatives</td>
+</tr>
+<tr class="odd">
+<td>JSON / structured output</td>
+<td>Constrained</td>
+<td>0.0–0.3</td>
+<td>—</td>
+<td>Use constrained decoding; redundant with high-T</td>
+</tr>
+<tr class="even">
+<td>Translation</td>
+<td>Beam or low-T</td>
+<td>0.1–0.3</td>
+<td>—</td>
+<td>Beam k=4 or low-T sampling</td>
+</tr>
+<tr class="odd">
+<td>Summarization</td>
+<td>Low-medium</td>
+<td>0.3–0.6</td>
+<td>0.9</td>
+<td>Some diversity; avoid repetition penalties for common words</td>
+</tr>
+<tr class="even">
+<td>Conversation</td>
+<td>Medium</td>
+<td>0.7–0.9</td>
+<td>0.9</td>
+<td>Naturalness and variety</td>
+</tr>
+<tr class="odd">
+<td>Creative writing</td>
+<td>High</td>
+<td>0.9–1.2</td>
+<td>0.95</td>
+<td>Maximize diversity; consider min-p</td>
+</tr>
+<tr class="even">
+<td>Reasoning / math</td>
+<td>Very low or CoT</td>
+<td>0.0–0.1</td>
+<td>—</td>
+<td>Greedy for extraction; chain-of-thought for reasoning</td>
+</tr>
+<tr class="odd">
+<td>Brainstorming</td>
+<td>High</td>
+<td>1.0–1.4</td>
+<td>0.95</td>
+<td>Divergent thinking; coherence secondary</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="9.14">
+<h2 data-number="9.14" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">9.14</span> Key takeaways</h2>
+<ul>
+<li>The model outputs a probability distribution over the vocabulary at each step; decoding selects a token from that distribution — this choice, made thousands of times, determines the character of the output</li>
+<li>Greedy decoding (always pick the most probable token) is deterministic and accurate for factual tasks but produces repetitive, generic output for open- ended generation because local optimality does not imply global optimality</li>
+<li>Beam search maintains <code>k</code> candidate sequences and returns the highest cumulative probability sequence; better than greedy for constrained tasks but suffers the beam search curse for open-ended generation — highest-probability ≠ most interesting</li>
+<li>Temperature scales logits before softmax: below 1.0 sharpens the distribution (more deterministic), above 1.0 flattens it (more random); vary temperature by task rather than using a single global value</li>
+<li>Top-p (nucleus sampling) adaptively samples from the smallest token set covering probability mass <code>p</code> — the nucleus shrinks when the model is confident, expands when uncertain; it is the dominant production sampling strategy</li>
+<li>Min-p uses the maximum token probability as a reference threshold rather than cumulative mass, producing more coherent output in cases where top-p includes low-probability tokens</li>
+<li>Structured decoding masks invalid tokens at each step using FSMs or parsers, guaranteeing format correctness with ~5–15% overhead — far cheaper than retry loops</li>
+<li>Best-of-n generates multiple completions and selects the best; most effective for verifiable tasks (math, code) where correctness can be checked programmatically</li>
+<li>Chain-of-thought uses the KV cache as working memory — intermediate reasoning tokens change the probability distribution over the final answer; reasoning models extend this to thousands of deliberation tokens</li>
+<li>Higher temperature increases hallucination rate; factual and structured tasks should use low temperature or constrained decoding to respect the model’s already-correct probability signal</li>
+</ul>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch5/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.2: Cheat sheet.
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="9.15">
+<h2 data-number="9.15" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.15</span> Further reading</h2>
+<ul>
+<li>Holtzman et al.&nbsp;(2020). <em>The Curious Case of Neural Text Degeneration.</em> — Established why greedy and beam search fail for open-ended generation and introduced nucleus sampling. The analysis of probability maximization failure modes is essential.</li>
+<li>Fan et al.&nbsp;(2018). <em>Hierarchical Neural Story Generation.</em> — Introduced top-k sampling for neural text generation; the original motivation and evaluation.</li>
+<li>Leviathan et al.&nbsp;(2023). <em>Fast Inference from Transformers via Speculative Decoding.</em> — Speculative sampling with exact distribution preservation; the proof that the correction step maintains the target distribution is the key contribution.</li>
+<li>Wei et al.&nbsp;(2022). <em>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models.</em> — Established chain-of-thought as a decoding-time technique.</li>
+<li>Willard &amp; Louf (2023). <em>Efficient Guided Generation for Large Language Models.</em> — The Outlines paper; FSM-based constrained decoding with O(1) per-step overhead.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/llm\.hosseini\.work");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../book/part3/gpu-execution.html" class="pagination-link" aria-label="GPU Execution">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
