@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; GPU Execution – From Prompt to Response</title>
+<title>11&nbsp; Document Ingestion – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,8 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/decoding-and-sampling.html" rel="next">
-<link href="../../book/part3/kv-cache.html" rel="prev">
+<link href="../../book/part4/parametric-vs-external-memory.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,43 +113,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<meta property="og:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta property="og:title" content="11&nbsp; Document Ingestion – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part4/figures/ch3/journey_part4_ch3.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta name="twitter:title" content="11&nbsp; Document Ingestion – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part4/figures/ch3/journey_part4_ch3.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -325,7 +295,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/document_ingestion.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -435,7 +405,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
   </div>
 </li>
@@ -464,7 +434,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
   </div>
 </li>
@@ -492,16 +462,14 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-gpu-execution-deserves-its-own-chapter" id="toc-why-gpu-execution-deserves-its-own-chapter" class="nav-link active" data-scroll-target="#why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</a></li>
-  <li><a href="#gpu-architecture-fundamentals" id="toc-gpu-architecture-fundamentals" class="nav-link" data-scroll-target="#gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</a></li>
-  <li><a href="#the-roofline-model" id="toc-the-roofline-model" class="nav-link" data-scroll-target="#the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</a></li>
-  <li><a href="#prefill-vs.-decode-two-different-regimes" id="toc-prefill-vs.-decode-two-different-regimes" class="nav-link" data-scroll-target="#prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</a></li>
-  <li><a href="#kernel-fusion" id="toc-kernel-fusion" class="nav-link" data-scroll-target="#kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</a></li>
-  <li><a href="#precision-and-quantization-at-the-kernel-level" id="toc-precision-and-quantization-at-the-kernel-level" class="nav-link" data-scroll-target="#precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</a></li>
-  <li><a href="#tensor-parallelism-at-the-kernel-level" id="toc-tensor-parallelism-at-the-kernel-level" class="nav-link" data-scroll-target="#tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</a></li>
-  <li><a href="#cuda-graph-capture" id="toc-cuda-graph-capture" class="nav-link" data-scroll-target="#cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.10</span> Further reading</a></li>
+  <li><a href="#the-ingestion-problem" id="toc-the-ingestion-problem" class="nav-link active" data-scroll-target="#the-ingestion-problem"><span class="header-section-number">11.1</span> The ingestion problem</a></li>
+  <li><a href="#document-formats-and-their-challenges" id="toc-document-formats-and-their-challenges" class="nav-link" data-scroll-target="#document-formats-and-their-challenges"><span class="header-section-number">11.2</span> Document formats and their challenges</a></li>
+  <li><a href="#text-cleaning" id="toc-text-cleaning" class="nav-link" data-scroll-target="#text-cleaning"><span class="header-section-number">11.3</span> Text cleaning</a></li>
+  <li><a href="#document-metadata-extraction" id="toc-document-metadata-extraction" class="nav-link" data-scroll-target="#document-metadata-extraction"><span class="header-section-number">11.4</span> Document metadata extraction</a></li>
+  <li><a href="#the-ingestion-pipeline-assembled" id="toc-the-ingestion-pipeline-assembled" class="nav-link" data-scroll-target="#the-ingestion-pipeline-assembled"><span class="header-section-number">11.5</span> The ingestion pipeline assembled</a></li>
+  <li><a href="#ingestion-at-scale" id="toc-ingestion-at-scale" class="nav-link" data-scroll-target="#ingestion-at-scale"><span class="header-section-number">11.6</span> Ingestion at scale</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">11.7</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">11.8</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -509,9 +477,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/document_ingestion.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></h1>
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></h1>
 </div>
 
 
@@ -529,7 +497,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>When the model runs, what is GPU actually doing? Why does the same operation take wildly different amounts of time depending on how it is scheduled, and how the data is laid out in memory?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>You upload a PDF, a Word document, a webpage, or a database export. Before any of it can be retrieved or reasoned over, it must be transformed into something a retrieval system can work with. What actually happens during that transformation?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -542,290 +510,255 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/journey_part3_ch4.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch3/journey_part4_ch3.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.1: The journey through the Model Mind.
+Figure&nbsp;11.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The previous chapters established what the model computes: embeddings, attention, feed-forward networks, the KV cache. This chapter covers <em>where</em> that computation actually happens and why it behaves the way it does. Every optimization discussed so far (FlashAttention, PageAttention, continuous batching, quantization) exists because of specific GPU execution constraints. This chapter makes those constraints explicit.</p>
+<p>Before a document can be retrieved, it must be ingested, parsed, cleaned, structured, and prepared for the pipeline that follows. This is where most RAG systems fail, and it happens long before any query is ever issued.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-gpu-execution-deserves-its-own-chapter" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</h2>
-<p>Every previous chapter has mentioned GPU constraints in passing: memory bandwidth, arithmetic throughput, HBM capacity. This chapter makes those concepts precise.</p>
-<p>Understanding GPU execution has direct impact ob system performance and it is not just an academic exercise for LLM engineers. A serving system operating at 60% of a GPU’s theoretical peak throughput can deliver 50% more throughput than one running at just 40%, without any additional hardware. This knowledge also explains why certain operations become bottlenecks, why quantization improves performance, why kernel fusion is so effective, and why the prefill and decode phases show different latency characteristics.</p>
-<p>More directly: every optimization technique in serving (FlashAttention, continuous batching, tensor parallelism) exists because of specific GPU execution constraints. Understanding those constraints explains why the optimizations take the form they do, rather than appearing as a collection of unrelated tricks.</p>
+<section id="the-ingestion-problem" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="the-ingestion-problem"><span class="header-section-number">11.1</span> The ingestion problem</h2>
+<p>A language model’s knowledge is frozen at training time. It knows what was in its training data and nothing more. For most production applications, this is insufficient, users ask about documents the model has never seen, databases that change daily, proprietary internal knowledge that was never part of any public corpus.</p>
+<p>Retrieval-Augmented Generation solves this by giving the model access to external knowledge at inference time. But before any document can be retrieved, it must be ingested: parsed, cleaned, structured, and stored in a form that retrieval systems can query efficiently.</p>
+<p>Ingestion is the foundation of every RAG system and where most RAG failures actually originate. It is not in the retrieval algorithm or the language model, but in poor parsing, inadequate cleaning, or naive chunking that destroys the coherence of the source material. Getting ingestion right is a prerequisite for optimizing anything else.</p>
 <hr>
 </section>
-<section id="gpu-architecture-fundamentals" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</h2>
-<p>A modern GPU is not a fast CPU. It is a fundamentally different compute architecture optimized for a different class of problems.</p>
-<section id="the-execution-model" class="level3" data-number="8.2.1">
-<h3 data-number="8.2.1" class="anchored" data-anchor-id="the-execution-model"><span class="header-section-number">8.2.1</span> The execution model</h3>
-<p>A CPU has a small number of powerful cores (typically 8–128), each capable of complex out-of-order execution, branch prediction, and deep caches. CPUs are optimized for latency and completing a single thread of execution as fast as possible.</p>
-<p>A GPU has a massive number of simpler cores (an H100 has 16,896 CUDA cores) organized into streaming multiprocessors (SMs). Each SM is not particularly fast for a single operation, but thousands of them executing simultaneously produce enormous total throughput. GPUs are optimized to complete as many simple operations as possible per second, not completing any one operation quickly.</p>
-<p>The programming model reflects on this: GPU programs are written as kernels that execute the same operation on many data elements simultaneously. A matrix multiplication kernel runs the same multiply operation on thousands of elements in parallel. If there is data parallelism in your problem, a GPU exploits it. If there is not, a GPU is slower than a CPU for that specific task.</p>
-<p>LLM inference has enormous data parallelism: the same transformer operations apply to every token in the sequence, and every element of every weight matrix participates in the same type of computation. This structural match is why GPUs dominate LLM inference.</p>
-</section>
-<section id="the-memory-hierarchy" class="level3" data-number="8.2.2">
-<h3 data-number="8.2.2" class="anchored" data-anchor-id="the-memory-hierarchy"><span class="header-section-number">8.2.2</span> The memory hierarchy</h3>
-<p>GPU memory has multiple tiers with very different bandwidth and capacity:</p>
-<pre><code>Memory tier       Bandwidth        Capacity      Latency
-──────────────────────────────────────────────────────────
-Registers         ~80 TB/s         256 KB/SM     ~1 cycle
-L1/SRAM           ~20 TB/s         256 KB/SM     ~30 cycles
-L2 cache          ~5 TB/s          50 MB         ~200 cycles
-HBM (VRAM)        ~3.35 TB/s       80 GB         ~600 cycles
-PCIe (CPU RAM)    ~64 GB/s         TBs           ~microseconds
-NVLink (GPU-GPU)  ~900 GB/s        —             ~microseconds</code></pre>
-<p>SRAM (often called shared memory or L1 cache) is the GPU’s fast on-chip memory. It offers extremely low latency but limited capacity. HBM (High Bandwidth Memory), is the GPU’s large off-chip memory although it provides massive bandwidth, accessing HBM is still significantly more expensive than accessing on-chip memory.</p>
-<p>Every GPU computation ultimately reads data from HBM and writes results back to it. As a result, the central challenge of GPU kernel optimization is reducing HBM traffic by keeping frequently accessed data in SRAM for as long as possible which is the exact key insight behind FlashAttention.</p>
-</section>
-<section id="streaming-multiprocessors-and-warps" class="level3" data-number="8.2.3">
-<h3 data-number="8.2.3" class="anchored" data-anchor-id="streaming-multiprocessors-and-warps"><span class="header-section-number">8.2.3</span> Streaming multiprocessors and warps</h3>
-<p>The Streaming Multiprocessor (SM) is the fundamental compute unit of an NVIDIA GPU. An H100 GPU contains many SMs operating in parallel, with each SM responsible for executing thousands of lightweight threads concurrently.</p>
-<p>Each SM on an H100 contains:</p>
+<section id="document-formats-and-their-challenges" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="document-formats-and-their-challenges"><span class="header-section-number">11.2</span> Document formats and their challenges</h2>
+<p>The first step in ingestion is parsing: extracting usable text from whatever format the document arrives in. Different formats present different challenges.</p>
+<section id="pdf" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="pdf"><span class="header-section-number">11.2.1</span> PDF</h3>
+<p>The most common and most problematic format. PDF is a presentation format, not a semantic one. It describes where each character is placed on a page, not what structure the document has.</p>
+<p>A PDF does not have “paragraphs” or “sections” in any structural sense. It has positioned text elements, each with a font, size, and (x, y) coordinate. Reconstructing reading order, identifying headings, distinguishing body text from captions, and separating columns requires heuristics that work well on simple documents and poorly on complex ones.</p>
+<p>Specific PDF challenges:</p>
+<p><strong>Multi-column layouts.</strong> Text from different columns is interleaved in the raw extraction order. Naive extractors produce text that mixes columns: “The company revenue | left column second line | right column second line | grew significantly.” Correct column separation requires spatial analysis.</p>
+<p><strong>Tables.</strong> Tabular data in PDFs is often just positioned text with no structural information. Extractors must infer table structure from spatial relationships between text elements. This fails on complex merged cells, rotated headers, and tables that span pages.</p>
+<p><strong>Scanned PDFs.</strong> PDFs that contain scanned images rather than text contain no extractable text at all, what appears as “text” is actually just pixels. Extraction requires OCR, which adds its own error rate. A 98% OCR accuracy rate sounds high until you realize it means roughly one error every fifty words in a dense technical document.</p>
+<p><strong>Headers and footers.</strong> Page numbers, document titles, and section headers in running headers and footers are often extracted inline with body text. A 100-page document might have “CONFIDENTIAL Page N of 100” injected into the text every few paragraphs.</p>
+<p><strong>Mathematical notation.</strong> Equations in PDFs are often stored as positioned symbols rather than structured mathematical expressions. Extraction typically produces garbled sequences of symbols.</p>
+<p>PDF libraries for Python:</p>
 <ul>
-<li>128 CUDA cores for FP32 arithmetic operations.</li>
-<li>4 Tensor Cores specialized for matrix multiplication.</li>
-<li>256 KB of registers for storing temporary values used by active threads.</li>
-<li>228 KB of on-chip SRAM, configurable between:
-<ul>
-<li>L1 cache for automatically caching memory accesses.</li>
-<li>Shared memory for explicitly sharing data between threads in the same thread block.</li>
-</ul></li>
-<li>Warp schedulers that determine which groups of threads execute next.</li>
+<li><strong>PyMuPDF (fitz)</strong>: fast, good text extraction for standard PDFs, reasonable layout analysis</li>
+<li><strong>pdfplumber</strong>: better table extraction than PyMuPDF, slower</li>
+<li><strong>pypdf</strong>: pure Python, simpler, adequate for basic extraction</li>
+<li><strong>Adobe PDF Extract API</strong>: commercial, highest quality for complex layouts</li>
 </ul>
-<p>GPU threads execute in groups called warps, where each warp consists of 32 threads. Unlike CPU threads, which execute independently, all threads within a warp execute the same instruction at the same time on different pieces of data. NVIDIA refers to this execution model as SIMT (Single Instruction, Multiple Threads).</p>
-<p>For example, consider the following code executed by a warp:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> c <span class="op">+</span> d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Suppose that among the 32 threads in the warp 20 threads satisfy <span class="math inline">\(x &gt; 0\)</span> and 12 threads satisfy <span class="math inline">\(x &lt;= 0\)</span> The GPU cannot execute both branches simultaneously within the same warp. Instead, it execute <span class="math inline">\(y = a + b\)</span> for the 20 relevant threads while the other 12 threads remain temporarily inactive and than execute <span class="math inline">\(y = c + d\)</span> for the remaining 12 threads while the first 20 threads remain inactive. Conceptually, execution looks like:</p>
-<pre><code>Cycle 1:
-[Active]   Threads 0-19  -&gt; y = a + b
-[Inactive] Threads 20-31
-
-Cycle 2:
-[Inactive] Threads 0-19
-[Active]   Threads 20-31 -&gt; y = c + d</code></pre>
-<p>Although each thread only needs one branch, the warp executes both branches sequentially, reducing parallel efficiency whcih is known as branch divergence.</p>
-<p>An H100 has 132 SMs. With 4 warp schedulers per SM and 32 threads per warp, the H100 can keep 132 × 4 × 32 = 16,896 threads active simultaneously.</p>
+<p>For high-stakes RAG applications (legal documents, financial filings, technical documentation) investing in high-quality PDF parsing pays off significantly. A poorly parsed PDF produces retrieval failures that are invisible at the extraction stage but manifest as hallucinations and incorrect answers at inference time.</p>
 </section>
-<section id="tensor-cores" class="level3" data-number="8.2.4">
-<h3 data-number="8.2.4" class="anchored" data-anchor-id="tensor-cores"><span class="header-section-number">8.2.4</span> Tensor cores</h3>
-<p>Standard CUDA cores perform scalar floating point operations. Tensor cores perform matrix multiplications directly in hardware, at much higher throughput.</p>
-<p>An H100 tensor core performs a 16×16×16 matrix multiplication in a single operation. The H100 has 528 tensor cores, delivering approximately:</p>
+<section id="word-documents-docx" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="word-documents-docx"><span class="header-section-number">11.2.2</span> Word documents (DOCX)</h3>
+<p>Structurally richer than PDF. DOCX files have an explicit document model: paragraphs, headings (with levels), tables (with cell structure), lists, and styles. Extraction can respect this structure rather than reconstructing it from layout.</p>
+<p>Challenges: embedded objects (images, embedded PDFs, charts) are opaque blobs whose content is inaccessible without separate processing. Tracked changes and revision marks can clutter extracted text.</p>
+</section>
+<section id="html-and-web-pages" class="level3" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="html-and-web-pages"><span class="header-section-number">11.2.3</span> HTML and web pages</h3>
+<p>HTML is semantically rich when used correctly. Heading tags (<code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>), paragraph tags, list tags, table tags, and semantic elements like <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;nav&gt;</code> provide structural information that text extractors can use.</p>
+<p>In practice, web HTML is rarely so clean. Navigation menus, cookie banners, advertisements, and footers must be removed. JavaScript-rendered content requires a headless browser to extract.</p>
+</section>
+<section id="plain-text-and-markdown" class="level3" data-number="11.2.4">
+<h3 data-number="11.2.4" class="anchored" data-anchor-id="plain-text-and-markdown"><span class="header-section-number">11.2.4</span> Plain text and Markdown</h3>
+<p>The easiest cases. Text files require no parsing; they are read directly. Markdown adds lightweight semantic structure (headings via <code>#</code>, code blocks via backticks, lists) that parsers can respect.</p>
+<p>Markdown is increasingly common as a RAG source format because it is both human-readable and machine-parseable. Documents intentionally written for RAG ingestion are sometimes authored in Markdown for this reason.</p>
+</section>
+<section id="spreadsheets-xlsx-csv" class="level3" data-number="11.2.5">
+<h3 data-number="11.2.5" class="anchored" data-anchor-id="spreadsheets-xlsx-csv"><span class="header-section-number">11.2.5</span> Spreadsheets (XLSX, CSV)</h3>
+<p>Tabular data presents a different challenge: how do you convert a table into text that can be retrieved and understood by a language model?</p>
+<p>Options:</p>
 <ul>
-<li>1,000 TFLOPS for BF16/FP16 matrix multiplications</li>
-<li>1,979 TFLOPS for FP8 matrix multiplications</li>
-<li>66 TFLOPS for FP32 scalar operations</li>
+<li><strong>Row-by-row serialization</strong>: “Row 3: Name=Alice, Age=32, Department=Engineering, Salary=95000”</li>
+<li><strong>Markdown table format</strong>: convert to a Markdown table that the LLM can parse</li>
+<li><strong>Schema + sample rows</strong>: describe the schema and include representative examples; retrieve the schema for schema-level questions and specific rows for value-level questions</li>
 </ul>
-<p>The gap between tensor core throughput and scalar throughput explains why matrix multiplication is fast and why all other operations are relatively expensive on modern GPUs.</p>
+<p>For large spreadsheets (thousands of rows), row-by-row serialization produces too much text to embed meaningfully. SQL or structured databases with text-to-SQL generation are often a better architecture than RAG for tabular data. Retrieval finds relevant rows; the model generates SQL; the database executes it exactly.</p>
 </section>
-</section>
-<section id="the-roofline-model" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</h2>
-<p>The roofline model is a simple framework for understanding whether a given operation is compute-bound or memory-bandwidth-bound, and what the theoretical maximum performance is:</p>
-<pre><code>Attainable performance = min(Peak FLOPS, Memory bandwidth × Arithmetic intensity)</code></pre>
-<p>Where arithmetic intensity = FLOPs executed / bytes read from memory.</p>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/roofline_model.svg" class="img-fluid figure-img" style="width:70.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.2: The roofline Model.
-</figcaption>
-</figure>
-</div>
-<p>The ridge point is where the roofline transitions from memory-bound to compute-bound which is approximately 300 FLOPs/byte for the H100 (1,000 TFLOPS / 3.35 TB/s). Operations with arithmetic intensity above 300 are compute-bound and those below are memory-bandwidth-bound.</p>
-<section id="llm-operations-on-the-roofline" class="level3" data-number="8.3.1">
-<h3 data-number="8.3.1" class="anchored" data-anchor-id="llm-operations-on-the-roofline"><span class="header-section-number">8.3.1</span> LLM operations on the roofline</h3>
-<p>Different operations in LLM inference have very different arithmetic intensities:</p>
-<p><strong>Large matrix multiplications</strong> (prefill, large batches): Matrix multiplication achieves high arithmetic intensity by reusing each byte of weight data for every sequence in the batch. For example, with a batch size of 32 and <span class="math inline">\(d_model = 4,096\)</span>, the arithmetic intensity is approximately 32 FLOPs/byte. This value approaches the roofline model’s ridge point, indicating that performance is primarily limited by computational throughput rather than memory bandwidth.</p>
-<p><strong>Vector-matrix products</strong> (decode, batch size 1): The Q projection at a batch size of 1 exhibits low arithmetic intensity because each byte of weight data is used in only one multiply operation. Consequently, the arithmetic intensity is approximately 1 FLOP/byte, which is about 300× below the roofline model’s ridge point. As a result, performance is severely limited by memory bandwidth, leaving the tensor cores underutilized.</p>
-<p><strong>Attention with KV cache</strong> (decode): extremely low arithmetic intensity. Reading the full KV cache and computing a dot product with the query vector. Memory- bandwidth-bound with near-zero compute utilization.</p>
-<p><strong>Softmax, layer norm, element-wise ops</strong>: essentially zero arithmetic intensity. Read data, apply a simple function, write it back. Pure memory bandwidth operations. No tensor core involvement.</p>
-<p>The practical implication: for decode at small batch sizes, the GPU is almost entirely idle arithmetically, waiting for data from HBM. Increasing batch size is the primary lever for improving GPU utilization during decode, because it amortizes weight reads across multiple sequences and increases arithmetic intensity toward the ridge point.</p>
+<section id="images-and-multimodal-documents" class="level3" data-number="11.2.6">
+<h3 data-number="11.2.6" class="anchored" data-anchor-id="images-and-multimodal-documents"><span class="header-section-number">11.2.6</span> Images and multimodal documents</h3>
+<p>Documents with meaningful visual content (diagrams, charts, photographs with captions, infographics) require multimodal processing.</p>
+<p>OCR extracts text from images. Tesseract is the standard open-source OCR library; AWS Textract, Google Cloud Vision, and Azure Computer Vision are commercial alternatives with higher accuracy on complex layouts.</p>
+<p>Vision-language models can describe image content, answer questions about figures, and extract structured information from charts. For documents where figures carry significant information, routing image content through a VLM before ingestion produces much better retrieval coverage than ignoring figures or relying on captions alone. A technical diagram with no caption is invisible to text-based retrieval without VLM description.</p>
 <hr>
 </section>
 </section>
-<section id="prefill-vs.-decode-two-different-regimes" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</h2>
-<p>The roofline analysis explains why prefill and decode behave so differently and they are not just slow and fast versions of the same operation. They are different hardware bottlenecks entirely.</p>
-<section id="prefill-compute-bound" class="level3" data-number="8.4.1">
-<h3 data-number="8.4.1" class="anchored" data-anchor-id="prefill-compute-bound"><span class="header-section-number">8.4.1</span> Prefill: compute-bound</h3>
-<p>During prefill, all prompt tokens are processed simultaneously. The Q projection operates on a matrix of shape <code>[n_prompt, d_model]</code>:</p>
-<pre><code>Q projection: [n_prompt, d_model] @ [d_model, d_model]
-FLOPs:        2 × n_prompt × d_model²
-Bytes:        d_model² × 2    (weight matrix, loaded once)
-
-Arithmetic intensity = n_prompt FLOPs/byte</code></pre>
-<p>For n_prompt = 1,024 and d_model = 4,096: arithmetic intensity = 1,024 FLOPs/byte which is above the ridge point. Prefill is compute-bound. The H100 runs near its theoretical FLOPs ceiling. In order to make prefill faster it requires more FLOPs (more GPUs, higher clock speeds, or more efficient kernels).</p>
+<section id="text-cleaning" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="text-cleaning"><span class="header-section-number">11.3</span> Text cleaning</h2>
+<p>After parsing, raw extracted text often contains artifacts that reduce retrieval quality and cleaning is used to remove or normalize them.</p>
+<section id="common-cleaning-steps" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="common-cleaning-steps"><span class="header-section-number">11.3.1</span> Common cleaning steps</h3>
+<p><strong>Whitespace normalization.</strong> Collapse multiple spaces to one, remove leading/trailing whitespace from paragraphs, normalize line endings. Necessary because PDF extraction produces variable whitespace depending on character positioning.</p>
+<p><strong>Header and footer removal.</strong> Identify and remove page numbers, document titles repeated on each page, copyright notices, and other non-content text. Pattern matching (regex for “Page N of M”) handles simple cases and spatial analysis during PDF parsing handles complex ones.</p>
+<p><strong>Hyphenation repair.</strong> PDF extraction often breaks hyphenated words at line breaks: <code>trans-\naction</code> appears as two tokens rather than “transaction”. Detecting and joining these is straightforward for end-of-line hyphens but ambiguous for legitimate compound hyphenation.</p>
+<p><strong>Encoding normalization.</strong> Documents from multiple sources may have different encodings (UTF-8, Latin-1, Windows-1252). Normalize to UTF-8. Handle common encoding artifacts: curly quotes that appear as <code>â€œ</code>, em dashes that appear as <code>â€"</code>.</p>
+<p><strong>Boilerplate removal.</strong> Repeated passages that appear across many documents (terms of service, disclaimer language, standard legal notices) add noise to embeddings and can dominate retrieval for questions that accidentally match boilerplate patterns. Deduplication at the passage level or explicit blocklisting removes this.</p>
+<p><strong>Table of contents removal.</strong> Tables of contents in PDFs and Word documents are often extracted as body text, producing a list of section titles that duplicates content the model will encounter in the actual sections. Identifying and removing ToC passages prevents this duplication from dominating retrieval.</p>
+<p><strong>Reference list handling.</strong> Bibliographies and reference lists at the end of academic papers are often extracted as body text. Whether to include or exclude them depends on whether the references themselves are useful for retrieval. For scientific RAG, including references can help answer “what papers support this claim” questions.</p>
 </section>
-<section id="decode-memory-bandwidth-bound" class="level3" data-number="8.4.2">
-<h3 data-number="8.4.2" class="anchored" data-anchor-id="decode-memory-bandwidth-bound"><span class="header-section-number">8.4.2</span> Decode: memory-bandwidth-bound</h3>
-<p>During decode, only one new token is processed at a time. The Q projection operates on a vector of shape <code>[1, d_model]</code>:</p>
-<pre><code>Q projection: [1, d_model] @ [d_model, d_model]
-FLOPs:        2 × 1 × d_model²
-Bytes:        d_model² × 2    (same weight matrix)
-
-Arithmetic intensity = 1 FLOPs/byte</code></pre>
-<p>For d_model = 4,096: arithmetic intensity = 1 FLOPs/byte which makes decode memory-bandwidth-bound. The H100 runs at approximately 1/300th of its peak FLOPs utilization. Making decode faster requires loading weights faster, higher bandwidth memory, quantization (fewer bytes per parameter), or larger batches (sharing weight reads across sequences).</p>
+<section id="cleaning-for-specific-domains" class="level3" data-number="11.3.2">
+<h3 data-number="11.3.2" class="anchored" data-anchor-id="cleaning-for-specific-domains"><span class="header-section-number">11.3.2</span> Cleaning for specific domains</h3>
+<p><strong>Legal documents.</strong> Case citations, statutory references, and defined terms have specific patterns. Preserving these patterns rather than normalizing them is important for legal search. Removing citation formatting destroys the semantic signal that distinguishes a reference to a case from a discussion of it.</p>
+<p><strong>Medical records.</strong> PHI (Protected Health Information) removal is legally required before storing patient records in retrieval systems. Names, dates, locations, and identifiers must be de-identified before ingestion. This is not optional and not a post-processing step, it must happen before any content is stored.</p>
+<p><strong>Code.</strong> Programming language syntax should not be normalized like prose. Tab/space preservation matters for Python. Comment blocks, docstrings, and variable names are semantically important and should not be striped. Code is often better chunked by function or class boundary than by token count.</p>
+<p><strong>Financial filings.</strong> Numerical tables in SEC filings have specific conventions (negative numbers in parentheses, thousands vs.&nbsp;millions) which should be preserved or explicitly normalized consistently across the corpus.</p>
 <hr>
 </section>
 </section>
-<section id="kernel-fusion" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</h2>
-<p>Each operation in a transformer block, such as layer normalization, Q/K/V projection, softmax, and residual addition, can be implemented as a separate CUDA kernel. In this approach, every kernel reads its inputs from HBM and writes its outputs back to HBM before the next kernel executes. While this design is straightforward to implement, it is inefficient because intermediate results are repeatedly transferred to and from HBM despite being needed only by subsequent operations.</p>
-<p>Kernel fusion addresses this inefficiency by combining multiple operations into a single CUDA kernel. Intermediate results are retained in registers or on-chip shared memory (SRAM) rather than being written to HBM after each operation. Only the final output is stored in HBM, reducing memory traffic, increasing arithmetic intensity, and improving overall performance.</p>
-<section id="example-fused-layer-norm-and-linear-projection" class="level3" data-number="8.5.1">
-<h3 data-number="8.5.1" class="anchored" data-anchor-id="example-fused-layer-norm-and-linear-projection"><span class="header-section-number">8.5.1</span> Example: fused layer norm and linear projection</h3>
-<p>Without fusion:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x_norm <span class="op">=</span> layer_norm(x)     <span class="co"># read x from HBM, write x_norm to HBM</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> x_norm <span class="op">@</span> W_Q           <span class="co"># read x_norm from HBM, write q to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Two HBM reads, two HBM writes, for data that is only an intermediate result.</p>
-<p>With fusion:</p>
-<pre><code>Single kernel:
-  Read x from HBM once
-  Compute layer norm in registers/SRAM
-  Apply W_Q projection immediately
-  Write q to HBM once</code></pre>
-<p>One HBM read, one HBM write. Memory traffic halved for this pair of operations. The intermediate <code>x_norm</code> never leaves the chip.</p>
+<section id="document-metadata-extraction" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="document-metadata-extraction"><span class="header-section-number">11.4</span> Document metadata extraction</h2>
+<p>Every ingested document should be accompanied by metadata that enables filtering, ranking, and attribution during retrieval.</p>
+<section id="core-metadata-fields" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="core-metadata-fields"><span class="header-section-number">11.4.1</span> Core metadata fields</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"document_id"</span>: <span class="st">"uuid-abc123"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"source_url"</span>: <span class="st">"https://example.com/docs/api-reference.pdf"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"source_type"</span>: <span class="st">"pdf"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"title"</span>: <span class="st">"API Reference Guide v3.2"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"author"</span>: <span class="st">"Engineering Team"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"created_at"</span>: <span class="st">"2024-01-15T10:30:00Z"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"modified_at"</span>: <span class="st">"2024-03-22T14:15:00Z"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"language"</span>: <span class="st">"en"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"page_count"</span>: <span class="dv">48</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"word_count"</span>: <span class="dv">23500</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"section"</span>: <span class="st">"Technical Documentation"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tags"</span>: [<span class="st">"api"</span>, <span class="st">"reference"</span>, <span class="st">"v3"</span>],</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"access_level"</span>: <span class="st">"internal"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="flashattention-as-kernel-fusion" class="level3" data-number="8.5.2">
-<h3 data-number="8.5.2" class="anchored" data-anchor-id="flashattention-as-kernel-fusion"><span class="header-section-number">8.5.2</span> FlashAttention as kernel fusion</h3>
-<p>FlashAttention is the most impactful example of kernel fusion in LLM inference. The naive attention computation reads and writes the n×n score matrix multiple times (scaling, masking, softmax, and the final weighted sum). FlashAttention fuses all of these into a single kernel that keeps intermediate scores in SRAM.</p>
-<p>The memory traffic reduction is from O(n²) to O(n). At long sequence lengths, this is the difference between attention fitting in available memory and not fitting at all. Chapter REFF covers FlashAttention in detail; the point here is that it is fundamentally a kernel fusion optimization, not an algorithmic approximation. The result is mathematically identical to naive attention.</p>
+<section id="why-metadata-matters" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="why-metadata-matters"><span class="header-section-number">11.4.2</span> Why metadata matters</h3>
+<p><strong>Filtering.</strong> Retrieval can be limited to documents matching metadata criteria. “What does our API documentation say about authentication?” should retrieve from technical documentation, not from marketing materials or HR policies. Without metadata filtering, vector similarity is the only selection mechanism, and it will surface whatever is most semantically similar regardless of source.</p>
+<p><strong>Recency ranking.</strong> For questions about current state, recently modified documents should rank higher. Metadata enables this without modifying embeddings.</p>
+<p><strong>Access control.</strong> Metadata carries authorization information. Users should not retrieve documents their access level does not permit, even if those documents are semantically relevant to their query. Access control must be enforced at retrieval time, not just at ingestion time.</p>
+<p><strong>Attribution.</strong> When the model uses retrieved content to generate a response, metadata provides the citation: “According to the API Reference Guide v3.2, section 4…” Users who need to verify information can follow the citation to the source.</p>
 </section>
-<section id="kernel-fusion-in-practice" class="level3" data-number="8.5.3">
-<h3 data-number="8.5.3" class="anchored" data-anchor-id="kernel-fusion-in-practice"><span class="header-section-number">8.5.3</span> Kernel fusion in practice</h3>
-<p>Production inference frameworks apply kernel fusion throughout the model:</p>
+<section id="automatic-metadata-extraction" class="level3" data-number="11.4.3">
+<h3 data-number="11.4.3" class="anchored" data-anchor-id="automatic-metadata-extraction"><span class="header-section-number">11.4.3</span> Automatic metadata extraction</h3>
+<p>Some metadata fields must be inferred rather than extracted directly:</p>
+<p><strong>Language detection.</strong> langdetect and fastText language identification models classify language from text samples. Important for multilingual corpora where language-specific retrieval is needed, you do not want a French query retrieving German documents.</p>
+<p><strong>Topic classification.</strong> Embedding the document title and first paragraph and comparing to topic embedding clusters can assign broad topical categories. Useful for filtering and for routing queries to the right sub-corpus.</p>
+<p><strong>Entity extraction.</strong> Named entity recognition (NER) identifies people, organizations, locations, and other entities mentioned in the document. These can be stored as metadata fields enabling entity-based filtering: “find documents that mention Acme Corp.”</p>
+<hr>
+</section>
+</section>
+<section id="the-ingestion-pipeline-assembled" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="the-ingestion-pipeline-assembled"><span class="header-section-number">11.5</span> The ingestion pipeline assembled</h2>
+<p>Putting the components together, a production document ingestion pipeline:</p>
+<pre><code>Raw document (PDF, DOCX, HTML, etc.)
+      │
+      ▼
+Format detection
+      │
+      ▼
+Parser selection and execution
+  ├── PDF: PyMuPDF / pdfplumber / LlamaParse
+  ├── DOCX: python-docx
+  ├── HTML: trafilatura + BeautifulSoup
+  ├── Image: OCR + VLM captioning
+  └── Plain text: direct read
+      │
+      ▼
+Raw text + structural information
+  (paragraphs, headings, tables, page numbers)
+      │
+      ▼
+Text cleaning
+  ├── Whitespace normalization
+  ├── Header/footer removal
+  ├── Encoding normalization
+  ├── Boilerplate removal
+  └── Domain-specific cleaning
+      │
+      ▼
+Metadata extraction
+  ├── Core fields (title, source, timestamps)
+  ├── Language detection
+  └── Entity extraction (optional)
+      │
+      ▼
+Chunking
+      │
+      ▼
+Embedding
+      │
+      ▼
+Vector store + metadata store</code></pre>
+<section id="idempotency-and-incremental-updates" class="level3" data-number="11.5.1">
+<h3 data-number="11.5.1" class="anchored" data-anchor-id="idempotency-and-incremental-updates"><span class="header-section-number">11.5.1</span> Idempotency and incremental updates</h3>
+<p>A production ingestion pipeline runs continuously as new documents arrive and existing documents are updated. Two properties are essential:</p>
+<p><strong>Idempotency.</strong> Ingesting the same document twice should produce the same result as ingesting it once. Without idempotency, re-running the pipeline on a partially-updated corpus duplicates documents and corrupts the retrieval index. Implementation: checksums enable detection of already-ingested documents. If a document’s checksum matches an existing entry, skip re-ingestion. If the checksum differs (document has been updated), delete the old chunks and embeddings and re-ingest.</p>
+<p><strong>Atomic updates.</strong> When a document is updated, the retrieval index should not be in a mixed state (some chunks from the old version, some from the new). Atomic updates require: ingesting the new version to a staging area, deleting all old chunks and embeddings for this document ID, and promoting the new chunks and embeddings from staging to production. These steps are typically transactional in a properly designed metadata store.</p>
+</section>
+<section id="error-handling-and-monitoring" class="level3" data-number="11.5.2">
+<h3 data-number="11.5.2" class="anchored" data-anchor-id="error-handling-and-monitoring"><span class="header-section-number">11.5.2</span> Error handling and monitoring</h3>
+<p>Document ingestion fails silently in ways that are hard to detect. A document that fails to parse produces no chunks and no embeddings, it simply does not exist in the retrieval index. Users asking questions about that document get answers based on whatever other documents are retrieved instead. Without logging and monitoring, these failures are invisible.</p>
+<p>Instrument the pipeline to track: documents processed, failed, and skipped per run; parse failures by format and error type; quality gate rejection rates; embedding failures; and processing latency by document type and size.</p>
+<p>Alert on anomalies: if the PDF parse failure rate suddenly spikes, the parser library may have a bug or the input format may have changed. If the quality gate rejects an unusually large fraction of documents, the source may be producing degraded content.</p>
+<hr>
+</section>
+</section>
+<section id="ingestion-at-scale" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="ingestion-at-scale"><span class="header-section-number">11.6</span> Ingestion at scale</h2>
+<p>For large corpora (millions of documents) the ingestion pipeline must be designed for scale from the start.</p>
+<section id="parallelization" class="level3" data-number="11.6.1">
+<h3 data-number="11.6.1" class="anchored" data-anchor-id="parallelization"><span class="header-section-number">11.6.1</span> Parallelization</h3>
+<p>Document parsing is CPU-bound and embarrassingly parallel, each document can be processed independently. Use a task queue (Celery, Ray, AWS SQS + Lambda) to distribute documents across multiple workers. Each worker handles parsing, cleaning, chunking, and embedding for its assigned documents.</p>
+<p>The embedding step often calls an external API (OpenAI, claude). API rate limits impose a ceiling on parallelism. Design the pipeline to batch embedding requests at the maximum allowed batch size and implement rate limit handling with exponential backoff.</p>
+</section>
+<section id="incremental-ingestion" class="level3" data-number="11.6.2">
+<h3 data-number="11.6.2" class="anchored" data-anchor-id="incremental-ingestion"><span class="header-section-number">11.6.2</span> Incremental ingestion</h3>
+<p>For corpora that change frequently, full re-ingestion on every update is too slow. Incremental ingestion processes only new and modified documents:</p>
+<ol type="1">
+<li>Maintain a manifest of all ingested documents and their checksums</li>
+<li>On each run, compare new document checksums to the manifest</li>
+<li>Process only documents with new or changed checksums</li>
+<li>Update the manifest after successful ingestion</li>
+</ol>
+<p>For web crawls, compare last-modified headers or ETags to detect changes without re-downloading content.</p>
+</section>
+<section id="storage-tiering" class="level3" data-number="11.6.3">
+<h3 data-number="11.6.3" class="anchored" data-anchor-id="storage-tiering"><span class="header-section-number">11.6.3</span> Storage tiering</h3>
+<p>Ingested documents at various stages should be stored durably:</p>
 <ul>
-<li>Layer norm fused into linear projections (Q, K, V, output projections)</li>
-<li>Attention scores, masking, and softmax fused (FlashAttention)</li>
-<li>Residual addition fused with layer norm</li>
-<li>Activation functions fused into FFN computation</li>
-<li>RoPE application fused into Q and K projection</li>
+<li><strong>Raw documents</strong>: store the original files in object storage (S3, GCS). Enables re-ingestion if the pipeline changes without retrieving the original from the source.</li>
+<li><strong>Parsed text</strong>: store the cleaned extracted text alongside metadata. Enables re-chunking and re-embedding without re-parsing.</li>
+<li><strong>Chunks</strong>: store chunk text and metadata. Enables re-embedding without re-chunking.</li>
+<li><strong>Embeddings</strong>: stored in the vector database. The final retrieval index.</li>
 </ul>
-<p>The cumulative impact is typically 1.5–2× throughput improvement over naively separate kernels, primarily by reducing HBM traffic.</p>
+<p>Each tier enables rerunning from that point forward without rerunning earlier stages. When you improve your embedding model, you only need to re-embed, not re-parse. When you improve your chunking strategy, you only need to re-chunk and re-embed, not re-parse. This separation pays off every time a component of the pipeline changes.</p>
+</section>
+<section id="versioning-the-pipeline" class="level3" data-number="11.6.4">
+<h3 data-number="11.6.4" class="anchored" data-anchor-id="versioning-the-pipeline"><span class="header-section-number">11.6.4</span> Versioning the pipeline</h3>
+<p>The ingestion pipeline is code that runs over data to produce embeddings. Changes to any component (parser version, cleaning rules, chunking strategy, embedding model) invalidate some or all of the stored artifacts.</p>
+<p>Track the pipeline version with each stored artifact. When the pipeline version changes, identify which artifacts need to recompute. This is analogous to dependency tracking in build systems and is essential for maintaining a coherent retrieval index. Without it, a corpus may silently contain chunks embedded with an old model alongside chunks embedded with a new one, making similarity comparisons meaningless.</p>
 <hr>
 </section>
 </section>
-<section id="precision-and-quantization-at-the-kernel-level" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</h2>
-<p>Quantization affects GPU execution at the kernel level, not just memory footprint. Understanding this distinction separates knowing what quantization does from knowing why it helps.</p>
-<section id="weight-only-quantization" class="level3" data-number="8.6.1">
-<h3 data-number="8.6.1" class="anchored" data-anchor-id="weight-only-quantization"><span class="header-section-number">8.6.1</span> Weight-only quantization</h3>
-<p>The most common serving quantization scheme: model weights are stored in INT4 or INT8, but computation happens in BF16/FP16.</p>
-<p>During a weight-only quantized matrix multiplication:</p>
-<pre><code>1. Load INT4 weights from HBM          (4× fewer bytes than BF16)
-2. Dequantize to BF16 in registers     (fast, negligible compute overhead)
-3. Multiply with BF16 activations via tensor cores
-4. Accumulate in FP32, write BF16 output to HBM</code></pre>
-<p>The benefit: decode is memory-bandwidth-bound. Reducing weight bytes by 4× means 4× more weights can be streamed per second, directly improving decode throughput by approximately 4× for bandwidth-limited operations.</p>
-<p>The cost: dequantization adds compute overhead. For bandwidth-bound operations (decode), this overhead is negligible. For compute-bound operations (prefill, large batches), dequantization adds meaningful overhead. Weight-only quantization therefore improves decode more than prefill, which is precisely where the improvement is most needed.</p>
-</section>
-<section id="activation-quantization-int8-and-fp8" class="level3" data-number="8.6.2">
-<h3 data-number="8.6.2" class="anchored" data-anchor-id="activation-quantization-int8-and-fp8"><span class="header-section-number">8.6.2</span> Activation quantization: INT8 and FP8</h3>
-<p>For compute-bound operations, quantizing both weights and activations to INT8 or FP8 allows tensor cores to operate at higher throughput:</p>
+<section id="key-takeaways" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">11.7</span> Key takeaways</h2>
 <ul>
-<li>BF16 tensor cores: 1,000 TFLOPS</li>
-<li>FP8 tensor cores: 1,979 TFLOPS on H100 (approximately 2× faster)</li>
+<li>Document ingestion is the foundation of every RAG system; most RAG failures originate in poor parsing, inadequate cleaning, or naive structure destruction rather than in retrieval algorithms or language models</li>
+<li>PDF is the most common and most problematic format: a presentation format with no semantic structure, requiring heuristic reconstruction of reading order, headings, columns, and tables; for high-stakes applications, invest in high-quality PDF parsing</li>
+<li>Different formats require different parsers and present different challenges; text files and Markdown are easy; scanned PDFs and multi-column layouts are hard</li>
+<li>Text cleaning removes artifacts introduced by parsing — whitespace, headers and footers, encoding issues, boilerplate — that degrade retrieval quality without conveying content; domain-specific cleaning (PHI removal, citation preservation, code formatting) requires domain knowledge</li>
+<li>Metadata is not optional: it enables filtering by source, date, and access level; provides attribution for citations; and allows quality gating and deduplication before embedding</li>
+<li>A production ingestion pipeline must be idempotent (re-running is safe) and support atomic updates (document updates replace all old chunks, not mix old and new)</li>
+<li>Silent failures — documents that fail to parse or are rejected by quality gates — are invisible without explicit logging and monitoring; instrument the pipeline before you need to debug it</li>
+<li>At scale, ingestion must be parallelized, incremental, and tiered: store artifacts at each stage so that pipeline improvements can be applied from that stage forward without rerunning from scratch</li>
+<li>Track pipeline versions with stored artifacts; a corpus that mixes chunks embedded with different models has corrupted similarity comparisons</li>
 </ul>
-<p>Activation quantization is more complex than weight quantization because activations have more dynamic range and they can contain outlier values that cause large quantization errors when mapped to a narrow integer range.</p>
-<p><strong>The outlier problem.</strong> LLM activations contain outlier values in a small fraction of channels, values that are orders of magnitude larger than typical. These outliers are consistent across inputs and are a known property of large language models. Naive quantization sets the scale by the outlier, compressing all normal values to near-zero and destroying information.</p>
-<p><strong>LLM.int8()</strong> (Dettmers et al., 2022) addresses this by decomposing the matrix multiplication: outlier channels are computed in full BF16 precision, and the remaining channels (typically 99%+) are computed in INT8. The results are combined. Quality is preserved while most of the memory savings are retained.</p>
-<p><strong>SmoothQuant</strong> (Xiao et al., 2023) migrates the quantization difficulty from activations to weights, mathematically equivalent to scaling the activation channels down and the corresponding weight rows up before quantization. The result is more uniform activation distributions that quantize cleanly to INT8 without special outlier handling.</p>
-<p><strong>FP8 inference</strong> is available on H100 GPUs and has become the recommended precision for large-scale serving: near-BF16 quality at roughly 2× the arithmetic throughput. The H100’s Transformer Engine handles FP8 scaling automatically, making it practical without manual calibration.</p>
 <hr>
 </section>
-</section>
-<section id="tensor-parallelism-at-the-kernel-level" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</h2>
-<p>When a model is too large for a single GPU, tensor parallelism distributes weight matrices across multiple GPUs. The kernel-level implementation requires communication between GPUs at each layer.</p>
-<section id="column-and-row-parallelism" class="level3" data-number="8.7.1">
-<h3 data-number="8.7.1" class="anchored" data-anchor-id="column-and-row-parallelism"><span class="header-section-number">8.7.1</span> Column and row parallelism</h3>
-<p>A linear projection <code>Y = X @ W</code> can be split in two ways:</p>
-<p><strong>Column parallelism</strong> splits W by columns:</p>
-<pre><code>W split into [W₁ | W₂] across 2 GPUs
-GPU 0: Y₁ = X @ W₁    (partial output — subset of output dimensions)
-GPU 1: Y₂ = X @ W₂    (partial output — complementary subset)
-Combine: Y = [Y₁ | Y₂]    (concatenation, no communication needed here)</code></pre>
-<p><strong>Row parallelism</strong> splits W by rows and requires split input:</p>
-<pre><code>W split into [W₁; W₂], X split into [X₁, X₂] across 2 GPUs
-GPU 0: Y_partial₀ = X₁ @ W₁
-GPU 1: Y_partial₁ = X₂ @ W₂
-Combine: Y = Y_partial₀ + Y_partial₁    (all-reduce required)</code></pre>
-<p>In a transformer layer: Q, K, V projections use column parallelism, each GPU computes a subset of attention heads. The output projection uses row parallelism. Attention within each GPU is independent; an all-reduce synchronizes after the output projection. The FFN follows the same pattern: column parallelism on the first layer, row parallelism on the second, with one all-reduce between them.</p>
-</section>
-<section id="pipeline-parallelism-and-bubble-overhead" class="level3" data-number="8.7.2">
-<h3 data-number="8.7.2" class="anchored" data-anchor-id="pipeline-parallelism-and-bubble-overhead"><span class="header-section-number">8.7.2</span> Pipeline parallelism and bubble overhead</h3>
-<p>Pipeline parallelism splits a transformer model across multiple GPUs by assigning different sets of layers to different devices. Instead of each GPU holding the full model, computation flows through GPUs sequentially, like an assembly line and each GPU processes a contiguous block of layers. To keep all GPUs busy, the input batch is divided into microbatches, which are then streamed through the pipeline:</p>
-<pre><code>Time step:        1    2    3  |  4    5    6    7    8  | 9   10   11
-                 &lt;-- Fill --&gt;  | &lt;---- Steady state ---&gt; | &lt;-- Drain --&gt;
-
-GPU 0 (L0 –L24): [1]  [2]  [3]   [4]  [5]  [6]  [7]  [8]   ·    ·    ·
-GPU 1 (L25–L48):  ·   [1]  [2]   [3]  [4]  [5]  [6]  [7]  [8]   ·    ·
-GPU 2 (L49–L72):  ·    ·   [1]   [2]  [3]  [4]  [5]  [6]  [7]  [8]   ·
-GPU 3 (L73–L96):  ·    ·    ·    [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]</code></pre>
-<p>This creates a wave-like execution pattern where different GPUs work on different microbatches at different stages of the model. However, pipeline parallelism introduces idle time, known as the pipeline bubble. This occurs during pipeline fill (startup) and pipeline drain (shutdown), when not all GPUs are fully utilized.</p>
-<p>Increasing the number of microbatches reduces bubble overhead by improving pipeline utilization, but it also increases memory usage and scheduling complexity. In practice, systems use 8–32 microbatches to keep bubble overhead under 10% while maintaining efficiency.</p>
-<hr>
-</section>
-</section>
-<section id="cuda-graph-capture" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</h2>
-<p>Every GPU operation requires a kernel launch: the CPU sends an instruction to the GPU specifying which kernel to run with which parameters. For small operations, kernel launch overhead can dominate the actual execution time.</p>
-<p>For a transformer decode step at batch size 1:</p>
+<section id="further-reading" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">11.8</span> Further reading</h2>
 <ul>
-<li>Total arithmetic work: small (bandwidth-bound, most of step time is HBM reads)</li>
-<li>Number of kernel launches: hundreds (one per operation across all layers)</li>
-<li>Kernel launch overhead: ~5–10 microseconds per launch</li>
-</ul>
-<p>Hundreds of launches × 5–10 microseconds = milliseconds of CPU overhead per decode step, for a step that may itself take only a few milliseconds of actual GPU work. The CPU becomes the bottleneck.</p>
-<p>CUDA graphs capture the sequence of kernel launches and their data dependencies as a static graph, replayed without CPU involvement for each step. After the initial capture, subsequent replays bypass CPU overhead entirely.</p>
-<p>For decode at batch size 1, CUDA graph capture reduces per-step latency by 30–50%. The tradeoff: the graph is captured for a specific batch size and sequence length; changing these requires recapture. Production inference frameworks use CUDA graphs for decode (fixed batch size and one new token per step) and not for prefill (variable sequence length per request).</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="8.9">
-<h2 data-number="8.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</h2>
-<ul>
-<li>GPUs are throughput-optimized processors with thousands of simple cores; LLM inference maps well to GPUs because transformer operations are highly data- parallel — the same computation applied to every token and every weight element</li>
-<li>The GPU memory hierarchy spans registers (80 TB/s) to HBM (3.35 TB/s) to PCIe (64 GB/s); kernel optimization is the art of keeping hot data in fast memory and minimizing HBM round trips</li>
-<li>Tensor cores perform 16×16×16 matrix multiplications in hardware at ~15× the throughput of scalar CUDA cores; every operation expressible as matrix multiplication should be</li>
-<li>The roofline model predicts whether an operation is compute-bound (arithmetic intensity above ~300 FLOPs/byte for H100) or memory-bandwidth-bound (below); prefill is compute-bound, decode is severely memory-bandwidth-bound at ~1 FLOPs/byte</li>
-<li>MFU for decode at batch size 1 is approximately 0.3% — the GPU is nearly idle arithmetically; batching and quantization are the primary levers for improving this</li>
-<li>Kernel fusion eliminates intermediate HBM reads and writes between operations; FlashAttention reduces attention memory traffic from O(n²) to O(n) by keeping scores in SRAM throughout computation</li>
-<li>Weight-only INT4/INT8 quantization reduces decode latency proportionally to the bit reduction, with negligible dequantization overhead when bandwidth-bound; FP8 activation quantization improves prefill throughput by ~2×</li>
-<li>CUDA graph capture eliminates CPU kernel launch overhead — 30–50% latency reduction for decode at small batch sizes — by replaying a static kernel sequence without CPU involvement</li>
-</ul>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch1/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.3: Cheat sheet.
-</figcaption>
-</figure>
-</div>
-<hr>
-</section>
-<section id="further-reading" class="level2" data-number="8.10">
-<h2 data-number="8.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.10</span> Further reading</h2>
-<ul>
-<li>Williams et al.&nbsp;(2009). <em>Roofline: An Insightful Visual Performance Model for Multicore Architectures.</em> — The roofline model; essential reading for GPU performance analysis regardless of domain.</li>
-<li>Dao et al.&nbsp;(2022). <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.</em> — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.</li>
-<li>Dettmers et al.&nbsp;(2022). <em>LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale.</em> — The outlier problem and mixed-precision INT8 quantization.</li>
-<li>Xiao et al.&nbsp;(2023). <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models.</em> — Migrating quantization difficulty from activations to weights for clean INT8 inference.</li>
-<li>Shoeybi et al.&nbsp;(2019). <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism.</em> — Tensor and pipeline parallelism; the foundational implementation reference.</li>
+<li>Lewis et al.&nbsp;(2020). <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.</em> — The foundational RAG paper; establishes the ingestion → retrieval → generation framework.</li>
+<li>Edge et al.&nbsp;(2024). <em>From Local to Global: A Graph RAG Approach to Query-Focused Summarization.</em> — GraphRAG; extends ingestion to extract entities and relationships, not just text chunks.</li>
+<li>Unstructured.io (2023). <em>Unstructured: Document parsing for LLM applications.</em> — The leading open-source document parsing library for RAG; handles many formats with layout analysis.</li>
+<li>Shi et al.&nbsp;(2023). <em>REPLUG: Retrieval-Augmented Black-Box Language Models.</em> — Analysis of how retrieval quality affects end-to-end RAG performance; ingestion quality is the upstream dependency.</li>
 </ul>
 <hr>
 
@@ -1248,14 +1181,11 @@ Figure&nbsp;8.3: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/kv-cache.html" class="pagination-link" aria-label="KV Cache">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span>
+      <a href="../../book/part4/parametric-vs-external-memory.html" class="pagination-link" aria-label="Parametric Memory vs External Memory">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/decoding-and-sampling.html" class="pagination-link" aria-label="Decoding and Sampling">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
