@@ -39,6 +39,7 @@ book:
     - part: "The Forbidden Archive"
       chapters: 
         - book/part4/parametric-vs-external-memory.md
+        - book/part4/document_ingestion.md
 
     - part: "The Forging of Intelligence"
       chapters: []

@@ -194,7 +194,7 @@ Pattern matching (regex for "Page N of M") handles simple cases and spatial
 analysis during PDF parsing handles complex ones.
 
 **Hyphenation repair.** PDF extraction often breaks hyphenated words at line
-breaks: "trans-\naction" appears as two tokens rather than "transaction".
+breaks: `trans-\naction` appears as two tokens rather than "transaction".
 Detecting and joining these is straightforward for end-of-line hyphens but
 ambiguous for legitimate compound hyphenation.
 
