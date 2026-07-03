@@ -1,0 +1,84 @@
+<svg width="1200" height="1260" xmlns="http://www.w3.org/2000/svg">
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13px sans-serif; fill:#222; }
+.code { font: 12px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- Top Introduction -->
+<rect x="50" y="80" width="1100" height="120" class="box"/>
+<text x="70" y="110" class="section">Core Tradeoff</text>
+<text x="80" y="140" class="text">Small chunks → precise retrieval but weak context</text>
+<text x="80" y="165" class="text">Large chunks → rich context but poor retrieval precision</text>
+<text x="80" y="190" class="text">Goal: retrievable + coherent + useful to the LLM</text>
+
+<!-- Row 1: Basic Chunking -->
+<rect x="50" y="230" width="540" height="180" class="box"/>
+<text x="70" y="260" class="section">Fixed Size Chunking</text>
+<text x="80" y="290" class="text">Split every N tokens</text>
+<text x="80" y="315" class="text">Optional overlap preserves boundaries</text>
+<text x="80" y="340" class="code">chunk_size=512, overlap=50</text>
+<text x="80" y="365" class="text">Best for transcripts and unstructured text</text>
+<text x="80" y="390" class="text">Bad for tables, code, and structured docs</text>
+
+<rect x="610" y="230" width="540" height="180" class="box"/>
+<text x="630" y="260" class="section">Sentence Chunking</text>
+<text x="640" y="290" class="text">Split only at sentence boundaries</text>
+<text x="640" y="315" class="text">Preserves semantic units</text>
+<text x="640" y="340" class="text">Works well for prose</text>
+<text x="640" y="365" class="text">Poor for tables, code, bullet lists</text>
+
+<!-- Row 2: Intermediate Chunking -->
+<rect x="50" y="440" width="540" height="180" class="box"/>
+<text x="70" y="470" class="section">Recursive Splitting</text>
+<text x="80" y="500" class="code">Paragraph → Line → Word → Character</text>
+<text x="80" y="525" class="text">Keeps largest structure possible</text>
+<text x="80" y="550" class="text">Default strategy in many frameworks</text>
+<text x="80" y="575" class="text">Custom separators for Markdown and code</text>
+
+<rect x="610" y="440" width="540" height="180" class="box"/>
+<text x="630" y="470" class="section">Structure-Aware Chunking</text>
+<text x="640" y="500" class="text">Use headings, sections, tables, AST nodes</text>
+<text x="640" y="525" class="text">Natural units become chunks</text>
+<text x="640" y="550" class="text">Best for docs, contracts and repositories</text>
+<text x="640" y="575" class="text">Requires document parsing</text>
+
+<!-- Row 3: Advanced Chunking -->
+<rect x="50" y="650" width="540" height="180" class="box"/>
+<text x="70" y="680" class="section">Semantic Chunking</text>
+<text x="80" y="710" class="text">Detect topic changes instead of text boundaries</text>
+<text x="80" y="735" class="text">Embedding similarity drop → new chunk</text>
+<text x="80" y="760" class="text">LLM chunking gives highest quality but highest cost</text>
+<text x="80" y="785" class="code">similarity(sentence_i, sentence_i+1)</text>
+
+<rect x="610" y="650" width="540" height="180" class="box"/>
+<text x="630" y="680" class="section">Multi-Granularity Retrieval</text>
+<text x="640" y="710" class="text">Parent-child retrieval: retrieve small, return large</text>
+<text x="640" y="735" class="text">Sentence → paragraph (small-to-big)</text>
+<text x="640" y="760" class="text">Summary indexing for long documents</text>
+<text x="640" y="785" class="text">Combines precision with context richness</text>
+
+<!-- Row 4: Improvements & Optimizations -->
+<rect x="50" y="860" width="540" height="180" class="box"/>
+<text x="70" y="890" class="section">Chunk Enrichment</text>
+<text x="80" y="920" class="text">Add title, heading and metadata before embedding</text>
+<text x="80" y="945" class="text">Improves retrieval accuracy</text>
+<text x="80" y="970" class="text">Contextual Retrieval adds LLM-generated summaries</text>
+
+<rect x="610" y="860" width="540" height="180" class="box"/>
+<text x="630" y="890" class="section">Query-Time Improvements</text>
+<text x="640" y="920" class="text">HyDE: generate hypothetical answer then embed it</text>
+<text x="640" y="945" class="text">Query rewriting: adapt query to corpus language</text>
+<text x="640" y="970" class="text">Useful when users and docs use different vocabulary</text>
+
+<!-- Bottom Synthesis -->
+<rect x="50" y="1070" width="1100" height="170" class="box"/>
+<text x="70" y="1100" class="section">Chunk Size Selection</text>
+<text x="80" y="1130" class="text">Depends on embedding limit, query type and context window</text>
+<text x="80" y="1155" class="text">Common starting point: 512 tokens + 10% overlap</text>
+<text x="80" y="1180" class="text">Treat chunk size as a hyperparameter</text>
+<text x="80" y="1205" class="text">Evaluate recall and answer quality on real queries</text>
+
+</svg>
