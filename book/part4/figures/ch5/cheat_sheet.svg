@@ -1,0 +1,86 @@
+<svg width="1200" height="1150" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#444; }
+</style>
+
+<!-- ROW 1: TASK & MODEL -->
+<rect x="50" y="50" width="540" height="180" class="box"/>
+<text x="70" y="80" class="section">Retrieval Embedding Task</text>
+<text x="80" y="110" class="text">Goal: map queries + documents into same vector space</text>
+<text x="80" y="135" class="text">Queries: short, ambiguous, user phrasing</text>
+<text x="80" y="160" class="text">Documents: long, structured, domain-specific</text>
+<text x="80" y="185" class="text">Key challenge: asymmetric semantics</text>
+<text x="80" y="210" class="text">Model must bridge vocabulary + style gap</text>
+
+<rect x="610" y="50" width="540" height="180" class="box"/>
+<text x="630" y="80" class="section">Choosing an Embedding Model</text>
+<text x="640" y="110" class="text">• Retrieval-trained models &gt; generic embeddings</text>
+<text x="640" y="135" class="text">• Dimension: quality vs storage tradeoff</text>
+<text x="640" y="160" class="text">• Context length must match chunk size</text>
+<text x="640" y="185" class="text">• Multilingual support if needed</text>
+<text x="640" y="210" class="text">• API vs self-hosted tradeoff</text>
+
+<!-- ROW 2: ENCODING & ADAPTATION -->
+<rect x="50" y="250" width="540" height="240" class="box"/>
+<text x="70" y="280" class="section">Asymmetric Encoding</text>
+<text x="80" y="310" class="text">Critical: queries ≠ documents</text>
+<text x="80" y="340" class="code">E5 / Instructor:</text>
+<text x="80" y="365" class="text">query: how does timeout work?</text>
+<text x="80" y="390" class="text">passage: token expiration is 3600s...</text>
+<text x="80" y="420" class="code">Cohere / Voyage:</text>
+<text x="80" y="445" class="text">input_type = search_query / search_document</text>
+<text x="80" y="475" class="text">Wrong prefixing → silent retrieval degradation</text>
+
+<rect x="610" y="250" width="540" height="240" class="box"/>
+<text x="630" y="280" class="section">Domain Adaptation</text>
+<text x="640" y="310" class="text">General models fail on specialized corpora</text>
+<text x="640" y="335" class="text">Signals: poor recall, jargon mismatch</text>
+<text x="640" y="360" class="text">Fix: fine-tune on query-document pairs</text>
+<text x="640" y="385" class="text">Synthetic queries work surprisingly well</text>
+
+<!-- ROW 3: ENGINEERING & PIPELINE -->
+<rect x="50" y="510" width="540" height="190" class="box"/>
+<text x="70" y="540" class="section">Batching &amp; Scaling</text>
+<text x="80" y="570" class="text">Embedding is GPU-batch efficient</text>
+<text x="80" y="595" class="text">Single requests waste 10–100× compute</text>
+<text x="80" y="620" class="text">Use batching (128–256 typical)</text>
+<text x="80" y="645" class="text">Handle API limits + retries</text>
+<text x="80" y="675" class="code">Key idea: throughput = batching × GPU utilization</text>
+
+<rect x="610" y="510" width="540" height="190" class="box"/>
+<text x="630" y="540" class="section">Incremental Embedding</text>
+<text x="640" y="570" class="text">Never re-embed full corpus if only small updates occur</text>
+<text x="640" y="595" class="text">Use hashing to detect changed chunks</text>
+<text x="640" y="620" class="text">Only embed new/modified documents</text>
+<text x="640" y="645" class="text">Ensures idempotent embedding pipeline</text>
+
+<!-- ROW 4: EVALUATION & LIFECYCLE -->
+<rect x="50" y="720" width="540" height="170" class="box"/>
+<text x="70" y="750" class="section">Evaluation: MTEB + Reality Check</text>
+<text x="80" y="780" class="text">MTEB = multi-task embedding benchmark (retrieval, clustering...)</text>
+<text x="80" y="805" class="text">Important: leaderboard ≠ your domain performance</text>
+<text x="80" y="830" class="text">Always evaluate on your own query-document distribution</text>
+
+<rect x="610" y="720" width="540" height="170" class="box"/>
+<text x="630" y="750" class="section">Versioning Problem</text>
+<text x="640" y="780" class="text">Embeddings are NOT backward compatible</text>
+<text x="640" y="805" class="text">Model change = full corpus re-embedding</text>
+<text x="640" y="830" class="text">Store model version with every vector</text>
+<text x="640" y="855" class="text">Use dual-index for zero downtime migration</text>
+
+<!-- QUALITY SIGNALS (Outro) -->
+<rect x="50" y="910" width="1100" height="190" class="box"/>
+<text x="70" y="940" class="section">Quality Signals</text>
+<text x="80" y="970" class="text">• Nearest neighbors should be semantically similar</text>
+<text x="80" y="995" class="text">• Low pairwise similarity (&lt; 0.1) = healthy space</text>
+<text x="80" y="1020" class="text">• High similarity (&gt; 0.3) = embedding collapse</text>
+<text x="80" y="1045" class="text">• Measure Recall@k, MRR, NDCG on real queries</text>
+<text x="80" y="1075" class="code">Good retrieval = correct doc ranks #1 consistently</text>
+
+</svg>
