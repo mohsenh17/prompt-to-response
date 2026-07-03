@@ -40,6 +40,7 @@ book:
       chapters: 
         - book/part4/parametric-vs-external-memory.md
         - book/part4/document_ingestion.md
+        - book/part4/chunking_strategies.md
 
     - part: "The Forging of Intelligence"
       chapters: []
