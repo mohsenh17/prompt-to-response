@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; Chunking Strategies – From Prompt to Response</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../book/part4/embedding_for_search.html" rel="next">
+<link href="../../book/part4/document_ingestion.html" rel="prev">
+<link href="../../images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4e5c8a923c97ced843d0652dafb23d7b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<meta property="og:title" content="12&nbsp; Chunking Strategies – From Prompt to Response">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://llm.hosseini.work/book/part4/figures/ch4/journey_part4_ch4.svg">
+<meta property="og:site_name" content="From Prompt to Response">
+<meta name="twitter:title" content="12&nbsp; Chunking Strategies – From Prompt to Response">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part4/figures/ch4/journey_part4_ch4.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/chunking_strategies.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">From Prompt to Response</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mohsenh17/prompt-to-response" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Art of the True Name</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Runes Beneath Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Labyrinth of Attention</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Forbidden Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/chunking_strategies.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/embedding_for_search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Forging of Intelligence</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Trial of the Answer</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Keepers of the Waking Engine</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#why-chunking-exists-and-why-it-is-hard" id="toc-why-chunking-exists-and-why-it-is-hard" class="nav-link active" data-scroll-target="#why-chunking-exists-and-why-it-is-hard"><span class="header-section-number">12.1</span> Why chunking exists and why it is hard</a></li>
+  <li><a href="#fixed-size-chunking" id="toc-fixed-size-chunking" class="nav-link" data-scroll-target="#fixed-size-chunking"><span class="header-section-number">12.2</span> Fixed-size chunking</a></li>
+  <li><a href="#sentence-based-chunking" id="toc-sentence-based-chunking" class="nav-link" data-scroll-target="#sentence-based-chunking"><span class="header-section-number">12.3</span> Sentence-based chunking</a></li>
+  <li><a href="#recursive-character-text-splitting" id="toc-recursive-character-text-splitting" class="nav-link" data-scroll-target="#recursive-character-text-splitting"><span class="header-section-number">12.4</span> Recursive character text splitting</a></li>
+  <li><a href="#structure-aware-chunking" id="toc-structure-aware-chunking" class="nav-link" data-scroll-target="#structure-aware-chunking"><span class="header-section-number">12.5</span> Structure-aware chunking</a></li>
+  <li><a href="#semantic-chunking" id="toc-semantic-chunking" class="nav-link" data-scroll-target="#semantic-chunking"><span class="header-section-number">12.6</span> Semantic chunking</a></li>
+  <li><a href="#chunk-enrichment" id="toc-chunk-enrichment" class="nav-link" data-scroll-target="#chunk-enrichment"><span class="header-section-number">12.7</span> Chunk enrichment</a></li>
+  <li><a href="#chunk-size-selection" id="toc-chunk-size-selection" class="nav-link" data-scroll-target="#chunk-size-selection"><span class="header-section-number">12.8</span> Chunk size selection</a></li>
+  <li><a href="#multi-granularity-retrieval" id="toc-multi-granularity-retrieval" class="nav-link" data-scroll-target="#multi-granularity-retrieval"><span class="header-section-number">12.9</span> Multi-granularity retrieval</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">12.10</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">12.11</span> Further reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/chunking_strategies.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>The canonical question for this chapter:</strong> <em>A document might be 50,000 words while an embedding model can process 512 tokens. A retrieved context window might be limited to 5,000. How do you divide the document into pieces that are retrievable, coherent, and useful to the language model?</em></p>
+</blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch4/journey_part4_ch4.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
+<p>Document ingestion produced clean text. Now that text must be divided into retrievable chunks which is the most consequential preprocessing decision in a RAG system. Poor chunking produces retrieval failures that no downstream component can fix.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="why-chunking-exists-and-why-it-is-hard" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="why-chunking-exists-and-why-it-is-hard"><span class="header-section-number">12.1</span> Why chunking exists and why it is hard</h2>
+<p>Embedding models have a maximum input length which is typically 512 to 8,192 tokens. Embedding an entire document as a single vector loses granularity: a 10,000-word technical manual embedded as one vector will match queries about any topic covered in the manual, making retrieval imprecise. You want the chunk about authentication to be retrieved for authentication questions and the chunk about rate limiting to be retrieved for rate limiting questions, not the entire manual for both.</p>
+<p>At the same time, chunks must be semantically coherent. A chunk that cuts mid-sentence, mid-argument, or mid-table is harder for the language model to use correctly. The model receives a fragment without the context that makes it interpretable.</p>
+<p>The fundamental tension: small chunks are precise for retrieval but too small to be self-contained. Large chunks are self-contained but imprecise for retrieval. The right chunk size is a function of the document type, the query distribution, the embedding model, and the language model’s context window.</p>
+<p>Getting chunking wrong is one of the most common RAG failure modes. A retrieval system with perfect relevance ranking that retrieves incoherent chunks will produce worse answers than a system with imperfect ranking that retrieves coherent chunks. The language model cannot compensate for fragmented context.</p>
+<hr>
+</section>
+<section id="fixed-size-chunking" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="fixed-size-chunking"><span class="header-section-number">12.2</span> Fixed-size chunking</h2>
+<p>The simplest strategy: split the document into chunks of a fixed number of tokens, with an optional overlap between adjacent chunks.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fixed_size_chunk(text: <span class="bu">str</span>, chunk_size: <span class="bu">int</span>, overlap: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> tokenize(text)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> start <span class="op">&lt;</span> <span class="bu">len</span>(tokens):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        end <span class="op">=</span> <span class="bu">min</span>(start <span class="op">+</span> chunk_size, <span class="bu">len</span>(tokens))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        chunk_tokens <span class="op">=</span> tokens[start:end]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        chunks.append(detokenize(chunk_tokens))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        start <span class="op">+=</span> chunk_size <span class="op">-</span> overlap</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For <code>chunk_size=512</code> and <code>overlap=50</code>: chunk 1 covers tokens 0–511, chunk 2 covers tokens 462–973, chunk 3 covers tokens 924–1435. Each chunk overlaps with its neighbors by 50 tokens.</p>
+<section id="why-overlap-exists" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="why-overlap-exists"><span class="header-section-number">12.2.1</span> Why overlap exists</h3>
+<p>Without overlap, a sentence that straddles a chunk boundary is split: the first half is at the end of one chunk, the second half at the start of the next. Neither chunk contains the complete sentence, and a query that matches the complete sentence may not match either fragment.</p>
+<p>Overlap ensures that every point in the document appears in at least one complete chunk. For overlap of <code>k</code> tokens, any contiguous span of <code>chunk_size - k</code> tokens or fewer is guaranteed to appear entirely within at least one chunk.</p>
+<p>The cost of overlap: the same content is embedded and stored multiple times, increasing storage and compute cost. An overlap of 10% (50 tokens on a 512- token chunk) increases storage by approximately 10% which is a small price for significantly better boundary coverage.</p>
+</section>
+<section id="when-fixed-size-chunking-is-appropriate" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="when-fixed-size-chunking-is-appropriate"><span class="header-section-number">12.2.2</span> When fixed-size chunking is appropriate</h3>
+<p>Fixed-size chunking is fast, simple, and predictable. It works reasonably well for homogeneous documents without meaningful structure (transcripts, continuous prose), corpora where you cannot rely on structural markers (inconsistent heading styles, poorly formatted PDFs), and prototyping.</p>
+<p>It is inappropriate for documents with meaningful structure (technical documentation, legal contracts) where semantic boundaries do not align with token count boundaries, for tables and code which should not be split arbitrarily, and for documents where context continuity is critical.</p>
+</section>
+<section id="token-based-vs.-character-based-splitting" class="level3" data-number="12.2.3">
+<h3 data-number="12.2.3" class="anchored" data-anchor-id="token-based-vs.-character-based-splitting"><span class="header-section-number">12.2.3</span> Token-based vs.&nbsp;character-based splitting</h3>
+<p>Splitting on token count is more precise than splitting on character count because token count directly maps to embedding model input length. Character- based splitting produces chunks of unpredictable token length, a chunk of 2,000 characters might be 400 tokens for English prose or 700 tokens for code with many short tokens.</p>
+<hr>
+</section>
+</section>
+<section id="sentence-based-chunking" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="sentence-based-chunking"><span class="header-section-number">12.3</span> Sentence-based chunking</h2>
+<p>Instead of splitting at fixed token counts, split at sentence boundaries. This preserves semantic units and avoids splitting mid-sentence.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> spacy</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">"en_core_web_sm"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentence_chunk(text: <span class="bu">str</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                   max_tokens: <span class="bu">int</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                   overlap_sentences: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> nlp(text)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    sentences <span class="op">=</span> [sent.text.strip() <span class="cf">for</span> sent <span class="kw">in</span> doc.sents]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    current_chunk <span class="op">=</span> []</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    current_length <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> sentence <span class="kw">in</span> sentences:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        sentence_tokens <span class="op">=</span> <span class="bu">len</span>(tokenize(sentence))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> current_length <span class="op">+</span> sentence_tokens <span class="op">&gt;</span> max_tokens <span class="kw">and</span> current_chunk:</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            chunks.append(<span class="st">" "</span>.join(current_chunk))</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            current_chunk <span class="op">=</span> current_chunk[<span class="op">-</span>overlap_sentences:]</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            current_length <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">len</span>(tokenize(s)) <span class="cf">for</span> s <span class="kw">in</span> current_chunk)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        current_chunk.append(sentence)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        current_length <span class="op">+=</span> sentence_tokens</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> current_chunk:</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        chunks.append(<span class="st">" "</span>.join(current_chunk))</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Sentence detection requires a sentence boundary detector, spaCy, NLTK’s Punkt tokenizer, or regex-based heuristics for simple cases. Sentence detectors are imperfect: abbreviations (“Dr.”, “U.S.”), decimal points, and ellipses can confuse them.</p>
+<p>Sentence-based chunking works well for dense prose where individual sentences carry complete thoughts. It works poorly for bullet points and numbered lists (items may not be complete sentences), tables (rows are not sentences), code (statements are not sentences in the linguistic sense), and very long sentences that exceed the chunk size on their own.</p>
+<hr>
+</section>
+<section id="recursive-character-text-splitting" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="recursive-character-text-splitting"><span class="header-section-number">12.4</span> Recursive character text splitting</h2>
+<p>LangChain’s <code>RecursiveCharacterTextSplitter</code> is the most widely used chunking implementation in production RAG systems. It splits on a hierarchy of separators, trying each in order until chunks are within the size limit:</p>
+<pre><code>Separator hierarchy (default):
+  1. "\n\n"   (paragraph break)
+  2. "\n"     (line break)
+  3. " "      (word boundary)
+  4. ""       (character)</code></pre>
+<p>The algorithm tries to split on <code>"\n\n"</code>. If all resulting pieces are within the size limit, done. If some pieces are still too large, it recursively splits those on <code>"\n"</code>. If still too large, on <code>" "</code>. If still too large, on individual characters.</p>
+<p>This preserves the largest meaningful structure possible within the size limit. For a well-formatted document, most chunks will be split at paragraph boundaries. The character-level fallback is rarely triggered for natural text.</p>
+<p>Custom separator hierarchies for specific document types:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For Markdown documents</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>markdown_separators <span class="op">=</span> [</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st"># "</span>,    <span class="co"># H1 heading</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">## "</span>,   <span class="co"># H2 heading</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">### "</span>,  <span class="co"># H3 heading</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">#### "</span>, <span class="co"># H4 heading</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>,    <span class="co"># Paragraph</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>,      <span class="co"># Line break</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">" "</span>,       <span class="co"># Word</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># For code</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>code_separators <span class="op">=</span> [</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">class "</span>,    <span class="co"># Class definition</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">def "</span>,      <span class="co"># Function definition</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>,        <span class="co"># Blank line</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>,          <span class="co"># Line</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">" "</span>,           <span class="co"># Token</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The key insight: splitting at paragraph boundaries is almost always better than splitting at arbitrary token counts, and the recursive approach tries for paragraph boundaries first.</p>
+<hr>
+</section>
+<section id="structure-aware-chunking" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="structure-aware-chunking"><span class="header-section-number">12.5</span> Structure-aware chunking</h2>
+<p>For documents with explicit structure, the best chunking strategy uses that structure directly rather than approximating it with text splitting.</p>
+<section id="heading-based-chunking" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="heading-based-chunking"><span class="header-section-number">12.5.1</span> Heading-based chunking</h3>
+<p>For documents with hierarchical headings (HTML, Markdown, DOCX with proper heading styles), chunk at heading boundaries. Each chunk is one section: from a heading to the next heading at the same or higher level.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> heading_chunk(document: ParsedDocument) <span class="op">-&gt;</span> <span class="bu">list</span>[Chunk]:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    current_section <span class="op">=</span> []</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    current_heading <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    current_level <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> element <span class="kw">in</span> document.elements:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> element.<span class="bu">type</span> <span class="op">==</span> <span class="st">"heading"</span>:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> current_section:</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                chunks.append(Chunk(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                    text<span class="op">=</span><span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(current_section),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                    heading<span class="op">=</span>current_heading,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                    heading_level<span class="op">=</span>current_level,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                    metadata<span class="op">=</span>document.metadata</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                ))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            current_section <span class="op">=</span> [element.text]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            current_heading <span class="op">=</span> element.text</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            current_level <span class="op">=</span> element.level</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            current_section.append(element.text)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> current_section:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        chunks.append(Chunk(</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            text<span class="op">=</span><span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(current_section),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            heading<span class="op">=</span>current_heading,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            heading_level<span class="op">=</span>current_level,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>            metadata<span class="op">=</span>document.metadata</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        ))</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This produces chunks that correspond to meaningful sections rather than arbitrary text blocks. The heading becomes part of the chunk metadata, enabling heading-based filtering and citation.</p>
+<p>The limitation: sections vary enormously in length. A one-paragraph section produces a tiny chunk; a multi-page section produces a huge one. Post-processing applies fixed-size splitting to chunks that exceed the embedding model’s context limit while keeping chunks below the limit intact.</p>
+</section>
+<section id="hierarchical-chunking" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="hierarchical-chunking"><span class="header-section-number">12.5.2</span> Hierarchical chunking</h3>
+<p>Documents with nested structure (chapters contain sections contain subsections) can be chunked at multiple levels simultaneously:</p>
+<pre><code>Chapter level:    "Chapter 4: Authentication"
+  Section level:  "4.1 API Keys"
+  Section level:  "4.2 OAuth 2.0"
+    Subsection:   "4.2.1 Authorization Code Flow"
+    Subsection:   "4.2.2 Client Credentials Flow"
+  Section level:  "4.3 JWT Tokens"</code></pre>
+<p>A query about “authentication” might retrieve the chapter-level chunk. A query about “OAuth authorization code flow” retrieves the specific subsection. Both are indexed; retrieval chooses the appropriate level. Hierarchical chunking requires a retrieval system that can handle multi-granularity documents, typically by indexing all levels and using metadata to filter or re-rank by granularity.</p>
+</section>
+<section id="table-handling" class="level3" data-number="12.5.3">
+<h3 data-number="12.5.3" class="anchored" data-anchor-id="table-handling"><span class="header-section-number">12.5.3</span> Table handling</h3>
+<p>Tables should almost never be split across chunks. A partial table (some rows at the end of one chunk, remaining rows at the start of the next) is nearly useless to the language model. Two strategies:</p>
+<p><strong>Keep tables whole.</strong> Treat each table as an atomic chunk regardless of size. If the table exceeds the embedding model’s limit, summarize it or split into row groups that include the header row in each group.</p>
+<p><strong>Serialize by row group.</strong> Convert the table to serialized text and chunk by row groups, including the header in each chunk:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> serialize_table_chunk(table: Table, rows_per_chunk: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    header <span class="op">=</span> <span class="st">"| "</span> <span class="op">+</span> <span class="st">" | "</span>.join(table.headers) <span class="op">+</span> <span class="st">" |"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    separator <span class="op">=</span> <span class="st">"| "</span> <span class="op">+</span> <span class="st">" | "</span>.join([<span class="st">"---"</span>] <span class="op">*</span> <span class="bu">len</span>(table.headers)) <span class="op">+</span> <span class="st">" |"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(table.rows), rows_per_chunk):</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        row_group <span class="op">=</span> table.rows[i:i <span class="op">+</span> rows_per_chunk]</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        rows_text <span class="op">=</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"| "</span> <span class="op">+</span> <span class="st">" | "</span>.join(<span class="bu">str</span>(cell) <span class="cf">for</span> cell <span class="kw">in</span> row) <span class="op">+</span> <span class="st">" |"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> row <span class="kw">in</span> row_group</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        chunks.append(<span class="ss">f"</span><span class="sc">{</span>header<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>separator<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>rows_text<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="code-chunking" class="level3" data-number="12.5.4">
+<h3 data-number="12.5.4" class="anchored" data-anchor-id="code-chunking"><span class="header-section-number">12.5.4</span> Code chunking</h3>
+<p>Code has its own natural units: functions, classes, modules. Chunking at these boundaries is almost always preferable to fixed-size splitting.</p>
+<p>For Python, the AST provides exact function and class boundaries:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ast</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chunk_python_file(source_code: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[Chunk]:</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    tree <span class="op">=</span> ast.parse(source_code)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> node <span class="kw">in</span> ast.walk(tree):</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            start_line <span class="op">=</span> node.lineno <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            end_line <span class="op">=</span> node.end_lineno</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            chunk_text <span class="op">=</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(source_code.split(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)[start_line:end_line])</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            chunks.append(Chunk(</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                text<span class="op">=</span>chunk_text,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                metadata<span class="op">=</span>{</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"type"</span>: <span class="bu">type</span>(node).<span class="va">__name__</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"name"</span>: node.name,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"start_line"</span>: node.lineno,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"end_line"</span>: node.end_lineno,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            ))</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="semantic-chunking" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="semantic-chunking"><span class="header-section-number">12.6</span> Semantic chunking</h2>
+<p>Rather than splitting on structural or syntactic boundaries, semantic chunking splits where the meaning changes. Adjacent sentences discussing the same topic are grouped together; a split is introduced when the topic shifts.</p>
+<section id="embedding-based-semantic-chunking" class="level3" data-number="12.6.1">
+<h3 data-number="12.6.1" class="anchored" data-anchor-id="embedding-based-semantic-chunking"><span class="header-section-number">12.6.1</span> Embedding-based semantic chunking</h3>
+<p>Embed each sentence independently, then compute the cosine similarity between adjacent sentence embeddings. A significant drop in similarity indicates a topic shift and marks the boundary for a new chunk.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics.pairwise <span class="im">import</span> cosine_similarity</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> semantic_chunk(sentences: <span class="bu">list</span>[<span class="bu">str</span>],</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                   embedding_model,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                   percentile: <span class="bu">float</span> <span class="op">=</span> <span class="dv">95</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    embeddings <span class="op">=</span> embedding_model.encode(sentences)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    similarities <span class="op">=</span> [</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        cosine_similarity([embeddings[i]], [embeddings[i<span class="op">+</span><span class="dv">1</span>]])[<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(embeddings) <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adaptive threshold: split where similarity is in the bottom percentile</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    breakpoint_threshold <span class="op">=</span> np.percentile(similarities, <span class="dv">100</span> <span class="op">-</span> percentile)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    breakpoints <span class="op">=</span> [</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        i <span class="cf">for</span> i, sim <span class="kw">in</span> <span class="bu">enumerate</span>(similarities)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> sim <span class="op">&lt;</span> breakpoint_threshold</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> bp <span class="kw">in</span> breakpoints:</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        chunks.append(<span class="st">" "</span>.join(sentences[start:bp<span class="op">+</span><span class="dv">1</span>]))</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> bp <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    chunks.append(<span class="st">" "</span>.join(sentences[start:]))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="advantages-and-costs-of-semantic-chunking" class="level3" data-number="12.6.2">
+<h3 data-number="12.6.2" class="anchored" data-anchor-id="advantages-and-costs-of-semantic-chunking"><span class="header-section-number">12.6.2</span> Advantages and costs of semantic chunking</h3>
+<p>Semantic chunking produces chunks that are more topically coherent than fixed- size or structure-based chunking. Queries match chunks about the same topic as the query, not just chunks that happen to contain the query terms at an arbitrary text position.</p>
+<p>The cost is significant: every sentence must be embedded individually during chunking. For a document with 1,000 sentences and an embedding model that takes 10ms per sentence, that is 10 seconds per document. At corpus scale (millions of documents), this is a substantial offline cost that is usually justified for high-value corpora where retrieval quality is critical.</p>
+</section>
+<section id="llm-based-semantic-chunking" class="level3" data-number="12.6.3">
+<h3 data-number="12.6.3" class="anchored" data-anchor-id="llm-based-semantic-chunking"><span class="header-section-number">12.6.3</span> LLM-based semantic chunking</h3>
+<p>A more sophisticated approach: use a language model to identify thematic boundaries directly.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> llm_chunk(document: <span class="bu">str</span>, llm) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""Identify the major thematic sections in the following document.</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ss">Return a JSON list of character indices where each new section begins.</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ss">Document:</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>document<span class="sc">}</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ss">Return only the JSON array of character indices."""</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> llm.complete(prompt)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    section_starts <span class="op">=</span> json.loads(response)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    chunks <span class="op">=</span> []</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, start <span class="kw">in</span> <span class="bu">enumerate</span>(section_starts):</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        end <span class="op">=</span> section_starts[i<span class="op">+</span><span class="dv">1</span>] <span class="cf">if</span> i<span class="op">+</span><span class="dv">1</span> <span class="op">&lt;</span> <span class="bu">len</span>(section_starts) <span class="cf">else</span> <span class="bu">len</span>(document)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        chunks.append(document[start:end])</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> chunks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>LLM-based chunking is expensive (one model call per document) and slow but produces the highest-quality semantic boundaries. It is practical for high- value documents (contracts, research papers, technical specifications) where chunking quality directly affects critical business outcomes.</p>
+<hr>
+</section>
+</section>
+<section id="chunk-enrichment" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="chunk-enrichment"><span class="header-section-number">12.7</span> Chunk enrichment</h2>
+<p>Raw chunks often lack context that was available in the document but is not present in the chunk itself. Chunk enrichment adds this context before embedding, making the resulting embeddings more informative.</p>
+<section id="prepending-metadata" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="prepending-metadata"><span class="header-section-number">12.7.1</span> Prepending metadata</h3>
+<p>Include the document title, section heading, and other metadata in the chunk text before embedding:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> enrich_chunk(chunk: Chunk) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    parts <span class="op">=</span> []</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> chunk.metadata.get(<span class="st">"document_title"</span>):</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        parts.append(<span class="ss">f"Document: </span><span class="sc">{</span>chunk<span class="sc">.</span>metadata[<span class="st">'document_title'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> chunk.metadata.get(<span class="st">"section_heading"</span>):</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        parts.append(<span class="ss">f"Section: </span><span class="sc">{</span>chunk<span class="sc">.</span>metadata[<span class="st">'section_heading'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> chunk.metadata.get(<span class="st">"source_date"</span>):</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        parts.append(<span class="ss">f"Date: </span><span class="sc">{</span>chunk<span class="sc">.</span>metadata[<span class="st">'source_date'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    parts.append(chunk.text)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(parts)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This changes what the embedding represents: instead of just the chunk text, the embedding represents the chunk in the context of its document and section. Queries about “authentication” will now match chunks in authentication sections more reliably, because the section heading “Authentication” is part of the embedded text.</p>
+</section>
+<section id="contextual-retrieval" class="level3" data-number="12.7.2">
+<h3 data-number="12.7.2" class="anchored" data-anchor-id="contextual-retrieval"><span class="header-section-number">12.7.2</span> Contextual retrieval</h3>
+<p>Anthropic’s contextual retrieval technique uses a language model to generate a brief context description for each chunk, prepended before embedding:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_chunk_context(document: <span class="bu">str</span>, chunk: <span class="bu">str</span>, llm) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""Given the following document:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;document&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>document<span class="sc">}</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/document&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ss">And this chunk from the document:</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;chunk&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>chunk<span class="sc">}</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/chunk&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="ss">Provide a brief (2–3 sentence) description of what this chunk is about and</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="ss">how it relates to the broader document. This will be prepended to the chunk</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="ss">to improve retrieval."""</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    context <span class="op">=</span> llm.complete(prompt)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"</span><span class="sc">{</span>context<span class="sc">}</span><span class="ch">\n\n</span><span class="sc">{</span>chunk<span class="sc">}</span><span class="ss">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The result: instead of embedding “The token expires after 3600 seconds by default,” you embed “This chunk describes the default expiration time for authentication tokens in the API. It is from the Authentication section of the API reference guide. The token expires after 3600 seconds by default.”</p>
+<p>The enriched embedding retrieves more accurately for queries about token expiration, authentication configuration, or API defaults. The cost: one LLM call per chunk during ingestion. Batch the calls, use a smaller model for context generation, and cache results so that re-chunking does not require regenerating contexts.</p>
+</section>
+<section id="hypothetical-document-embeddings-hyde" class="level3" data-number="12.7.3">
+<h3 data-number="12.7.3" class="anchored" data-anchor-id="hypothetical-document-embeddings-hyde"><span class="header-section-number">12.7.3</span> Hypothetical document embeddings (HyDE)</h3>
+<p>A related technique applied at query time rather than ingestion time: instead of embedding the raw query, use a language model to generate a hypothetical document that would answer the query, then embed that hypothetical document for retrieval.</p>
+<p>The intuition: a query (“what is the default token expiration time?”) and a document chunk (“The token expires after 3600 seconds by default”) may be phrased very differently and have dissimilar embeddings. A hypothetical answer (“The default token expiration time is 3600 seconds, configurable via the token_ttl parameter”) is phrased similarly to the actual document content and embeds more similarly.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hyde_retrieve(query: <span class="bu">str</span>, llm, retriever) <span class="op">-&gt;</span> <span class="bu">list</span>[Chunk]:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    hypothetical_doc <span class="op">=</span> llm.complete(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Write a brief passage that answers this question:</span><span class="ch">\n</span><span class="sc">{</span>query<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> retriever.retrieve(hypothetical_doc, top_k<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>HyDE consistently improves retrieval quality for factual queries where the query phrasing differs significantly from the document phrasing. It adds one LLM call per query which is acceptable for most production systems where answer quality is the priority.</p>
+</section>
+<section id="query-rewriting" class="level3" data-number="12.7.4">
+<h3 data-number="12.7.4" class="anchored" data-anchor-id="query-rewriting"><span class="header-section-number">12.7.4</span> Query rewriting</h3>
+<p>A related technique operates at query time rather than ingestion time: rewrite the user’s query so that it more closely matches the language, terminology, and writing style of the underlying document corpus before retrieval.</p>
+<p>The motivation is the same as HyDE: retrieval systems operate in embedding space, and semantically identical concepts may be expressed very differently by users and documents. A user might ask:</p>
+<blockquote class="blockquote">
+<p>“How long does a login session last?”</p>
+</blockquote>
+<p>while the documentation states:</p>
+<blockquote class="blockquote">
+<p>“Authentication tokens expire after 3600 seconds.”</p>
+</blockquote>
+<p>Although these refer to the same concept, the phrasing differs substantially. A query rewriting model transforms the user query into language that more closely resembles the corpus:</p>
+<blockquote class="blockquote">
+<p>“What is the default expiration time for authentication tokens?”</p>
+</blockquote>
+<p>The rewritten query is then embedded and used for retrieval.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rewrite_retrieve(query: <span class="bu">str</span>, llm, retriever) <span class="op">-&gt;</span> <span class="bu">list</span>[Chunk]:</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    rewritten_query <span class="op">=</span> llm.complete(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"""Rewrite the following search query so that it matches the</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ss">terminology and writing style of technical documentation while preserving</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ss">its original meaning.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ss">Query: </span><span class="sc">{</span>query<span class="sc">}</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="ss">Return only the rewritten query."""</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> retriever.retrieve(rewritten_query, top_k<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Query rewriting differs from HyDE in an important way. HyDE generates a hypothetical answer document and embeds that document for retrieval. Query rewriting preserves the query format but adapts its vocabulary and style to better align with the corpus.</p>
+<p>This approach is particularly effective for domain-specific corpora where users and documents use different terminology, such as medical records, legal documents, internal company jargon, and technical documentation.</p>
+<hr>
+</section>
+</section>
+<section id="chunk-size-selection" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="chunk-size-selection"><span class="header-section-number">12.8</span> Chunk size selection</h2>
+<p>There is no universal optimal chunk size. The right value depends on the embedding model’s context window (chunks cannot exceed the maximum input length), the query type (short factual queries match short precise chunks; long analytical queries match longer contextual chunks), the document type (technical documentation with short precise sections warrants smaller chunks; legal contracts with long interconnected clauses warrant larger ones), and the retrieval top-k and context window (if you retrieve top-5 chunks into a 128k context window, chunks can be large; if the context window is 4k tokens, keep chunks under 1,000 tokens each).</p>
+<section id="empirical-chunk-size-selection" class="level3" data-number="12.8.1">
+<h3 data-number="12.8.1" class="anchored" data-anchor-id="empirical-chunk-size-selection"><span class="header-section-number">12.8.1</span> Empirical chunk size selection</h3>
+<p>The right approach: treat chunk size as a hyperparameter and evaluate empirically.</p>
+<ol type="1">
+<li>Build a small evaluation set: 50–100 questions with known answers from your document corpus</li>
+<li>Ingest the corpus with multiple chunk sizes (256, 512, 1024, 2048 tokens)</li>
+<li>For each chunk size, measure retrieval recall (does the answer appear in the top-k retrieved chunks?) and answer quality (does the LLM produce a correct answer?)</li>
+<li>Select the chunk size that maximizes answer quality on the evaluation set</li>
+</ol>
+<p>This takes time but produces chunk sizes calibrated to your specific documents and queries rather than arbitrary defaults. The defaults in most frameworks (512 tokens, 10% overlap) are reasonable starting points, not optimal values.</p>
+<hr>
+</section>
+</section>
+<section id="multi-granularity-retrieval" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="multi-granularity-retrieval"><span class="header-section-number">12.9</span> Multi-granularity retrieval</h2>
+<p>A single chunk size is a compromise. A better approach: index documents at multiple granularities and retrieve from the most appropriate level.</p>
+<section id="parent-child-chunking" class="level3" data-number="12.9.1">
+<h3 data-number="12.9.1" class="anchored" data-anchor-id="parent-child-chunking"><span class="header-section-number">12.9.1</span> Parent-child chunking</h3>
+<p>Index small chunks for precise retrieval, but retrieve and pass larger parent chunks to the language model for context:</p>
+<pre><code>Document
+  └── Parent chunk (1,000 tokens): "Section 4.2: OAuth 2.0"
+        ├── Child chunk (200 tokens): "Authorization Code Flow"
+        ├── Child chunk (200 tokens): "Client Credentials Flow"
+        └── Child chunk (200 tokens): "Token Refresh"</code></pre>
+<p>Retrieval operates on child chunk embeddings (precise matching). When a child chunk is retrieved, the system returns its parent chunk (rich context). The language model receives the full parent chunk, not the narrow child chunk.</p>
+<p>This combines the retrieval precision of small chunks with the contextual richness of large chunks which is the best of both without the tradeoff.</p>
+</section>
+<section id="small-to-big-retrieval" class="level3" data-number="12.9.2">
+<h3 data-number="12.9.2" class="anchored" data-anchor-id="small-to-big-retrieval"><span class="header-section-number">12.9.2</span> Small-to-big retrieval</h3>
+<p>Similar to parent-child, but the relationship is sentence-to-paragraph: embed sentences for retrieval, return the surrounding paragraph to the language model.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> small_to_big_retrieve(query: <span class="bu">str</span>, retriever, document_store) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    sentence_chunks <span class="op">=</span> retriever.retrieve(query, top_k<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    paragraphs <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> chunk <span class="kw">in</span> sentence_chunks:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        paragraph_id <span class="op">=</span> chunk.metadata[<span class="st">"paragraph_id"</span>]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        paragraphs.add(document_store.get_paragraph(paragraph_id))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(paragraphs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="summary-indexing" class="level3" data-number="12.9.3">
+<h3 data-number="12.9.3" class="anchored" data-anchor-id="summary-indexing"><span class="header-section-number">12.9.3</span> Summary indexing</h3>
+<p>For very long documents, index a summary of each section alongside the sections themselves. Broad queries (“what is this document about?”) match the summary. Specific queries (“what is the default timeout?”) match the section chunks. The summary provides a navigational layer above the detailed content.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">12.10</span> Key takeaways</h2>
+<ul>
+<li>Chunking is the most consequential preprocessing decision in a RAG system; incoherent chunks cannot be compensated for by better retrieval or a better language model</li>
+<li>Fixed-size chunking with overlap is simple and works reasonably well for homogeneous prose; 10% overlap costs 10% more storage and dramatically reduces boundary failures</li>
+<li>Recursive character splitting preserves the largest meaningful structure (paragraphs, then lines, then words) within the size limit — better than pure fixed-size splitting for most documents</li>
+<li>Structure-aware chunking at heading boundaries produces the most semantically coherent chunks for well-formatted documents; tables and code should always be treated as atomic units with splitting only at row or function boundaries</li>
+<li>Semantic chunking (embedding-based similarity breakpoints) produces the most topically coherent chunks at the cost of significant offline compute — worth it for high-value corpora, expensive at scale</li>
+<li>Chunk enrichment — prepending metadata, section headings, or LLM-generated context descriptions — improves retrieval by making embeddings more informative about the chunk’s place in the document; contextual retrieval is high-impact when quality justifies the extra LLM calls</li>
+<li>HyDE improves retrieval at query time by embedding a hypothetical answer rather than the raw query, bridging the vocabulary gap between queries and documents</li>
+<li>Parent-child chunking combines retrieval precision (embed small child chunks) with contextual richness (return large parent chunks to the language model)</li>
+<li>Treat chunk size as a hyperparameter: build an evaluation set of 50–100 representative questions and select chunk size empirically rather than using arbitrary defaults</li>
+</ul>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch4/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.2: Cheat sheet.
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">12.11</span> Further reading</h2>
+<ul>
+<li>Anthropic (2024). <em>Introducing Contextual Retrieval.</em> — The contextual chunk enrichment technique; one of the highest-impact chunking improvements available with documented retrieval quality gains.</li>
+<li>Gao et al.&nbsp;(2023). <em>Precise Zero-Shot Dense Retrieval without Relevance Labels.</em> — The HyDE paper; generating hypothetical documents for retrieval.</li>
+<li>Liu et al.&nbsp;(2023). <em>Lost in the Middle: How Language Models Use Long Contexts.</em> — Establishes that chunk position within the context window affects how well LLMs use retrieved content; relevant for context assembly decisions in chapter 24.</li>
+<li>LangChain Documentation. <em>Text Splitters.</em> — Comprehensive reference for RecursiveCharacterTextSplitter and other splitters with configuration examples.</li>
+<li>LlamaIndex Documentation. <em>Node Parsers / Text Splitters.</em> — Alternative implementation reference with hierarchical chunking and parent-child strategies.</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/llm\.hosseini\.work");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../book/part4/document_ingestion.html" class="pagination-link" aria-label="Document Ingestion">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../book/part4/embedding_for_search.html" class="pagination-link" aria-label="Embeddings for Search">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
