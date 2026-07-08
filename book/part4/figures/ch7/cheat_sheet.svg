@@ -1,0 +1,90 @@
+<svg width="1200" height="1070" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#555; }
+</style>
+
+<!-- ROW 1: THE RETRIEVAL PROBLEM & SPARSE RETRIEVAL BM25 -->
+<rect x="50" y="80" width="540" height="150" class="box"/>
+<text x="70" y="110" class="section">The Retrieval Problem</text>
+<text x="80" y="140" class="text">Goal: Given a query, return the most relevant document chunks</text>
+<text x="80" y="165" class="text">• No single algorithm reliably handles all query types and domain words</text>
+<text x="80" y="190" class="text">• Each algorithm has clear failure modes that other systems compensate for</text>
+<text x="80" y="215" class="text">• Production RAG combines systems to exploit individual performance peaks</text>
+
+<rect x="610" y="80" width="540" height="150" class="box"/>
+<text x="630" y="110" class="section">Sparse Retrieval: BM25</text>
+<text x="640" y="140" class="text">Dominant keyword algorithm expanding on classic TF-IDF principles</text>
+<text x="640" y="165" class="text">Good at: Exact term matching, unique product IDs, and named entities</text>
+<text x="640" y="190" class="text">Fails at: Vocabulary mismatch ("car" query won't hit "automobile" chunk)</text>
+<text x="640" y="215" class="text">Weakness: Degrades heavily on short 1-2 word ambiguous keyword lookups</text>
+
+<!-- ROW 2: DENSE STRENGTHS & DENSE WEAKNESSES -->
+<rect x="50" y="250" width="540" height="160" class="box"/>
+<text x="70" y="280" class="section">Dense Retrieval: What it Handles Well</text>
+<text x="80" y="310" class="text">Embeds queries and documents into a shared continuous vector space</text>
+<text x="80" y="335" class="text">• Semantic matching: Links "session expires" conceptually to "3600 seconds"</text>
+<text x="80" y="360" class="text">• Paraphrase matching: Groups different words sharing identical concepts</text>
+<text x="80" y="385" class="text">• Cross-lingual retrieval: Aligns abstract concepts across global languages</text>
+
+<rect x="610" y="250" width="540" height="160" class="box"/>
+<text x="630" y="280" class="section">Dense Retrieval: Critical Failure Modes</text>
+<text x="640" y="310" class="text">• Rare/OOV terms: Forces explicit error codes into generic nearest domains</text>
+<text x="640" y="335" class="text">• Exact strings: Conflates highly distinct products (e.g., "GPT-4" vs "GPT-4o")</text>
+<text x="640" y="360" class="text">• High specificity: Blurs targeted queries into wide general theme buckets</text>
+<text x="640" y="385" class="text">• Numbers/Structure: Cannot resolve structured mathematical or date filters</text>
+
+<!-- ROW 3: BM25 FORMULA & HYBRID FUSION -->
+<rect x="50" y="430" width="540" height="190" class="box"/>
+<text x="70" y="460" class="section">BM25 Formula Mechanics</text>
+<text x="80" y="490" class="code">BM25(D,Q) = SUM[ IDF(t) * (TF * (k1 + 1)) / (TF + k1 * (1 - b + b * L)) ]</text>
+<text x="80" y="515" class="text">• IDF component: Drastically penalizes ultra-common grammatical filler words</text>
+<text x="80" y="540" class="text">• TF saturation (k1): Caps the mathematical advantage of high word repetition</text>
+<text x="80" y="565" class="text">• Length norm (b): Shifts preferential scoring weight to shorter documents</text>
+
+<rect x="610" y="430" width="540" height="190" class="box"/>
+<text x="630" y="460" class="section">Hybrid Retrieval &amp; Fusion</text>
+<text x="640" y="490" class="code">RRF(c) = SUM[ 1 / (k + rank_s(c)) ]</text>
+<text x="640" y="515" class="text">• Reciprocal Rank Fusion (RRF): Robustly merges dense and sparse rankings</text>
+<text x="640" y="540" class="text">• Rank-driven: Skips complex score normalization entirely to prevent skew</text>
+<text x="640" y="565" class="text">• Weighted Score: alpha * dense + (1 - alpha) * BM25 (prone to scaling artifacts)</text>
+<text x="640" y="590" class="small">Production tip: Fetch large pools (top 50-100) before executing fusion calculations</text>
+
+<!-- ROW 4: QUERY REFORMULATION & CONTEXTUAL RETRIEVAL -->
+<rect x="50" y="640" width="540" height="170" class="box"/>
+<text x="70" y="670" class="section">Query Expansion &amp; Reformulation</text>
+<text x="80" y="700" class="text">Bridges formatting/vocabulary style gaps between users and text bodies</text>
+<text x="80" y="725" class="text">• Synonym expansion: Boosts broad recall terms but risks adding text noise</text>
+<text x="80" y="750" class="text">• Multi-query: LLM spawns alternative phrasings; results are deduplicated</text>
+<text x="80" y="775" class="text">• Step-back prompting: Queries a generalized topic first to gain baseline context</text>
+
+<rect x="610" y="640" width="540" height="170" class="box"/>
+<text x="630" y="670" class="section">Contextual &amp; Conversational Retrieval</text>
+<text x="640" y="700" class="text">Resolves context-dependent follow-up prompts in multi-turn dialogues</text>
+<text x="640" y="725" class="text">• Standalone query gen: LLM rewrites the query to include implicit context</text>
+<text x="640" y="750" class="text">• Conversation embedding: Directly concatenates recent history into vector</text>
+<text x="640" y="775" class="small">Tradeoff: Standalone gen is far more accurate; context embedding offers lower latency</text>
+
+<!-- ROW 5: KNOWLEDGE GRAPH & RETRIEVAL EVALUATION -->
+<rect x="50" y="830" width="540" height="190" class="box"/>
+<text x="70" y="860" class="section">Knowledge Graph Retrieval (GraphRAG)</text>
+<text x="80" y="890" class="text">Maps complex cross-document dependencies text similarity cannot resolve</text>
+<text x="80" y="915" class="text">• Method: Extracts entities and relations into JSON triplets from chunks</text>
+<text x="80" y="940" class="text">• Execution: Query entities trigger local neighborhood graph traversal</text>
+<text x="80" y="965" class="text">• Integration: Merged directly into text results to enrich background schema</text>
+<text x="80" y="990" class="small">Tradeoff: Excellent for intricate systems (legal/medical); high ingestion overhead</text>
+
+<rect x="610" y="830" width="540" height="190" class="box"/>
+<text x="630" y="860" class="section">Retrieval Evaluation Metrics</text>
+<text x="640" y="890" class="text">• Recall@k: Primary RAG metric. Fraction of true docs caught in top-k pool</text>
+<text x="640" y="915" class="text">• Precision@k: Density of truly relevant materials inside top-k returns</text>
+<text x="640" y="940" class="text">• MRR: Reciprocal ranking score focusing exclusively on the top hit accuracy</text>
+<text x="640" y="965" class="text">• NDCG: Position-graded valuation penalizing lower placed relevant answers</text>
+<text x="640" y="990" class="code">Rule of thumb: If a chunk misses Recall@k, the LLM cannot recover it</text>
+
+</svg>

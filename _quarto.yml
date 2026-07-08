@@ -43,6 +43,7 @@ book:
         - book/part4/chunking_strategies.md
         - book/part4/embedding_for_search.md
         - book/part4/vector_databases.md
+        - book/part4/retrieval_algorithms.md
 
     - part: "The Forging of Intelligence"
       chapters: []
