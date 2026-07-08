@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>15&nbsp; Retrieval Algorithms – From Prompt to Response</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../book/part4/vector_databases.html" rel="prev">
+<link href="../../images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4e5c8a923c97ced843d0652dafb23d7b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="15&nbsp; Retrieval Algorithms – From Prompt to Response">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://llm.hosseini.work/book/part4/figures/ch7/journey.svg">
+<meta property="og:site_name" content="From Prompt to Response">
+<meta name="twitter:title" content="15&nbsp; Retrieval Algorithms – From Prompt to Response">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part4/figures/ch7/journey.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/retrieval_algorithms.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">From Prompt to Response</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mohsenh17/prompt-to-response" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Art of the True Name</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Runes Beneath Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Labyrinth of Attention</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Forbidden Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/chunking_strategies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/embedding_for_search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/vector_databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Vector Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Forging of Intelligence</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Trial of the Answer</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Keepers of the Waking Engine</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-retrieval-problem" id="toc-the-retrieval-problem" class="nav-link active" data-scroll-target="#the-retrieval-problem"><span class="header-section-number">15.1</span> The retrieval problem</a></li>
+  <li><a href="#dense-retrieval-vector-similarity-search" id="toc-dense-retrieval-vector-similarity-search" class="nav-link" data-scroll-target="#dense-retrieval-vector-similarity-search"><span class="header-section-number">15.2</span> Dense retrieval: vector similarity search</a></li>
+  <li><a href="#sparse-retrieval-bm25" id="toc-sparse-retrieval-bm25" class="nav-link" data-scroll-target="#sparse-retrieval-bm25"><span class="header-section-number">15.3</span> Sparse retrieval: BM25</a></li>
+  <li><a href="#hybrid-retrieval" id="toc-hybrid-retrieval" class="nav-link" data-scroll-target="#hybrid-retrieval"><span class="header-section-number">15.4</span> Hybrid retrieval</a></li>
+  <li><a href="#query-expansion-and-reformulation" id="toc-query-expansion-and-reformulation" class="nav-link" data-scroll-target="#query-expansion-and-reformulation"><span class="header-section-number">15.5</span> Query expansion and reformulation</a></li>
+  <li><a href="#contextual-and-conversational-retrieval" id="toc-contextual-and-conversational-retrieval" class="nav-link" data-scroll-target="#contextual-and-conversational-retrieval"><span class="header-section-number">15.6</span> Contextual and conversational retrieval</a></li>
+  <li><a href="#knowledge-graph-retrieval" id="toc-knowledge-graph-retrieval" class="nav-link" data-scroll-target="#knowledge-graph-retrieval"><span class="header-section-number">15.7</span> Knowledge graph retrieval</a></li>
+  <li><a href="#retrieval-evaluation" id="toc-retrieval-evaluation" class="nav-link" data-scroll-target="#retrieval-evaluation"><span class="header-section-number">15.8</span> Retrieval evaluation</a></li>
+  <li><a href="#the-full-retrieval-pipeline" id="toc-the-full-retrieval-pipeline" class="nav-link" data-scroll-target="#the-full-retrieval-pipeline"><span class="header-section-number">15.9</span> The full retrieval pipeline</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">15.10</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">15.11</span> Further reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/retrieval_algorithms.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>The canonical question for this chapter:</strong> <em>Given a user query and a corpus of embedded chunks, what algorithms actually find the right chunks, and why is vector similarity alone not enough?</em></p>
+</blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch7/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
+<p>The vector database is now in ready, and the queries are coming to be processed. This chapter explores the algorithms that transform a natural language query into a ranked list of relevant chunks, and explains why combining multiple retrieval methods consistently delivers better results than relying on any single approach. In a Retrieval-Augmented Generation (RAG) system, the retrieval stage has the greatest impact on answer quality, often more than the choice of language model or prompt design.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="the-retrieval-problem" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="the-retrieval-problem"><span class="header-section-number">15.1</span> The retrieval problem</h2>
+<p>Retrieval is deceptively simple to describe: given a query, return the most relevant chunks. In practice, no single algorithm reliably finds the right chunks across all query types, corpus structures, and domain vocabularies.</p>
+<p>Vector similarity search finds semantically related content but fails on exact string matches, rare terms, and out-of-distribution vocabulary. Keyword search (BM25) finds exact matches but fails when the query and document use different words for the same concept. Re-ranking models produce better relevance signals than either but are too slow to run over the full corpus. Each algorithm has failure modes the others compensate for.</p>
+<p>Production RAG systems that work reliably across diverse query types combine multiple retrieval algorithms, using each where it performs best. This chapter covers each algorithm in depth, then covers how to combine them.</p>
+<hr>
+</section>
+<section id="dense-retrieval-vector-similarity-search" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="dense-retrieval-vector-similarity-search"><span class="header-section-number">15.2</span> Dense retrieval: vector similarity search</h2>
+<p>Dense retrieval embeds the query and retrieves chunks whose embeddings are nearest to the query embedding in vector space.</p>
+<section id="what-dense-retrieval-is-good-at" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="what-dense-retrieval-is-good-at"><span class="header-section-number">15.2.1</span> What dense retrieval is good at</h3>
+<p><strong>Semantic matching.</strong> The query “how long before my session expires” retrieves the chunk “the default token expiration is 3600 seconds” because the embeddings are nearby even though no words overlap.</p>
+<p><strong>Paraphrase matching.</strong> The query “terminate an employee” retrieves documents about “offboarding” and “separation from the company”, different words, same concept.</p>
+<p><strong>Cross-lingual retrieval.</strong> With a multilingual embedding model, an English query retrieves a French document about the same topic.</p>
+<p><strong>Conceptual queries.</strong> “Explain the difference between authentication and authorization” retrieves relevant conceptual explanations even when the query phrasing does not match any document passage verbatim.</p>
+</section>
+<section id="what-dense-retrieval-fails-at" class="level3" data-number="15.2.2">
+<h3 data-number="15.2.2" class="anchored" data-anchor-id="what-dense-retrieval-fails-at"><span class="header-section-number">15.2.2</span> What dense retrieval fails at</h3>
+<p><strong>Rare and out-of-vocabulary terms.</strong> The query “error code E1042” may produce a poor embedding if E1042 is rare in the embedding model’s training data. The model has no strong statistical association to learn from, so E1042 gets embedded near generic “error code” content rather than near the specific documentation for E1042. The correct chunk may rank 500th.</p>
+<p><strong>Exact string matching.</strong> Product names, model numbers, person names, and technical identifiers must match exactly. “GPT-4o” and “GPT-4” should not be treated as semantically equivalent, they are different products and embedding models can easily conflate them.</p>
+<p><strong>High-specificity queries.</strong> “What is the difference between TCP and UDP?” embeds similarly to “compare two network protocols.” Dense retrieval may surface documents about other protocol comparisons that are not specifically about TCP vs.&nbsp;UDP.</p>
+<p><strong>Numerical and structured queries.</strong> “Find all incidents from Q3 2024” requires exact date matching. Embedding similarity cannot handle structured numerical constraints.</p>
+<hr>
+</section>
+</section>
+<section id="sparse-retrieval-bm25" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="sparse-retrieval-bm25"><span class="header-section-number">15.3</span> Sparse retrieval: BM25</h2>
+<p>BM25 (Best Match 25) is the dominant keyword retrieval algorithm. It extends TF-IDF with term frequency saturation and length normalization, producing relevance scores that behave well across a wide range of corpus and query types.</p>
+<section id="the-bm25-formula" class="level3" data-number="15.3.1">
+<h3 data-number="15.3.1" class="anchored" data-anchor-id="the-bm25-formula"><span class="header-section-number">15.3.1</span> The BM25 formula</h3>
+<p>For a query Q and document D:</p>
+<p><span class="math display">\[
+\mathrm{BM25}(D,Q) = \sum_{t \in Q} \mathrm{IDF}(t) \times
+\frac{\mathrm{TF}(t,D)\times(k_1+1)}
+{\mathrm{TF}(t,D)+k_1\left(1-b+b\times\frac{|D|}{\mathrm{avgdl}}\right)}
+\]</span></p>
+<p>Where <code>t</code> iterates over query terms, <code>TF(t,D)</code> is term frequency in document D, <code>IDF(t)</code> is <span class="math inline">\(\log\left(\frac{N-\mathrm{df}(t)+0.5}{\mathrm{df}(t)+0.5}+1\right)\)</span>, N is total documents, df(t) is documents containing term t, |D| is document length in tokens, avgdl is average document length, k1 is the term frequency saturation parameter (typically 1.2-2.0), and b is the length normalization parameter (typically 0.75).</p>
+<p><strong>IDF</strong> penalizes terms that appear in many documents (“the” and “is” get near- zero IDF and a rare technical term gets high IDF).</p>
+<p><strong>TF saturation</strong> (k1 parameter) limits the advantage of high repetition. A term appearing 100 times scores only marginally higher than one appearing 10 times.</p>
+<p><strong>Length normalization</strong> (b parameter) favors shorter documents. A document that mentions a query term once in 100 words scores higher than one that mentions it once in 10,000 words.</p>
+</section>
+<section id="what-bm25-is-good-at" class="level3" data-number="15.3.2">
+<h3 data-number="15.3.2" class="anchored" data-anchor-id="what-bm25-is-good-at"><span class="header-section-number">15.3.2</span> What BM25 is good at</h3>
+<p><strong>Exact term matching.</strong> “Error code E1042” retrieves documents containing “E1042” precisely, regardless of whether the embedding model has seen E1042 in training.</p>
+<p><strong>Named entities.</strong> Person names, organization names, product names, and proper nouns are retrieved reliably by exact match.</p>
+<p><strong>Technical and domain-specific terminology.</strong> Medical codes, legal citations, scientific terms, and other domain vocabulary with precise meaning are handled by exact matching.</p>
+</section>
+<section id="what-bm25-fails-at" class="level3" data-number="15.3.3">
+<h3 data-number="15.3.3" class="anchored" data-anchor-id="what-bm25-fails-at"><span class="header-section-number">15.3.3</span> What BM25 fails at</h3>
+<p><strong>Vocabulary mismatch.</strong> “Car” and “automobile” are the same concept but BM25 treats them as different terms. The query “automobile maintenance” does not retrieve documents about “car repair.”</p>
+<p><strong>Conceptual queries.</strong> “Explain how transformers work” has no single discriminating term. Every technical document might contain “work”; many contain “transformer.” BM25 cannot reason about the conceptual relationship.</p>
+<p><strong>Short queries.</strong> BM25 degrades for one or two word queries because there are few terms to score. “Timeout” as a query retrieves all documents mentioning timeout regardless of whether they are about network timeouts, session timeouts, or database timeouts.</p>
+<hr>
+</section>
+</section>
+<section id="hybrid-retrieval" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="hybrid-retrieval"><span class="header-section-number">15.4</span> Hybrid retrieval</h2>
+<p>Combining dense and sparse retrieval consistently outperforms either alone on real world RAG benchmarks. Their failure modes are complementary: BM25 catches exact matches that dense retrieval misses; dense retrieval catches semantic matches that BM25 misses.</p>
+<section id="reciprocal-rank-fusion-rrf" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="reciprocal-rank-fusion-rrf"><span class="header-section-number">15.4.1</span> Reciprocal Rank Fusion (RRF)</h3>
+<p>RRF is the simplest and most robust fusion method that relies only on rank positions rather than score magnitudes, eliminating the need for score normalization.</p>
+<p>For a set of retrieval systems, each producing a ranked list, RRF score for a chunk <code>c</code> is defined as:</p>
+<p><span class="math display">\[
+\mathrm{RRF}(c) = \sum_{s \in S} \frac{1}{k + \mathrm{rank}_s(c)}
+\]</span></p>
+<p>where <code>S</code> represents the set of retrieval systems, and <span class="math inline">\(\mathrm{rank}_s(c)\)</span> denotes the 1-indexed rank of chunk <code>c</code> in the result list returned by system <code>s</code>. The parameter <code>k</code> is a smoothing constant, typically set to 60, that controls the influence of lower-ranked results. If a chunk does not appear in a system’s result list, that system contributes a score of 0 for the chunk.</p>
+<p><strong>Why RRF is robust.</strong> RRF relies on rank positions rather than raw retrieval scores. For example, a chunk with a dense retrieval score of 0.99 receives the same contribution as a chunk with a score of 0.51 if both are ranked first. This avoids the need to normalize or align score scales across different retrieval systems. Additionally, RRF naturally handles varying result sets by rewarding chunks that consistently appear across multiple systems</p>
+<p><strong>RRF in practice.</strong> Retrieve a larger candidate pool from each system (e.g., top-50 or top-100 results) before applying fusion. RRF can promote chunks that are ranked moderately across multiple systems, for example, a chunk ranked 30th by one system and 5th by another may outperform a chunk appearing only in the top-10 of a single system.</p>
+</section>
+<section id="weighted-score-combination" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="weighted-score-combination"><span class="header-section-number">15.4.2</span> Weighted score combination</h3>
+<p>This is an alternative approach to normalize scores from each retrieval system to the same range, typically ([0,1]), and combine them using system-specific weights:</p>
+<pre><code>hybrid_score = α × normalized_dense_score + (1 - α) × normalized_bm25_score</code></pre>
+<p>Where <code>α = 1.0</code> is pure dense and <code>α = 0.0</code> is pure sparse. Weaviate uses this with its <code>alpha</code> parameter. The limitation: BM25 scores are unbounded and skewed; cosine similarity is bounded to [-1, 1] and normalization artifacts can cause instability.</p>
+<p>RRF is generally more robust than weighted combination in practice because it does not require score normalization. Use weighted combination only when you have domain-specific knowledge about the relative importance of semantic vs. keyword matching for your query distribution.</p>
+<hr>
+</section>
+</section>
+<section id="query-expansion-and-reformulation" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="query-expansion-and-reformulation"><span class="header-section-number">15.5</span> Query expansion and reformulation</h2>
+<p>Retrieval quality depends heavily on query phrasing. Users phrase queries differently from how documents phrase answers. Query expansion and reformulation bridge this gap.</p>
+<p><strong>Synonym expansion</strong> Expand queries with synonyms and related terms before performing BM25 retrieval. Simple synonym expansion can improve recall by matching additional relevant terms, but it may also introduce noise by adding less relevant matches. Careful tuning of the BM25 <code>k_1</code> parameter can help reduce the impact of these added terms on the final scoring.</p>
+<p><strong>Multi-query retrieval.</strong> Generate multiple semantically equivalent or complementary reformulations of the original query and retrieve results for each. The retrieved results are then merged and deduplicated to produce a more comprehensive candidate set. This approach consistently improves recall, particularly for ambiguous, underspecified, or poorly phrased queries. Although generating multiple queries with an LLM typically adds 200–500 ms of latency, the improvement in retrieval quality often justifies the additional cost when answer accuracy is the primary objective.</p>
+<p><strong>Step-back prompting.</strong> For complex analytical queries, first generate or retrieve information for a broader, more general “step-back” question and use it as additional context for answering the original query. This provides foundational knowledge that may be missing from the specific question.</p>
+<p>For example, the query <em>“What causes the token refresh to fail?”</em> can benefit from retrieving background information on <em>“How does token refresh work?”</em> first. The broader context helps explain the underlying mechanism and makes it easier to identify and answer the specific failure causes.</p>
+<hr>
+</section>
+<section id="contextual-and-conversational-retrieval" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="contextual-and-conversational-retrieval"><span class="header-section-number">15.6</span> Contextual and conversational retrieval</h2>
+<p>In a multi-turn conversation, follow-up messages are often not self-contained. “What about for enterprise customers?” makes no sense as a standalone retrieval query without the previous turn’s context.</p>
+<p><strong>Standalone query generation</strong> Rewrite the user’s message into a self-contained query that incorporates the necessary context from previous conversation turns before performing retrieval.</p>
+<p>Without standalone query generation, retrieval for follow-up questions often fails because the query lacks the context needed to identify the intended topic. For example, <em>“What about for enterprise customers?”</em> may retrieve general information about enterprise customers rather than information related to the specific subject discussed earlier. Generating standalone queries is one of the most common and effective improvements for conversational RAG systems.</p>
+<p><strong>Conversation-aware embedding</strong>, A faster alternative to standalone query generation is to concatenate recent conversation context with the current user query before creating the embedding.</p>
+<p>This approach avoids the additional latency of an LLM-based rewriting step, but it is generally less reliable because the combined text may not accurately represent the user’s true information need. The embedding can be influenced by irrelevant conversational details rather than focusing on the core query intent. Use standalone query generation when retrieval quality is the priority, and conversation-aware embedding when lower latency is more important.</p>
+<hr>
+</section>
+<section id="knowledge-graph-retrieval" class="level2" data-number="15.7">
+<h2 data-number="15.7" class="anchored" data-anchor-id="knowledge-graph-retrieval"><span class="header-section-number">15.7</span> Knowledge graph retrieval</h2>
+<p>For some domains, structured knowledge in graph form enables retrieval that pure text search cannot support.</p>
+<section id="when-graphs-help" class="level3" data-number="15.7.1">
+<h3 data-number="15.7.1" class="anchored" data-anchor-id="when-graphs-help"><span class="header-section-number">15.7.1</span> When graphs help</h3>
+<p>Consider a question about a complex regulatory requirement that depends on: the regulation text (in documents), which entities are subject to it (structured data), how it relates to other regulations (graph relationships), and which exceptions apply (structured rules). Text retrieval finds the regulation document. It cannot navigate the relationships between regulatory entities, exceptions, and cross-references.</p>
+<p>GraphRAG (Edge et al., 2024) extracts entities and relationships from documents and builds a knowledge graph. Retrieval traverses the graph to gather related entities before generating a response.</p>
+</section>
+<section id="entity-extraction-for-graph-building" class="level3" data-number="15.7.2">
+<h3 data-number="15.7.2" class="anchored" data-anchor-id="entity-extraction-for-graph-building"><span class="header-section-number">15.7.2</span> Entity extraction for graph building</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_entities_and_relations(text: <span class="bu">str</span>, llm) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""Extract entities and relationships from the following text.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ss">Return a JSON object with:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- "entities": list of </span><span class="ch">{{</span><span class="ss">name, type, description</span><span class="ch">}}</span><span class="ss"> objects</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- "relations": list of </span><span class="ch">{{</span><span class="ss">subject, predicate, object</span><span class="ch">}}</span><span class="ss"> triples</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ss">Text: </span><span class="sc">{</span>text<span class="sc">}</span><span class="ss">"""</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> llm.complete(prompt)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> json.loads(response)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Build graph incrementally from corpus</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>graph <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> chunk <span class="kw">in</span> corpus_chunks:</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    extracted <span class="op">=</span> extract_entities_and_relations(chunk.text, llm)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> extracted[<span class="st">"entities"</span>]:</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        graph.add_node(entity[<span class="st">"name"</span>], <span class="op">**</span>entity)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> relation <span class="kw">in</span> extracted[<span class="st">"relations"</span>]:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        graph.add_edge(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            relation[<span class="st">"subject"</span>], relation[<span class="st">"object"</span>],</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span>relation[<span class="st">"predicate"</span>],</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            source_chunk<span class="op">=</span>chunk.<span class="bu">id</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="graph-retrieval-at-query-time" class="level3" data-number="15.7.3">
+<h3 data-number="15.7.3" class="anchored" data-anchor-id="graph-retrieval-at-query-time"><span class="header-section-number">15.7.3</span> Graph retrieval at query time</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> graph_retrieve(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    query: <span class="bu">str</span>, graph, text_retriever, k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    query_entities <span class="op">=</span> extract_entities(query)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Expand to related entities via graph traversal</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    expanded <span class="op">=</span> <span class="bu">set</span>(query_entities)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> query_entities:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> entity <span class="kw">in</span> graph:</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            expanded.update(nx.neighbors(graph, entity))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gather chunks associated with expanded entities</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    entity_chunks <span class="op">=</span> []</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> expanded:</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        entity_chunks.extend(graph.nodes[entity].get(<span class="st">"source_chunks"</span>, []))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Merge with standard text retrieval</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    text_results <span class="op">=</span> text_retriever.retrieve(query, top_k<span class="op">=</span>k)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(<span class="bu">set</span>(entity_chunks) <span class="op">|</span> <span class="bu">set</span>(r[<span class="dv">0</span>] <span class="cf">for</span> r <span class="kw">in</span> text_results))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>GraphRAG is powerful for corpora with rich entity relationships (medical knowledge bases, legal systems, financial networks) but adds significant ingestion complexity (entity extraction per chunk) and retrieval complexity (graph traversal). —</p>
+</section>
+</section>
+<section id="retrieval-evaluation" class="level2" data-number="15.8">
+<h2 data-number="15.8" class="anchored" data-anchor-id="retrieval-evaluation"><span class="header-section-number">15.8</span> Retrieval evaluation</h2>
+<section id="metrics" class="level3" data-number="15.8.1">
+<h3 data-number="15.8.1" class="anchored" data-anchor-id="metrics"><span class="header-section-number">15.8.1</span> Metrics</h3>
+<p><strong>Recall@k</strong>: of all truly relevant chunks, what fraction appear in the top-k retrieved chunks?</p>
+<p><span class="math display">\[
+\mathrm{Recall@k} =
+\frac{
+\left|\{\mathrm{relevant}\} \cap \{\mathrm{top\text{-}k\ retrieved}\}\right|
+}{
+\left|\{\mathrm{relevant}\}\right|
+}
+\]</span></p>
+<p>This is the primary metric for RAG. If the relevant chunk is not in the top-k, the language model cannot use it and no downstream component can compensate.</p>
+<p><strong>Precision@k</strong>: of the top-k retrieved chunks, what fraction are truly relevant?</p>
+<p><span class="math display">\[
+\mathrm{Precision@k} =
+\frac{
+\left|\{\mathrm{relevant}\} \cap \{\mathrm{top\text{-}k\ retrieved}\}\right|
+}{
+k
+}
+\]</span></p>
+<p><strong>Mean Reciprocal Rank (MRR)</strong>: average reciprocal rank of the first relevant result across queries.</p>
+<p><span class="math display">\[
+\mathrm{MRR} =
+\frac{1}{|\mathrm{queries}|}
+\sum_{q \in \mathrm{queries}}
+\frac{1}{\mathrm{rank\_of\_first\_relevant}(q)}
+\]</span></p>
+<p><strong>NDCG@k</strong>: accounts for graded relevance and position. A relevant chunk at rank 1 contributes more than the same chunk at rank 5. <span class="math display">\[
+\mathrm{NDCG@k} =
+\frac{\mathrm{DCG@k}}{\mathrm{IDCG@k}}
+\]</span></p>
+<p><span class="math display">\[
+\mathrm{DCG@k} =
+\sum_{i=1}^{k}
+\frac{2^{rel_i}-1}{\log_2(i+1)}
+\]</span></p>
+<p><span class="math display">\[
+\mathrm{IDCG@k} =
+\sum_{i=1}^{k}
+\frac{2^{rel_i^*}-1}{\log_2(i+1)}
+\]</span></p>
+<hr>
+</section>
+</section>
+<section id="the-full-retrieval-pipeline" class="level2" data-number="15.9">
+<h2 data-number="15.9" class="anchored" data-anchor-id="the-full-retrieval-pipeline"><span class="header-section-number">15.9</span> The full retrieval pipeline</h2>
+<p>A production pipeline combining the techniques from this chapter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HybridRetriever:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vector_db, bm25_index, embedding_model, llm):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vector_db     <span class="op">=</span> vector_db</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bm25          <span class="op">=</span> bm25_index</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embedding_model <span class="op">=</span> embedding_model</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm           <span class="op">=</span> llm</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> retrieve(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        query: <span class="bu">str</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        conversation_history: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        filters: <span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        top_k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]:</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 1: Resolve conversational context</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        retrieval_query <span class="op">=</span> query</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> conversation_history:</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            retrieval_query <span class="op">=</span> generate_standalone_query(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                conversation_history, query, <span class="va">self</span>.llm</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 2: Dense retrieval</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        query_embedding <span class="op">=</span> <span class="va">self</span>.embedding_model.encode(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"query: </span><span class="sc">{</span>retrieval_query<span class="sc">}</span><span class="ss">"</span>, normalize_embeddings<span class="op">=</span><span class="va">True</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        dense_results <span class="op">=</span> <span class="va">self</span>.vector_db.search(</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            query_embedding, top_k<span class="op">=</span><span class="dv">50</span>, filters<span class="op">=</span>filters</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 3: Sparse retrieval</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        sparse_results <span class="op">=</span> <span class="va">self</span>.bm25.search(retrieval_query, top_k<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 4: Fuse with RRF</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        fused <span class="op">=</span> reciprocal_rank_fusion([dense_results, sparse_results], k<span class="op">=</span><span class="dv">60</span>)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        candidates <span class="op">=</span> fused[:<span class="dv">100</span>]  <span class="co"># top-100 for re-ranking</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 5: Re-rank (chapter 23)</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># reranked = reranker.rerank(retrieval_query, candidates, top_k)</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 6: Return top results</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="va">self</span>.get_chunk(chunk_id) <span class="cf">for</span> chunk_id, _ <span class="kw">in</span> candidates[:top_k]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="15.10">
+<h2 data-number="15.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">15.10</span> Key takeaways</h2>
+<ul>
+<li>No single retrieval algorithm works well for all query types; dense retrieval excels at semantic matching, BM25 excels at exact term matching, and their failure modes are complementary — hybrid retrieval consistently outperforms either alone</li>
+<li>BM25 scores by term frequency (saturated), inverse document frequency, and length normalization; it is essential for exact matching of rare terms, product codes, and named entities that embedding models handle poorly</li>
+<li>Reciprocal Rank Fusion is the most robust fusion method because it depends only on rank positions, not score magnitudes — no normalization required; retrieve top-50 or top-100 from each system before fusing</li>
+<li>Multi-query retrieval generates paraphrase variants and fuses results, improving recall for ambiguous queries at the cost of one LLM call per query</li>
+<li>Standalone query generation is mandatory for multi-turn conversations; direct retrieval on follow-up questions without context rewriting consistently fails and is one of the most common fixable RAG failures</li>
+<li>GraphRAG adds entity-relationship traversal for domains with rich structured relationships; adds significant complexity and is only worth it when text retrieval quality is provably insufficient for relationship-dependent queries</li>
+<li>Recall@k on a held-out evaluation set is the only reliable way to measure retrieval quality; build this before tuning anything else in the RAG pipeline</li>
+</ul>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch6/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.2: Cheat sheet.
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="15.11">
+<h2 data-number="15.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">15.11</span> Further reading</h2>
+<ul>
+<li>Robertson &amp; Zaragoza (2009). <em>The Probabilistic Relevance Framework: BM25 and Beyond.</em> — The authoritative BM25 reference; explains the mathematical motivation for saturation and length normalization.</li>
+<li>Karpukhin et al.&nbsp;(2020). <em>Dense Passage Retrieval for Open-Domain Question Answering.</em> — established dense retrieval for question answering.</li>
+<li>Cormack et al.&nbsp;(2009). <em>Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods.</em> — The RRF paper.</li>
+<li>Ma et al.&nbsp;(2023). <em>Fine-Tuning LLaMA for Multi-Stage Text Retrieval.</em> — LLM- based query reformulation for improved retrieval.</li>
+<li>Edge et al.&nbsp;(2024). <em>From Local to Global: A Graph RAG Approach to Query- Focused Summarization.</em> — GraphRAG; entity-based retrieval for complex multi-document reasoning.</li>
+<li>Es et al.&nbsp;(2023). <em>RAGAS: Automated Evaluation of Retrieval Augmented Generation.</em> — End-to-end RAG evaluation framework including retrieval metrics.</li>
+<li>Thakur et al.&nbsp;(2021). <em>BEIR: A Heterogeneous Benchmark for Zero-Shot Evaluation of Information Retrieval Models.</em> — The standard benchmark for comparing retrieval algorithms across diverse domains.</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/llm\.hosseini\.work");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../book/part4/vector_databases.html" class="pagination-link" aria-label="Vector Databases">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Vector Databases</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

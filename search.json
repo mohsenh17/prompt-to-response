@@ -1559,5 +1559,126 @@
       "The Forbidden Archive",
       "<span class='chapter-number'>14</span>  <span class='chapter-title'>Vector Databases</span>"
     ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html",
+    "href": "book/part4/retrieval_algorithms.html",
+    "title": "15  Retrieval Algorithms",
+    "section": "",
+    "text": "15.1 The retrieval problem\nRetrieval is deceptively simple to describe: given a query, return the most relevant chunks. In practice, no single algorithm reliably finds the right chunks across all query types, corpus structures, and domain vocabularies.\nVector similarity search finds semantically related content but fails on exact string matches, rare terms, and out-of-distribution vocabulary. Keyword search (BM25) finds exact matches but fails when the query and document use different words for the same concept. Re-ranking models produce better relevance signals than either but are too slow to run over the full corpus. Each algorithm has failure modes the others compensate for.\nProduction RAG systems that work reliably across diverse query types combine multiple retrieval algorithms, using each where it performs best. This chapter covers each algorithm in depth, then covers how to combine them.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#dense-retrieval-vector-similarity-search",
+    "href": "book/part4/retrieval_algorithms.html#dense-retrieval-vector-similarity-search",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.2 Dense retrieval: vector similarity search",
+    "text": "15.2 Dense retrieval: vector similarity search\nDense retrieval embeds the query and retrieves chunks whose embeddings are nearest to the query embedding in vector space.\n\n15.2.1 What dense retrieval is good at\nSemantic matching. The query “how long before my session expires” retrieves the chunk “the default token expiration is 3600 seconds” because the embeddings are nearby even though no words overlap.\nParaphrase matching. The query “terminate an employee” retrieves documents about “offboarding” and “separation from the company”, different words, same concept.\nCross-lingual retrieval. With a multilingual embedding model, an English query retrieves a French document about the same topic.\nConceptual queries. “Explain the difference between authentication and authorization” retrieves relevant conceptual explanations even when the query phrasing does not match any document passage verbatim.\n\n\n15.2.2 What dense retrieval fails at\nRare and out-of-vocabulary terms. The query “error code E1042” may produce a poor embedding if E1042 is rare in the embedding model’s training data. The model has no strong statistical association to learn from, so E1042 gets embedded near generic “error code” content rather than near the specific documentation for E1042. The correct chunk may rank 500th.\nExact string matching. Product names, model numbers, person names, and technical identifiers must match exactly. “GPT-4o” and “GPT-4” should not be treated as semantically equivalent, they are different products and embedding models can easily conflate them.\nHigh-specificity queries. “What is the difference between TCP and UDP?” embeds similarly to “compare two network protocols.” Dense retrieval may surface documents about other protocol comparisons that are not specifically about TCP vs. UDP.\nNumerical and structured queries. “Find all incidents from Q3 2024” requires exact date matching. Embedding similarity cannot handle structured numerical constraints.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#sparse-retrieval-bm25",
+    "href": "book/part4/retrieval_algorithms.html#sparse-retrieval-bm25",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.3 Sparse retrieval: BM25",
+    "text": "15.3 Sparse retrieval: BM25\nBM25 (Best Match 25) is the dominant keyword retrieval algorithm. It extends TF-IDF with term frequency saturation and length normalization, producing relevance scores that behave well across a wide range of corpus and query types.\n\n15.3.1 The BM25 formula\nFor a query Q and document D:\n\\[\n\\mathrm{BM25}(D,Q) = \\sum_{t \\in Q} \\mathrm{IDF}(t) \\times\n\\frac{\\mathrm{TF}(t,D)\\times(k_1+1)}\n{\\mathrm{TF}(t,D)+k_1\\left(1-b+b\\times\\frac{|D|}{\\mathrm{avgdl}}\\right)}\n\\]\nWhere t iterates over query terms, TF(t,D) is term frequency in document D, IDF(t) is \\(\\log\\left(\\frac{N-\\mathrm{df}(t)+0.5}{\\mathrm{df}(t)+0.5}+1\\right)\\), N is total documents, df(t) is documents containing term t, |D| is document length in tokens, avgdl is average document length, k1 is the term frequency saturation parameter (typically 1.2-2.0), and b is the length normalization parameter (typically 0.75).\nIDF penalizes terms that appear in many documents (“the” and “is” get near- zero IDF and a rare technical term gets high IDF).\nTF saturation (k1 parameter) limits the advantage of high repetition. A term appearing 100 times scores only marginally higher than one appearing 10 times.\nLength normalization (b parameter) favors shorter documents. A document that mentions a query term once in 100 words scores higher than one that mentions it once in 10,000 words.\n\n\n15.3.2 What BM25 is good at\nExact term matching. “Error code E1042” retrieves documents containing “E1042” precisely, regardless of whether the embedding model has seen E1042 in training.\nNamed entities. Person names, organization names, product names, and proper nouns are retrieved reliably by exact match.\nTechnical and domain-specific terminology. Medical codes, legal citations, scientific terms, and other domain vocabulary with precise meaning are handled by exact matching.\n\n\n15.3.3 What BM25 fails at\nVocabulary mismatch. “Car” and “automobile” are the same concept but BM25 treats them as different terms. The query “automobile maintenance” does not retrieve documents about “car repair.”\nConceptual queries. “Explain how transformers work” has no single discriminating term. Every technical document might contain “work”; many contain “transformer.” BM25 cannot reason about the conceptual relationship.\nShort queries. BM25 degrades for one or two word queries because there are few terms to score. “Timeout” as a query retrieves all documents mentioning timeout regardless of whether they are about network timeouts, session timeouts, or database timeouts.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#hybrid-retrieval",
+    "href": "book/part4/retrieval_algorithms.html#hybrid-retrieval",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.4 Hybrid retrieval",
+    "text": "15.4 Hybrid retrieval\nCombining dense and sparse retrieval consistently outperforms either alone on real world RAG benchmarks. Their failure modes are complementary: BM25 catches exact matches that dense retrieval misses; dense retrieval catches semantic matches that BM25 misses.\n\n15.4.1 Reciprocal Rank Fusion (RRF)\nRRF is the simplest and most robust fusion method that relies only on rank positions rather than score magnitudes, eliminating the need for score normalization.\nFor a set of retrieval systems, each producing a ranked list, RRF score for a chunk c is defined as:\n\\[\n\\mathrm{RRF}(c) = \\sum_{s \\in S} \\frac{1}{k + \\mathrm{rank}_s(c)}\n\\]\nwhere S represents the set of retrieval systems, and \\(\\mathrm{rank}_s(c)\\) denotes the 1-indexed rank of chunk c in the result list returned by system s. The parameter k is a smoothing constant, typically set to 60, that controls the influence of lower-ranked results. If a chunk does not appear in a system’s result list, that system contributes a score of 0 for the chunk.\nWhy RRF is robust. RRF relies on rank positions rather than raw retrieval scores. For example, a chunk with a dense retrieval score of 0.99 receives the same contribution as a chunk with a score of 0.51 if both are ranked first. This avoids the need to normalize or align score scales across different retrieval systems. Additionally, RRF naturally handles varying result sets by rewarding chunks that consistently appear across multiple systems\nRRF in practice. Retrieve a larger candidate pool from each system (e.g., top-50 or top-100 results) before applying fusion. RRF can promote chunks that are ranked moderately across multiple systems, for example, a chunk ranked 30th by one system and 5th by another may outperform a chunk appearing only in the top-10 of a single system.\n\n\n15.4.2 Weighted score combination\nThis is an alternative approach to normalize scores from each retrieval system to the same range, typically ([0,1]), and combine them using system-specific weights:\nhybrid_score = α × normalized_dense_score + (1 - α) × normalized_bm25_score\nWhere α = 1.0 is pure dense and α = 0.0 is pure sparse. Weaviate uses this with its alpha parameter. The limitation: BM25 scores are unbounded and skewed; cosine similarity is bounded to [-1, 1] and normalization artifacts can cause instability.\nRRF is generally more robust than weighted combination in practice because it does not require score normalization. Use weighted combination only when you have domain-specific knowledge about the relative importance of semantic vs. keyword matching for your query distribution.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#query-expansion-and-reformulation",
+    "href": "book/part4/retrieval_algorithms.html#query-expansion-and-reformulation",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.5 Query expansion and reformulation",
+    "text": "15.5 Query expansion and reformulation\nRetrieval quality depends heavily on query phrasing. Users phrase queries differently from how documents phrase answers. Query expansion and reformulation bridge this gap.\nSynonym expansion Expand queries with synonyms and related terms before performing BM25 retrieval. Simple synonym expansion can improve recall by matching additional relevant terms, but it may also introduce noise by adding less relevant matches. Careful tuning of the BM25 k_1 parameter can help reduce the impact of these added terms on the final scoring.\nMulti-query retrieval. Generate multiple semantically equivalent or complementary reformulations of the original query and retrieve results for each. The retrieved results are then merged and deduplicated to produce a more comprehensive candidate set. This approach consistently improves recall, particularly for ambiguous, underspecified, or poorly phrased queries. Although generating multiple queries with an LLM typically adds 200–500 ms of latency, the improvement in retrieval quality often justifies the additional cost when answer accuracy is the primary objective.\nStep-back prompting. For complex analytical queries, first generate or retrieve information for a broader, more general “step-back” question and use it as additional context for answering the original query. This provides foundational knowledge that may be missing from the specific question.\nFor example, the query “What causes the token refresh to fail?” can benefit from retrieving background information on “How does token refresh work?” first. The broader context helps explain the underlying mechanism and makes it easier to identify and answer the specific failure causes.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#contextual-and-conversational-retrieval",
+    "href": "book/part4/retrieval_algorithms.html#contextual-and-conversational-retrieval",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.6 Contextual and conversational retrieval",
+    "text": "15.6 Contextual and conversational retrieval\nIn a multi-turn conversation, follow-up messages are often not self-contained. “What about for enterprise customers?” makes no sense as a standalone retrieval query without the previous turn’s context.\nStandalone query generation Rewrite the user’s message into a self-contained query that incorporates the necessary context from previous conversation turns before performing retrieval.\nWithout standalone query generation, retrieval for follow-up questions often fails because the query lacks the context needed to identify the intended topic. For example, “What about for enterprise customers?” may retrieve general information about enterprise customers rather than information related to the specific subject discussed earlier. Generating standalone queries is one of the most common and effective improvements for conversational RAG systems.\nConversation-aware embedding, A faster alternative to standalone query generation is to concatenate recent conversation context with the current user query before creating the embedding.\nThis approach avoids the additional latency of an LLM-based rewriting step, but it is generally less reliable because the combined text may not accurately represent the user’s true information need. The embedding can be influenced by irrelevant conversational details rather than focusing on the core query intent. Use standalone query generation when retrieval quality is the priority, and conversation-aware embedding when lower latency is more important.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#knowledge-graph-retrieval",
+    "href": "book/part4/retrieval_algorithms.html#knowledge-graph-retrieval",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.7 Knowledge graph retrieval",
+    "text": "15.7 Knowledge graph retrieval\nFor some domains, structured knowledge in graph form enables retrieval that pure text search cannot support.\n\n15.7.1 When graphs help\nConsider a question about a complex regulatory requirement that depends on: the regulation text (in documents), which entities are subject to it (structured data), how it relates to other regulations (graph relationships), and which exceptions apply (structured rules). Text retrieval finds the regulation document. It cannot navigate the relationships between regulatory entities, exceptions, and cross-references.\nGraphRAG (Edge et al., 2024) extracts entities and relationships from documents and builds a knowledge graph. Retrieval traverses the graph to gather related entities before generating a response.\n\n\n15.7.2 Entity extraction for graph building\ndef extract_entities_and_relations(text: str, llm) -&gt; dict:\n    prompt = f\"\"\"Extract entities and relationships from the following text.\nReturn a JSON object with:\n- \"entities\": list of {{name, type, description}} objects\n- \"relations\": list of {{subject, predicate, object}} triples\n\nText: {text}\"\"\"\n\n    response = llm.complete(prompt)\n    return json.loads(response)\n\n# Build graph incrementally from corpus\nimport networkx as nx\n\ngraph = nx.DiGraph()\nfor chunk in corpus_chunks:\n    extracted = extract_entities_and_relations(chunk.text, llm)\n\n    for entity in extracted[\"entities\"]:\n        graph.add_node(entity[\"name\"], **entity)\n\n    for relation in extracted[\"relations\"]:\n        graph.add_edge(\n            relation[\"subject\"], relation[\"object\"],\n            label=relation[\"predicate\"],\n            source_chunk=chunk.id\n        )\n\n\n15.7.3 Graph retrieval at query time\ndef graph_retrieve(\n    query: str, graph, text_retriever, k: int = 5\n) -&gt; list:\n    query_entities = extract_entities(query)\n\n    # Expand to related entities via graph traversal\n    expanded = set(query_entities)\n    for entity in query_entities:\n        if entity in graph:\n            expanded.update(nx.neighbors(graph, entity))\n\n    # Gather chunks associated with expanded entities\n    entity_chunks = []\n    for entity in expanded:\n        entity_chunks.extend(graph.nodes[entity].get(\"source_chunks\", []))\n\n    # Merge with standard text retrieval\n    text_results = text_retriever.retrieve(query, top_k=k)\n    return list(set(entity_chunks) | set(r[0] for r in text_results))\nGraphRAG is powerful for corpora with rich entity relationships (medical knowledge bases, legal systems, financial networks) but adds significant ingestion complexity (entity extraction per chunk) and retrieval complexity (graph traversal). —",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#retrieval-evaluation",
+    "href": "book/part4/retrieval_algorithms.html#retrieval-evaluation",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.8 Retrieval evaluation",
+    "text": "15.8 Retrieval evaluation\n\n15.8.1 Metrics\nRecall@k: of all truly relevant chunks, what fraction appear in the top-k retrieved chunks?\n\\[\n\\mathrm{Recall@k} =\n\\frac{\n\\left|\\{\\mathrm{relevant}\\} \\cap \\{\\mathrm{top\\text{-}k\\ retrieved}\\}\\right|\n}{\n\\left|\\{\\mathrm{relevant}\\}\\right|\n}\n\\]\nThis is the primary metric for RAG. If the relevant chunk is not in the top-k, the language model cannot use it and no downstream component can compensate.\nPrecision@k: of the top-k retrieved chunks, what fraction are truly relevant?\n\\[\n\\mathrm{Precision@k} =\n\\frac{\n\\left|\\{\\mathrm{relevant}\\} \\cap \\{\\mathrm{top\\text{-}k\\ retrieved}\\}\\right|\n}{\nk\n}\n\\]\nMean Reciprocal Rank (MRR): average reciprocal rank of the first relevant result across queries.\n\\[\n\\mathrm{MRR} =\n\\frac{1}{|\\mathrm{queries}|}\n\\sum_{q \\in \\mathrm{queries}}\n\\frac{1}{\\mathrm{rank\\_of\\_first\\_relevant}(q)}\n\\]\nNDCG@k: accounts for graded relevance and position. A relevant chunk at rank 1 contributes more than the same chunk at rank 5. \\[\n\\mathrm{NDCG@k} =\n\\frac{\\mathrm{DCG@k}}{\\mathrm{IDCG@k}}\n\\]\n\\[\n\\mathrm{DCG@k} =\n\\sum_{i=1}^{k}\n\\frac{2^{rel_i}-1}{\\log_2(i+1)}\n\\]\n\\[\n\\mathrm{IDCG@k} =\n\\sum_{i=1}^{k}\n\\frac{2^{rel_i^*}-1}{\\log_2(i+1)}\n\\]",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#the-full-retrieval-pipeline",
+    "href": "book/part4/retrieval_algorithms.html#the-full-retrieval-pipeline",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.9 The full retrieval pipeline",
+    "text": "15.9 The full retrieval pipeline\nA production pipeline combining the techniques from this chapter:\nclass HybridRetriever:\n    def __init__(self, vector_db, bm25_index, embedding_model, llm):\n        self.vector_db     = vector_db\n        self.bm25          = bm25_index\n        self.embedding_model = embedding_model\n        self.llm           = llm\n\n    def retrieve(\n        self,\n        query: str,\n        conversation_history: list[dict] | None = None,\n        filters: dict | None = None,\n        top_k: int = 10,\n    ) -&gt; list[dict]:\n\n        # Step 1: Resolve conversational context\n        retrieval_query = query\n        if conversation_history:\n            retrieval_query = generate_standalone_query(\n                conversation_history, query, self.llm\n            )\n\n        # Step 2: Dense retrieval\n        query_embedding = self.embedding_model.encode(\n            f\"query: {retrieval_query}\", normalize_embeddings=True\n        )\n        dense_results = self.vector_db.search(\n            query_embedding, top_k=50, filters=filters\n        )\n\n        # Step 3: Sparse retrieval\n        sparse_results = self.bm25.search(retrieval_query, top_k=50)\n\n        # Step 4: Fuse with RRF\n        fused = reciprocal_rank_fusion([dense_results, sparse_results], k=60)\n        candidates = fused[:100]  # top-100 for re-ranking\n\n        # Step 5: Re-rank (chapter 23)\n        # reranked = reranker.rerank(retrieval_query, candidates, top_k)\n\n        # Step 6: Return top results\n        return [self.get_chunk(chunk_id) for chunk_id, _ in candidates[:top_k]]",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#key-takeaways",
+    "href": "book/part4/retrieval_algorithms.html#key-takeaways",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.10 Key takeaways",
+    "text": "15.10 Key takeaways\n\nNo single retrieval algorithm works well for all query types; dense retrieval excels at semantic matching, BM25 excels at exact term matching, and their failure modes are complementary — hybrid retrieval consistently outperforms either alone\nBM25 scores by term frequency (saturated), inverse document frequency, and length normalization; it is essential for exact matching of rare terms, product codes, and named entities that embedding models handle poorly\nReciprocal Rank Fusion is the most robust fusion method because it depends only on rank positions, not score magnitudes — no normalization required; retrieve top-50 or top-100 from each system before fusing\nMulti-query retrieval generates paraphrase variants and fuses results, improving recall for ambiguous queries at the cost of one LLM call per query\nStandalone query generation is mandatory for multi-turn conversations; direct retrieval on follow-up questions without context rewriting consistently fails and is one of the most common fixable RAG failures\nGraphRAG adds entity-relationship traversal for domains with rich structured relationships; adds significant complexity and is only worth it when text retrieval quality is provably insufficient for relationship-dependent queries\nRecall@k on a held-out evaluation set is the only reliable way to measure retrieval quality; build this before tuning anything else in the RAG pipeline\n\n\n\n\n\n\n\nFigure 15.2: Cheat sheet.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
+  },
+  {
+    "objectID": "book/part4/retrieval_algorithms.html#further-reading",
+    "href": "book/part4/retrieval_algorithms.html#further-reading",
+    "title": "15  Retrieval Algorithms",
+    "section": "15.11 Further reading",
+    "text": "15.11 Further reading\n\nRobertson & Zaragoza (2009). The Probabilistic Relevance Framework: BM25 and Beyond. — The authoritative BM25 reference; explains the mathematical motivation for saturation and length normalization.\nKarpukhin et al. (2020). Dense Passage Retrieval for Open-Domain Question Answering. — established dense retrieval for question answering.\nCormack et al. (2009). Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods. — The RRF paper.\nMa et al. (2023). Fine-Tuning LLaMA for Multi-Stage Text Retrieval. — LLM- based query reformulation for improved retrieval.\nEdge et al. (2024). From Local to Global: A Graph RAG Approach to Query- Focused Summarization. — GraphRAG; entity-based retrieval for complex multi-document reasoning.\nEs et al. (2023). RAGAS: Automated Evaluation of Retrieval Augmented Generation. — End-to-end RAG evaluation framework including retrieval metrics.\nThakur et al. (2021). BEIR: A Heterogeneous Benchmark for Zero-Shot Evaluation of Information Retrieval Models. — The standard benchmark for comparing retrieval algorithms across diverse domains.",
+    "crumbs": [
+      "The Forbidden Archive",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Retrieval Algorithms</span>"
+    ]
   }
 ]
