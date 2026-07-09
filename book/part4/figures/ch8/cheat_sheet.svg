@@ -1,0 +1,89 @@
+<svg width="1200" height="1060" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 22pt sans-serif; fill:#111; }
+.section { font: 700 13pt sans-serif; fill:#111; }
+.text { font: 10pt sans-serif; fill:#222; }
+.code { font: 9pt monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 8.5pt sans-serif; fill:#555; }
+
+</style>
+
+
+<!-- ROW 1: WHY RERANKING EXISTS & RERANKING SPECTRUM -->
+<rect x="50" y="80" width="540" height="160" class="box"/>
+<text x="70" y="110" class="section">Why Reranking Exists</text>
+<text x="80" y="140" class="text">Bridges the gap between coarse recall and deep model precision</text>
+<text x="80" y="165" class="text">• Initial retrieval extracts large candidate pools (50+) to secure recall</text>
+<text x="80" y="190" class="text">• Passing unpruned lists wastes token context and dilutes key information</text>
+<text x="80" y="215" class="text">• Prevents "lost-in-the-middle" behavior where LLMs miss mid-context details</text>
+
+<rect x="610" y="80" width="540" height="160" class="box"/>
+<text x="630" y="110" class="section">The Reranking Spectrum</text>
+<text x="640" y="140" class="text">Tradeoff curve moving from high speed to extreme semantic accuracy</text>
+<text x="640" y="165" class="text">• Score-Based: Filters raw retrieval scores directly (fastest, lowest quality)</text>
+<text x="640" y="190" class="text">• Late Interaction (ColBERT): Medium cost with strong operational quality</text>
+<text x="640" y="215" class="text">• Cross-Encoders &amp; LLM Judges: Highest practical precision (slowest execution)</text>
+
+<!-- ROW 2: SCORE-BASED FILTERS & CROSS-ENCODER MECHANICS -->
+<rect x="50" y="260" width="540" height="170" class="box"/>
+<text x="70" y="290" class="section">Score-Based Reranking</text>
+<text x="80" y="320" class="text">Simplistic filtering using numerical weights from initial retrieval cycles</text>
+<text x="80" y="345" class="text">• Threshold Filtering: Drops elements failing a minimum baseline target</text>
+<text x="80" y="370" class="text">• Vector Pitfall: High similarity scores don't guarantee exact context relevance</text>
+<text x="80" y="395" class="text">• Keyword Flaw: BM25 scores are unbounded; scales break across distinct corpora</text>
+
+<rect x="610" y="260" width="540" height="170" class="box"/>
+<text x="630" y="290" class="section">Cross-Encoder Mechanics</text>
+<text x="640" y="320" class="code">Input Format: [CLS] query_tokens [SEP] chunk_tokens [SEP]</text>
+<text x="640" y="345" class="text">• Complete Interaction: Tokens attend to each other across all model layers</text>
+<text x="640" y="370" class="text">• Core Lift: Consistently beats isolated bi-encoders by 10 to 20 NDCG points</text>
+<text x="640" y="395" class="text">• Operational Cost: Requires GPU forward pass per candidate pair at runtime</text>
+
+<!-- ROW 3: LONG CHUNK HANDLING & MODEL SELECTION -->
+<rect x="50" y="450" width="540" height="165" class="box"/>
+<text x="70" y="480" class="section">Strategies for Long Chunks</text>
+<text x="80" y="510" class="text">Overcomes rigid context constraints (e.g., 512-token BERT limits)</text>
+<text x="80" y="535" class="text">• Sliding Window: Breaks text into overlapping parts; records maximum score</text>
+<text x="80" y="560" class="text">• First-N Tokens: Simple, immediate truncation technique for front-loaded text</text>
+<text x="80" y="585" class="small">Risk: Truncation completely drops relevant terms hiding deep in trailing paragraphs</text>
+
+<rect x="610" y="450" width="540" height="165" class="box"/>
+<text x="630" y="480" class="section">Reranker Model Selection</text>
+<text x="640" y="510" class="text">• MiniLM-L-6-v2 (22M): Ultra-fast performance; ideal production baseline</text>
+<text x="640" y="535" class="text">• MiniLM-L-12-v2 (33M): Gains ~3 MRR points but doubles computation latency</text>
+<text x="640" y="560" class="text">• BGE-Reranker-v2-m3 (568M): SOTA multilingual capability; requires heavy GPU</text>
+<text x="640" y="585" class="text">• Cohere v3 / Voyage v2: Elite managed APIs; great for specialized tech text</text>
+
+<!-- ROW 4: LLM-BASED JUDGES & DIVERSITY-AWARE MMR -->
+<rect x="50" y="630" width="540" height="180" class="box"/>
+<text x="70" y="660" class="section">LLM-Based Reranking</text>
+<text x="80" y="690" class="text">• Pointwise: Evaluates chunks individually (0-10 scale); highly slow/costly</text>
+<text x="80" y="715" class="text">• Listwise: Processes and ranks multiple text candidates inside a single prompt</text>
+<text x="80" y="740" class="text">• RankGPT: Sliding window permutation sort; provides premium quality results</text>
+<text x="80" y="765" class="small">Best For: Offline golden dataset generation or ultra high-stakes reasoning pipelines</text>
+
+<rect x="610" y="630" width="540" height="180" class="box"/>
+<text x="630" y="660" class="section">Diversity-Aware Reranking (MMR)</text>
+<text x="640" y="690" class="code">MMR = L * Sim(Di, Q) - (1 - L) * Max_Sim(Di, Dj)</text>
+<text x="640" y="715" class="text">• Goal: Prevents filling context windows with redundant text variations</text>
+<text x="640" y="740" class="text">• Lambda Balance: 1.0 is pure semantic relevance; 0.0 is pure variation</text>
+<text x="640" y="765" class="text">• Use Case: Crucial for multi-part synthesis and broad comparison queries</text>
+
+<!-- ROW 5: CONTEXTUAL COMPRESSION & PIPELINE PERFORMANCE -->
+<rect x="50" y="830" width="540" height="180" class="box"/>
+<text x="70" y="860" class="section">Contextual Compression</text>
+<text x="80" y="890" class="text">Prunes text structures to squeeze out fluff before language model synthesis</text>
+<text x="80" y="915" class="text">• LLM Extraction: Isolates precise relevant sentences; premium latency fee</text>
+<text x="80" y="940" class="text">• Sentence-Level Vectors: Strips out rows falling below basic cosine floors</text>
+<text x="80" y="965" class="small">Benefit: Drops a 500-token chunk to 50 vital words, freeing up reasoning space</text>
+
+<rect x="610" y="830" width="540" height="180" class="box"/>
+<text x="630" y="860" class="section">Pipeline Latency &amp; Fine-Tuning</text>
+<text x="640" y="890" class="text">• Budget Allocation: Aim for under 100ms for retrieval + cross-encoder cycles</text>
+<text x="640" y="915" class="text">• Real-time Bounds: MiniLM takes ~30ms on GPU; LLM rerankers blow budgets</text>
+<text x="640" y="940" class="text">• Fine-Tuning: 1k to 5k domain pairs lift localized precision by 5 to 15 percent</text>
+<text x="640" y="965" class="code">Evaluation Metric: Reranking must lift Precision@10 while holding Recall@50</text>
+
+</svg>
