@@ -1,0 +1,86 @@
+<svg width="1200" height="1370" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font:700 28px sans-serif; fill:#000; }
+.section { font:700 18px sans-serif; fill:#000; }
+.text { font:14px sans-serif; fill:#000; }
+.small { font:12px sans-serif; fill:#000; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+</style>
+
+<rect x="40" y="50" width="1120" height="220" class="box"/>
+<text x="70" y="85" class="section">Retrieval → Context Construction → Generation</text>
+<text x="70" y="120" class="text">Retrieval returns ranked chunks.</text>
+<text x="70" y="145" class="text">Context construction decides what the model actually sees.</text>
+<text x="70" y="175" class="text">Failures: wrong order, duplicates, missing sources, too much text, unclear instructions.</text>
+<text x="70" y="210" class="text">Good retrieval does not guarantee good answers.</text>
+
+
+<rect x="40" y="300" width="540" height="250" class="box"/>
+<text x="70" y="335" class="section">RAG Prompt Anatomy</text>
+<text x="70" y="375" class="text">SYSTEM PROMPT</text>
+<text x="90" y="400" class="small">Role + behavior + output rules</text>
+<text x="70" y="435" class="text">RETRIEVED CONTEXT</text>
+<text x="90" y="460" class="small">Documents / chunks / metadata</text>
+<text x="70" y="495" class="text">CONVERSATION HISTORY</text>
+<text x="90" y="520" class="small">Previous turns (optional)</text>
+<text x="70" y="545" class="text">CURRENT QUERY</text>
+
+
+<rect x="620" y="300" width="540" height="250" class="box"/>
+<text x="650" y="335" class="section">System Prompt Design</text>
+<text x="650" y="375" class="text">Define:</text>
+<text x="670" y="405" class="small">• How to use context</text>
+<text x="670" y="430" class="small">• What to do when information is missing</text>
+<text x="670" y="455" class="small">• Citation format</text>
+<text x="670" y="480" class="small">• Contradiction handling</text>
+<text x="670" y="505" class="small">• Response style</text>
+
+
+<rect x="40" y="600" width="540" height="260" class="box"/>
+<text x="70" y="635" class="section">Context Formatting</text>
+<text x="70" y="675" class="text">Basic:</text>
+<text x="90" y="700" class="small">[1] chunk text</text>
+<text x="70" y="735" class="text">Metadata:</text>
+<text x="90" y="760" class="small">Source + section + date + page</text>
+<text x="70" y="795" class="text">XML:</text>
+<text x="90" y="820" class="small">&lt;document source="..."&gt;</text>
+
+
+<rect x="620" y="600" width="540" height="260" class="box"/>
+<text x="650" y="635" class="section">Chunk Ordering</text>
+<text x="650" y="675" class="text">Lost-in-the-middle:</text>
+<text x="670" y="710" class="small">Important chunks → beginning/end</text>
+<text x="670" y="740" class="small">Less important chunks → middle</text>
+<text x="650" y="885" class="text">Other strategies:</text>
+<text x="670" y="815" class="small">Relevance | Chronological | Document grouping</text>
+
+
+<rect x="40" y="910" width="540" height="230" class="box"/>
+<text x="70" y="945" class="section">Context Budget</text>
+<text x="70" y="985" class="text">Available tokens =</text>
+<text x="90" y="1015" class="small">Context window</text>
+<text x="90" y="1040" class="small">- system prompt</text>
+<text x="90" y="1065" class="small">- query</text>
+<text x="90" y="1090" class="small">- history</text>
+<text x="90" y="1115" class="small">- completion budget</text>
+
+
+<rect x="620" y="910" width="540" height="230" class="box"/>
+<text x="650" y="945" class="section">Redundancy Control</text>
+<text x="650" y="985" class="text">Remove:</text>
+<text x="670" y="1015" class="small">Exact duplicates</text>
+<text x="670" y="1040" class="small">Near duplicate chunks</text>
+<text x="670" y="1075" class="small">Repeated information wastes context</text>
+
+
+<rect x="40" y="1190" width="1120" height="150" class="box"/>
+<text x="70" y="1230" class="section">Final Context Pipeline</text>
+<text x="70" y="1270" class="text">
+Retrieve → Check Sufficiency → Deduplicate → Budget → Order → Format → Generate
+</text>
+<text x="70" y="1310" class="small">
+Goal: provide the model with the right information, in the right structure, at the right amount.
+</text>
+
+</svg>
