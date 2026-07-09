@@ -45,6 +45,7 @@ book:
         - book/part4/vector_databases.md
         - book/part4/retrieval_algorithms.md
         - book/part4/reranking.md
+        - book/part4/context_construction.md
 
     - part: "The Forging of Intelligence"
       chapters: []
