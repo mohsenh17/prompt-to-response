@@ -44,6 +44,7 @@ book:
         - book/part4/embedding_for_search.md
         - book/part4/vector_databases.md
         - book/part4/retrieval_algorithms.md
+        - book/part4/reranking.md
 
     - part: "The Forging of Intelligence"
       chapters: []
