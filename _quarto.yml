@@ -50,7 +50,8 @@ book:
         - book/part4/grounded_generation.md
 
     - part: "The Forging of Intelligence"
-      chapters: []
+      chapters: 
+        - book/part5/data_collection.md
 
     - part: "The Trial of the Answer"
       chapters: []
