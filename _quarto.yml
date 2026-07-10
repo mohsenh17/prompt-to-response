@@ -47,6 +47,7 @@ book:
         - book/part4/retrieval_algorithms.md
         - book/part4/reranking.md
         - book/part4/context_construction.md
+        - book/part4/grounded_generation.md
 
     - part: "The Forging of Intelligence"
       chapters: []
