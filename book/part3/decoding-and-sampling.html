@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Decoding and Sampling – From Prompt to Response</title>
+<title>10&nbsp; Decoding and Sampling – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,7 +69,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../book/part4/parametric-vs-external-memory.html" rel="next">
-<link href="../../book/part3/gpu-execution.html" rel="prev">
+<link href="../../book/part3/quantization.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -144,11 +144,11 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="9&nbsp; Decoding and Sampling – From Prompt to Response">
+<meta property="og:title" content="10&nbsp; Decoding and Sampling – From Prompt to Response">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch5/journey_part3_ch5.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="9&nbsp; Decoding and Sampling – From Prompt to Response">
+<meta name="twitter:title" content="10&nbsp; Decoding and Sampling – From Prompt to Response">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch5/journey_part3_ch5.svg">
 <meta name="twitter:card" content="summary_large_image">
@@ -325,7 +325,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -441,8 +441,14 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../book/part3/quantization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
   </div>
 </li>
       </ul>
@@ -459,49 +465,49 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/chunking_strategies.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/embedding_for_search.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/vector_databases.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Vector Databases</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Vector Databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/reranking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reranking</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reranking</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part4/context_construction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Context Construction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Context Construction</span></span></a>
   </div>
 </li>
       </ul>
@@ -528,21 +534,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-decoding-problem" id="toc-the-decoding-problem" class="nav-link active" data-scroll-target="#the-decoding-problem"><span class="header-section-number">9.1</span> The decoding problem</a></li>
-  <li><a href="#greedy-decoding" id="toc-greedy-decoding" class="nav-link" data-scroll-target="#greedy-decoding"><span class="header-section-number">9.2</span> Greedy decoding</a></li>
-  <li><a href="#beam-search" id="toc-beam-search" class="nav-link" data-scroll-target="#beam-search"><span class="header-section-number">9.3</span> Beam search</a></li>
-  <li><a href="#temperature-sampling" id="toc-temperature-sampling" class="nav-link" data-scroll-target="#temperature-sampling"><span class="header-section-number">9.4</span> Temperature sampling</a></li>
-  <li><a href="#top-k-sampling" id="toc-top-k-sampling" class="nav-link" data-scroll-target="#top-k-sampling"><span class="header-section-number">9.5</span> Top-k sampling</a></li>
-  <li><a href="#nucleus-top-p-sampling" id="toc-nucleus-top-p-sampling" class="nav-link" data-scroll-target="#nucleus-top-p-sampling"><span class="header-section-number">9.6</span> Nucleus (top-p) sampling</a></li>
-  <li><a href="#min-p-sampling" id="toc-min-p-sampling" class="nav-link" data-scroll-target="#min-p-sampling"><span class="header-section-number">9.7</span> Min-p sampling</a></li>
-  <li><a href="#repetition-penalties" id="toc-repetition-penalties" class="nav-link" data-scroll-target="#repetition-penalties"><span class="header-section-number">9.8</span> Repetition penalties</a></li>
-  <li><a href="#structured-decoding-and-constrained-generation" id="toc-structured-decoding-and-constrained-generation" class="nav-link" data-scroll-target="#structured-decoding-and-constrained-generation"><span class="header-section-number">9.9</span> Structured decoding and constrained generation</a></li>
-  <li><a href="#best-of-n-sampling" id="toc-best-of-n-sampling" class="nav-link" data-scroll-target="#best-of-n-sampling"><span class="header-section-number">9.10</span> Best-of-n sampling</a></li>
-  <li><a href="#speculative-sampling" id="toc-speculative-sampling" class="nav-link" data-scroll-target="#speculative-sampling"><span class="header-section-number">9.11</span> Speculative sampling</a></li>
-  <li><a href="#chain-of-thought-and-reasoning-tokens" id="toc-chain-of-thought-and-reasoning-tokens" class="nav-link" data-scroll-target="#chain-of-thought-and-reasoning-tokens"><span class="header-section-number">9.12</span> Chain-of-thought and reasoning tokens</a></li>
-  <li><a href="#decoding-strategy-selection-guide" id="toc-decoding-strategy-selection-guide" class="nav-link" data-scroll-target="#decoding-strategy-selection-guide"><span class="header-section-number">9.13</span> Decoding strategy selection guide</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">9.14</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.15</span> Further reading</a></li>
+  <li><a href="#the-decoding-problem" id="toc-the-decoding-problem" class="nav-link active" data-scroll-target="#the-decoding-problem"><span class="header-section-number">10.1</span> The decoding problem</a></li>
+  <li><a href="#greedy-decoding" id="toc-greedy-decoding" class="nav-link" data-scroll-target="#greedy-decoding"><span class="header-section-number">10.2</span> Greedy decoding</a></li>
+  <li><a href="#beam-search" id="toc-beam-search" class="nav-link" data-scroll-target="#beam-search"><span class="header-section-number">10.3</span> Beam search</a></li>
+  <li><a href="#temperature-sampling" id="toc-temperature-sampling" class="nav-link" data-scroll-target="#temperature-sampling"><span class="header-section-number">10.4</span> Temperature sampling</a></li>
+  <li><a href="#top-k-sampling" id="toc-top-k-sampling" class="nav-link" data-scroll-target="#top-k-sampling"><span class="header-section-number">10.5</span> Top-k sampling</a></li>
+  <li><a href="#nucleus-top-p-sampling" id="toc-nucleus-top-p-sampling" class="nav-link" data-scroll-target="#nucleus-top-p-sampling"><span class="header-section-number">10.6</span> Nucleus (top-p) sampling</a></li>
+  <li><a href="#min-p-sampling" id="toc-min-p-sampling" class="nav-link" data-scroll-target="#min-p-sampling"><span class="header-section-number">10.7</span> Min-p sampling</a></li>
+  <li><a href="#repetition-penalties" id="toc-repetition-penalties" class="nav-link" data-scroll-target="#repetition-penalties"><span class="header-section-number">10.8</span> Repetition penalties</a></li>
+  <li><a href="#structured-decoding-and-constrained-generation" id="toc-structured-decoding-and-constrained-generation" class="nav-link" data-scroll-target="#structured-decoding-and-constrained-generation"><span class="header-section-number">10.9</span> Structured decoding and constrained generation</a></li>
+  <li><a href="#best-of-n-sampling" id="toc-best-of-n-sampling" class="nav-link" data-scroll-target="#best-of-n-sampling"><span class="header-section-number">10.10</span> Best-of-n sampling</a></li>
+  <li><a href="#speculative-sampling" id="toc-speculative-sampling" class="nav-link" data-scroll-target="#speculative-sampling"><span class="header-section-number">10.11</span> Speculative sampling</a></li>
+  <li><a href="#chain-of-thought-and-reasoning-tokens" id="toc-chain-of-thought-and-reasoning-tokens" class="nav-link" data-scroll-target="#chain-of-thought-and-reasoning-tokens"><span class="header-section-number">10.12</span> Chain-of-thought and reasoning tokens</a></li>
+  <li><a href="#decoding-strategy-selection-guide" id="toc-decoding-strategy-selection-guide" class="nav-link" data-scroll-target="#decoding-strategy-selection-guide"><span class="header-section-number">10.13</span> Decoding strategy selection guide</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">10.14</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">10.15</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -550,9 +556,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/decoding-and-sampling.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></h1>
 </div>
 
 
@@ -586,7 +592,7 @@ window.Quarto = {
 <img src="figures/ch5/journey_part3_ch5.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.1: The journey through the Model Mind.
+Figure&nbsp;10.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
@@ -595,8 +601,8 @@ Figure&nbsp;9.1: The journey through the Model Mind.
 </div>
 </div>
 <hr>
-<section id="the-decoding-problem" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="the-decoding-problem"><span class="header-section-number">9.1</span> The decoding problem</h2>
+<section id="the-decoding-problem" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="the-decoding-problem"><span class="header-section-number">10.1</span> The decoding problem</h2>
 <p>After the transformer forward pass, the output is a vector of logits one score per token in the vocabulary. Applying softmax converts these to a probability distribution:</p>
 <pre><code>logits:        [2.3,  -1.2,  0.8,  4.1,  -0.3,  ...]   shape: [vocab_size]
 probabilities: [0.04,  0.001, 0.01, 0.33,  0.004, ...]   shape: [vocab_size]</code></pre>
@@ -604,8 +610,8 @@ probabilities: [0.04,  0.001, 0.01, 0.33,  0.004, ...]   shape: [vocab_size]</co
 <p>Decoding is the set of strategies for navigating this tradeoff: selecting a token (or sequence of tokens) from the distribution in a way that produces output that is coherent, diverse, and appropriate for the task. It runs once per generated token, which for a 500 token response means it runs 500 times. Small differences in strategy compound into large differences in output.</p>
 <hr>
 </section>
-<section id="greedy-decoding" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="greedy-decoding"><span class="header-section-number">9.2</span> Greedy decoding</h2>
+<section id="greedy-decoding" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="greedy-decoding"><span class="header-section-number">10.2</span> Greedy decoding</h2>
 <p>The simplest strategy: always select the token with the highest probability.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> greedy_decode(logits):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> logits.argmax(dim<span class="op">=-</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -615,8 +621,8 @@ probabilities: [0.04,  0.001, 0.01, 0.33,  0.004, ...]   shape: [vocab_size]</co
 <p>Greedy decoding is appropriate for tasks with a single correct answer (extracting specific information, classification, structured output generation where diversity is undesirable) and for debugging, where the deterministic output makes it easier to isolate model behavior from sampling noise.</p>
 <hr>
 </section>
-<section id="beam-search" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="beam-search"><span class="header-section-number">9.3</span> Beam search</h2>
+<section id="beam-search" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="beam-search"><span class="header-section-number">10.3</span> Beam search</h2>
 <p>Beam search maintains a set of <code>k</code> candidate sequences and extends all of them at each step, keeping only the <code>k</code> most probable overall:</p>
 <pre><code>Beam width k=2, step 1:
   Candidates: ["The cat", "A dog"]
@@ -630,19 +636,19 @@ Step 2: extend each candidate:
 Keep top k=2 by cumulative log probability:
   ["The cat sat", "A dog ran"]</code></pre>
 <p>At the end of generation, the candidate with the highest cumulative log probability is returned. Beam search finds sequences with higher overall probability than greedy decoding because it can recover from locally suboptimal choices.</p>
-<section id="the-beam-search-curse" class="level3" data-number="9.3.1">
-<h3 data-number="9.3.1" class="anchored" data-anchor-id="the-beam-search-curse"><span class="header-section-number">9.3.1</span> The beam search curse</h3>
+<section id="the-beam-search-curse" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="the-beam-search-curse"><span class="header-section-number">10.3.1</span> The beam search curse</h3>
 <p>Beam search dominated sequence-to-sequence tasks (translation, summarization) from roughly 2015 to 2020. For tasks with constrained output spaces, it performs well. For open-ended generation, it has a well-documented failure mode: it produces output that is generic and boring.</p>
 <p>High-probability sequences tend to be safe, common phrases. The beam converges to the statistical mean of training data rather than producing specific, vivid text. This is the beam search curse: the sequences with highest probability under the model are not the sequences humans prefer. Human language is not the highest- probability sequence, people regularly choose moderately probable, interesting words over the most probable, expected ones.</p>
 <p>Beam search is still used for translation (k=4 is typical), structured data extraction, and code generation with hard constraints. For conversational and creative generation, sampling-based methods have largely replaced it.</p>
 <hr>
 </section>
 </section>
-<section id="temperature-sampling" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="temperature-sampling"><span class="header-section-number">9.4</span> Temperature sampling</h2>
+<section id="temperature-sampling" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="temperature-sampling"><span class="header-section-number">10.4</span> Temperature sampling</h2>
 <p>Temperature is one of the most important hyperparameters in decoding. It adjusts the probability distribution over the next token before sampling, making the distribution either sharper or flatter.</p>
-<section id="the-temperature-transformation" class="level3" data-number="9.4.1">
-<h3 data-number="9.4.1" class="anchored" data-anchor-id="the-temperature-transformation"><span class="header-section-number">9.4.1</span> The temperature transformation</h3>
+<section id="the-temperature-transformation" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="the-temperature-transformation"><span class="header-section-number">10.4.1</span> The temperature transformation</h3>
 <p>Before sampling, the logits are divided by a temperature parameter (T):</p>
 <pre><code>adjusted_probs = softmax(logits / T)</code></pre>
 <p><strong>T &lt; 1.0 (cold):</strong> the distribution become sharper and high-probability tokens receive relatively more probability mass, while low-probability tokens receive less. At T → 0, the distribution approaches a point mass on the highest-probability token. Consequently, stochastic sampling becomes deterministic, recovering the behavior of greedy decoding.</p>
@@ -654,8 +660,8 @@ T=0.5 (cold):    softmax([8.0, 4.0, 2.0, 1.0]) → [0.86, 0.12, 0.02, 0.01]
 T=1.0 (normal):  softmax([4.0, 2.0, 1.0, 0.5]) → [0.68, 0.17, 0.08, 0.07]
 T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</code></pre>
 </section>
-<section id="choosing-temperature" class="level3" data-number="9.4.2">
-<h3 data-number="9.4.2" class="anchored" data-anchor-id="choosing-temperature"><span class="header-section-number">9.4.2</span> Choosing temperature</h3>
+<section id="choosing-temperature" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="choosing-temperature"><span class="header-section-number">10.4.2</span> Choosing temperature</h3>
 <p><strong>T = 0 (greedy):</strong> factual retrieval, classification, structured output. Maximizes accuracy for tasks with correct answers.</p>
 <p><strong>T = 0.1–0.4:</strong> code generation, factual Q&amp;A, tasks where accuracy matters but some flexibility is useful. Concentrated distribution that rarely samples improbable tokens.</p>
 <p><strong>T = 0.7–1.0:</strong> conversational responses, general-purpose assistants. Balanced diversity and coherence. Most production systems operate in this range.</p>
@@ -665,8 +671,8 @@ T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</cod
 <hr>
 </section>
 </section>
-<section id="top-k-sampling" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="top-k-sampling"><span class="header-section-number">9.5</span> Top-k sampling</h2>
+<section id="top-k-sampling" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="top-k-sampling"><span class="header-section-number">10.5</span> Top-k sampling</h2>
 <p>Temperature sampling from the full distribution can still sample very unlikely tokens. If there are 100,000 tokens in the vocabulary, even after temperature adjustment there may be thousands of tokens with non-negligible probability, including tokens that produce incoherent output.</p>
 <p>Top-k sampling restricts sampling to the <code>k</code> most probable tokens:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> top_k_sample(logits, k, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
@@ -680,8 +686,8 @@ T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</cod
 <p>Top-k has a structural limitation: <code>k</code> is fixed regardless of the distribution shape. When the model is very confident (one token at probability 0.95, the rest near zero) top-k=50 forces sampling from 50 tokens when 49 of them are clearly wrong choices. When the model is genuinely uncertain (500 tokens each at probability ~0.002) top-k=50 discards 450 plausible options. A fixed <code>k</code> handles neither scenario well. This motivates nucleus sampling.</p>
 <hr>
 </section>
-<section id="nucleus-top-p-sampling" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="nucleus-top-p-sampling"><span class="header-section-number">9.6</span> Nucleus (top-p) sampling</h2>
+<section id="nucleus-top-p-sampling" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="nucleus-top-p-sampling"><span class="header-section-number">10.6</span> Nucleus (top-p) sampling</h2>
 <p>Nucleus sampling adapts the number of candidates to the distribution shape. Instead of a fixed count <code>k</code>, it takes the smallest set of tokens whose cumulative probability exceeds <code>p</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nucleus_sample(logits, p, temperature<span class="op">=</span><span class="fl">1.0</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> logits <span class="op">/</span> temperature</span>
@@ -695,8 +701,8 @@ T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</cod
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sorted_indices[sampled_index]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With <code>p = 0.9</code>: include the fewest tokens whose probabilities sum to at least 0.9. Renormalize and sample from those tokens only.</p>
 <p>When the model is confident (one token at 0.95 probability), the nucleus contains only that token which is effectively greedy decoding. When the model is uncertain (probability spread widely), the nucleus includes many tokens and sampling is diverse. The nucleus size adapts to the situation rather than being fixed in advance which makes it ideal for production.</p>
-<section id="choosing-p" class="level3" data-number="9.6.1">
-<h3 data-number="9.6.1" class="anchored" data-anchor-id="choosing-p"><span class="header-section-number">9.6.1</span> Choosing p</h3>
+<section id="choosing-p" class="level3" data-number="10.6.1">
+<h3 data-number="10.6.1" class="anchored" data-anchor-id="choosing-p"><span class="header-section-number">10.6.1</span> Choosing p</h3>
 <p><strong>p = 0.9–0.95:</strong> the most common range. Excludes the long tail of implausible tokens while preserving diversity for plausible choices.</p>
 <p><strong>p = 1.0:</strong> sample from the full distribution there aren’t any nucleus restriction. Equivalent to pure temperature sampling.</p>
 <p><strong>p = 0.5:</strong> very concentrated. Appropriate for high-accuracy tasks but risks becoming too deterministic.</p>
@@ -704,8 +710,8 @@ T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</cod
 <hr>
 </section>
 </section>
-<section id="min-p-sampling" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="min-p-sampling"><span class="header-section-number">9.7</span> Min-p sampling</h2>
+<section id="min-p-sampling" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="min-p-sampling"><span class="header-section-number">10.7</span> Min-p sampling</h2>
 <p>A more recent alternative to top-p that addresses a subtle failure mode.</p>
 <p>Top-p’s cutoff is cumulative: if the nucleus already covers 90% of probability mass, tokens beyond that are excluded regardless of their absolute probability. In practice, this can include tokens with very low absolute probability if they accumulate to push the total past <code>p</code>, especially when the distribution is flat.</p>
 <p>Min-p sets a minimum absolute probability threshold instead: only sample from tokens whose probability exceeds <code>min_p × max_token_probability</code>.</p>
@@ -721,40 +727,40 @@ T=2.0 (hot):     softmax([2.0, 1.0, 0.5, 0.25])→ [0.45, 0.27, 0.16, 0.12]</cod
 <p>Min-p adapts to distribution shape like top-p but uses the maximum token probability as the reference rather than the cumulative sum. Empirically, it produces more coherent output than top-p for creative tasks while maintaining diversity.</p>
 <hr>
 </section>
-<section id="repetition-penalties" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="repetition-penalties"><span class="header-section-number">9.8</span> Repetition penalties</h2>
+<section id="repetition-penalties" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="repetition-penalties"><span class="header-section-number">10.8</span> Repetition penalties</h2>
 <p>A common failure mode of sampling is that the model becomes trapped in repetitive loops. This issue is not solely caused by the decoding algorithm, it often reflects the model operating in a low-quality mode or producing a poorly calibrated probability distribution. Nevertheless, appropriate decoding strategies can help mitigate this problem.</p>
-<section id="frequency-penalty" class="level3" data-number="9.8.1">
-<h3 data-number="9.8.1" class="anchored" data-anchor-id="frequency-penalty"><span class="header-section-number">9.8.1</span> Frequency penalty</h3>
+<section id="frequency-penalty" class="level3" data-number="10.8.1">
+<h3 data-number="10.8.1" class="anchored" data-anchor-id="frequency-penalty"><span class="header-section-number">10.8.1</span> Frequency penalty</h3>
 <p>Reduces the logit of any token proportional to how many times it has appeared in the generated output so far:</p>
 <pre><code>adjusted_logit[t] = logit[t] - frequency_penalty × count(t, generated_so_far)</code></pre>
 <p>A token that has appeared 5 times with <code>frequency_penalty = 0.5</code> has its logit reduced by 2.5. Frequently used tokens become progressively less likely.</p>
 </section>
-<section id="presence-penalty" class="level3" data-number="9.8.2">
-<h3 data-number="9.8.2" class="anchored" data-anchor-id="presence-penalty"><span class="header-section-number">9.8.2</span> Presence penalty</h3>
+<section id="presence-penalty" class="level3" data-number="10.8.2">
+<h3 data-number="10.8.2" class="anchored" data-anchor-id="presence-penalty"><span class="header-section-number">10.8.2</span> Presence penalty</h3>
 <p>Reduces the logit of any token that has appeared at all, by a flat amount:</p>
 <pre><code>adjusted_logit[t] = logit[t] - presence_penalty × (1 if t in generated_so_far else 0)</code></pre>
 <p>Unlike frequency penalty, presence penalty does not scale with count, it applies a flat reduction on first appearance and no additional reduction after that. It discourages reusing any token at all, not repeatedly using a token many times.</p>
 </section>
-<section id="repetition-penalty-multiplicative" class="level3" data-number="9.8.3">
-<h3 data-number="9.8.3" class="anchored" data-anchor-id="repetition-penalty-multiplicative"><span class="header-section-number">9.8.3</span> Repetition penalty (multiplicative)</h3>
+<section id="repetition-penalty-multiplicative" class="level3" data-number="10.8.3">
+<h3 data-number="10.8.3" class="anchored" data-anchor-id="repetition-penalty-multiplicative"><span class="header-section-number">10.8.3</span> Repetition penalty (multiplicative)</h3>
 <p>Used in HuggingFace and most open-source implementations:</p>
 <pre><code>adjusted_logit[t] = logit[t] / repetition_penalty    if logit[t] &gt; 0
 adjusted_logit[t] = logit[t] × repetition_penalty    if logit[t] &lt; 0</code></pre>
 <p>For <code>repetition_penalty &gt; 1.0</code>, this divides positive logits and multiplies negative logits, making previously generated tokens less likely regardless of their sign.</p>
 </section>
-<section id="practical-considerations" class="level3" data-number="9.8.4">
-<h3 data-number="9.8.4" class="anchored" data-anchor-id="practical-considerations"><span class="header-section-number">9.8.4</span> Practical considerations</h3>
+<section id="practical-considerations" class="level3" data-number="10.8.4">
+<h3 data-number="10.8.4" class="anchored" data-anchor-id="practical-considerations"><span class="header-section-number">10.8.4</span> Practical considerations</h3>
 <p>Repetition penalties must be carefully calibrated. If the penalty is too strong, the model may avoid repeating necessary words, including common function words such as the, is, and and, which naturally occur multiple times in fluent text. Conversely, if the penalty is too weak, repetitive outputs may persist.</p>
 <p>Most production systems apply penalties only to the generated portion, not the prompt, you do not want tokens appearing in the prompt to be penalized in the response. Context window position also matters: penalizing tokens from many turns ago that have no relationship to the current generation is rarely useful.</p>
 <hr>
 </section>
 </section>
-<section id="structured-decoding-and-constrained-generation" class="level2" data-number="9.9">
-<h2 data-number="9.9" class="anchored" data-anchor-id="structured-decoding-and-constrained-generation"><span class="header-section-number">9.9</span> Structured decoding and constrained generation</h2>
+<section id="structured-decoding-and-constrained-generation" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="structured-decoding-and-constrained-generation"><span class="header-section-number">10.9</span> Structured decoding and constrained generation</h2>
 <p>For many production use cases, the output must conform to a specific format ( a valid JSON, a Python function, a response matching, a defined schema). Unconstrained sampling may produce syntactically invalid output, requiring expensive retry loops. Structured decoding guarantees valid output by constraining the logits at each step.</p>
-<section id="how-constrained-generation-works" class="level3" data-number="9.9.1">
-<h3 data-number="9.9.1" class="anchored" data-anchor-id="how-constrained-generation-works"><span class="header-section-number">9.9.1</span> How constrained generation works</h3>
+<section id="how-constrained-generation-works" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="how-constrained-generation-works"><span class="header-section-number">10.9.1</span> How constrained generation works</h3>
 <p>At each decoding step, a parser tracks the current state of the partially generated output and computes the set of tokens that are valid at this position, tokens that would not cause the output to become unparseable. All invalid tokens are masked out (their logits set to <code>-inf</code>) before sampling.</p>
 <pre><code>Target format: JSON object with "name" (string) and "age" (integer)
 
@@ -767,20 +773,20 @@ After generating: {"name": "Alice", "age":
   Invalid next tokens: letters, quotes, braces</code></pre>
 <p>The parser can be regex-based (valid tokens match the regex at the current position), grammar-based (tokens permitted by a context-free grammar at the current parse state), or schema-based (tokens consistent with a JSON schema or Pydantic model).</p>
 </section>
-<section id="implementations" class="level3" data-number="9.9.2">
-<h3 data-number="9.9.2" class="anchored" data-anchor-id="implementations"><span class="header-section-number">9.9.2</span> Implementations</h3>
+<section id="implementations" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="implementations"><span class="header-section-number">10.9.2</span> Implementations</h3>
 <p><strong>Outlines</strong> (Willard &amp; Louf, 2023): builds a finite state machine from the schema or regex at compile time. At inference, the FSM advances after each token and the valid next-token set is read from the FSM in O(1). The precomputed FSM makes constraint checking negligible overhead.</p>
 <p><strong>Guidance</strong> (Microsoft): the earlier widely-used structured generation library. Intercepts the generation loop and applies constraints at each step with a broader feature set including branching and conditional generation.</p>
 <p><strong>llama.cpp GBNF grammars</strong>: built-in grammar-based constrained generation using a BNF-like notation. Ships with llama.cpp without additional dependencies.</p>
 </section>
-<section id="overhead" class="level3" data-number="9.9.3">
-<h3 data-number="9.9.3" class="anchored" data-anchor-id="overhead"><span class="header-section-number">9.9.3</span> Overhead</h3>
+<section id="overhead" class="level3" data-number="10.9.3">
+<h3 data-number="10.9.3" class="anchored" data-anchor-id="overhead"><span class="header-section-number">10.9.3</span> Overhead</h3>
 <p>Constrained generation adds overhead in logit masking (computing the valid token set and applying the mask which is O(1) per step with precomputed FSMs) and in reduced sampling diversity (smaller effective vocabulary). Latency overhead is typically 5–15% relative to unconstrained generation with FSM-based approaches. The alternative (parsing failures and retry loops) is far more expensive.</p>
 <hr>
 </section>
 </section>
-<section id="best-of-n-sampling" class="level2" data-number="9.10">
-<h2 data-number="9.10" class="anchored" data-anchor-id="best-of-n-sampling"><span class="header-section-number">9.10</span> Best-of-n sampling</h2>
+<section id="best-of-n-sampling" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="best-of-n-sampling"><span class="header-section-number">10.10</span> Best-of-n sampling</h2>
 <p>Generate <code>n</code> independent completions for the same prompt and select the best one according to some criterion:</p>
 <pre><code>Generate n=8 completions for the same prompt
 Score each:
@@ -795,13 +801,13 @@ Return the highest-scoring completion</code></pre>
 <p><strong>Self-consistency</strong> (Wang et al., 2023) generates <code>n</code> answers with chain-of- thought, returns the most common final answer. This improves accuracy on multi- step reasoning tasks significantly without requiring a separate verifier.</p>
 <hr>
 </section>
-<section id="speculative-sampling" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="speculative-sampling"><span class="header-section-number">9.11</span> Speculative sampling</h2>
+<section id="speculative-sampling" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="speculative-sampling"><span class="header-section-number">10.11</span> Speculative sampling</h2>
 <p>Autoregressive generation has an uncomfortable property: producing token 50 requires having already produced tokens 1 through 49, one at a time, each requiring a full forward pass through the model.</p>
 <p>Speculative decoding is a way to avoid paying that tax token-by-token. A small, cheap <strong>draft model</strong> runs ahead and proposes a candidate sequence of <code>k</code> tokens. The target model then evaluates all <code>k</code> candidates in a <em>single</em> forward pass. The target model isn’t generating here; it’s grading a draft that’s already been written.</p>
 <p>Drafting versus grading raises the obvious question: how does the target model decide which of the draft’s guesses to keep? The naive answer is a threshold: keep what the target model agrees with and discard the rest. This naive answer is wrong, and understanding <em>why</em> it’s wrong is the key to understanding the whole algorithm.</p>
-<section id="the-acceptance-rule" class="level3" data-number="9.11.1">
-<h3 data-number="9.11.1" class="anchored" data-anchor-id="the-acceptance-rule"><span class="header-section-number">9.11.1</span> The acceptance rule</h3>
+<section id="the-acceptance-rule" class="level3" data-number="10.11.1">
+<h3 data-number="10.11.1" class="anchored" data-anchor-id="the-acceptance-rule"><span class="header-section-number">10.11.1</span> The acceptance rule</h3>
 <p>For each draft token <code>x_t</code>, accept it with probability:</p>
 <pre><code>P(accept x_t) = min(1, p_target(x_t) / p_draft(x_t))</code></pre>
 <p>Two regimes:</p>
@@ -810,8 +816,8 @@ Return the highest-scoring completion</code></pre>
 <li><strong>The target model likes it less</strong> (<span class="math inline">\(p_{target} &lt; p_{draft}\)</span>): accept only with probability <span class="math inline">\(p_{target} / p_{draft}\)</span>. The draft model was, in effect, overconfident relative to the target, so the token survives only in proportion to how much the target actually endorses it.</li>
 </ul>
 </section>
-<section id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong" class="level3" data-number="9.11.2">
-<h3 data-number="9.11.2" class="anchored" data-anchor-id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong"><span class="header-section-number">9.11.2</span> What happens on rejection and why the obvious fix is wrong</h3>
+<section id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong" class="level3" data-number="10.11.2">
+<h3 data-number="10.11.2" class="anchored" data-anchor-id="what-happens-on-rejection-and-why-the-obvious-fix-is-wrong"><span class="header-section-number">10.11.2</span> What happens on rejection and why the obvious fix is wrong</h3>
 <p>Suppose a draft token is rejected. The intuitive move is to sample a replacement directly from <code>p_target</code> at that position after all, the target model already computed that full distribution during verification. This turns out to <em>distort</em> the final output, and a small numeric example makes the distortion concrete.</p>
 <p>Take a two-token vocabulary, <code>{A, B}</code>, where:</p>
 <pre><code>p_target(A) = 0.5,  p_target(B) = 0.5
@@ -822,8 +828,8 @@ p_draft(A)  = 0.9,  p_draft(B)  = 0.1</code></pre>
              = 0.5 + 0.2 = 0.7</code></pre>
 <p>The final probability of A comes out to <strong>0.7</strong>, even though the target model only wanted A 50% of the time. Token A is getting double-counted: it wins a first chance through acceptance, and then (because a naive resample doesn’t know that) a second, independent chance through rejection. Any token the draft model over-favored relative to the target ends up over-represented in the output. This is precisely the kind of quality drift speculative decoding is supposed to avoid.</p>
 </section>
-<section id="the-residual-distribution" class="level3" data-number="9.11.3">
-<h3 data-number="9.11.3" class="anchored" data-anchor-id="the-residual-distribution"><span class="header-section-number">9.11.3</span> The residual distribution</h3>
+<section id="the-residual-distribution" class="level3" data-number="10.11.3">
+<h3 data-number="10.11.3" class="anchored" data-anchor-id="the-residual-distribution"><span class="header-section-number">10.11.3</span> The residual distribution</h3>
 <p>The fix is to correct only into the probability mass that acceptance <em>hasn’t already claimed</em>:</p>
 <pre><code>p_correction(x) = max(0, p_target(x) - p_draft(x)) / Z</code></pre>
 <p>This is <strong>not</strong> the target’s raw distribution, it is the target’s distribution with the draft’s contribution subtracted out, clipped at zero, and renormalized by <code>Z</code>. Any token the draft over-proposed is zeroed out here, since it already had its fair shot via acceptance and cannot be picked a second time. Any token the draft under-proposed keeps some mass, since that’s the only place where the target’s true preference hasn’t yet been accounted for.</p>
@@ -832,8 +838,8 @@ p_draft(A)  = 0.9,  p_draft(B)  = 0.1</code></pre>
 P(final = B) = 0.1 × 1 (direct accept) + 0.9 × 0.444 × 1 (correction) = 0.1 + 0.4 = 0.5   matches p_target(B)</code></pre>
 <p>Both tokens land exactly on the target’s true probabilities.</p>
 </section>
-<section id="walking-through-a-full-sequence" class="level3" data-number="9.11.4">
-<h3 data-number="9.11.4" class="anchored" data-anchor-id="walking-through-a-full-sequence"><span class="header-section-number">9.11.4</span> Walking through a full sequence</h3>
+<section id="walking-through-a-full-sequence" class="level3" data-number="10.11.4">
+<h3 data-number="10.11.4" class="anchored" data-anchor-id="walking-through-a-full-sequence"><span class="header-section-number">10.11.4</span> Walking through a full sequence</h3>
 <p>The acceptance/correction step happens <em>per position</em>, scanned left to right, and stops at the first rejection. Suppose the draft model proposes five tokens continuing “The cat sat on the”:</p>
 <pre><code>Draft sequence:  x1="mat"   x2="and"   x3="looked"  x4="very"   x5="happy"</code></pre>
 <p>One target-model forward pass over the prompt plus all five draft tokens yields the target’s distribution at every position simultaneously, thanks to causal masking position 1 conditioned only on the real prompt, position 2 on the real prompt plus <code>x1</code>, and so on.</p>
@@ -847,8 +853,8 @@ Discarded:              "looked", "very", "happy"</code></pre>
 <hr>
 </section>
 </section>
-<section id="chain-of-thought-and-reasoning-tokens" class="level2" data-number="9.12">
-<h2 data-number="9.12" class="anchored" data-anchor-id="chain-of-thought-and-reasoning-tokens"><span class="header-section-number">9.12</span> Chain-of-thought and reasoning tokens</h2>
+<section id="chain-of-thought-and-reasoning-tokens" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="chain-of-thought-and-reasoning-tokens"><span class="header-section-number">10.12</span> Chain-of-thought and reasoning tokens</h2>
 <p>A decoding-time technique that improves performance on reasoning tasks: before producing the final answer, the model generates intermediate reasoning steps.</p>
 <pre><code>Without chain-of-thought:
   Q: "If a train travels 120 miles in 2 hours, what is its speed?"
@@ -862,8 +868,8 @@ With chain-of-thought:
 <p>This is in-context computation: the model uses its own generated text as working memory, offloading complex reasoning to the sequence rather than encoding it entirely within the forward pass. The context window is not just for input but also it is the model’s scratch pad.</p>
 <hr>
 </section>
-<section id="decoding-strategy-selection-guide" class="level2" data-number="9.13">
-<h2 data-number="9.13" class="anchored" data-anchor-id="decoding-strategy-selection-guide"><span class="header-section-number">9.13</span> Decoding strategy selection guide</h2>
+<section id="decoding-strategy-selection-guide" class="level2" data-number="10.13">
+<h2 data-number="10.13" class="anchored" data-anchor-id="decoding-strategy-selection-guide"><span class="header-section-number">10.13</span> Decoding strategy selection guide</h2>
 <p>A practical reference for choosing decoding parameters by task:</p>
 <table class="caption-top table">
 <colgroup>
@@ -950,8 +956,8 @@ With chain-of-thought:
 </table>
 <hr>
 </section>
-<section id="key-takeaways" class="level2" data-number="9.14">
-<h2 data-number="9.14" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">9.14</span> Key takeaways</h2>
+<section id="key-takeaways" class="level2" data-number="10.14">
+<h2 data-number="10.14" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">10.14</span> Key takeaways</h2>
 <ul>
 <li>The model outputs a probability distribution over the vocabulary at each step; decoding selects a token from that distribution — this choice, made thousands of times, determines the character of the output</li>
 <li>Greedy decoding (always pick the most probable token) is deterministic and accurate for factual tasks but produces repetitive, generic output for open- ended generation because local optimality does not imply global optimality</li>
@@ -970,14 +976,14 @@ With chain-of-thought:
 <img src="figures/ch5/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.2: Cheat sheet.
+Figure&nbsp;10.2: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="9.15">
-<h2 data-number="9.15" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.15</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="10.15">
+<h2 data-number="10.15" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">10.15</span> Further reading</h2>
 <ul>
 <li>Holtzman et al.&nbsp;(2020). <em>The Curious Case of Neural Text Degeneration.</em> — Established why greedy and beam search fail for open-ended generation and introduced nucleus sampling. The analysis of probability maximization failure modes is essential.</li>
 <li>Fan et al.&nbsp;(2018). <em>Hierarchical Neural Story Generation.</em> — Introduced top-k sampling for neural text generation; the original motivation and evaluation.</li>
@@ -1405,13 +1411,13 @@ Figure&nbsp;9.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/gpu-execution.html" class="pagination-link" aria-label="GPU Execution">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span>
+      <a href="../../book/part3/quantization.html" class="pagination-link" aria-label="Quantization and Model Compression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../../book/part4/parametric-vs-external-memory.html" class="pagination-link" aria-label="Parametric Memory vs External Memory">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

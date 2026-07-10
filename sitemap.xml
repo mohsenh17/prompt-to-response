@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://llm.hosseini.work/index.html</loc>
-    <lastmod>2026-07-03T13:26:14.415Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part1/chapter1/introduction.html</loc>
@@ -10,74 +10,78 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/APIs_and_serving.html</loc>
-    <lastmod>2026-07-03T13:26:14.398Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/Tokenization.html</loc>
-    <lastmod>2026-07-03T13:26:14.398Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/Embeddings_and_meaning.html</loc>
-    <lastmod>2026-07-03T13:26:14.398Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/transformer-architecture.html</loc>
-    <lastmod>2026-07-03T13:26:14.403Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/attention-computation.html</loc>
-    <lastmod>2026-07-03T13:26:14.398Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/kv-cache.html</loc>
-    <lastmod>2026-07-03T13:26:14.403Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/gpu-execution.html</loc>
-    <lastmod>2026-07-03T13:26:14.403Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
+  </url>
+  <url>
+    <loc>https://llm.hosseini.work/book/part3/quantization.html</loc>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/decoding-and-sampling.html</loc>
-    <lastmod>2026-07-03T13:26:14.398Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/parametric-vs-external-memory.html</loc>
-    <lastmod>2026-07-03T13:26:14.407Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/document_ingestion.html</loc>
-    <lastmod>2026-07-03T13:26:14.403Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/chunking_strategies.html</loc>
-    <lastmod>2026-07-03T13:26:14.403Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/embedding_for_search.html</loc>
-    <lastmod>2026-07-03T15:32:56.837Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/vector_databases.html</loc>
-    <lastmod>2026-07-06T18:40:19.989Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/retrieval_algorithms.html</loc>
-    <lastmod>2026-07-08T16:38:28.367Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/reranking.html</loc>
-    <lastmod>2026-07-09T15:45:22.688Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/context_construction.html</loc>
-    <lastmod>2026-07-09T17:01:40.242Z</lastmod>
+    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-07-09T17:02:40.515Z</lastmod>
+    <lastmod>2026-07-10T12:30:28.340Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-07-09T17:02:43.941Z</lastmod>
+    <lastmod>2026-07-10T12:30:32.285Z</lastmod>
   </url>
 </urlset>
