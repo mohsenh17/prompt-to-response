@@ -1,0 +1,115 @@
+<svg width="1200" height="1250" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#555; }
+</style>
+
+
+<!-- ROW 1: THE MEMORY PROBLEM & FLOATING POINT FORMATS -->
+<rect x="50" y="80" width="540" height="170" class="box"/>
+<text x="70" y="110" class="section">The Memory Problem &amp; Footprint Math</text>
+<text x="80" y="140" class="text">Model footprint scales linearly with parameter count (N) and bit precision:</text>
+<text x="80" y="165" class="code">FP32 = N * 4 Bytes | BF16 = N * 2 Bytes | INT8 = N * 1 Byte | INT4 = N * 0.5 Bytes</text>
+<text x="80" y="190" class="text">• 70B Model in BF16: Requires ~140 GB of VRAM (spans at least 2x H100 GPUs)</text>
+<text x="80" y="215" class="text">• 70B Model in INT4: Requires ~35 GB of VRAM (fits on 1x consumer 40GB A100)</text>
+<text x="80" y="238" class="small">Impact: Quantization enables serving elite frontier networks on single/local nodes</text>
+
+<rect x="610" y="80" width="540" height="170" class="box"/>
+<text x="630" y="110" class="section">Floating Point Formats: IEEE 754 &amp; FP8</text>
+<text x="640" y="140" class="code">Structure: Value = (-1)^sign * mantissa * 2^exponent</text>
+<text x="640" y="165" class="text">• FP16: 1s + 5e + 10m (Max value ≈ 65,504; prone to training overflow crashes)</text>
+<text x="640" y="190" class="text">• BF16: 1s + 8e + 7m (Matches FP32 dynamic range; standard for model training)</text>
+<text x="640" y="215" class="text">• FP8 E4M3 / E5M2: Maximizes dynamic throughput natively on Hopper architectures</text>
+<text x="640" y="238" class="small">Hardware tip: Transformer Engines double processing bandwidth via dynamic FP8 scales</text>
+
+<!-- ROW 2: INTEGER QUANTIZATION & THE OUTLIER PROBLEM -->
+<rect x="50" y="270" width="540" height="175" class="box"/>
+<text x="70" y="300" class="section">Integer Quantization Mapping</text>
+<text x="80" y="330" class="text">Maps continuous floating-point weights into precise discrete bins:</text>
+<text x="80" y="355" class="code">Scale: s = (max - min)/255  |  Zero Point: z = round(-min/s)</text>
+<text x="80" y="380" class="code">Quantize: x_int8 = clip(round(x/s) + z, 0, 255)</text>
+<text x="80" y="405" class="text">• Symmetric: Forces zero point to 0; ideal for distributions balancing around zero</text>
+<text x="80" y="428" class="text">• Asymmetric: Employs both s and z; highly accurate for skewed data patterns</text>
+
+<rect x="610" y="270" width="540" height="175" class="box"/>
+<text x="630" y="300" class="section">The Activation Outlier Phenomenon</text>
+<text x="640" y="330" class="text">Emerges consistently within intermediate hidden layer representation tracks:</text>
+<text x="640" y="355" class="text">• Behavior: &lt;1% of activation channels spike dramatically (e.g., from [-1,1] to [-100,100])</text>
+<text x="640" y="380" class="text">• Calibration Trap: Scaling down for outliers crushes standard ranges into dust</text>
+<text x="640" y="405" class="text">• Truncation Flaw: Clipping outlier channels introducing massive loss in model logic</text>
+<text x="640" y="428" class="small">Note: This is an emergent structural property of deep architectures, not a bug</text>
+
+<!-- ROW 3: POST-TRAINING METHODOLOGIES & LLM.INT8() -->
+<rect x="50" y="465" width="540" height="175" class="box"/>
+<text x="70" y="495" class="section">Advanced Weight PTQ: GPTQ vs. AWQ</text>
+<text x="80" y="525" class="text">One-shot optimization techniques designed for low-bit (INT4) targets:</text>
+<text x="80" y="550" class="text">• GPTQ: Layer-by-layer step; uses an inverse Hessian error matrix to adjust</text>
+<text x="80" y="575" class="text">  remaining weights in sequence to counteract cumulative quantization loss</text>
+<text x="80" y="600" class="text">• AWQ: Protects vital weight tracks multiplying hyper-active channels via</text>
+<text x="80" y="625" class="code">  Channel Scale scaling: W_new = W * s  |  X_new = X / s  (where s &gt; 1)</text>
+
+<rect x="610" y="465" width="540" height="175" class="box"/>
+<text x="630" y="495" class="section">LLM.int8() Mixed-Precision Decomposition</text>
+<text x="640" y="525" class="text">Isolates activation outliers dynamically at run-time execution intervals:</text>
+<text x="640" y="550" class="code">Matrix Product: (W_outlier * X_outlier)[BF16] + (W_normal * X_normal)[INT8]</text>
+<text x="640" y="575" class="text">• Separation: Diverts outlier vectors (&lt;1% of dimensions) to high precision</text>
+<text x="640" y="600" class="text">• Bulk: Computes the remaining 99% of normal tokens in dense INT8 format</text>
+<text x="640" y="625" class="small">Tradeoff: Preserves near-lossless BF16 quality while saving heavy GPU memory room</text>
+
+<!-- ROW 4: GGUF COMPRESSION & QUANTIZATION-AWARE TRAINING -->
+<rect x="50" y="660" width="540" height="175" class="box"/>
+<text x="70" y="690" class="section">GGUF Block Quantization (llama.cpp)</text>
+<text x="80" y="720" class="text">Optimized file system layout built for CPU, Apple Silicon, and consumer engines:</text>
+<text x="80" y="745" class="text">• Block Architecture: Weights segment into blocks (typically 32 parameters)</text>
+<text x="80" y="770" class="text">• Scaling: Each discrete block holds its own localized float scale reference</text>
+<text x="80" y="795" class="text">• Core Scale Spectrum (70B Model):</text>
+<text x="90" y="818" class="code">Q4_K_M (~4.8 bits, small loss, ~43GB) | Q8_0 (~8.5 bits, near-lossless, ~75GB)</text>
+
+<rect x="610" y="660" width="540" height="175" class="box"/>
+<text x="630" y="690" class="section">Quantization-Aware Training &amp; QLoRA</text>
+<text x="640" y="720" class="text">• QAT Simulation: injects quantization constraints into model forward runs;</text>
+<text x="640" y="745" class="text">  backward steps pass via Straight-Through Estimators (STE) to adapt weights</text>
+<text x="640" y="770" class="text">• QLoRA: Fine-tunes frozen low-bit weights by appending active adapters:</text>
+<text x="650" y="795" class="code">Base Layer: NF4 Quantized (Normal Float 4) | Adapters: Trainable BF16 LoRA</text>
+<text x="640" y="818" class="small">NF4 Benefit: Allocates dense bin spacing near zero where network weights cluster</text>
+
+<!-- ROW 5: ACTIVATION QUANTIZATION & HARDWARE SPARSITY -->
+<rect x="50" y="855" width="540" height="175" class="box"/>
+<text x="70" y="885" class="section">Activation Quantization (SmoothQuant)</text>
+<text x="80" y="915" class="text">Enables true W8A8 operations by shifting variance from inputs to weights:</text>
+<text x="80" y="940" class="code">Mathematical Transform: (X / s) * (W * s) = X * W</text>
+<text x="80" y="965" class="text">• Migration: Divides outlier activation tracks by a calculated scaling factor (s)</text>
+<text x="80" y="990" class="text">• Ingestion: Absorbs balancing multiplication matrix step directly into weights offline</text>
+<text x="80" y="1013" class="small">Performance: Unlocks fast integer tensor core execution with near-zero accuracy drops</text>
+
+<rect x="610" y="855" width="540" height="175" class="box"/>
+<text x="630" y="885" class="section">Structured vs. Unstructured Sparsity</text>
+<text x="640" y="915" class="text">• Unstructured: Prunes loose weights by absolute magnitude. Hard to accelerate</text>
+<text x="640" y="940" class="text">  operationally because irregular patterns do not match standard GPU dense designs</text>
+<text x="640" y="965" class="text">• 2:4 Structured Sparsity: Forces exactly 2 zeros out of every 4 entries:</text>
+<text x="650" y="990" class="code">Structured Row Pattern Example: [ w1, 0, w3, 0 ]</text>
+<text x="640" y="1013" class="small">Hardware Benefit: Custom architecture loads indexing maps to double core throughput</text>
+
+<!-- ROW 6: PRODUCTION PIPELINES & PERFORMANCE DEGRADATION -->
+<rect x="50" y="1050" width="540" height="175" class="box"/>
+<text x="70" y="1080" class="section">Production Pipeline Strategies</text>
+<text x="80" y="1110" class="text">• Weight-Only INT4 + BF16 Compute: Weights remain in storage at 4 bits,</text>
+<text x="80" y="1135" class="text">  dequantizing to native BF16 on-the-fly during active token loading steps</text>
+<text x="80" y="1160" class="text">• Pure FP8 Serving: Fully implements both FP8 weights and activations on</text>
+<text x="80" y="1185" class="text">  Hopper chips; manages dynamic scaling tracking via Transformer Engine</text>
+<text x="80" y="1210" class="code">Blackwell Horizon: Blends compressed INT4 formats with 2:4 sparse patterns</text>
+
+<rect x="610" y="1050" width="540" height="175" class="box"/>
+<text x="630" y="1080" class="section">Quantization Degradation Dynamics</text>
+<text x="640" y="1110" class="text">• Core Metric: Evaluation uses cross-entropy text Perplexity (PPL) tracking</text>
+<text x="640" y="1135" class="text">• Task Drops: Mathematics, logical coding, and fact retrieval show high scale</text>
+<text x="640" y="1160" class="text">  sensitivity to low bits; conversational prose remains highly robust</text>
+<text x="640" y="1185" class="text">• Scale Law: Larger models absorb low-bit compression far better than small variants</text>
+<text x="640" y="1210" class="code">Rule: A 70B INT4 model routinely outpaces an unquantized 7B BF16 layout in VRAM</text>
+
+</svg>
