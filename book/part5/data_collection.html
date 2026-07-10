@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; GPU Execution – From Prompt to Response</title>
+<title>20&nbsp; Data Collection and Curation – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -68,8 +33,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/quantization.html" rel="next">
-<link href="../../book/part3/kv-cache.html" rel="prev">
+<link href="../../book/part4/grounded_generation.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,43 +78,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<meta property="og:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta property="og:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta name="twitter:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -325,7 +260,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -435,7 +370,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
   </div>
 </li>
@@ -529,7 +464,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span></a>
   </div>
 </li>
@@ -553,16 +488,17 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-gpu-execution-deserves-its-own-chapter" id="toc-why-gpu-execution-deserves-its-own-chapter" class="nav-link active" data-scroll-target="#why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</a></li>
-  <li><a href="#gpu-architecture-fundamentals" id="toc-gpu-architecture-fundamentals" class="nav-link" data-scroll-target="#gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</a></li>
-  <li><a href="#the-roofline-model" id="toc-the-roofline-model" class="nav-link" data-scroll-target="#the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</a></li>
-  <li><a href="#prefill-vs.-decode-two-different-regimes" id="toc-prefill-vs.-decode-two-different-regimes" class="nav-link" data-scroll-target="#prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</a></li>
-  <li><a href="#kernel-fusion" id="toc-kernel-fusion" class="nav-link" data-scroll-target="#kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</a></li>
-  <li><a href="#precision-and-quantization-at-the-kernel-level" id="toc-precision-and-quantization-at-the-kernel-level" class="nav-link" data-scroll-target="#precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</a></li>
-  <li><a href="#tensor-parallelism-at-the-kernel-level" id="toc-tensor-parallelism-at-the-kernel-level" class="nav-link" data-scroll-target="#tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</a></li>
-  <li><a href="#cuda-graph-capture" id="toc-cuda-graph-capture" class="nav-link" data-scroll-target="#cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.10</span> Further reading</a></li>
+  <li><a href="#why-data-is-the-real-foundation" id="toc-why-data-is-the-real-foundation" class="nav-link active" data-scroll-target="#why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</a></li>
+  <li><a href="#what-scale-actually-means" id="toc-what-scale-actually-means" class="nav-link" data-scroll-target="#what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</a></li>
+  <li><a href="#the-primary-sources" id="toc-the-primary-sources" class="nav-link" data-scroll-target="#the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</a></li>
+  <li><a href="#the-data-pipeline" id="toc-the-data-pipeline" class="nav-link" data-scroll-target="#the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</a></li>
+  <li><a href="#deduplication-the-underrated-problem" id="toc-deduplication-the-underrated-problem" class="nav-link" data-scroll-target="#deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</a></li>
+  <li><a href="#quality-filtering-what-quality-means" id="toc-quality-filtering-what-quality-means" class="nav-link" data-scroll-target="#quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</a></li>
+  <li><a href="#domain-mixing-and-data-proportions" id="toc-domain-mixing-and-data-proportions" class="nav-link" data-scroll-target="#domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</a></li>
+  <li><a href="#the-data-contamination-problem" id="toc-the-data-contamination-problem" class="nav-link" data-scroll-target="#the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</a></li>
+  <li><a href="#the-web-as-a-cultural-artifact" id="toc-the-web-as-a-cultural-artifact" class="nav-link" data-scroll-target="#the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">20.11</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -570,9 +506,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></h1>
+<h1 class="title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></h1>
 </div>
 
 
@@ -590,7 +526,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>When the model runs, what is GPU actually doing? Why does the same operation take wildly different amounts of time depending on how it is scheduled, and how the data is laid out in memory?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>Before a model can answer anything, it must read everything. How does the raw internet become training data and why are the choices made here the ones that propagate furthest and are corrected least easily?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -603,290 +539,233 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/journey_part3_ch4.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch1/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.1: The journey through the Model Mind.
+Figure&nbsp;20.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The previous chapters established what the model computes: embeddings, attention, feed-forward networks, the KV cache. This chapter covers <em>where</em> that computation actually happens and why it behaves the way it does. Every optimization discussed so far (FlashAttention, PageAttention, continuous batching, quantization) exists because of specific GPU execution constraints. This chapter makes those constraints explicit.</p>
+<p>Part IV showed how retrieval gives the model access to external knowledge at inference time. Part V rewinds the clock entirely. The model had to learn to do all of that from somewhere. This chapter covers where: the construction of the training corpus that precedes everything else in Part V. Data collection is not a preprocessing step you get out of the way before the real work begins. It is the first architectural decision of the entire system.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-gpu-execution-deserves-its-own-chapter" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</h2>
-<p>Every previous chapter has mentioned GPU constraints in passing: memory bandwidth, arithmetic throughput, HBM capacity. This chapter makes those concepts precise.</p>
-<p>Understanding GPU execution has direct impact ob system performance and it is not just an academic exercise for LLM engineers. A serving system operating at 60% of a GPU’s theoretical peak throughput can deliver 50% more throughput than one running at just 40%, without any additional hardware. This knowledge also explains why certain operations become bottlenecks, why quantization improves performance, why kernel fusion is so effective, and why the prefill and decode phases show different latency characteristics.</p>
-<p>More directly: every optimization technique in serving (FlashAttention, continuous batching, tensor parallelism) exists because of specific GPU execution constraints. Understanding those constraints explains why the optimizations take the form they do, rather than appearing as a collection of unrelated tricks.</p>
+<section id="why-data-is-the-real-foundation" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</h2>
+<p>Every capability an LLM has (reasoning, coding, translation, summarization, answering questions about French geography and quantum mechanics) traces back to the data it was trained on. The model has no built-in knowledge of the world. It has patterns compressed from text. Those patterns are only as good as the text that produced them.</p>
+<p>This means data collection is where the model’s capabilities are fundamentally shaped. Architecture decisions matter (attention, depth, positional encoding) but modern LLMs share a largely converged architecture. What they know, what they get wrong, what biases they carry, and what blind spots they have are primarily determined by data, not architecture.</p>
+<p>Most papers spend one paragraph on data and thirty pages on model design. This is backwards. The architecture of a 2024 model is recognizable from a 2020 model. The data is where they diverge.</p>
 <hr>
 </section>
-<section id="gpu-architecture-fundamentals" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</h2>
-<p>A modern GPU is not a fast CPU. It is a fundamentally different compute architecture optimized for a different class of problems.</p>
-<section id="the-execution-model" class="level3" data-number="8.2.1">
-<h3 data-number="8.2.1" class="anchored" data-anchor-id="the-execution-model"><span class="header-section-number">8.2.1</span> The execution model</h3>
-<p>A CPU has a small number of powerful cores (typically 8–128), each capable of complex out-of-order execution, branch prediction, and deep caches. CPUs are optimized for latency and completing a single thread of execution as fast as possible.</p>
-<p>A GPU has a massive number of simpler cores (an H100 has 16,896 CUDA cores) organized into streaming multiprocessors (SMs). Each SM is not particularly fast for a single operation, but thousands of them executing simultaneously produce enormous total throughput. GPUs are optimized to complete as many simple operations as possible per second, not completing any one operation quickly.</p>
-<p>The programming model reflects on this: GPU programs are written as kernels that execute the same operation on many data elements simultaneously. A matrix multiplication kernel runs the same multiply operation on thousands of elements in parallel. If there is data parallelism in your problem, a GPU exploits it. If there is not, a GPU is slower than a CPU for that specific task.</p>
-<p>LLM inference has enormous data parallelism: the same transformer operations apply to every token in the sequence, and every element of every weight matrix participates in the same type of computation. This structural match is why GPUs dominate LLM inference.</p>
+<section id="what-scale-actually-means" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</h2>
+<p>Training corpora are large enough that intuitions built on normal datasets break down. Some grounding numbers:</p>
+<p>GPT-3 trained on roughly 300 billion tokens. LLaMA 2 used 2 trillion tokens. Frontier models from 2024 are estimated to have trained on 10–15 trillion tokens. A token is approximately 0.75 words in English, so 1 trillion tokens is roughly 750 billion words, about 5 million books.</p>
+<p>No human has read 5 million books. No team of humans has read 5 million books. The model has, in a statistical sense, absorbed patterns from all of them.</p>
+<p>This scale creates an immediate engineering constraint: you cannot curate 10 trillion tokens by hand. You cannot read a meaningful fraction of it. Every quality decision must be made programmatically, which means every quality decision is imperfect. The question is not how to achieve perfect curation but it is how to make systematic decisions that produce the best results across billions of documents without ever seeing most of them.</p>
+<hr>
 </section>
-<section id="the-memory-hierarchy" class="level3" data-number="8.2.2">
-<h3 data-number="8.2.2" class="anchored" data-anchor-id="the-memory-hierarchy"><span class="header-section-number">8.2.2</span> The memory hierarchy</h3>
-<p>GPU memory has multiple tiers with very different bandwidth and capacity:</p>
-<pre><code>Memory tier       Bandwidth        Capacity      Latency
-──────────────────────────────────────────────────────────
-Registers         ~80 TB/s         256 KB/SM     ~1 cycle
-L1/SRAM           ~20 TB/s         256 KB/SM     ~30 cycles
-L2 cache          ~5 TB/s          50 MB         ~200 cycles
-HBM (VRAM)        ~3.35 TB/s       80 GB         ~600 cycles
-PCIe (CPU RAM)    ~64 GB/s         TBs           ~microseconds
-NVLink (GPU-GPU)  ~900 GB/s        —             ~microseconds</code></pre>
-<p>SRAM (often called shared memory or L1 cache) is the GPU’s fast on-chip memory. It offers extremely low latency but limited capacity. HBM (High Bandwidth Memory), is the GPU’s large off-chip memory although it provides massive bandwidth, accessing HBM is still significantly more expensive than accessing on-chip memory.</p>
-<p>Every GPU computation ultimately reads data from HBM and writes results back to it. As a result, the central challenge of GPU kernel optimization is reducing HBM traffic by keeping frequently accessed data in SRAM for as long as possible which is the exact key insight behind FlashAttention.</p>
+<section id="the-primary-sources" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</h2>
+<p>Modern LLM training data comes from four broad categories. Real datasets blend all of them in deliberate proportions.</p>
+<section id="web-crawls" class="level3" data-number="20.3.1">
+<h3 data-number="20.3.1" class="anchored" data-anchor-id="web-crawls"><span class="header-section-number">20.3.1</span> Web crawls</h3>
+<p>The largest source by volume. Common Crawl has been running automated web snapshots since 2008, releasing monthly snapshots each containing petabytes of raw HTML from billions of pages. The appeal is obvious: the web is the largest corpus of human-written text ever assembled. The problem is equally obvious: most of it is garbage. Spam, SEO content, duplicate pages, auto-generated text, comment sections, scraped aggregator sites, and machine-translated content sit alongside high-quality journalism, technical documentation, and encyclopedic reference.</p>
+<p>Raw web crawl data is unusable without extensive filtering. The question is how to filter aggressively enough to remove noise without losing diversity.</p>
 </section>
-<section id="streaming-multiprocessors-and-warps" class="level3" data-number="8.2.3">
-<h3 data-number="8.2.3" class="anchored" data-anchor-id="streaming-multiprocessors-and-warps"><span class="header-section-number">8.2.3</span> Streaming multiprocessors and warps</h3>
-<p>The Streaming Multiprocessor (SM) is the fundamental compute unit of an NVIDIA GPU. An H100 GPU contains many SMs operating in parallel, with each SM responsible for executing thousands of lightweight threads concurrently.</p>
-<p>Each SM on an H100 contains:</p>
+<section id="curated-text-corpora" class="level3" data-number="20.3.2">
+<h3 data-number="20.3.2" class="anchored" data-anchor-id="curated-text-corpora"><span class="header-section-number">20.3.2</span> Curated text corpora</h3>
+<p>Books, academic papers, and high-quality long-form writing. Books3, Project Gutenberg, and the Pile’s academic subsets (ArXiv papers, PubMed abstracts, Wikipedia) fall into this category. These sources are much smaller by volume than web crawls (Wikipedia in all languages is roughly 20 billion tokens, a rounding error at frontier scale) but they contribute disproportionately to factual grounding, structured reasoning, and citation quality. They are heavily oversampled relative to their share of the internet.</p>
+</section>
+<section id="code-repositories" class="level3" data-number="20.3.3">
+<h3 data-number="20.3.3" class="anchored" data-anchor-id="code-repositories"><span class="header-section-number">20.3.3</span> Code repositories</h3>
+<p>GitHub and other code hosts. This has become a major data category not only because it teaches models to write and understand code, but because code has structural properties that improve general reasoning: it is unambiguous, logical, hierarchical, and extensively annotated with natural language in comments and docstrings.</p>
+<p>Models trained on large code corpora show improved performance on non-coding tasks including mathematics and structured reasoning, even when evaluated on tasks that have nothing to do with code. The mechanism is still debated, but the empirical result is consistent across model families.</p>
+</section>
+<section id="instruction-and-dialogue-data" class="level3" data-number="20.3.4">
+<h3 data-number="20.3.4" class="anchored" data-anchor-id="instruction-and-dialogue-data"><span class="header-section-number">20.3.4</span> Instruction and dialogue data</h3>
+<p>Conversations, Q&amp;A pairs, and instruction-following examples. This category is distinct because it teaches the model the format and register of being helpful, how to respond to a question, how to follow a directive, how to structure an explanation. It is often synthetic (generated by another model) or manually curated (human-written examples). It is typically much smaller in volume than web data but has outsized influence on how the final model behaves at inference time.</p>
+<hr>
+</section>
+</section>
+<section id="the-data-pipeline" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</h2>
+<p>Raw collection is just the beginning. Every serious training pipeline includes a sequence of filtering, deduplication, and quality scoring steps. Here is a representative pipeline for web data:</p>
+<pre><code>Raw HTML from crawl
+      │
+      ▼
+Language identification
+(discard non-target languages or assign per-language weights)
+      │
+      ▼
+Text extraction
+(strip HTML tags, boilerplate, navigation menus, ads, footers)
+      │
+      ▼
+Length and format filtering
+(discard very short pages, pages with too many special characters,
+ pages where text-to-total-content ratio is too low)
+      │
+      ▼
+Heuristic quality filtering
+(word count, punctuation ratio, stop word ratio,
+ line length distribution, duplicate line fraction)
+      │
+      ▼
+Deduplication
+(exact match by hash, near-duplicate via MinHash or SimHash,
+ substring deduplication for repeated passages)
+      │
+      ▼
+Classifier-based quality scoring
+(trained model predicts P(high quality); discard below threshold)
+      │
+      ▼
+Toxicity and safety filtering
+(remove documents matching harmful content classifiers)
+      │
+      ▼
+Domain weighting and mixing
+(upsample high-quality sources, set per-domain proportions)
+      │
+      ▼
+Final training corpus</code></pre>
+<p>Each step involves tradeoffs. Aggressive quality filtering produces a cleaner corpus but reduces volume, which may hurt diversity and underrepresented language coverage. Loose filtering preserves volume but degrades signal. There is no universally correct threshold, the right settings depend on the target model, the available compute budget, and empirical evaluation on smaller runs.</p>
+<hr>
+</section>
+<section id="deduplication-the-underrated-problem" class="level2" data-number="20.5">
+<h2 data-number="20.5" class="anchored" data-anchor-id="deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</h2>
+<p>Duplicate content in training data is a serious and underappreciated problem that affects both quality and benchmark integrity.</p>
+<p>At web scale, the same article gets republished hundreds of times across aggregator sites, blogs, and content farms. If a document appears 500 times in the training set and once in the test set, the model has not learned to generalize it has only learned to memorize. This inflates benchmark performance and degrades real-world capability.</p>
+<p>Worse, repeated exposure to the same document teaches the model that this content is important. A piece of misinformation that went viral and was copied ten thousand times gets disproportionate weight relative to a single careful correction.</p>
+<p>Deduplication happens at multiple granularities:</p>
+<p><strong>Exact deduplication</strong> removes documents with identical content. This is cheap and straightforward, hash the document, compare against a lookup table, discard matches.</p>
+<p><strong>Near-duplicate detection</strong> removes documents that are semantically identical but not textually identical. Two articles with 95% word overlap but different headlines should not both appear in training. MinHash and SimHash are standard approaches: they produce a fingerprint of the document’s n-gram distribution that allows fast approximate comparison across billions of documents.</p>
+<p><strong>Substring deduplication</strong> removes repeated passages within documents, not just repeated documents. A web page that contains the same boilerplate legal disclaimer 200 times should not contribute 200 unique training examples.</p>
+<p>Research from Google (Lee et al., 2022) demonstrated that aggressive deduplication consistently improves model quality even when it reduces total token count. Less data, cleaner signal, better model, a counterintuitive result that has held up across multiple model families.</p>
+<hr>
+</section>
+<section id="quality-filtering-what-quality-means" class="level2" data-number="20.6">
+<h2 data-number="20.6" class="anchored" data-anchor-id="quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</h2>
+<p>Quality filtering is philosophically tricky because “quality” is a value judgment and the judgment embedded in your filtering approach shapes what the model learns is normal.</p>
+<section id="heuristic-filtering" class="level3" data-number="20.6.1">
+<h3 data-number="20.6.1" class="anchored" data-anchor-id="heuristic-filtering"><span class="header-section-number">20.6.1</span> Heuristic filtering</h3>
+<p>The most common approach uses signals computed from the document itself:</p>
 <ul>
-<li>128 CUDA cores for FP32 arithmetic operations.</li>
-<li>4 Tensor Cores specialized for matrix multiplication.</li>
-<li>256 KB of registers for storing temporary values used by active threads.</li>
-<li>228 KB of on-chip SRAM, configurable between:
-<ul>
-<li>L1 cache for automatically caching memory accesses.</li>
-<li>Shared memory for explicitly sharing data between threads in the same thread block.</li>
-</ul></li>
-<li>Warp schedulers that determine which groups of threads execute next.</li>
+<li>Average word length (too short suggests gibberish; too long suggests technical jargon or non-natural language)</li>
+<li>Ratio of alphabetic characters to total characters (low ratio suggests spam or code fragments)</li>
+<li>Presence of stop words (a proxy for natural language vs.&nbsp;keyword lists)</li>
+<li>Distribution of line lengths (regular short lines suggest poetry or bullet content; extremely variable suggests scraped layout artifacts)</li>
+<li>Ratio of duplicate lines within a document (high ratio suggests boilerplate or repeated headers)</li>
+<li>Presence of known spam or adult content patterns</li>
 </ul>
-<p>GPU threads execute in groups called warps, where each warp consists of 32 threads. Unlike CPU threads, which execute independently, all threads within a warp execute the same instruction at the same time on different pieces of data. NVIDIA refers to this execution model as SIMT (Single Instruction, Multiple Threads).</p>
-<p>For example, consider the following code executed by a warp:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> c <span class="op">+</span> d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Suppose that among the 32 threads in the warp 20 threads satisfy <span class="math inline">\(x &gt; 0\)</span> and 12 threads satisfy <span class="math inline">\(x &lt;= 0\)</span> The GPU cannot execute both branches simultaneously within the same warp. Instead, it execute <span class="math inline">\(y = a + b\)</span> for the 20 relevant threads while the other 12 threads remain temporarily inactive and than execute <span class="math inline">\(y = c + d\)</span> for the remaining 12 threads while the first 20 threads remain inactive. Conceptually, execution looks like:</p>
-<pre><code>Cycle 1:
-[Active]   Threads 0-19  -&gt; y = a + b
-[Inactive] Threads 20-31
-
-Cycle 2:
-[Inactive] Threads 0-19
-[Active]   Threads 20-31 -&gt; y = c + d</code></pre>
-<p>Although each thread only needs one branch, the warp executes both branches sequentially, reducing parallel efficiency whcih is known as branch divergence.</p>
-<p>An H100 has 132 SMs. With 4 warp schedulers per SM and 32 threads per warp, the H100 can keep 132 × 4 × 32 = 16,896 threads active simultaneously.</p>
 </section>
-<section id="tensor-cores" class="level3" data-number="8.2.4">
-<h3 data-number="8.2.4" class="anchored" data-anchor-id="tensor-cores"><span class="header-section-number">8.2.4</span> Tensor cores</h3>
-<p>Standard CUDA cores perform scalar floating point operations. Tensor cores perform matrix multiplications directly in hardware, at much higher throughput.</p>
-<p>An H100 tensor core performs a 16×16×16 matrix multiplication in a single operation. The H100 has 528 tensor cores, delivering approximately:</p>
+<section id="classifier-based-filtering" class="level3" data-number="20.6.2">
+<h3 data-number="20.6.2" class="anchored" data-anchor-id="classifier-based-filtering"><span class="header-section-number">20.6.2</span> Classifier-based filtering</h3>
+<p>The more sophisticated approach trains a classifier on examples of high and low-quality text. You take a small set of documents you believe are high quality (Wikipedia articles, selected books, academic papers), a set you believe are low quality (scraped spam, auto-generated content), train a binary classifier, and use its score to filter the full corpus.</p>
+<p>This approach was used to produce C4 (Colossal Clean Crawled Corpus), where a fastText classifier trained on Wikipedia and Common Crawl data scored documents and filtered those below a threshold. The resulting corpus was significantly smaller than the raw crawl but dramatically higher quality.</p>
+<p><strong>The bias this introduces.</strong> The classifier inherits the biases of its positive examples. If high-quality training examples are predominantly English and from Western academic and journalistic traditions, the classifier will score content from other cultural, linguistic, and domain contexts lower, not because those documents are low quality, but because they are dissimilar from the examples the classifier was trained to recognize as high quality.</p>
+</section>
+<section id="perplexity-based-filtering" class="level3" data-number="20.6.3">
+<h3 data-number="20.6.3" class="anchored" data-anchor-id="perplexity-based-filtering"><span class="header-section-number">20.6.3</span> Perplexity-based filtering</h3>
+<p>A variant: use a smaller, already-trained language model to score each document’s perplexity. Very high perplexity (the model is very surprised by the text) suggests low-quality or anomalous content. Very low perplexity (the model already knows this text well) may suggest repeated or memorized content.</p>
+<p>The limitation: a small model trained on web text will score high-quality text in specialized domains (medical literature, legal documents, code documentation) as high perplexity simply because it is unfamiliar. Perplexity filtering can inadvertently remove exactly the specialized knowledge that makes the training data valuable.</p>
+<hr>
+</section>
+</section>
+<section id="domain-mixing-and-data-proportions" class="level2" data-number="20.7">
+<h2 data-number="20.7" class="anchored" data-anchor-id="domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</h2>
+<p>Collecting data is one problem and deciding how much of each source to include is another, the decision matters as much as collection quality.</p>
+<p>Frontier models deliberately oversample high-quality sources relative to their share of the raw internet. A representative mixing strategy:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Share of training tokens</th>
+<th>Share of raw internet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Web crawl (filtered)</td>
+<td>~45%</td>
+<td>~99%</td>
+</tr>
+<tr class="even">
+<td>Books</td>
+<td>~20%</td>
+<td>&lt;0.1%</td>
+</tr>
+<tr class="odd">
+<td>Code</td>
+<td>~15%</td>
+<td>~1%</td>
+</tr>
+<tr class="even">
+<td>Academic papers</td>
+<td>~10%</td>
+<td>&lt;0.1%</td>
+</tr>
+<tr class="odd">
+<td>Wikipedia</td>
+<td>~5%</td>
+<td>&lt;0.01%</td>
+</tr>
+<tr class="even">
+<td>Instruction / dialogue</td>
+<td>~5%</td>
+<td>near zero</td>
+</tr>
+</tbody>
+</table>
+<p>These proportions are not derived from first principles. They are found through empirical ablations: train smaller models on different mixes, evaluate across benchmark suites, and iterate toward the mix that produces the best results. This is expensive and also one of the least documented aspects of frontier model development. Mixing ratios are among the most guarded details in model technical reports.</p>
+<section id="domain-mixing-and-capability" class="level3" data-number="20.7.1">
+<h3 data-number="20.7.1" class="anchored" data-anchor-id="domain-mixing-and-capability"><span class="header-section-number">20.7.1</span> Domain mixing and capability</h3>
+<p>Mixing decisions directly affect model capabilities. A model trained with higher code proportion shows better performance on code-related tasks, on mathematical reasoning, and (empirically, though mechanistically unclear) on structured reasoning tasks generally. A model with more multilingual data performs better across languages. A model with more instruction data is more naturally helpful without additional fine-tuning.</p>
+<p>Changing the mix at frontier scale (adjusting proportions for a 15 trillion token training run) is a multi-month commitment. Getting it right requires either expensive experiments at smaller scale (with uncertain extrapolation to full scale) or expensive mistakes at full scale.</p>
+<hr>
+</section>
+</section>
+<section id="the-data-contamination-problem" class="level2" data-number="20.8">
+<h2 data-number="20.8" class="anchored" data-anchor-id="the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</h2>
+<p>A fundamental requirement of valid evaluation is that the test set must not appear in the training data. If the model has seen the answers, the evaluation tells you nothing about generalization.</p>
+<p>At the scale of modern training corpora, this is genuinely difficult to guarantee. The internet contains solutions to many standard benchmarks: HumanEval coding problems appear on GitHub; MMLU questions appear in study guides and Quora discussions; GSM8K math problems appear on math tutoring sites; BIG-Bench tasks appear in academic papers that post-date the benchmark but pre-date many models.</p>
+<p>Contamination detection requires: 1. Collecting all known evaluation datasets 2. Running n-gram matching between evaluation examples and training documents 3. Removing or flagging contaminated training documents 4. Reporting contamination rates explicitly in publications</p>
+<p>Many papers do this imperfectly or not at all. When a model achieves dramatically higher scores than predecessors on a specific benchmark, contamination is one of the first alternative hypotheses to evaluate. The difficulty of ruling it out cleanly is one reason the field has moved toward harder-to-memorize benchmarks, live coding challenges, human preference evaluation, new tasks created after the training cutoff.</p>
+<hr>
+</section>
+<section id="the-web-as-a-cultural-artifact" class="level2" data-number="20.9">
+<h2 data-number="20.9" class="anchored" data-anchor-id="the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</h2>
+<p>One underappreciated aspect of using the web as training data is the fact that the web is not a neutral sample of human knowledge. It overrepresents certain voices, certain languages, certain time periods, and certain topics.</p>
+<p>English accounts for roughly half of web content despite being spoken by only 17% of the world’s population. Technical and academic content from the United States and Western Europe is disproportionately represented. Recent content is more represented than historical content. Content from wealthy countries with high internet penetration is more represented than content from countries with lower penetration.</p>
+<p>A model trained primarily on this data will reflect these asymmetries: it will know more about some cultures, regions, and perspectives than others. It will have stronger capabilities in some languages than others. This is not a bug in any simple sense (it is a direct consequence of training on the data that exists) but it has real downstream consequences for who the model serves well and who it serves poorly.</p>
+<p>These asymmetries can be partially corrected through deliberate data sourcing: specifically mining underrepresented language content, partnering with institutions that have access to non-web text corpora, and applying language-specific oversampling. They cannot be fully corrected because the underlying data simply does not exist in comparable volume for all languages and cultures.</p>
+<hr>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="20.10">
+<h2 data-number="20.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</h2>
 <ul>
-<li>1,000 TFLOPS for BF16/FP16 matrix multiplications</li>
-<li>1,979 TFLOPS for FP8 matrix multiplications</li>
-<li>66 TFLOPS for FP32 scalar operations</li>
+<li>LLM training requires trillions of tokens; no human-curated dataset exists at this scale, so web crawls are the primary source — but raw web data is low quality and requires extensive filtering before use</li>
+<li>Every serious training pipeline includes language identification, text extraction, heuristic quality filtering, deduplication, and classifier-based scoring; each step involves tradeoffs between quality and diversity</li>
+<li>Deduplication is as important as quality filtering — repeated content teaches memorization rather than generalization; aggressive deduplication consistently improves model quality even when it reduces token count</li>
+<li>Domain mixing is a deliberate design choice: high-quality sources (books, academic papers, Wikipedia) are heavily oversampled relative to their share of the raw internet; these proportions are found empirically, not derived from first principles</li>
+<li>Classifier-based quality filtering inherits the biases of its training examples; content that is dissimilar from Western academic and journalistic norms may be scored lower even when it is high quality on its own terms</li>
+<li>Data contamination with evaluation benchmarks is a real and underreported problem; detecting it requires explicit n-gram matching between training documents and all known evaluation datasets</li>
+<li>The web overrepresents certain languages, cultures, and perspectives; these asymmetries propagate directly into model capabilities and cannot be fully corrected after training</li>
 </ul>
-<p>The gap between tensor core throughput and scalar throughput explains why matrix multiplication is fast and why all other operations are relatively expensive on modern GPUs.</p>
-</section>
-</section>
-<section id="the-roofline-model" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</h2>
-<p>The roofline model is a simple framework for understanding whether a given operation is compute-bound or memory-bandwidth-bound, and what the theoretical maximum performance is:</p>
-<pre><code>Attainable performance = min(Peak FLOPS, Memory bandwidth × Arithmetic intensity)</code></pre>
-<p>Where arithmetic intensity = FLOPs executed / bytes read from memory.</p>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/roofline_model.svg" class="img-fluid figure-img" style="width:70.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.2: The roofline Model.
-</figcaption>
-</figure>
-</div>
-<p>The ridge point is where the roofline transitions from memory-bound to compute-bound which is approximately 300 FLOPs/byte for the H100 (1,000 TFLOPS / 3.35 TB/s). Operations with arithmetic intensity above 300 are compute-bound and those below are memory-bandwidth-bound.</p>
-<section id="llm-operations-on-the-roofline" class="level3" data-number="8.3.1">
-<h3 data-number="8.3.1" class="anchored" data-anchor-id="llm-operations-on-the-roofline"><span class="header-section-number">8.3.1</span> LLM operations on the roofline</h3>
-<p>Different operations in LLM inference have very different arithmetic intensities:</p>
-<p><strong>Large matrix multiplications</strong> (prefill, large batches): Matrix multiplication achieves high arithmetic intensity by reusing each byte of weight data for every sequence in the batch. For example, with a batch size of 32 and <span class="math inline">\(d_model = 4,096\)</span>, the arithmetic intensity is approximately 32 FLOPs/byte. This value approaches the roofline model’s ridge point, indicating that performance is primarily limited by computational throughput rather than memory bandwidth.</p>
-<p><strong>Vector-matrix products</strong> (decode, batch size 1): The Q projection at a batch size of 1 exhibits low arithmetic intensity because each byte of weight data is used in only one multiply operation. Consequently, the arithmetic intensity is approximately 1 FLOP/byte, which is about 300× below the roofline model’s ridge point. As a result, performance is severely limited by memory bandwidth, leaving the tensor cores underutilized.</p>
-<p><strong>Attention with KV cache</strong> (decode): extremely low arithmetic intensity. Reading the full KV cache and computing a dot product with the query vector. Memory- bandwidth-bound with near-zero compute utilization.</p>
-<p><strong>Softmax, layer norm, element-wise ops</strong>: essentially zero arithmetic intensity. Read data, apply a simple function, write it back. Pure memory bandwidth operations. No tensor core involvement.</p>
-<p>The practical implication: for decode at small batch sizes, the GPU is almost entirely idle arithmetically, waiting for data from HBM. Increasing batch size is the primary lever for improving GPU utilization during decode, because it amortizes weight reads across multiple sequences and increases arithmetic intensity toward the ridge point.</p>
 <hr>
 </section>
-</section>
-<section id="prefill-vs.-decode-two-different-regimes" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</h2>
-<p>The roofline analysis explains why prefill and decode behave so differently and they are not just slow and fast versions of the same operation. They are different hardware bottlenecks entirely.</p>
-<section id="prefill-compute-bound" class="level3" data-number="8.4.1">
-<h3 data-number="8.4.1" class="anchored" data-anchor-id="prefill-compute-bound"><span class="header-section-number">8.4.1</span> Prefill: compute-bound</h3>
-<p>During prefill, all prompt tokens are processed simultaneously. The Q projection operates on a matrix of shape <code>[n_prompt, d_model]</code>:</p>
-<pre><code>Q projection: [n_prompt, d_model] @ [d_model, d_model]
-FLOPs:        2 × n_prompt × d_model²
-Bytes:        d_model² × 2    (weight matrix, loaded once)
-
-Arithmetic intensity = n_prompt FLOPs/byte</code></pre>
-<p>For n_prompt = 1,024 and d_model = 4,096: arithmetic intensity = 1,024 FLOPs/byte which is above the ridge point. Prefill is compute-bound. The H100 runs near its theoretical FLOPs ceiling. In order to make prefill faster it requires more FLOPs (more GPUs, higher clock speeds, or more efficient kernels).</p>
-</section>
-<section id="decode-memory-bandwidth-bound" class="level3" data-number="8.4.2">
-<h3 data-number="8.4.2" class="anchored" data-anchor-id="decode-memory-bandwidth-bound"><span class="header-section-number">8.4.2</span> Decode: memory-bandwidth-bound</h3>
-<p>During decode, only one new token is processed at a time. The Q projection operates on a vector of shape <code>[1, d_model]</code>:</p>
-<pre><code>Q projection: [1, d_model] @ [d_model, d_model]
-FLOPs:        2 × 1 × d_model²
-Bytes:        d_model² × 2    (same weight matrix)
-
-Arithmetic intensity = 1 FLOPs/byte</code></pre>
-<p>For d_model = 4,096: arithmetic intensity = 1 FLOPs/byte which makes decode memory-bandwidth-bound. The H100 runs at approximately 1/300th of its peak FLOPs utilization. Making decode faster requires loading weights faster, higher bandwidth memory, quantization (fewer bytes per parameter), or larger batches (sharing weight reads across sequences).</p>
-<hr>
-</section>
-</section>
-<section id="kernel-fusion" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</h2>
-<p>Each operation in a transformer block, such as layer normalization, Q/K/V projection, softmax, and residual addition, can be implemented as a separate CUDA kernel. In this approach, every kernel reads its inputs from HBM and writes its outputs back to HBM before the next kernel executes. While this design is straightforward to implement, it is inefficient because intermediate results are repeatedly transferred to and from HBM despite being needed only by subsequent operations.</p>
-<p>Kernel fusion addresses this inefficiency by combining multiple operations into a single CUDA kernel. Intermediate results are retained in registers or on-chip shared memory (SRAM) rather than being written to HBM after each operation. Only the final output is stored in HBM, reducing memory traffic, increasing arithmetic intensity, and improving overall performance.</p>
-<section id="example-fused-layer-norm-and-linear-projection" class="level3" data-number="8.5.1">
-<h3 data-number="8.5.1" class="anchored" data-anchor-id="example-fused-layer-norm-and-linear-projection"><span class="header-section-number">8.5.1</span> Example: fused layer norm and linear projection</h3>
-<p>Without fusion:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x_norm <span class="op">=</span> layer_norm(x)     <span class="co"># read x from HBM, write x_norm to HBM</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> x_norm <span class="op">@</span> W_Q           <span class="co"># read x_norm from HBM, write q to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Two HBM reads, two HBM writes, for data that is only an intermediate result.</p>
-<p>With fusion:</p>
-<pre><code>Single kernel:
-  Read x from HBM once
-  Compute layer norm in registers/SRAM
-  Apply W_Q projection immediately
-  Write q to HBM once</code></pre>
-<p>One HBM read, one HBM write. Memory traffic halved for this pair of operations. The intermediate <code>x_norm</code> never leaves the chip.</p>
-</section>
-<section id="flashattention-as-kernel-fusion" class="level3" data-number="8.5.2">
-<h3 data-number="8.5.2" class="anchored" data-anchor-id="flashattention-as-kernel-fusion"><span class="header-section-number">8.5.2</span> FlashAttention as kernel fusion</h3>
-<p>FlashAttention is the most impactful example of kernel fusion in LLM inference. The naive attention computation reads and writes the n×n score matrix multiple times (scaling, masking, softmax, and the final weighted sum). FlashAttention fuses all of these into a single kernel that keeps intermediate scores in SRAM.</p>
-<p>The memory traffic reduction is from O(n²) to O(n). At long sequence lengths, this is the difference between attention fitting in available memory and not fitting at all. Chapter REFF covers FlashAttention in detail; the point here is that it is fundamentally a kernel fusion optimization, not an algorithmic approximation. The result is mathematically identical to naive attention.</p>
-</section>
-<section id="kernel-fusion-in-practice" class="level3" data-number="8.5.3">
-<h3 data-number="8.5.3" class="anchored" data-anchor-id="kernel-fusion-in-practice"><span class="header-section-number">8.5.3</span> Kernel fusion in practice</h3>
-<p>Production inference frameworks apply kernel fusion throughout the model:</p>
+<section id="further-reading" class="level2" data-number="20.11">
+<h2 data-number="20.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">20.11</span> Further reading</h2>
 <ul>
-<li>Layer norm fused into linear projections (Q, K, V, output projections)</li>
-<li>Attention scores, masking, and softmax fused (FlashAttention)</li>
-<li>Residual addition fused with layer norm</li>
-<li>Activation functions fused into FFN computation</li>
-<li>RoPE application fused into Q and K projection</li>
-</ul>
-<p>The cumulative impact is typically 1.5–2× throughput improvement over naively separate kernels, primarily by reducing HBM traffic.</p>
-<hr>
-</section>
-</section>
-<section id="precision-and-quantization-at-the-kernel-level" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</h2>
-<p>Quantization affects GPU execution at the kernel level, not just memory footprint. Understanding this distinction separates knowing what quantization does from knowing why it helps.</p>
-<section id="weight-only-quantization" class="level3" data-number="8.6.1">
-<h3 data-number="8.6.1" class="anchored" data-anchor-id="weight-only-quantization"><span class="header-section-number">8.6.1</span> Weight-only quantization</h3>
-<p>The most common serving quantization scheme: model weights are stored in INT4 or INT8, but computation happens in BF16/FP16.</p>
-<p>During a weight-only quantized matrix multiplication:</p>
-<pre><code>1. Load INT4 weights from HBM          (4× fewer bytes than BF16)
-2. Dequantize to BF16 in registers     (fast, negligible compute overhead)
-3. Multiply with BF16 activations via tensor cores
-4. Accumulate in FP32, write BF16 output to HBM</code></pre>
-<p>The benefit: decode is memory-bandwidth-bound. Reducing weight bytes by 4× means 4× more weights can be streamed per second, directly improving decode throughput by approximately 4× for bandwidth-limited operations.</p>
-<p>The cost: dequantization adds compute overhead. For bandwidth-bound operations (decode), this overhead is negligible. For compute-bound operations (prefill, large batches), dequantization adds meaningful overhead. Weight-only quantization therefore improves decode more than prefill, which is precisely where the improvement is most needed.</p>
-</section>
-<section id="activation-quantization-int8-and-fp8" class="level3" data-number="8.6.2">
-<h3 data-number="8.6.2" class="anchored" data-anchor-id="activation-quantization-int8-and-fp8"><span class="header-section-number">8.6.2</span> Activation quantization: INT8 and FP8</h3>
-<p>For compute-bound operations, quantizing both weights and activations to INT8 or FP8 allows tensor cores to operate at higher throughput:</p>
-<ul>
-<li>BF16 tensor cores: 1,000 TFLOPS</li>
-<li>FP8 tensor cores: 1,979 TFLOPS on H100 (approximately 2× faster)</li>
-</ul>
-<p>Activation quantization is more complex than weight quantization because activations have more dynamic range and they can contain outlier values that cause large quantization errors when mapped to a narrow integer range.</p>
-<p><strong>The outlier problem.</strong> LLM activations contain outlier values in a small fraction of channels, values that are orders of magnitude larger than typical. These outliers are consistent across inputs and are a known property of large language models. Naive quantization sets the scale by the outlier, compressing all normal values to near-zero and destroying information.</p>
-<p><strong>LLM.int8()</strong> (Dettmers et al., 2022) addresses this by decomposing the matrix multiplication: outlier channels are computed in full BF16 precision, and the remaining channels (typically 99%+) are computed in INT8. The results are combined. Quality is preserved while most of the memory savings are retained.</p>
-<p><strong>SmoothQuant</strong> (Xiao et al., 2023) migrates the quantization difficulty from activations to weights, mathematically equivalent to scaling the activation channels down and the corresponding weight rows up before quantization. The result is more uniform activation distributions that quantize cleanly to INT8 without special outlier handling.</p>
-<p><strong>FP8 inference</strong> is available on H100 GPUs and has become the recommended precision for large-scale serving: near-BF16 quality at roughly 2× the arithmetic throughput. The H100’s Transformer Engine handles FP8 scaling automatically, making it practical without manual calibration.</p>
-<hr>
-</section>
-</section>
-<section id="tensor-parallelism-at-the-kernel-level" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</h2>
-<p>When a model is too large for a single GPU, tensor parallelism distributes weight matrices across multiple GPUs. The kernel-level implementation requires communication between GPUs at each layer.</p>
-<section id="column-and-row-parallelism" class="level3" data-number="8.7.1">
-<h3 data-number="8.7.1" class="anchored" data-anchor-id="column-and-row-parallelism"><span class="header-section-number">8.7.1</span> Column and row parallelism</h3>
-<p>A linear projection <code>Y = X @ W</code> can be split in two ways:</p>
-<p><strong>Column parallelism</strong> splits W by columns:</p>
-<pre><code>W split into [W₁ | W₂] across 2 GPUs
-GPU 0: Y₁ = X @ W₁    (partial output — subset of output dimensions)
-GPU 1: Y₂ = X @ W₂    (partial output — complementary subset)
-Combine: Y = [Y₁ | Y₂]    (concatenation, no communication needed here)</code></pre>
-<p><strong>Row parallelism</strong> splits W by rows and requires split input:</p>
-<pre><code>W split into [W₁; W₂], X split into [X₁, X₂] across 2 GPUs
-GPU 0: Y_partial₀ = X₁ @ W₁
-GPU 1: Y_partial₁ = X₂ @ W₂
-Combine: Y = Y_partial₀ + Y_partial₁    (all-reduce required)</code></pre>
-<p>In a transformer layer: Q, K, V projections use column parallelism, each GPU computes a subset of attention heads. The output projection uses row parallelism. Attention within each GPU is independent; an all-reduce synchronizes after the output projection. The FFN follows the same pattern: column parallelism on the first layer, row parallelism on the second, with one all-reduce between them.</p>
-</section>
-<section id="pipeline-parallelism-and-bubble-overhead" class="level3" data-number="8.7.2">
-<h3 data-number="8.7.2" class="anchored" data-anchor-id="pipeline-parallelism-and-bubble-overhead"><span class="header-section-number">8.7.2</span> Pipeline parallelism and bubble overhead</h3>
-<p>Pipeline parallelism splits a transformer model across multiple GPUs by assigning different sets of layers to different devices. Instead of each GPU holding the full model, computation flows through GPUs sequentially, like an assembly line and each GPU processes a contiguous block of layers. To keep all GPUs busy, the input batch is divided into microbatches, which are then streamed through the pipeline:</p>
-<pre><code>Time step:        1    2    3  |  4    5    6    7    8  | 9   10   11
-                 &lt;-- Fill --&gt;  | &lt;---- Steady state ---&gt; | &lt;-- Drain --&gt;
-
-GPU 0 (L0 –L24): [1]  [2]  [3]   [4]  [5]  [6]  [7]  [8]   ·    ·    ·
-GPU 1 (L25–L48):  ·   [1]  [2]   [3]  [4]  [5]  [6]  [7]  [8]   ·    ·
-GPU 2 (L49–L72):  ·    ·   [1]   [2]  [3]  [4]  [5]  [6]  [7]  [8]   ·
-GPU 3 (L73–L96):  ·    ·    ·    [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]</code></pre>
-<p>This creates a wave-like execution pattern where different GPUs work on different microbatches at different stages of the model. However, pipeline parallelism introduces idle time, known as the pipeline bubble. This occurs during pipeline fill (startup) and pipeline drain (shutdown), when not all GPUs are fully utilized.</p>
-<p>Increasing the number of microbatches reduces bubble overhead by improving pipeline utilization, but it also increases memory usage and scheduling complexity. In practice, systems use 8–32 microbatches to keep bubble overhead under 10% while maintaining efficiency.</p>
-<hr>
-</section>
-</section>
-<section id="cuda-graph-capture" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</h2>
-<p>Every GPU operation requires a kernel launch: the CPU sends an instruction to the GPU specifying which kernel to run with which parameters. For small operations, kernel launch overhead can dominate the actual execution time.</p>
-<p>For a transformer decode step at batch size 1:</p>
-<ul>
-<li>Total arithmetic work: small (bandwidth-bound, most of step time is HBM reads)</li>
-<li>Number of kernel launches: hundreds (one per operation across all layers)</li>
-<li>Kernel launch overhead: ~5–10 microseconds per launch</li>
-</ul>
-<p>Hundreds of launches × 5–10 microseconds = milliseconds of CPU overhead per decode step, for a step that may itself take only a few milliseconds of actual GPU work. The CPU becomes the bottleneck.</p>
-<p>CUDA graphs capture the sequence of kernel launches and their data dependencies as a static graph, replayed without CPU involvement for each step. After the initial capture, subsequent replays bypass CPU overhead entirely.</p>
-<p>For decode at batch size 1, CUDA graph capture reduces per-step latency by 30–50%. The tradeoff: the graph is captured for a specific batch size and sequence length; changing these requires recapture. Production inference frameworks use CUDA graphs for decode (fixed batch size and one new token per step) and not for prefill (variable sequence length per request).</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="8.9">
-<h2 data-number="8.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</h2>
-<ul>
-<li>GPUs are throughput-optimized processors with thousands of simple cores; LLM inference maps well to GPUs because transformer operations are highly data- parallel — the same computation applied to every token and every weight element</li>
-<li>The GPU memory hierarchy spans registers (80 TB/s) to HBM (3.35 TB/s) to PCIe (64 GB/s); kernel optimization is the art of keeping hot data in fast memory and minimizing HBM round trips</li>
-<li>Tensor cores perform 16×16×16 matrix multiplications in hardware at ~15× the throughput of scalar CUDA cores; every operation expressible as matrix multiplication should be</li>
-<li>The roofline model predicts whether an operation is compute-bound (arithmetic intensity above ~300 FLOPs/byte for H100) or memory-bandwidth-bound (below); prefill is compute-bound, decode is severely memory-bandwidth-bound at ~1 FLOPs/byte</li>
-<li>MFU for decode at batch size 1 is approximately 0.3% — the GPU is nearly idle arithmetically; batching and quantization are the primary levers for improving this</li>
-<li>Kernel fusion eliminates intermediate HBM reads and writes between operations; FlashAttention reduces attention memory traffic from O(n²) to O(n) by keeping scores in SRAM throughout computation</li>
-<li>Weight-only INT4/INT8 quantization reduces decode latency proportionally to the bit reduction, with negligible dequantization overhead when bandwidth-bound; FP8 activation quantization improves prefill throughput by ~2×</li>
-<li>CUDA graph capture eliminates CPU kernel launch overhead — 30–50% latency reduction for decode at small batch sizes — by replaying a static kernel sequence without CPU involvement</li>
-</ul>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch1/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.3: Cheat sheet.
-</figcaption>
-</figure>
-</div>
-<hr>
-</section>
-<section id="further-reading" class="level2" data-number="8.10">
-<h2 data-number="8.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.10</span> Further reading</h2>
-<ul>
-<li>Williams et al.&nbsp;(2009). <em>Roofline: An Insightful Visual Performance Model for Multicore Architectures.</em> — The roofline model; essential reading for GPU performance analysis regardless of domain.</li>
-<li>Dao et al.&nbsp;(2022). <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.</em> — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.</li>
-<li>Dettmers et al.&nbsp;(2022). <em>LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale.</em> — The outlier problem and mixed-precision INT8 quantization.</li>
-<li>Xiao et al.&nbsp;(2023). <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models.</em> — Migrating quantization difficulty from activations to weights for clean INT8 inference.</li>
-<li>Shoeybi et al.&nbsp;(2019). <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism.</em> — Tensor and pipeline parallelism; the foundational implementation reference.</li>
+<li>Gao et al.&nbsp;(2020). <em>The Pile: An 800GB Dataset of Diverse Text for Language Modeling.</em> — One of the most documented large training corpora, with detailed source breakdowns and per-domain analysis.</li>
+<li>Lee et al.&nbsp;(2022). <em>Deduplicating Training Data Makes Language Models Better.</em> — Empirical demonstration that aggressive deduplication improves quality even at reduced token count.</li>
+<li>Raffel et al.&nbsp;(2020). <em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.</em> — Introduces C4 and the classifier-based filtering approach that became standard.</li>
+<li>Longpre et al.&nbsp;(2023). <em>The Data Provenance Initiative.</em> — Systematic audit of data licensing and consent in popular training datasets.</li>
+<li>Touvron et al.&nbsp;(2023). <em>LLaMA 2: Open Foundation and Fine-Tuned Chat Models.</em> — Contains one of the more transparent descriptions of data mixing decisions and filtering heuristics for a frontier model.</li>
+<li>Penedo et al.&nbsp;(2023). <em>The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only.</em> — Demonstrates that heavily filtered web data can match or exceed curated corpora.</li>
 </ul>
 <hr>
 
@@ -1309,14 +1188,11 @@ Figure&nbsp;8.3: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/kv-cache.html" class="pagination-link" aria-label="KV Cache">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span>
+      <a href="../../book/part4/grounded_generation.html" class="pagination-link" aria-label="Grounded Generation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Grounded Generation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/quantization.html" class="pagination-link" aria-label="Quantization and Model Compression">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
