@@ -1,0 +1,63 @@
+<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.title { font: 700 30px sans-serif; fill:#111; }
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 13.5px sans-serif; fill:#222; }
+.code { font: 12.5px monospace; fill:#0b5394; }
+.box { fill:#ffffff; stroke:#d0d0d0; stroke-width:1.2; rx:10; }
+.small { font: 12px sans-serif; fill:#555; }
+</style>
+
+<!-- ROW 1: FAILURE MODES & SYSTEM PROMPTS -->
+<rect x="50" y="80" width="540" height="170" class="box"/>
+<text x="70" y="110" class="section">The Three RAG Generation Failure Modes</text>
+<text x="80" y="140" class="text">High retrieval recall does not guarantee faithful model generation:</text>
+<text x="80" y="165" class="text">• Hallucination: Blends retrieved facts with unverified training memory.</text>
+<text x="80" y="190" class="text">• Context Ignorance: Completely ignores retrieved context chunks due to</text>
+<text x="90" y="210" class="text">  overwhelming parametric bias or long-context saturation mechanics.</text>
+<text x="80" y="235" class="text">• Miscalibrated Confidence: Hedges or asserts facts with faulty certainty.</text>
+
+<rect x="610" y="80" width="540" height="170" class="box"/>
+<text x="630" y="110" class="section">System Prompt Guardrails &amp; Anchoring</text>
+<text x="640" y="140" class="text">Explicit instructions force the model to anchor onto retrieved evidence:</text>
+<text x="640" y="165" class="code">"Base every factual claim strictly on provided excerpts."</text>
+<text x="640" y="190" class="code">"If text is missing, output: 'The documentation does not address [X]'"</text>
+<text x="640" y="215" class="text">• Strict Grounding: Converts assistant into a zero-compromise lookup tool,</text>
+<text x="650" y="235" class="text">  favoring direct verbatim citations over loose creative synthesis.</text>
+
+<!-- ROW 2: TOKEN-LEVEL LOGPROBS & CLAIM EXTRACTION -->
+<rect x="50" y="270" width="540" height="175" class="box"/>
+<text x="70" y="300" class="section">Token-Level Logprob Inspection</text>
+<text x="80" y="330" class="text">Catches transitions where model drifts away from context into raw guesses:</text>
+<text x="80" y="355" class="code">Heuristic: logprob score less than threshold (e.g., -2.0)</text>
+<text x="80" y="380" class="text">• Signal: Sudden drop in confidence indicates high likelihood of interpolation.</text>
+<text x="80" y="405" class="text">• Parsing: Runs custom spans wrapping tokens in error tags, providing an</text>
+<text x="90" y="425" class="text">  automated audit trail for live human-in-the-loop filtering layers.</text>
+
+<rect x="610" y="270" width="540" height="175" class="box"/>
+<text x="630" y="300" class="section">Claim Extraction &amp; Post-Evaluation</text>
+<text x="640" y="330" class="text">The algorithmic backbone of RAG validation frameworks (e.g., RAGAS):</text>
+<text x="640" y="355" class="code">Pipeline: Text Output -> Extract Atomic Claims -> Run N-Cross Check</text>
+<text x="640" y="380" class="text">• Mapping: Validates each isolated fact against the source context.</text>
+<text x="640" y="405" class="code">Verdicts: SUPPORTED | CONTRADICTED | NOT_ADDRESSED</text>
+<text x="640" y="428" class="small">Score calculation: Total Supported Claims divided by Total Extracted Claims</text>
+
+<!-- ROW 3: ADAPTIVE RETRIEVAL & INSUFFICIENT CONTEXT -->
+<rect x="50" y="465" width="540" height="175" class="box"/>
+<text x="70" y="495" class="section">Adaptive Retrieval: Self-RAG vs. FLARE</text>
+<text x="80" y="525" class="text">Interleaves search discovery dynamically directly inside generation runs:</text>
+<text x="80" y="550" class="text">• Self-RAG: Utilizes custom fine-tuned reflection tokens emitted on the fly</text>
+<text x="90" y="570" class="code">  [Retrieve] to trigger search | [IsSup] to validate grounding inline</text>
+<text x="80" y="595" class="text">• FLARE: Tracks frozen model confidence intervals; pauses execution and</text>
+<text x="90" y="615" class="text">  runs active retrieval query updates using the unverified sentence target.</text>
+
+<rect x="610" y="465" width="540" height="175" class="box"/>
+<text x="630" y="495" class="section">Context Insufficiency &amp; Production Logging</text>
+<text x="640" y="525" class="text">• The Structural Fallback Pattern: Force graceful refusal over guessing.</text>
+<text x="640" y="550" class="code">  "Excerpts do not address [X] but do cover [Y] on Page 2."</text>
+<text x="640" y="575" class="text">• Debug Logging Array: Store Query, Chunks, Context Maps, and raw Logprobs.</text>
+<text x="640" y="600" class="text">• Consistency Sampling: Sample multi-turn text chains at nonzero temperature;</text>
+<text x="640" y="620" class="text">  high variations across runs signal immediate grounding exposure gaps.</text>
+
+</svg>
