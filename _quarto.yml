@@ -52,6 +52,7 @@ book:
     - part: "The Forging of Intelligence"
       chapters: 
         - book/part5/data_collection.md
+        - book/part5/synthetic_data.md
 
     - part: "The Trial of the Answer"
       chapters: []
