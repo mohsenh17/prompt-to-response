@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; Attention Computation – From Prompt to Response</title>
+<title>22&nbsp; Tokenization During Training – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -68,8 +33,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/kv-cache.html" rel="next">
-<link href="../../book/part3/transformer-architecture.html" rel="prev">
+<link href="../../book/part5/synthetic_data.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,43 +78,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<meta property="og:title" content="6&nbsp; Attention Computation – From Prompt to Response">
+<meta property="og:title" content="22&nbsp; Tokenization During Training – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch2/journey_part3_ch2.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch3/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="6&nbsp; Attention Computation – From Prompt to Response">
+<meta property="og:image:alt" content="The journey through the Model Mind.">
+<meta name="twitter:title" content="22&nbsp; Tokenization During Training – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch2/journey_part3_ch2.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch3/journey.svg">
+<meta name="twitter:image:alt" content="The journey through the Model Mind.">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -325,7 +262,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/attention-computation.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_tokenization.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -423,7 +360,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
   </div>
 </li>
@@ -541,7 +478,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/training_tokenization.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/training_tokenization.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></span></a>
   </div>
 </li>
@@ -565,17 +502,20 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-quadratic-problem" id="toc-the-quadratic-problem" class="nav-link active" data-scroll-target="#the-quadratic-problem"><span class="header-section-number">6.1</span> The quadratic problem</a></li>
-  <li><a href="#what-the-gpu-actually-does-during-attention" id="toc-what-the-gpu-actually-does-during-attention" class="nav-link" data-scroll-target="#what-the-gpu-actually-does-during-attention"><span class="header-section-number">6.2</span> What the GPU actually does during attention</a></li>
-  <li><a href="#standard-attention-the-naive-computation" id="toc-standard-attention-the-naive-computation" class="nav-link" data-scroll-target="#standard-attention-the-naive-computation"><span class="header-section-number">6.3</span> Standard attention: the naive computation</a></li>
-  <li><a href="#flashattention" id="toc-flashattention" class="nav-link" data-scroll-target="#flashattention"><span class="header-section-number">6.4</span> FlashAttention</a></li>
-  <li><a href="#multi-head-attention-at-inference" id="toc-multi-head-attention-at-inference" class="nav-link" data-scroll-target="#multi-head-attention-at-inference"><span class="header-section-number">6.5</span> Multi-head attention at inference</a></li>
-  <li><a href="#the-kv-cache-at-inference" id="toc-the-kv-cache-at-inference" class="nav-link" data-scroll-target="#the-kv-cache-at-inference"><span class="header-section-number">6.6</span> The KV cache at inference</a></li>
-  <li><a href="#sparse-and-linear-attention" id="toc-sparse-and-linear-attention" class="nav-link" data-scroll-target="#sparse-and-linear-attention"><span class="header-section-number">6.7</span> Sparse and linear attention</a></li>
-  <li><a href="#ring-attention-and-sequence-parallelism" id="toc-ring-attention-and-sequence-parallelism" class="nav-link" data-scroll-target="#ring-attention-and-sequence-parallelism"><span class="header-section-number">6.8</span> Ring attention and sequence parallelism</a></li>
-  <li><a href="#attention-in-the-decode-loop-step-by-step" id="toc-attention-in-the-decode-loop-step-by-step" class="nav-link" data-scroll-target="#attention-in-the-decode-loop-step-by-step"><span class="header-section-number">6.9</span> Attention in the decode loop: step by step</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">6.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">6.11</span> Further reading</a></li>
+  <li><a href="#the-problem-that-tokenization-solves" id="toc-the-problem-that-tokenization-solves" class="nav-link active" data-scroll-target="#the-problem-that-tokenization-solves"><span class="header-section-number">22.1</span> The Problem That Tokenization Solves</a></li>
+  <li><a href="#byte-pair-encoding" id="toc-byte-pair-encoding" class="nav-link" data-scroll-target="#byte-pair-encoding"><span class="header-section-number">22.2</span> Byte Pair Encoding</a></li>
+  <li><a href="#wordpiece" id="toc-wordpiece" class="nav-link" data-scroll-target="#wordpiece"><span class="header-section-number">22.3</span> WordPiece</a></li>
+  <li><a href="#unigram-language-model-tokenization" id="toc-unigram-language-model-tokenization" class="nav-link" data-scroll-target="#unigram-language-model-tokenization"><span class="header-section-number">22.4</span> Unigram Language Model Tokenization</a></li>
+  <li><a href="#sentencepiece" id="toc-sentencepiece" class="nav-link" data-scroll-target="#sentencepiece"><span class="header-section-number">22.5</span> SentencePiece</a></li>
+  <li><a href="#vocabulary-size-the-fundamental-tradeoff" id="toc-vocabulary-size-the-fundamental-tradeoff" class="nav-link" data-scroll-target="#vocabulary-size-the-fundamental-tradeoff"><span class="header-section-number">22.6</span> Vocabulary Size: The Fundamental Tradeoff</a></li>
+  <li><a href="#special-tokens" id="toc-special-tokens" class="nav-link" data-scroll-target="#special-tokens"><span class="header-section-number">22.7</span> Special Tokens</a></li>
+  <li><a href="#tokenizer-training-data-and-its-consequences" id="toc-tokenizer-training-data-and-its-consequences" class="nav-link" data-scroll-target="#tokenizer-training-data-and-its-consequences"><span class="header-section-number">22.8</span> Tokenizer Training Data and Its Consequences</a></li>
+  <li><a href="#the-relationship-between-tokenizer-and-model-training" id="toc-the-relationship-between-tokenizer-and-model-training" class="nav-link" data-scroll-target="#the-relationship-between-tokenizer-and-model-training"><span class="header-section-number">22.9</span> The Relationship Between Tokenizer and Model Training</a></li>
+  <li><a href="#tokenizer-pathologies-and-failure-modes" id="toc-tokenizer-pathologies-and-failure-modes" class="nav-link" data-scroll-target="#tokenizer-pathologies-and-failure-modes"><span class="header-section-number">22.10</span> Tokenizer Pathologies and Failure Modes</a></li>
+  <li><a href="#tokenizer-compatibility-and-model-identity" id="toc-tokenizer-compatibility-and-model-identity" class="nav-link" data-scroll-target="#tokenizer-compatibility-and-model-identity"><span class="header-section-number">22.11</span> Tokenizer Compatibility and Model Identity</a></li>
+  <li><a href="#the-tiktoken-implementation" id="toc-the-tiktoken-implementation" class="nav-link" data-scroll-target="#the-tiktoken-implementation"><span class="header-section-number">22.12</span> The tiktoken Implementation</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">22.13</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">22.14</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -583,9 +523,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/attention-computation.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_tokenization.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></h1>
+<h1 class="title"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></h1>
 </div>
 
 
@@ -603,436 +543,343 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>When the model processes your prompt, how does each token decide what to look at and what does the hardware actually do to compute that?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How does a model’s vocabulary get built, and why does the choice of subword algorithm permanently shape everything the model can represent?</em></p>
 </blockquote>
 <hr>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch2/journey_part3_ch2.svg" class="img-fluid figure-img" style="width:100.0%">
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: The journey through the Model Mind.
-</figcaption>
-</figure>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong> <img src="figures/ch3/journey.svg" id="fig-progress" class="img-fluid" style="width:80.0%" alt="The journey through the Model Mind."></p>
+<p>The chapter on tokenization during inference explained how a trained tokenizer operates at inference time by applying chat templates, counting tokens, and managing context budgets. This chapter shifts upstream to examine how that tokenizer was created in the first place. Before model training begins, a separate tokenizer training process constructs the vocabulary file that every downstream component ultimately depends on.</p>
 </div>
-<p>In the previous chapter we introduced attention conceptually: queries, keys, values, dot products, softmax, weighted sum. This chapter covers what attention computation actually looks like on real hardware, under the constraints of latency, memory bandwidth, and concurrent requests.</p>
+</div>
+</div>
 <hr>
-<section id="the-quadratic-problem" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="the-quadratic-problem"><span class="header-section-number">6.1</span> The quadratic problem</h2>
-<p>Standard self-attention has a fundamental scaling property where both computation and memory grow quadratically with sequence length. For a sequence of <code>n</code> tokens:</p>
-<p><span class="math display">\[
-\begin{array}{l l}
-\text{Attention score matrix:} &amp; n \times n \\
-\text{Memory for scores:}     &amp; n^2 \times 2\ \text{bytes (BF16)} \\
-\text{Compute for scores:}    &amp; n^2 \times d_k\ \text{multiplications (}QK^\top\text{)} \\
-\text{Compute for output:}    &amp; n^2 \times d_v\ \text{multiplications (scores} \times V\text{)}
-\end{array}
-\]</span></p>
-<p>At small sequence lengths this is manageable:</p>
+<section id="the-problem-that-tokenization-solves" class="level2" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="the-problem-that-tokenization-solves"><span class="header-section-number">22.1</span> The Problem That Tokenization Solves</h2>
+<p>A language model is a function over sequences of discrete symbols. The choice of symbol set is not obvious. Three options present themselves immediately, each with a serious flaw.</p>
+<p><strong>Character-level tokenization</strong> treats every Unicode code point as a token. The vocabulary is tiny (roughly 100,000 characters in Unicode, though practical vocabularies are far smaller) and no out-of-vocabulary problem exists: any string is representable. The flaw is sequence length. The word “uncharacteristically” requires 20 tokens. A 2,048-token context window, measured in characters, holds roughly a paragraph. Self-attention cost scales quadratically with sequence length, so character-level models pay a steep computational price for what is, in practice, trivial structure: spelling.</p>
+<p><strong>Word-level tokenization</strong> goes to the other extreme. The model treats each whitespace-delimited word as a single token. This compresses sequences efficiently and aligns well with human intuition about linguistic units yet on the other hand the flaws are fundamental. First, vocabulary size: English alone has hundreds of thousands of distinct word forms, and that is before proper nouns, neologisms, and domain-specific terminology. A vocabulary large enough to be useful is also large enough to make the embedding table and output projection layer expensive. Second, and more seriously, any word not seen during training is unknown. A word-level model trained on English Wikipedia has never seen “COVID-19” or “zoombombing” or any company name coined after its training cutoff (2019 for this example). It cannot represent them; it can only produce a special <code>[UNK]</code> token, at which point the model has lost the input information entirely.</p>
+<p><strong>Subword tokenization</strong> resolves both problems by refusing to commit to either extreme. Common words appear as single tokens. Rare words are split into meaningful pieces (prefixes, suffixes, stems) that the model has seen in other contexts. The word “uncharacteristically” might become [“un”, “character”, “istic”, “ally”], four tokens, each of which carries recoverable meaning. An unseen technical term like “CRISPR” might become [“C”, “R”, “IS”, “PR”] which is not meaningful decomposition, but at least the characters are present and the model can condition on them.</p>
+<p>The choice of subword algorithm, and the vocabulary size it produces, is made once per model family. GPT-4 uses a vocabulary of roughly 100,000 tokens. LLaMA 3 uses 128,256 tokens. BERT uses 30,522 WordPiece tokens. These numbers are fixed before model training begins and cannot be changed without retraining the model from scratch. Every downstream decision like embedding table dimensions, output projection matrix size, how many tokens a document occupies, what the model can represent at all is downstream of this choice.</p>
+<hr>
+</section>
+<section id="byte-pair-encoding" class="level2" data-number="22.2">
+<h2 data-number="22.2" class="anchored" data-anchor-id="byte-pair-encoding"><span class="header-section-number">22.2</span> Byte Pair Encoding</h2>
+<p>Byte Pair Encoding (BPE) was introduced as a data compression algorithm in 1994 and adapted for neural machine translation by Sennrich et al.&nbsp;in 2016. It remains the dominant tokenization algorithm for large language models. GPT-2, GPT-3, GPT-4, LLaMA, Mistral, Falcon, and most other major models use BPE or a variant of it.</p>
+<section id="the-algorithm" class="level3" data-number="22.2.1">
+<h3 data-number="22.2.1" class="anchored" data-anchor-id="the-algorithm"><span class="header-section-number">22.2.1</span> The Algorithm</h3>
+<p>BPE training is an iterative merge procedure applied to a large text corpus. The algorithm:</p>
+<ol type="1">
+<li><p><strong>Initialize the vocabulary</strong> with the base symbol set. For text BPE, the base symbols are Unicode characters. For byte-level BPE (described below), the base symbols are the 256 byte values.</p></li>
+<li><p><strong>Represent the corpus</strong> as a sequence of base symbols. Typically the corpus is pre-tokenized into words by whitespace and punctuation, and each word is represented as a sequence of characters followed by a special end-of-word marker. GPT-2 uses <code>Ġ</code> (a space prefix) to distinguish word-initial tokens from word-internal ones; this matters because “ing” at the start of a word differs semantically from “ing” as a suffix.</p></li>
+<li><p><strong>Count all adjacent symbol pairs</strong> across the corpus.</p></li>
+<li><p><strong>Merge the most frequent pair.</strong> If (“e”, “r”) appears 47,000 times and no other pair appears more often, add “er” to the vocabulary and replace every occurrence of (“e”, “r”) in the corpus with the new token “er”.</p></li>
+<li><p><strong>Repeat</strong> until the target vocabulary size is reached.</p></li>
+</ol>
+<p>Each merge adds exactly one token to the vocabulary. A target vocabulary of 50,000 tokens (GPT-2’s size) requires 50,000 minus the number of base symbols merges.</p>
+<p>The result is a vocabulary in which the most frequent substrings in the training corpus are represented as single tokens. Common English words or morphemes appear whole while character sequences that the corpus rarely produces are represented by their constituent base symbols.</p>
+</section>
+<section id="byte-level-bpe" class="level3" data-number="22.2.2">
+<h3 data-number="22.2.2" class="anchored" data-anchor-id="byte-level-bpe"><span class="header-section-number">22.2.2</span> Byte-Level BPE</h3>
+<p>Standard BPE with Unicode characters still has a representation problem: Unicode has over a million code points, and any character not in the base vocabulary produces an error. GPT-2 addressed this with a conceptually simple fix: use all 256 byte values as the base vocabulary rather than Unicode characters. Any string, in any language or encoding, can be represented as a sequence of bytes. The BPE merge procedure then operates over bytes.</p>
+<p>This eliminates the out-of-vocabulary problem completely. A byte-level BPE tokenizer never encounters an input it cannot represent. The practical tradeoff is that languages not well-represented in the training corpus get inefficient tokenization: their common words are not merged into single tokens, so they occupy more tokens per word than English. A 2024 study found that GPT-4’s tokenizer encodes Amharic text using roughly 4–5× more tokens per character than English text, making API costs and context window utilization significantly worse for low-resource languages.</p>
+</section>
+<section id="learning-the-vocabulary-a-worked-example" class="level3" data-number="22.2.3">
+<h3 data-number="22.2.3" class="anchored" data-anchor-id="learning-the-vocabulary-a-worked-example"><span class="header-section-number">22.2.3</span> Learning the Vocabulary: A Worked Example</h3>
+<p>Consider a tiny corpus: “low lower newest widest”. After whitespace splitting and adding end-of-word markers, the initial representation is:</p>
+<pre><code>l o w &lt;/w&gt;         : 5 occurrences
+l o w e r &lt;/w&gt;     : 2 occurrences
+n e w e s t &lt;/w&gt;   : 6 occurrences
+w i d e s t &lt;/w&gt;   : 3 occurrences</code></pre>
+<p>Counting adjacent pairs across all occurrences:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Sequence length</th>
-<th>Score matrix</th>
-<th>Memory</th>
+<th>Pair</th>
+<th>Count</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>512 tokens</td>
-<td>512 × 512</td>
-<td>0.5 MB</td>
+<td>(e, s)</td>
+<td>9</td>
 </tr>
 <tr class="even">
-<td>2,048 tokens</td>
-<td>2,048 × 2,048</td>
-<td>8 MB</td>
+<td>(s, t)</td>
+<td>9</td>
 </tr>
 <tr class="odd">
-<td>8,192 tokens</td>
-<td>8,192 × 8,192</td>
-<td>128 MB</td>
+<td>(e, w)</td>
+<td>6</td>
 </tr>
 <tr class="even">
-<td>32,768 tokens</td>
-<td>32,768 × 32,768</td>
-<td>2 GB</td>
+<td>(l, o)</td>
+<td>7</td>
 </tr>
 <tr class="odd">
-<td>131,072 tokens</td>
-<td>131,072 × 131,072</td>
-<td>32 GB</td>
+<td>…</td>
+<td>…</td>
 </tr>
 </tbody>
 </table>
-<p>At 128k tokens on the other hand which is currently supported by several models the attention score matrix alone would require 32 GB of GPU memory per layer per head which means a model with 96-layer and 96 heads would need 96 × 96 × 32 GB = 295 TB and that is clearly impossible.</p>
-<p>In reality the score matrix is never actually materializes in practice with the help of FlashAttention but the compute still scales quadratically. Doubling the sequence length quadruples the attention computation and it is central cost driver for long-context inference.</p>
-<hr>
-</section>
-<section id="what-the-gpu-actually-does-during-attention" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="what-the-gpu-actually-does-during-attention"><span class="header-section-number">6.2</span> What the GPU actually does during attention</h2>
-<p>Understanding attention at the hardware level requires understanding two main bottlenecks in GPU computation, arithmetic throughput and memory bandwidth. <strong>Arithmetic throughput</strong> refers to how many floating-point operations per second the GPU can perform (an H100 delivers approximately 1,000 TFLOPS for BF16 matrix multiplications). <strong>Memory bandwidth</strong> refers to how fast data can be read/write from/to GPU high bandwidth memory (an H100 provides approximately 3.35 TB/s). The ratio between these, known as arithmetic intensity, determines whether a computation is compute-bound or memory-bandwidth-bound.</p>
-<p>For matrix multiplication, the main operation in attention and FFNs, large matrices have high arithmetic intensity and are compute-bound, while small matrices or element-wise operations have low arithmetic intensity and are memory-bandwidth-bound.</p>
-<p>During the decoding phase (processing one new token against the KV cache), attention is severely memory-bandwidth-bound. In this phase GPU must read the entire KV cache (potentially gigabytes of data) to compute attention scores for a single new token. The arithmetic work is tiny relative to the memory access while the GPU’s massive arithmetic throughput sits idle, waiting for data. This is the reason why decoding throughput scales with memory bandwidth, not arithmetic throughput and why increasing sequence length primarily increases memory pressure and not the compute pressure, during generation.</p>
-<hr>
-</section>
-<section id="standard-attention-the-naive-computation" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="standard-attention-the-naive-computation"><span class="header-section-number">6.3</span> Standard attention: the naive computation</h2>
-<p>Before FlashAttention, attention was computed in the obvious way:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard attention (naive)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Q: [seq_len, d_k]</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># K: [seq_len, d_k]</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># V: [seq_len, d_v]</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> Q <span class="op">@</span> K.T                          <span class="co"># [seq_len, seq_len] — written to HBM</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">/</span> math.sqrt(d_k)          <span class="co"># scaling — read/write from/to HBM</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> scores <span class="op">+</span> causal_mask             <span class="co"># masking — read/write from/to HBM</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> softmax(scores, dim<span class="op">=-</span><span class="dv">1</span>)          <span class="co"># softmax — read/write from/to HBM</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> scores <span class="op">@</span> V                       <span class="co"># [seq_len, d_v] — read/write from/to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Each step read/write from/to HBM. The score matrix of shape <code>[seq_len, seq_len]</code> is materialized in HBM multiple times during scaling, masking, and softmax.</p>
-<p>For a sequence of 8,192 tokens in BF16:</p>
-<ul>
-<li>Score matrix: 8,192 × 8,192 × 2 bytes = 128 MB</li>
-<li>Each read/write of the score matrix: 128 MB / 3.35 TB/s ≈ 38 microseconds</li>
-<li>Across multiple reads and writes: hundreds of microseconds in memory traffic alone</li>
-</ul>
-<p>The actual arithmetic is fast, while the movement of data between compute units and HBM is the bottleneck, which making this a classic I/O-bound computation.</p>
-<hr>
-</section>
-<section id="flashattention" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="flashattention"><span class="header-section-number">6.4</span> FlashAttention</h2>
-<p>FlashAttention (Dao et al., 2022) computes exact attention which is basically same numerical result as standard attention, while using dramatically less memory and running significantly faster. The trick is reorganizing the computation to minimize HBM traffic.</p>
-<section id="the-key-insight-tiling" class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="the-key-insight-tiling"><span class="header-section-number">6.4.1</span> The key insight: tiling</h3>
-<p>FlashAttention divides the Q, K, and V matrices into tiles that fit in SRAM, the fast on-chip memory sitting directly next to the compute units, with much higher bandwidth than HBM but much smaller capacity:</p>
-<pre><code>SRAM bandwidth:  ~20 TB/s   (fast, ~50 MB on H100)
-HBM bandwidth:   ~3.35 TB/s (slower, 80 GB on H100)</code></pre>
-<p>By loading tiles into SRAM and performing the full attention computation on those tiles before writing results back to HBM, FlashAttention reduces HBM reads and writes from O(n²) to O(n) while the score matrix is never written to HBM at all.</p>
-</section>
-<section id="online-softmax" class="level3" data-number="6.4.2">
-<h3 data-number="6.4.2" class="anchored" data-anchor-id="online-softmax"><span class="header-section-number">6.4.2</span> Online softmax</h3>
-<p>The challenge: softmax requires knowing the maximum value across all scores in a row before normalizing while in the tiled computation, you process one tile at a time without seeing the full row. How do you compute correct softmax without materializing the full score matrix?</p>
-<p>FlashAttention uses an online softmax algorithm that maintains running statistics (the running maximum and running sum of exponentials) and updates them as each tile is processed. After all tiles, the statistics are complete and the output is correctly normalized:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>running_max <span class="op">=</span> <span class="op">-</span>infinity</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_sum <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>running_output <span class="op">=</span> zeros(d_v)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> each key<span class="op">/</span>value tile (K_tile, V_tile):</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    scores_tile <span class="op">=</span> Q_row <span class="op">@</span> K_tile.T <span class="op">/</span> sqrt(d_k)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    tile_max <span class="op">=</span> <span class="bu">max</span>(scores_tile)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update running statistics</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    new_max <span class="op">=</span> <span class="bu">max</span>(running_max, tile_max)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    running_sum <span class="op">=</span> (running_sum <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                  <span class="op">+</span> <span class="bu">sum</span>(exp(scores_tile <span class="op">-</span> new_max)))</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    running_output <span class="op">=</span> (running_output <span class="op">*</span> exp(running_max <span class="op">-</span> new_max)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                     <span class="op">+</span> exp(scores_tile <span class="op">-</span> new_max) <span class="op">@</span> V_tile)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    running_max <span class="op">=</span> new_max</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Final normalization</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> running_output <span class="op">/</span> running_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This procedure produces the identical result to naive attention while never storing more than one tile’s worth of scores at a time.</p>
-</section>
-<section id="flashattention-in-practice" class="level3" data-number="6.4.3">
-<h3 data-number="6.4.3" class="anchored" data-anchor-id="flashattention-in-practice"><span class="header-section-number">6.4.3</span> FlashAttention in practice</h3>
-<p>FlashAttention is <span class="math inline">\(2\text{--}4×\)</span> faster than standard attention on typical sequence lengths, with the speedup increasing as sequences grow longer and more importantly, its memory usage is O(n) rather than O(n²).</p>
+<p>The pair (e, s) and (s, t) are tied at 9. The algorithm picks one (say, (e, s)) and merges:</p>
+<pre><code>l o w &lt;/w&gt;         : 5
+l o w e r &lt;/w&gt;     : 2
+n e w es t &lt;/w&gt;    : 6
+w i d es t &lt;/w&gt;    : 3</code></pre>
+<p>New vocabulary: {l, o, w, e, r, n, s, t, i, d, , <strong>es</strong>}. Next iteration, (es, t) appears 9 times and is the top pair:</p>
+<pre><code>n e w est &lt;/w&gt;     : 6
+w i d est &lt;/w&gt;     : 3</code></pre>
+<p>Vocabulary adds <strong>est</strong>. After a few more merges, “low” might become a single token. After thousands of merges on a real corpus, common English words are single tokens and common morphemes are single tokens, while rare strings remain as byte sequences.</p>
 <hr>
 </section>
 </section>
-<section id="multi-head-attention-at-inference" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="multi-head-attention-at-inference"><span class="header-section-number">6.5</span> Multi-head attention at inference</h2>
-<p>Multi-head attention runs <code>h</code> independent attention operations in parallel. For a model with <code>h = 96</code> heads and <code>d_model = 12,288</code>:</p>
-<p><span class="math display">\[
-\begin{aligned}
-d_k = d_v &amp;= \frac{d_{\text{model}}}{h} = 128 \quad \text{(per head)}
-\\[14pt]
-\textbf{Projections:} \quad &amp; \\
-Q &amp;: [n,\, 12288] \;@\; [12288,\, 96 \times 128] \;\to\; [n,\, 96,\, 128] \\
-K &amp;: [n,\, 12288] \;@\; [12288,\, 96 \times 128] \;\to\; [n,\, 96,\, 128] \\
-V &amp;: [n,\, 12288] \;@\; [12288,\, 96 \times 128] \;\to\; [n,\, 96,\, 128]
-\\[14pt]
-\textbf{Per-head attention:} \quad &amp; \\
-\text{scores} &amp;= \frac{Q_h K_h^\top}{\sqrt{128}} \;\to\; [n,\, n] \\[6pt]
-\text{output} &amp;= \text{softmax}(\text{scores})\, V_h \;\to\; [n,\, 128]
-\\[14pt]
-\textbf{Concatenate:} \quad &amp; [n,\, 96,\, 128] \;\to\; [n,\, 12288] \\[4pt]
-\textbf{Output proj:} \quad &amp; [n,\, 12288] \;@\; [12288,\, 12288] \;\to\; [n,\, 12288]
-\end{aligned}
-\]</span></p>
-<p>In practice, all 96 heads are computed in parallel by treating the head dimension as a batch dimension. The Q, K, V projections produce batched tensors processed simultaneously by the matrix multiplication kernel.</p>
-<section id="mha-vs.-mqa-vs.-gqa" class="level3" data-number="6.5.1">
-<h3 data-number="6.5.1" class="anchored" data-anchor-id="mha-vs.-mqa-vs.-gqa"><span class="header-section-number">6.5.1</span> MHA vs.&nbsp;MQA vs.&nbsp;GQA</h3>
-<p><strong>Multi-Head Attention (MHA)</strong> uses separate Q, K, and V projection matrices for each head. While this increases expressiveness, it is memory-intensive because each head requires its own stored K and V tensors in the KV cache.</p>
-<p><strong>Multi-Query Attention (MQA)</strong> (Shazeer, 2019): All attention heads share a single set of K and V projections, while Q remains separate per head. This significantly reduces KV cache usage by a factor of <em>h</em>, for example, a 96-head model achieves a ~96× smaller cache and in general, this comes with only a modest impact on output quality.</p>
-<p><span class="math display">\[
-\begin{aligned}
-\textbf{MHA:}\quad &amp; Q \in \mathbb{R}^{n \times h \times d_k},\; K \in \mathbb{R}^{n \times h \times d_k},\; V \in \mathbb{R}^{n \times h \times d_v} \;\Rightarrow\; \text{KV cache} \propto 2 \cdot h \cdot d_k \\[8pt]
-\textbf{MQA:}\quad &amp; Q \in \mathbb{R}^{n \times h \times d_k},\; K \in \mathbb{R}^{n \times 1 \times d_k},\; V \in \mathbb{R}^{n \times 1 \times d_v} \;\Rightarrow\; \text{KV cache} \propto 2 \cdot d_k
-\end{aligned}
-\]</span></p>
-<p><strong>Grouped-Query Attention (GQA)</strong> (Ainslie et al., 2023): the middle ground in which Heads are divided into groups; each group shares one K and V projection:</p>
+<section id="wordpiece" class="level2" data-number="22.3">
+<h2 data-number="22.3" class="anchored" data-anchor-id="wordpiece"><span class="header-section-number">22.3</span> WordPiece</h2>
+<p>WordPiece, developed at Google and used in BERT and its derivatives, is conceptually similar to BPE but differs in the merge criterion. Where BPE selects the pair with the highest raw frequency, WordPiece selects the pair that maximizes the likelihood of the training corpus under the language model induced by the current vocabulary.</p>
+<p>Formally, WordPiece scores each candidate merge (A, B) → AB as:</p>
+<pre><code>score(A, B) = count(AB) / (count(A) × count(B))</code></pre>
+<p>This is the pointwise mutual information of A and B. A merge is favored not just because AB is frequent, but because the co-occurrence of A and B is surprising given their individual frequencies. The pair (“un”, “##common”) would be favored over (“e”, “##r”) even if the latter is more frequent, because the combination “uncommon” is much more predictable from its parts than “er” is from “e” and “r”.</p>
+<p>WordPiece uses a <code>##</code> prefix convention to mark tokens that continue a word rather than beginning one. The token <code>##ing</code> is the continuation “ing”, while <code>ing</code> is the word-initial “ing”. This makes it easy to recover word boundaries from a token sequence.</p>
+<p>The practical behavior of BPE and WordPiece is similar for large vocabularies on large corpora. BERT’s 30,522-token WordPiece vocabulary and GPT-2’s 50,257- token BPE vocabulary both segment English text into roughly 1.3 tokens per word. The engineering differences matter more for implementation: WordPiece vocabularies are trained in a top-down fashion with a fixed vocabulary size target, while BPE proceeds bottom-up.</p>
+<hr>
+</section>
+<section id="unigram-language-model-tokenization" class="level2" data-number="22.4">
+<h2 data-number="22.4" class="anchored" data-anchor-id="unigram-language-model-tokenization"><span class="header-section-number">22.4</span> Unigram Language Model Tokenization</h2>
+<p>The Unigram Language Model algorithm, introduced by Kudo (2018) and used in SentencePiece (which underlies T5, mT5, ALBERT, and XLNet), approaches the problem differently. Rather than building a vocabulary through iterative merging, Unigram starts with a large candidate vocabulary and iteratively prunes it.</p>
+<p>The procedure:</p>
+<ol type="1">
+<li><p><strong>Initialize</strong> with a large vocabulary (typically 10–100× the target size) containing all substrings that appear with sufficient frequency in the corpus.</p></li>
+<li><p><strong>Train a unigram language model</strong> over the current vocabulary: assign each token a probability proportional to its frequency.</p></li>
+<li><p><strong>For each token</strong>, compute how much the corpus likelihood would decrease if that token were removed from the vocabulary. Tokens whose removal causes little likelihood decrease are candidates for pruning.</p></li>
+<li><p><strong>Remove the bottom p%</strong> of tokens (typically 10–20%) ranked by their likelihood contribution.</p></li>
+<li><p><strong>Repeat</strong> until the target vocabulary size is reached.</p></li>
+</ol>
+<p>The Unigram model defines the probability of a tokenization as the product of the probabilities of its constituent tokens, summed over all possible tokenizations using dynamic programming. At inference time, the tokenizer finds the most probable tokenization of each input string.</p>
+<p>The key advantage of the Unigram model is that it naturally handles tokenization ambiguity and can assign probabilities to multiple tokenizations of the same string. This enables subword regularization: during training, instead of always using the single most probable tokenization, the model is presented with multiple different tokenizations of the same input, sampled according to their probabilities. This acts as a form of data augmentation and has been shown to improve robustness, particularly for morphologically rich languages.</p>
+<hr>
+</section>
+<section id="sentencepiece" class="level2" data-number="22.5">
+<h2 data-number="22.5" class="anchored" data-anchor-id="sentencepiece"><span class="header-section-number">22.5</span> SentencePiece</h2>
+<p>SentencePiece is not a tokenization algorithm but a toolkit, developed by Kudo and Richardson at Google, that implements both BPE and Unigram in a language-agnostic framework. Its key design decision: it tokenizes raw text directly, without requiring a pre-tokenization step that splits on whitespace.</p>
+<p>Languages like Chinese, Japanese, and Thai have no whitespace between words. Applying a whitespace-splitting pre-tokenizer to Chinese text produces a sequence of individual characters, which is not a useful prior for BPE merging. SentencePiece treats the input as a sequence of Unicode characters and learns its own whitespace handling. The space character receives its own representation: typically <code>▁</code> (U+2581, a lower one-eighth block), which appears as a prefix on word-initial tokens.</p>
+<p>LLaMA 1 and LLaMA 2 use a SentencePiece BPE tokenizer with a vocabulary of 32,000 tokens. LLaMA 3 switched to a tiktoken-based BPE tokenizer with 128,256 tokens, a 4× vocabulary expansion motivated partly by better multilingual coverage and partly by reduced token fertility (tokens per word) for code.</p>
+<hr>
+</section>
+<section id="vocabulary-size-the-fundamental-tradeoff" class="level2" data-number="22.6">
+<h2 data-number="22.6" class="anchored" data-anchor-id="vocabulary-size-the-fundamental-tradeoff"><span class="header-section-number">22.6</span> Vocabulary Size: The Fundamental Tradeoff</h2>
+<p>Vocabulary size is a hyperparameter with pervasive consequences. The embedding table has shape [vocab_size, d_model] and the output projection (llm_head) has shape [d_model, vocab_size]. For a model with d_model = 4,096 (LLaMA 2 7B), each additional 1,000 vocabulary tokens adds 4,096,000 parameters to the embedding table and another 4,096,000 to the output projection, roughly 8M parameters, stored in float16, occupying 16 MB.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Vocabulary Size</th>
+<th>d_model</th>
+<th>Embedding + LM Head</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GPT-2</td>
+<td>50,257</td>
+<td>768</td>
+<td>77M params</td>
+</tr>
+<tr class="even">
+<td>BERT-base</td>
+<td>30,522</td>
+<td>768</td>
+<td>47M params</td>
+</tr>
+<tr class="odd">
+<td>LLaMA 2 7B</td>
+<td>32,000</td>
+<td>4,096</td>
+<td>262M params</td>
+</tr>
+<tr class="even">
+<td>LLaMA 3 8B</td>
+<td>128,256</td>
+<td>4,096</td>
+<td>1,051M params</td>
+</tr>
+<tr class="odd">
+<td>GPT-4 (estimated)</td>
+<td>~100,000</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>T5-base</td>
+<td>32,128</td>
+<td>768</td>
+<td>49M params</td>
+</tr>
+</tbody>
+</table>
+<p>For LLaMA 3 8B, the embedding and lm_head parameters represent roughly 13% of the total 8B parameter count which is not negligible. Vocabulary size is essentially a direct tax on model size.</p>
+<p>The tradeoffs in both directions:</p>
+<p><strong>Larger vocabulary:</strong> - Lower sequence length for the same text (higher compression) - Shorter effective context window in characters - Better representation of rare words and domain-specific terms - Better multilingual coverage without fertility explosion - Larger embedding and lm_head matrices - Sparser training signal: rare tokens appear less often during training</p>
+<p><strong>Smaller vocabulary:</strong> - Longer sequences for the same text - More tokens consumed per concept, reducing effective context - Higher fertility for code, math, and non-English text - Smaller, cheaper embedding and lm_head layers - Denser training signal: each token is seen more often</p>
+<p>The sweet spot has shifted upward over time. GPT-2 (2019) used 50,257 tokens. The field has since converged on the 100k–150k range for general-purpose models. The main driver is multilingual coverage: a 32,000-token vocabulary trained on English-dominated text tokenizes many other languages at 3–5× English fertility, which is a meaningful usability degradation.</p>
+<hr>
+</section>
+<section id="special-tokens" class="level2" data-number="22.7">
+<h2 data-number="22.7" class="anchored" data-anchor-id="special-tokens"><span class="header-section-number">22.7</span> Special Tokens</h2>
+<p>Every tokenizer reserves a set of token IDs for special purposes that are not learned by the BPE or Unigram procedure. These special tokens are added after vocabulary training and assigned IDs, typically at the ends of the ID range to avoid collision with learned tokens.</p>
+<p>Common special tokens and their functions:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 21%">
-<col style="width: 42%">
-<col style="width: 36%">
+<col style="width: 24%">
+<col style="width: 44%">
+<col style="width: 31%">
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Component</strong></th>
-<th><strong>Shape</strong></th>
-<th><strong>Details</strong></th>
+<th>Token</th>
+<th>Common forms</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Q (Query)</strong></td>
-<td><span class="math inline">\([n, 96, d_k]\)</span></td>
-<td>per head</td>
+<td>Beginning of sequence</td>
+<td><code>&lt;s&gt;</code>, <code>&lt;\|begin_of_text\|&gt;</code></td>
+<td>Marks the start of a context</td>
 </tr>
 <tr class="even">
-<td><strong>K (Key)</strong></td>
-<td><span class="math inline">\([n, 8, d_k]\)</span></td>
-<td>per group</td>
+<td>End of sequence</td>
+<td><code>&lt;/s&gt;</code>, <code>&lt;\|eot_id\|&gt;</code>, <code>&lt;\|endoftext\|&gt;</code></td>
+<td>Signals generation completion</td>
 </tr>
 <tr class="odd">
-<td><strong>V (Value)</strong></td>
-<td><span class="math inline">\([n, 8, d_v]\)</span></td>
-<td>per group</td>
+<td>Padding</td>
+<td><code>&lt;pad&gt;</code>, <code>[PAD]</code></td>
+<td>Fills sequences to uniform length in batches</td>
 </tr>
 <tr class="even">
-<td><strong>KV Cache</strong></td>
-<td><span class="math inline">\(\propto 2 × 8 × d_k\)</span></td>
-<td>12× smaller than MHA</td>
+<td>Unknown</td>
+<td><code>[UNK]</code></td>
+<td>Represents out-of-vocabulary tokens (absent in byte-level BPE)</td>
+</tr>
+<tr class="odd">
+<td>Mask</td>
+<td><code>[MASK]</code></td>
+<td>Used in masked language model training (BERT-style)</td>
+</tr>
+<tr class="even">
+<td>Separator</td>
+<td><code>[SEP]</code></td>
+<td>Separates segments in BERT-style dual-input tasks</td>
+</tr>
+<tr class="odd">
+<td>Classification</td>
+<td><code>[CLS]</code></td>
+<td>BERT’s pooling token; pooled for classification tasks</td>
+</tr>
+<tr class="even">
+<td>Role markers</td>
+<td><code>&lt;\|user\|&gt;</code>, <code>&lt;\|assistant\|&gt;</code>, <code>&lt;\|system\|&gt;</code></td>
+<td>Chat template structure</td>
+</tr>
+<tr class="odd">
+<td>Tool call tokens</td>
+<td><code>&lt;tool_call&gt;</code>, <code>&lt;\|python_tag\|&gt;</code></td>
+<td>Structured tool use in instruction-tuned models</td>
 </tr>
 </tbody>
 </table>
-<p>LLaMA 2 70B uses GQA with 8 KV heads and Mistral 7B uses GQA with 8 KV heads. Quality loss compared to MHA is negligible on standard benchmarks while the KV cache reduction is significant for serving.</p>
+<p>The design of special tokens matters for fine-tuning stability. If a special token like <code>&lt;\|assistant\|&gt;</code> appears in natural text (someone writing about the token itself), the model may behave unpredictably. In practice, the angle-bracket or pipe-bracket formats were chosen specifically because they are rare in natural text. LLaMA 3 uses a more elaborate special token scheme with 256 reserved positions (<code>&lt;\|reserved_special_token_0\|&gt;</code> through <code>&lt;\|reserved_special_token_250\|&gt;</code>) to allow future special token additions without changing the vocabulary size.</p>
 <hr>
 </section>
-</section>
-<section id="the-kv-cache-at-inference" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="the-kv-cache-at-inference"><span class="header-section-number">6.6</span> The KV cache at inference</h2>
-<p>During decoding, the model generates one token at a time and at each step, this new token must attend to all previous tokens. Recomputing the K and V vectors for all previous tokens at every step would be extremely wasteful due to the fact that those tokens have not changed, so their projections have not changed either.</p>
-<p>The KV cache stores K and V tensors for all previous tokens and reuses them at each generation step. Only the new token’s Q, K, V vectors need to be computed fresh. This is covered in full detail in chapter REFF nevertheless the momory cost understanding will be discussed here</p>
-<section id="kv-cache-memory-per-token" class="level3" data-number="6.6.1">
-<h3 data-number="6.6.1" class="anchored" data-anchor-id="kv-cache-memory-per-token"><span class="header-section-number">6.6.1</span> KV cache memory per token</h3>
-<p>For LLaMA 2 70B (L=80 layers, 8 KV heads, d_k=128, BF16):</p>
-<p>Per token per layer: <span class="math inline">\(2 × 8 × 128 × 2\)</span> bytes = 4 KB</p>
-<p>Per token total: <span class="math inline">\(4 × 80\)</span> layers = 320 KB</p>
-<p>For a 4,096-token sequence: 320 KB <span class="math inline">\(×\)</span> 4,096 ≈ <strong>1.28 GB of KV cache</strong> per sequence. At batch size 64 concurrent sequences: 64 × 1.28 GB = 82 GB which is more than the 80 GB on an H100. This is the reason KV cache management is the central serving constraint for long-context workloads.</p>
-</section>
-<section id="prefill-vs.-decode-attention" class="level3" data-number="6.6.2">
-<h3 data-number="6.6.2" class="anchored" data-anchor-id="prefill-vs.-decode-attention"><span class="header-section-number">6.6.2</span> Prefill vs.&nbsp;decode attention</h3>
-<p>During prefill (processing the input prompt), all tokens’ K and V vectors are computed simultaneously and written to the KV cache it is a batch matrix multiplication, efficient and compute-bound. On the othe hand during decoding (generating output), each new token’s K and V are computed and appended to the cache, then attention is computed between that single new token’s Q and the full KV cacheand it is a vector-matrix multiply, memory-bandwidth-bound:</p>
-<pre><code>Prefill: [n_prompt, d_k] @ [d_k, n_prompt]      → large matmul, compute-bound
-Decode:  [1, d_k] @ [d_k, n_prompt + n_gen]     → vector-matrix, bandwidth-bound</code></pre>
-<p>This asymmetry is why decoding is slower per token than prefill, and why disaggregated serving (separate hardware for prefill and decode phases) is considered as an active area of optimization.</p>
+<section id="tokenizer-training-data-and-its-consequences" class="level2" data-number="22.8">
+<h2 data-number="22.8" class="anchored" data-anchor-id="tokenizer-training-data-and-its-consequences"><span class="header-section-number">22.8</span> Tokenizer Training Data and Its Consequences</h2>
+<p>The tokenizer vocabulary reflects the distribution of the corpus used to train it. This is not a detail; it is a design choice with first-order effects on model behavior.</p>
+<p><strong>Code.</strong> A model trained primarily on natural text will have a tokenizer with poor code fertility. Python keywords might be single tokens, but multi-character operators like <code>!=</code>, <code>&lt;=</code>, and <code>+=</code> might split. Indentation whitespace (significant in Python) gets tokenized as a sequence of space tokens, consuming context budget for what is purely structural information. Code-specialized models (CodeLlama, Starcoder, DeepSeek-Coder) typically add code-specific merges to their tokenizer or use a tokenizer retrained on a code-heavy corpus. The Starcoder tokenizer allocates specific tokens for common indentation patterns (two spaces, four spaces, eight spaces) as single tokens.</p>
+<p><strong>Mathematics.</strong> Mathematical notation is hostile to standard tokenizers. Expressions like <code>\frac{d}{dx}</code> or <code>\mathbb{R}^{n \times n}</code> fragment into many tokens, each individually meaningless. The number “3.14159265” might become [“3”, “.”, “1”, “4”, “1”, “5”, “9”, “2”, “6”, “5”], ten tokens for ten digits. Models like Minerva (trained on arXiv and math textbooks) benefit from tokenizers that treat common LaTeX constructs as single units.</p>
+<p><strong>Numbers.</strong> How numbers tokenize has non-obvious arithmetic consequences. If “123” is a single token but “124” splits as [“12”, “4”], the model’s ability to generalize numerical relationships is compromised. The model must learn that the token “123” is numerically close to “12” + “4”,<br>
+a fact that is not implicit in the token IDs. Some tokenization schemes (notably those used for models specialized in arithmetic) tokenize digits individually to ensure that positional arithmetic generalizes correctly.</p>
+<p><strong>Non-English languages.</strong> As noted above, a tokenizer trained primarily on English text imposes high token fertility on other languages. This is an active area of remediation: mT5, XLM-RoBERTa, and BLOOM trained their tokenizers on multilingual corpora with careful sampling to equalize fertility across languages. BLOOM’s tokenizer was trained on a 341 billion token corpus balanced across 46 languages plus code.</p>
 <hr>
 </section>
-</section>
-<section id="sparse-and-linear-attention" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="sparse-and-linear-attention"><span class="header-section-number">6.7</span> Sparse and linear attention</h2>
-<p>The quadratic cost of standard attention has motivated significant research into more efficient alternatives yet None has been able to displace full attention in frontier models, but several are worth understanding.</p>
-<section id="sparse-attention" class="level3" data-number="6.7.1">
-<h3 data-number="6.7.1" class="anchored" data-anchor-id="sparse-attention"><span class="header-section-number">6.7.1</span> Sparse attention</h3>
-<p>Instead of every token attending to every other token, sparse attention restricts each token to a subset of positions:</p>
-<p><strong>Local window attention</strong>: each token attends only to the surrounding <code>w</code> tokens which reduces the complexity to O(n × w). With this approach the information still can propagate across long distances through multiple layers of local attention.</p>
-<p><strong>Strided attention</strong>: alternating layers use different patterns in which some layers use local windows and some use strided patterns (attend every k steps) allowing attention to distant tokens. Used in Longformer and BigBird.</p>
-<p><strong>Sliding window with global tokens</strong>: certain tokens (typically the first ones) attend to all other tokens and are attended to by all others. These global tokens propagate long-range information while the rest of the sequence uses local attention.</p>
-<p>The limitation: the sparsity pattern must be specified in advance. If it does not match the actual information dependencies in the data, quality degrades. Full attention is flexible that helps the model to learn any pattern which is why it has remained dominant.</p>
-</section>
-<section id="linear-attention" class="level3" data-number="6.7.2">
-<h3 data-number="6.7.2" class="anchored" data-anchor-id="linear-attention"><span class="header-section-number">6.7.2</span> Linear attention</h3>
-<p>The key idea behind <strong>linear attention</strong> is to reinterpret softmax attention as a kernel operation whose structure allows the order of computation to change.</p>
-<p>Ignoring scaling and normalization constants for clarity, the softmax attention weight between tokens can be written as</p>
-<p><span class="math display">\[
-A_{ij} = \exp(q_i^\top k_j).
-\]</span></p>
-<p>The attention output for token <span class="math inline">\(i\)</span> therefore becomes</p>
-<p><span class="math display">\[
-\text{output}_i
-=
-\frac{
-\sum_j \exp(q_i^\top k_j)\, v_j
-}{
-\sum_j \exp(q_i^\top k_j)
-}.
-\]</span></p>
-<p>This reveals that attention is fundamentally a <strong>kernel similarity</strong> <span class="math inline">\(\kappa(q_i,k_j) = \exp(q_i^\top k_j)\)</span> meaning attention computes a weighted kernel regression over values.</p>
-<p>With linear attention we can assume that this exponential kernel can be approximated by an inner product in a feature space, <span class="math inline">\(\exp(q^\top k) \approx \phi(q)^\top \phi(k)\)</span>, where the feature map <span class="math inline">\(\phi:\mathbb{R}^d \rightarrow \mathbb{R}^{d_\phi}\)</span> embeds queries and keys into a space where their similarity become linear and substituting this approximation into attention gives</p>
-<p><span class="math display">\[
-\text{output}_i
-=
-\frac{
-\sum_j
-\phi(q_i)^\top \phi(k_j)\, v_j
-}{
-\sum_j
-\phi(q_i)^\top \phi(k_j)
-}.
-\]</span></p>
-<p>Because <span class="math inline">\(\phi(q_i)\)</span> does not depend on <span class="math inline">\(j\)</span>, it can be factored outside the sums:</p>
-<p><span class="math display">\[
-\text{output}_i
-=
-\frac{
-\phi(q_i)^\top
-\sum_j \phi(k_j) v_j^\top
-}{
-\phi(q_i)^\top
-\sum_j \phi(k_j)
-}.
-\]</span></p>
-<p>All interactions with the sequence are now contained in two global statistics,</p>
-<p><span class="math display">\[
-S=\sum_j \phi(k_j)v_j^\top,
-\qquad
-z=\sum_j \phi(k_j),
-\]</span></p>
-<p>so the output becomes</p>
-<p><span class="math display">\[
-\text{output}_i
-=
-\frac{\phi(q_i)^\top S}{\phi(q_i)^\top z}.
-\]</span></p>
-<p>Stacking all queries yields the linear attention form</p>
-<p><span class="math display">\[
-\boxed{
-\text{Attn}(Q,K,V)
-=
-\phi(Q)\big(\phi(K)^\top V\big)
-}
-\quad\text{(up to normalization)}.
-\]</span></p>
-<p>The crucial consequence is that computation can be reordered:</p>
-<p><span class="math display">\[
-(QK^\top)V \;\;\longrightarrow\;\;
-\phi(Q)\big(\phi(K)^\top V\big),
-\]</span></p>
-<p>allowing the key-value product to be computed once and reused for all queries.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 21%">
-<col style="width: 65%">
-<col style="width: 12%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Method</th>
-<th>Formula</th>
-<th>Complexity</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Standard attention</td>
-<td><span class="math inline">\(\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V\)</span></td>
-<td><span class="math inline">\(O(n^2)\)</span></td>
-</tr>
-<tr class="even">
-<td>Linear attention</td>
-<td><span class="math inline">\(\phi(Q)\big(\phi(K)^\top V\big)\)</span></td>
-<td><span class="math inline">\(O(n)\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>The limitation is that the approximation works for some tasks but degrades on others, particularly tasks requiring precise comparison of specific tokens. Softmax produces a peaky distribution (concentrating attention on a small number of tokens) which is important for retrieval-like tasks that linear approximations cannot replicate faithfully.</p>
-</section>
-<section id="state-space-models-and-hybrid-architectures" class="level3" data-number="6.7.3">
-<h3 data-number="6.7.3" class="anchored" data-anchor-id="state-space-models-and-hybrid-architectures"><span class="header-section-number">6.7.3</span> State space models and hybrid architectures</h3>
-<p>Another direction for scaling sequence models is to move away from attention completely and instead model sequences through <strong>learned dynamical systems</strong>. State space models (SSMs) replace pairwise token interaction with a recurrent state that evolves over time, allowing sequences to be processed in linear time.</p>
-<p>Rather than computing interactions between all tokens, an SSM maintains a compact hidden state updated sequentially,</p>
-<p><span class="math display">\[
-h_t = A h_{t-1} + B x_t, \qquad
-y_t = C h_t,
-\]</span></p>
-<p>so information is carried forward through the state instead of recomputed via an attention matrix. Models such as Mamba achieve <span class="math inline">\(O(n)\)</span> computation and memory while retaining long-range dependency modeling, since past context is compressed into the evolving state.</p>
-<p>Hybrid architectures combine both paradigms. Instead of choosing between attention and recurrence, models like Jamba and Griffin interleave attention layers with SSM layers. Attention provides flexible global reasoning when precise token interactions matter, while SSM blocks handle long-context processing efficiently by propagating information through state updates.</p>
-<p>These hybrid designs represent an active research direction: as context lengths grow, future architectures may rely less on dense attention and more on mixtures of attention, recurrence, and continuous-time sequence modeling.</p>
+<section id="the-relationship-between-tokenizer-and-model-training" class="level2" data-number="22.9">
+<h2 data-number="22.9" class="anchored" data-anchor-id="the-relationship-between-tokenizer-and-model-training"><span class="header-section-number">22.9</span> The Relationship Between Tokenizer and Model Training</h2>
+<p>The tokenizer training run is separate from and prior to the model training run. It proceeds as follows:</p>
+<ol type="1">
+<li><p><strong>Collect a corpus</strong> representative of the model’s intended data distribution. For GPT-2, this was WebText (40GB of web text). For LLaMA 3, it was a 15.6 trillion token multilingual corpus. The tokenizer training corpus need not be identical to the model training corpus but should have the same distributional properties.</p></li>
+<li><p><strong>Run the tokenization algorithm</strong> (BPE, WordPiece, or Unigram) to target vocabulary size. This is computationally cheap relative to model training, a vocabulary of 100,000 tokens can be constructed from a multi-billion-token corpus in a few hours on a single machine.</p></li>
+<li><p><strong>Save the vocabulary file</strong> (a JSON or SentencePiece <code>.model</code> file mapping token strings to integer IDs) and the merge rules (for BPE, an ordered list of all merges performed).</p></li>
+<li><p><strong>Use this tokenizer</strong> to convert all training data into token ID sequences before model training begins. The model training loop never sees raw text, only integer sequences.</p></li>
+</ol>
+<p>This separation has an important implication: the tokenizer is frozen for the lifetime of the model. If the model is later fine-tuned on a domain with different vocabulary characteristics (medical text, legal text, a new programming language), the tokenizer cannot be updated without rebuilding the embedding table from scratch. This is one reason why large vocabulary sizes and multilingual tokenizer training have become standard practice: they reduce the probability that a downstream use case encounters catastrophic fertility problems.</p>
+<p>The interaction between tokenization and the training objective is subtle. Next-token prediction trains the model to predict the next token ID given all preceding token IDs. The model learns statistics over tokens, not characters or words. If “unfortunately” is a single token, the model learns a rich representation for it. If “unfortunately” splits as [“un”, “fort”, “unately”], the model must learn the composition across three prediction steps. Neither is obviously worse (the model can learn either way) but the representations that emerge are different.</p>
 <hr>
 </section>
-</section>
-<section id="ring-attention-and-sequence-parallelism" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="ring-attention-and-sequence-parallelism"><span class="header-section-number">6.8</span> Ring attention and sequence parallelism</h2>
-<p>For extremely long sequences, even FlashAttention with <span class="math inline">\(O(n)\)</span> memory may exceed a single GPU’s capacity with the help of Ring attention the sequence distributions can go across multiple GPUs.</p>
-<p>Each GPU holds a slice of the Q, K, and V matrices. The attention computation proceeds in a ring: each GPU computes a partial attention using its local Q slice against the current K/V slice, then passes the K/V to the next GPU while receiving the previous GPU’s K/V:</p>
-<pre><code>Ring of 4 GPUs:
-
-Step 1: GPU0 computes Q0×K0V0, GPU1 computes Q1×K1V1, ...
-        K/V rotate: K0V0 → GPU1, K1V1 → GPU2, ...
-
-Step 2: GPU0 computes Q0×K3V3 (received from GPU3)
-        GPU1 computes Q1×K0V0 (received from GPU0), ...
-
-Step 4: Each GPU has accumulated contributions from all K/V slices
-        → complete attention output for its Q slice</code></pre>
-<p>After one full revolution, each GPU has computed its complete attention output using K/V from all other GPUs and enables sequence lengths that scale linearly with the number of GPUs.</p>
+<section id="tokenizer-pathologies-and-failure-modes" class="level2" data-number="22.10">
+<h2 data-number="22.10" class="anchored" data-anchor-id="tokenizer-pathologies-and-failure-modes"><span class="header-section-number">22.10</span> Tokenizer Pathologies and Failure Modes</h2>
+<p><strong>Reversal asymmetry.</strong> Tokenizers frequently produce different tokens for a word depending on whether it appears at the start of a sentence versus in the middle. BPE with space-prefix encoding (GPT-2 style) distinguishes “▁hello” (word-initial) from “hello” (word-internal). This is correct behavior (case-insensitive models with naive tokenizers would conflate them) but it means that token IDs are not invariant to position within a sentence.</p>
+<p><strong>Capitalization sensitivity.</strong> “Hello”, “hello”, and “HELLO” frequently map to different tokens. A model that has not seen a word capitalized a particular way during training may not generalize well to that capitalization. This is particularly problematic for all-caps text (error messages, legal text) and for proper nouns that appear in inconsistent capitalizations.</p>
+<p><strong>Number fragmentation.</strong> As noted above, numbers tokenize inconsistently. “100” is often a single token; “101” may be [“10”, “1”]; “1001” may be [“100”, “1”]. This makes arithmetic notoriously difficult for tokenizer-dependent models and is one motivation for the shift toward digit-level tokenization in math-specialized models.</p>
+<p><strong>Whitespace sensitivity.</strong> Many tokenizers distinguish “dog” from ” dog” (with a leading space). A prompt that inadvertently adds or removes a leading space (easy to do when concatenating strings in code) changes the token sequence, which changes the model’s input, which can change the output.</p>
+<p><strong>The “SolidGoldMagikarp” class of pathologies.</strong> During GPT-2 and GPT-3 era research, Rumbelow and Watkins (2023) discovered that certain tokens in OpenAI’s tokenizer produced highly anomalous model behavior when prompted directly. The token “SolidGoldMagikarp” (a Reddit username that appeared frequently enough in the training corpus to earn its own token) caused unexpected outputs when the model was asked to repeat it. The underlying cause: the token was present in the tokenizer vocabulary (earned through high frequency in the BPE training corpus) but essentially absent from the model’s training data, perhaps filtered out by the data pipeline. The model had never learned a representation for this token ID, so querying it produced garbage outputs. This pathology reveals that the tokenizer training corpus and the model training corpus need to be in close distributional agreement.</p>
 <hr>
 </section>
-<section id="attention-in-the-decode-loop-step-by-step" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="attention-in-the-decode-loop-step-by-step"><span class="header-section-number">6.9</span> Attention in the decode loop: step by step</h2>
-<p>Here is exactly what happens during one attention computation step during decoding, after prefill is complete and the model is generating token by token:</p>
-<pre><code>State at step t:
-  KV cache contains K, V for tokens 0 through t-1
-  New token t has been embedded with positional encoding applied
-
-1. Compute Q, K, V for token t:
-   Q_t = x_t @ W_Q    → [1, d_k] per head
-   K_t = x_t @ W_K    → [1, d_k] per head  (stored in KV cache)
-   V_t = x_t @ W_V    → [1, d_v] per head  (stored in KV cache)
-
-2. Append K_t, V_t to KV cache:
-   K_cache[:t+1] = [K_0, K_1, ..., K_{t-1}, K_t]
-
-3. Compute attention scores:
-   scores = Q_t @ K_cache[:t+1].T / sqrt(d_k)    → [1, t+1] per head
-
-4. Softmax:
-   attn_weights = softmax(scores)    → [1, t+1] per head
-
-5. Weighted sum:
-   attn_output = attn_weights @ V_cache[:t+1]    → [1, d_v] per head
-
-6. Concatenate heads and project:
-   output = concat(attn_output_per_head) @ W_O    → [1, d_model]
-
-7. Add to residual stream:
-   x_t = x_t + output</code></pre>
-<p>Step 3 is the memory-bandwidth bottleneck: it reads the entire KV cache from HBM. At 4,096 tokens for LLaMA 2 70B, step 3 reads approximately 1.28 GB of KV cache per generation step. At 3.35 TB/s bandwidth, that is 0.38 milliseconds per step (for attention alone, before FFN and other operations). This is why long-context generation is slower per token than short-context generation.</p>
+<section id="tokenizer-compatibility-and-model-identity" class="level2" data-number="22.11">
+<h2 data-number="22.11" class="anchored" data-anchor-id="tokenizer-compatibility-and-model-identity"><span class="header-section-number">22.11</span> Tokenizer Compatibility and Model Identity</h2>
+<p>The tokenizer is part of a model’s identity in a strict technical sense. Two models with different tokenizers cannot share weights, cannot be compared token-for-token on benchmarks without normalization, and cannot be used interchangeably in serving infrastructure without a tokenizer swap. This has practical consequences:</p>
+<p><strong>Benchmark comparability.</strong> Perplexity, which measures how surprised a model is by a held-out test set, is not comparable across models with different tokenizers. A model with a large vocabulary that tokenizes the test set into fewer tokens may report lower perplexity simply because it has fewer prediction steps, not because its predictions are better. Correct comparison requires normalizing by bits-per-character or bits-per-byte rather than bits-per-token.</p>
+<p><strong>Context window comparison.</strong> A “32,768-token context window” means different things for different models. GPT-3.5 (~100k vocab) fits more characters per context slot than LLaMA 2 (SentencePiece, 32k vocab). Quoting context window sizes in tokens without specifying the tokenizer is imprecise.</p>
+<p><strong>Transfer and adapter training.</strong> Parameter-efficient fine-tuning methods like LoRA add adapters to an existing model’s weights without modifying the embedding table. If the fine-tuning data contains vocabulary not well-represented in the original tokenizer, the adapters cannot fix the underlying fertility problem, they can only learn compensating patterns within the existing token space.</p>
 <hr>
 </section>
-<section id="key-takeaways" class="level2" data-number="6.10">
-<h2 data-number="6.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">6.10</span> Key takeaways</h2>
+<section id="the-tiktoken-implementation" class="level2" data-number="22.12">
+<h2 data-number="22.12" class="anchored" data-anchor-id="the-tiktoken-implementation"><span class="header-section-number">22.12</span> The tiktoken Implementation</h2>
+<p>OpenAI’s tiktoken library is the implementation most practitioners encounter directly. It implements byte-level BPE and is the tokenizer for GPT-2, GPT-3, GPT-3.5, GPT-4, and the text-embedding-ada-002 and subsequent embedding models. LLaMA 3 adopted tiktoken’s format (though with a different vocabulary) to enable compatibility with existing tooling.</p>
+<p>tiktoken’s vocabulary files ship as a serialized mapping from base64-encoded byte sequences to integer IDs. The merge rules ship as an ordered list of pairs, one merge per line. The tokenization procedure at inference time applies merges in training order, the merge that was learned first (and therefore covers the most frequent pair in the training corpus) is applied first.</p>
+<p>A benchmark figure: tiktoken encodes approximately 5 million tokens per second on a modern CPU in Python (with Rust internals via a Python binding). This speed matters at scale: a training corpus of 15 trillion tokens requires 15 trillion tokenization operations before the first gradient step.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="22.13">
+<h2 data-number="22.13" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">22.13</span> Key Takeaways</h2>
 <ul>
-<li>Attention computation scales quadratically with sequence length in both memory and compute; this is the central cost driver for long-context inference, at 128k tokens, the naive score matrix would require 32 GB per layer per head</li>
-<li>Standard attention materializes the full <span class="math inline">\(n×n\)</span> score matrix in HBM, causing excessive memory traffic; FlashAttention eliminates this by tiling the computation into SRAM and using online softmax, reducing HBM access from <span class="math inline">\(O(n^2)\)</span> to <span class="math inline">\(O(n)\)</span></li>
-<li>During decode, attention is memory-bandwidth-bound: the GPU reads the entire KV cache for a single new token; throughput scales with HBM bandwidth, not arithmetic throughput</li>
-<li>GQA shares K and V projections across groups of heads, reducing KV cache by the ratio of total heads to KV heads, the primary reason GQA is now the default for new models</li>
-<li>Prefill is compute-bound (large batch matrix multiply); decode is memory- bandwidth-bound (vector-matrix multiply against the growing KV cache), the same model, two different hardware bottlenecks</li>
-<li>Sparse attention and linear attention reduce <span class="math inline">\(O(n^2)\)</span> cost but sacrifice flexibility; state space models and hybrid architectures are competitive alternatives for extreme sequence lengths</li>
+<li>Subword tokenization solves the vocabulary coverage problem by decomposing rare words into known subword units while representing common words as single tokens.</li>
+<li>BPE iteratively merges the most frequent adjacent symbol pair in a corpus; WordPiece uses pointwise mutual information instead of raw frequency; Unigram starts large and prunes.</li>
+<li>Byte-level BPE eliminates the out-of-vocabulary problem entirely by using the 256 byte values as the base vocabulary — any input string is representable.</li>
+<li>The embedding table and lm_head together have shape proportional to [vocab_size × d_model]; at d_model = 4,096, every 1,000 additional vocabulary tokens adds approximately 16 MB of parameters in float16.</li>
+<li>LLaMA 3’s shift from 32,000 to 128,256 tokens added roughly 1 billion parameters in embedding and lm_head layers — about 13% of the model’s size.</li>
+<li>The tokenizer training run is separate from model training and uses only the frequency statistics of the corpus, not gradient descent.</li>
+<li>Tokenizer vocabulary reflects its training corpus: a tokenizer trained on English text imposes 3–5× higher token fertility on many non-English languages.</li>
+<li>Number tokenization is inconsistent by design, which contributes to LLM arithmetic difficulties; digit-level tokenization is used in some math- specialized models as a remedy.</li>
+<li>Perplexity is not comparable across models with different tokenizers; normalization must be done per byte or per character, not per token.</li>
+<li>The “SolidGoldMagikarp” class of pathology arises when a token appears in the tokenizer vocabulary but not in the model training data, producing undefined model behavior.</li>
+<li>Special tokens (BOS, EOS, role markers, tool call tokens) are not learned by the subword algorithm; they are added to the vocabulary after BPE training and must be handled explicitly in data formatting pipelines.</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch2/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/ch3/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Cheat sheet.
+Figure&nbsp;22.1: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="6.11">
-<h2 data-number="6.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">6.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="22.14">
+<h2 data-number="22.14" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">22.14</span> Further Reading</h2>
 <ul>
-<li>Dao et al.&nbsp;(2022). <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.</em>: The foundational paper.</li>
-<li>Shazeer (2019). <em>Fast Transformer Decoding: One Write-Head is All You Need.</em>: The original Multi-Query Attention paper.</li>
-<li>Ainslie et al.&nbsp;(2023). <em>GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints.</em>: Grouped-Query Attention.</li>
-<li>Liu et al.&nbsp;(2023). <em>Ring Attention with Blockwise Transformers for Near-Infinite Context.</em>: Ring attention for distributed long-context computation.</li>
-<li>Gu &amp; Dao (2023). <em>Mamba: Linear-Time Sequence Modeling with Selective State Spaces.</em>: The leading SSM alternative to attention.</li>
+<li><p>Sennrich, R., Haddow, B., &amp; Birch, A. (2016). <em>Neural Machine Translation of Rare Words with Subword Units.</em> ACL. — The paper that adapted BPE for NLP; the core argument about morphological decomposition is still the clearest statement of why subword tokenization works.</p></li>
+<li><p>Kudo, T. (2018). <em>Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates.</em> ACL. — Introduces the Unigram language model tokenizer and the subword regularization training technique; the theoretical treatment of tokenization ambiguity is the key contribution.</p></li>
+<li><p>Kudo, T., &amp; Richardson, J. (2018). <em>SentencePiece: A simple and language- independent subword tokenizer and detokenizer for Neural Text Processing.</em> EMNLP. — The SentencePiece toolkit paper; explains the language-agnostic design and the ▁ whitespace convention.</p></li>
+<li><p>Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.</em> NAACL. — Introduces WordPiece in the context of masked language modeling; the original description of the [CLS], [SEP], and [MASK] special tokens.</p></li>
+<li><p>Rust, P., Pfeiffer, J., Vulić, I., Ruder, S., &amp; Gurevych, I. (2021). <em>How Good Is Your Tokenizer? On the Monolingual Performance of Multilingual Language Models.</em> ACL. — Systematic analysis of token fertility across languages and its effect on downstream task performance; the fertility tables are essential reading for anyone building multilingual systems.</p></li>
+<li><p>Rumbelow, J., &amp; Watkins, M. (2023). <em>SolidGoldMagikarp (plus, prompt generation).</em> Alignment Forum. — The blog post documenting anomalous token behavior; the clearest empirical demonstration that tokenizer and model training corpora must match.</p></li>
+<li><p>Touvron, H., et al.&nbsp;(2023). <em>LLaMA 2: Open Foundation and Fine-Tuned Chat Models.</em> — Section 2 describes the SentencePiece tokenizer design decisions for LLaMA 2; useful contrast with LLaMA 3’s subsequent shift to tiktoken.</p></li>
 </ul>
 <hr>
 
@@ -1455,14 +1302,11 @@ Figure&nbsp;6.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/transformer-architecture.html" class="pagination-link" aria-label="Transformer Architecture">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span>
+      <a href="../../book/part5/synthetic_data.html" class="pagination-link" aria-label="Synthetic Data Generation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/kv-cache.html" class="pagination-link" aria-label="KV Cache">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
