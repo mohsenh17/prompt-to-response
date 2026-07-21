@@ -1,4 +1,4 @@
-# Tokenization
+# Tokenization during inference 
 
 > **The canonical question for this chapter:**
 > *A user sends a message while a model receive and returns numbers. How does text become numbers 
@@ -6,7 +6,7 @@
 
 ---
 
-![The journey through the Model Mind.](figures/ch4/journey_part2_ch4.svg){#fig-progress width="100%"}
+![The journey through the Model Mind.](figures/ch4/journey.svg){#fig-progress width="100%"}
 
 The request has arrived at the inference server. Before the model sees a single
 character, the text must be converted to numbers. This chapter covers that
