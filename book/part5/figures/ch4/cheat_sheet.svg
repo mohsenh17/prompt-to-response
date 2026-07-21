@@ -1,0 +1,117 @@
+<svg width="1200" height="1250" viewBox="0 0 1200 1250"
+     xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+
+<!-- TRAINING OBJECTIVE -->
+<rect class="box" x="40" y="30" width="1120" height="170"/>
+<text class="section" x="65" y="65">Training Objective</text>
+
+<text class="text" x="65" y="105">
+  <tspan x="65" dy="0">A scalar loss measuring how badly the model performs.</tspan>
+  <tspan x="65" dy="27">The optimizer minimizes this loss → the objective determines what the model learns.</tspan>
+</text>
+
+<text class="code" x="65" y="170">Model parameters → Objective / Loss → Optimizer → Updated parameters</text>
+
+
+<!-- THREE OBJECTIVES -->
+<rect class="box" x="40" y="230" width="1120" height="300"/>
+<text class="section" x="65" y="265">Three Main Pretraining Objectives</text>
+
+<!-- CLM -->
+<rect class="box" x="65" y="300" width="325" height="190"/>
+<text class="section" x="90" y="335">Causal LM (CLM)</text>
+<text class="text" x="90" y="375">
+  <tspan x="90" dy="0">Predict next token</tspan>
+  <tspan x="90" dy="27">using previous tokens only.</tspan>
+</text>
+<text class="code" x="90" y="440">The cat → sat</text>
+<text class="text" x="90" y="470">GPT · LLaMA · Mistral</text>
+
+
+<!-- MLM -->
+<rect class="box" x="435" y="300" width="325" height="190"/>
+<text class="section" x="460" y="335">Masked LM (MLM)</text>
+<text class="text" x="460" y="375">
+  <tspan x="460" dy="0">Predict masked tokens</tspan>
+  <tspan x="460" dy="27">using left + right context.</tspan>
+</text>
+<text class="code" x="460" y="440">The [MASK] sat → cat</text>
+<text class="text" x="460" y="470">BERT · RoBERTa</text>
+
+
+<!-- SEQ2SEQ -->
+<rect class="box" x="805" y="300" width="325" height="190"/>
+<text class="section" x="830" y="335">Seq2Seq</text>
+<text class="text" x="830" y="375">
+  <tspan x="830" dy="0">Encode input bidirectionally.</tspan>
+  <tspan x="830" dy="27">Generate output autoregressively.</tspan>
+</text>
+<text class="code" x="830" y="440">Input → Output</text>
+<text class="text" x="830" y="470">T5 · BART</text>
+
+
+<!-- CLM VS MLM -->
+<rect class="box" x="40" y="560" width="1120" height="230"/>
+<text class="section" x="65" y="595">CLM vs MLM</text>
+
+<text class="text" x="80" y="640">
+  <tspan font-weight="700">CLM</tspan>
+  <tspan x="270">Left context</tspan>
+  <tspan x="500">Natural generation</tspan>
+  <tspan x="800">Strong for open-ended tasks</tspan>
+</text>
+
+<text class="text" x="80" y="685">
+  <tspan font-weight="700">MLM</tspan>
+  <tspan x="270">Both directions</tspan>
+  <tspan x="500">Not naturally generative</tspan>
+  <tspan x="800">Strong for representations</tspan>
+</text>
+
+<text class="text" x="80" y="745">
+  <tspan>CLM → predict what comes next</tspan>
+  <tspan x="500">MLM → understand what is there</tspan>
+</text>
+
+
+<!-- CROSS ENTROPY -->
+<rect class="box" x="40" y="820" width="540" height="180"/>
+<text class="section" x="65" y="855">Cross-Entropy Loss</text>
+
+<text class="code" x="80" y="905">L = −log P(correct token)</text>
+
+<text class="text" x="80" y="950">
+  <tspan>High probability for correct token → low loss</tspan>
+  <tspan x="80" dy="27">Low probability for correct token → high loss</tspan>
+</text>
+
+
+<!-- FROM PRETRAINING -->
+<rect class="box" x="620" y="820" width="540" height="180"/>
+<text class="section" x="645" y="855">From Pretraining to Assistant</text>
+
+<text class="text" x="645" y="905">
+  <tspan x="645" dy="0">Pretraining → capabilities</tspan>
+  <tspan x="645" dy="27">Instruction tuning → behavior</tspan>
+  <tspan x="645" dy="27">RLHF / alignment → preferences</tspan>
+</text>
+
+
+<!-- DOMAIN ADAPTATION -->
+<rect class="box" x="40" y="1030" width="1120" height="170"/>
+<text class="section" x="65" y="1065">Continued Pretraining &amp; Domain Adaptation</text>
+
+<text class="text" x="65" y="1110">
+  <tspan>Same objective + new domain data → domain specialization</tspan>
+  <tspan x="65" dy="30">Risk: catastrophic forgetting → mix general data + lower learning rate</tspan>
+</text>
+
+</svg>

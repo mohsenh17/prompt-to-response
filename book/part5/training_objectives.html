@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; GPU Execution – From Prompt to Response</title>
+<title>23&nbsp; Training Objectives – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -68,8 +33,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/quantization.html" rel="next">
-<link href="../../book/part3/kv-cache.html" rel="prev">
+<link href="../../book/part5/training_tokenization.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -144,13 +108,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta property="og:title" content="23&nbsp; Training Objectives – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch4/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="8&nbsp; GPU Execution – From Prompt to Response">
+<meta name="twitter:title" content="23&nbsp; Training Objectives – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch4/journey_part3_ch4.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch4/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -325,7 +289,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_objectives.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -435,7 +399,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
   </div>
 </li>
@@ -547,7 +511,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/training_objectives.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/training_objectives.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></span></a>
   </div>
 </li>
@@ -571,16 +535,17 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-gpu-execution-deserves-its-own-chapter" id="toc-why-gpu-execution-deserves-its-own-chapter" class="nav-link active" data-scroll-target="#why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</a></li>
-  <li><a href="#gpu-architecture-fundamentals" id="toc-gpu-architecture-fundamentals" class="nav-link" data-scroll-target="#gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</a></li>
-  <li><a href="#the-roofline-model" id="toc-the-roofline-model" class="nav-link" data-scroll-target="#the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</a></li>
-  <li><a href="#prefill-vs.-decode-two-different-regimes" id="toc-prefill-vs.-decode-two-different-regimes" class="nav-link" data-scroll-target="#prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</a></li>
-  <li><a href="#kernel-fusion" id="toc-kernel-fusion" class="nav-link" data-scroll-target="#kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</a></li>
-  <li><a href="#precision-and-quantization-at-the-kernel-level" id="toc-precision-and-quantization-at-the-kernel-level" class="nav-link" data-scroll-target="#precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</a></li>
-  <li><a href="#tensor-parallelism-at-the-kernel-level" id="toc-tensor-parallelism-at-the-kernel-level" class="nav-link" data-scroll-target="#tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</a></li>
-  <li><a href="#cuda-graph-capture" id="toc-cuda-graph-capture" class="nav-link" data-scroll-target="#cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">8.10</span> Further reading</a></li>
+  <li><a href="#what-a-training-objective-is" id="toc-what-a-training-objective-is" class="nav-link active" data-scroll-target="#what-a-training-objective-is"><span class="header-section-number">23.1</span> What a Training Objective Is</a></li>
+  <li><a href="#causal-language-modeling" id="toc-causal-language-modeling" class="nav-link" data-scroll-target="#causal-language-modeling"><span class="header-section-number">23.2</span> Causal Language Modeling</a></li>
+  <li><a href="#why-next-token-prediction-produces-capable-models" id="toc-why-next-token-prediction-produces-capable-models" class="nav-link" data-scroll-target="#why-next-token-prediction-produces-capable-models"><span class="header-section-number">23.3</span> Why Next-Token Prediction Produces Capable Models</a></li>
+  <li><a href="#masked-language-modeling" id="toc-masked-language-modeling" class="nav-link" data-scroll-target="#masked-language-modeling"><span class="header-section-number">23.4</span> Masked Language Modeling</a></li>
+  <li><a href="#sequence-to-sequence-objectives" id="toc-sequence-to-sequence-objectives" class="nav-link" data-scroll-target="#sequence-to-sequence-objectives"><span class="header-section-number">23.5</span> Sequence-to-Sequence Objectives</a></li>
+  <li><a href="#the-cross-entropy-loss-in-practice" id="toc-the-cross-entropy-loss-in-practice" class="nav-link" data-scroll-target="#the-cross-entropy-loss-in-practice"><span class="header-section-number">23.6</span> The Cross-Entropy Loss in Practice</a></li>
+  <li><a href="#from-pretraining-to-instruction-following" id="toc-from-pretraining-to-instruction-following" class="nav-link" data-scroll-target="#from-pretraining-to-instruction-following"><span class="header-section-number">23.7</span> From Pretraining to Instruction Following</a></li>
+  <li><a href="#continued-pretraining-and-domain-adaptation" id="toc-continued-pretraining-and-domain-adaptation" class="nav-link" data-scroll-target="#continued-pretraining-and-domain-adaptation"><span class="header-section-number">23.8</span> Continued Pretraining and Domain Adaptation</a></li>
+  <li><a href="#connecting-the-objective-to-what-the-model-learns" id="toc-connecting-the-objective-to-what-the-model-learns" class="nav-link" data-scroll-target="#connecting-the-objective-to-what-the-model-learns"><span class="header-section-number">23.9</span> Connecting the Objective to What the Model Learns</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">23.10</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">23.11</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -588,9 +553,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/gpu-execution.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_objectives.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></h1>
+<h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></h1>
 </div>
 
 
@@ -608,7 +573,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>When the model runs, what is GPU actually doing? Why does the same operation take wildly different amounts of time depending on how it is scheduled, and how the data is laid out in memory?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>What exactly is the model optimizing during training, and why does predicting the next token produce a system that can reason, translate, summarize, and write code?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -621,290 +586,197 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/journey_part3_ch4.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch4/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.1: The journey through the Model Mind.
+Figure&nbsp;23.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The previous chapters established what the model computes: embeddings, attention, feed-forward networks, the KV cache. This chapter covers <em>where</em> that computation actually happens and why it behaves the way it does. Every optimization discussed so far (FlashAttention, PageAttention, continuous batching, quantization) exists because of specific GPU execution constraints. This chapter makes those constraints explicit.</p>
+<p>Previous chapter established how the vocabulary is constructed before model training begins. This chapter specifies the loss function the model minimizes during training the mathematical statement of what the model is trying to learn.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-gpu-execution-deserves-its-own-chapter" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="why-gpu-execution-deserves-its-own-chapter"><span class="header-section-number">8.1</span> Why GPU execution deserves its own chapter</h2>
-<p>Every previous chapter has mentioned GPU constraints in passing: memory bandwidth, arithmetic throughput, HBM capacity. This chapter makes those concepts precise.</p>
-<p>Understanding GPU execution has direct impact ob system performance and it is not just an academic exercise for LLM engineers. A serving system operating at 60% of a GPU’s theoretical peak throughput can deliver 50% more throughput than one running at just 40%, without any additional hardware. This knowledge also explains why certain operations become bottlenecks, why quantization improves performance, why kernel fusion is so effective, and why the prefill and decode phases show different latency characteristics.</p>
-<p>More directly: every optimization technique in serving (FlashAttention, continuous batching, tensor parallelism) exists because of specific GPU execution constraints. Understanding those constraints explains why the optimizations take the form they do, rather than appearing as a collection of unrelated tricks.</p>
+<section id="what-a-training-objective-is" class="level2" data-number="23.1">
+<h2 data-number="23.1" class="anchored" data-anchor-id="what-a-training-objective-is"><span class="header-section-number">23.1</span> What a Training Objective Is</h2>
+<p>A training objective is a scalar-valued function of the model’s parameters and the training data that measures how badly the model is currently doing. During training, the optimizer adjusts model parameters to reduce this scalar. The training objective is the only signal the model ever receives about what “correct” behavior looks like. Everything the model learns (language, facts, reasoning patterns, stylistic tendencies) is a consequence of what the objective rewards and what it ignores.</p>
+<p>This makes the choice of objective the most consequential design decision in building a language model, with the possible exception of architecture. The transformer architecture describes the computational graph. The training objective describes what the graph should compute. Getting the architecture wrong costs you efficiency. Getting the objective wrong costs you the model.</p>
+<p>Modern large language models use one of two primary pretraining objectives: <strong>causal language modeling</strong> (autoregressive next-token prediction) and <strong>masked language modeling</strong> (bidirectional prediction of masked tokens). A third objective (<strong>sequence-to-sequence modeling</strong>) combines elements of both. Each objective induces a different kind of model with different strengths, different inference-time behavior, and different fine-tuning characteristics.</p>
 <hr>
 </section>
-<section id="gpu-architecture-fundamentals" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="gpu-architecture-fundamentals"><span class="header-section-number">8.2</span> GPU architecture fundamentals</h2>
-<p>A modern GPU is not a fast CPU. It is a fundamentally different compute architecture optimized for a different class of problems.</p>
-<section id="the-execution-model" class="level3" data-number="8.2.1">
-<h3 data-number="8.2.1" class="anchored" data-anchor-id="the-execution-model"><span class="header-section-number">8.2.1</span> The execution model</h3>
-<p>A CPU has a small number of powerful cores (typically 8–128), each capable of complex out-of-order execution, branch prediction, and deep caches. CPUs are optimized for latency and completing a single thread of execution as fast as possible.</p>
-<p>A GPU has a massive number of simpler cores (an H100 has 16,896 CUDA cores) organized into streaming multiprocessors (SMs). Each SM is not particularly fast for a single operation, but thousands of them executing simultaneously produce enormous total throughput. GPUs are optimized to complete as many simple operations as possible per second, not completing any one operation quickly.</p>
-<p>The programming model reflects on this: GPU programs are written as kernels that execute the same operation on many data elements simultaneously. A matrix multiplication kernel runs the same multiply operation on thousands of elements in parallel. If there is data parallelism in your problem, a GPU exploits it. If there is not, a GPU is slower than a CPU for that specific task.</p>
-<p>LLM inference has enormous data parallelism: the same transformer operations apply to every token in the sequence, and every element of every weight matrix participates in the same type of computation. This structural match is why GPUs dominate LLM inference.</p>
+<section id="causal-language-modeling" class="level2" data-number="23.2">
+<h2 data-number="23.2" class="anchored" data-anchor-id="causal-language-modeling"><span class="header-section-number">23.2</span> Causal Language Modeling</h2>
+<section id="the-objective" class="level3" data-number="23.2.1">
+<h3 data-number="23.2.1" class="anchored" data-anchor-id="the-objective"><span class="header-section-number">23.2.1</span> The Objective</h3>
+<p>Causal language modeling (CLM) is the pretraining objective used by GPT-2, GPT-3, GPT-4, LLaMA, Mistral, Falcon, and essentially every large model used for text generation. The setup is as follows.</p>
+<p>Given a sequence of tokens <span class="math inline">\(x_1, x_2, \ldots, x_T\)</span>, the model is trained to predict each token given all preceding tokens. The loss for a single sequence is the mean negative log-likelihood of the correct next token at each position:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{CLM}} = -\frac{1}{T} \sum_{t=1}^{T} \log P_\theta(x_t \mid x_1, x_2, \ldots, x_{t-1})
+\]</span></p>
+<p>where <span class="math inline">\(P_\theta\)</span> is the model’s predicted probability distribution over the vocabulary, parameterized by weights <span class="math inline">\(\theta\)</span>. At each position <span class="math inline">\(t\)</span>, the model receives the sequence <span class="math inline">\(x_1, \ldots, x_{t-1}\)</span> and must assign a probability to every token in the vocabulary. The loss penalizes the model in proportion to how surprised it is by the actual next token <span class="math inline">\(x_t\)</span>.</p>
+<p>Summing across positions and sequences, the total training loss is a measure of the model’s average surprise (its perplexity) over the training corpus. Minimizing this loss is equivalent to maximizing the likelihood of the training data under the model.</p>
 </section>
-<section id="the-memory-hierarchy" class="level3" data-number="8.2.2">
-<h3 data-number="8.2.2" class="anchored" data-anchor-id="the-memory-hierarchy"><span class="header-section-number">8.2.2</span> The memory hierarchy</h3>
-<p>GPU memory has multiple tiers with very different bandwidth and capacity:</p>
-<pre><code>Memory tier       Bandwidth        Capacity      Latency
-──────────────────────────────────────────────────────────
-Registers         ~80 TB/s         256 KB/SM     ~1 cycle
-L1/SRAM           ~20 TB/s         256 KB/SM     ~30 cycles
-L2 cache          ~5 TB/s          50 MB         ~200 cycles
-HBM (VRAM)        ~3.35 TB/s       80 GB         ~600 cycles
-PCIe (CPU RAM)    ~64 GB/s         TBs           ~microseconds
-NVLink (GPU-GPU)  ~900 GB/s        —             ~microseconds</code></pre>
-<p>SRAM (often called shared memory or L1 cache) is the GPU’s fast on-chip memory. It offers extremely low latency but limited capacity. HBM (High Bandwidth Memory), is the GPU’s large off-chip memory although it provides massive bandwidth, accessing HBM is still significantly more expensive than accessing on-chip memory.</p>
-<p>Every GPU computation ultimately reads data from HBM and writes results back to it. As a result, the central challenge of GPU kernel optimization is reducing HBM traffic by keeping frequently accessed data in SRAM for as long as possible which is the exact key insight behind FlashAttention.</p>
+<section id="why-causal" class="level3" data-number="23.2.2">
+<h3 data-number="23.2.2" class="anchored" data-anchor-id="why-causal"><span class="header-section-number">23.2.2</span> Why Causal?</h3>
+<p>The word “causal” refers to the constraint that prediction at position <span class="math inline">\(t\)</span> may only condition on positions <span class="math inline">\(1\)</span> through <span class="math inline">\(t-1\)</span>, never on positions <span class="math inline">\(t+1\)</span> and beyond. This constraint is enforced by the causal attention mask in the transformer: the upper triangle of the attention matrix is set to <span class="math inline">\(-\infty\)</span> before the softmax, preventing any token from attending to future tokens.</p>
+<p>The causal constraint serves two purposes. First, it makes training efficient: a single forward pass through a sequence of <span class="math inline">\(T\)</span> tokens produces <span class="math inline">\(T\)</span> prediction targets simultaneously (one at each position) giving <span class="math inline">\(T\)</span> gradient signals per sequence. Without causal masking, computing the prediction at each position would require a separate forward pass, since the model could otherwise “see” the answer it is trying to predict.</p>
+<p>Second, and more importantly, the causal constraint makes the trained model useful for generation. At inference time, the model generates text by sampling one token at a time, left to right, conditioning each new token on everything that came before. The training objective and the inference procedure are exactly aligned: the model was trained to do precisely the thing it is asked to do at inference time. This alignment is not trivial, it is one reason CLM became dominant over alternatives.</p>
 </section>
-<section id="streaming-multiprocessors-and-warps" class="level3" data-number="8.2.3">
-<h3 data-number="8.2.3" class="anchored" data-anchor-id="streaming-multiprocessors-and-warps"><span class="header-section-number">8.2.3</span> Streaming multiprocessors and warps</h3>
-<p>The Streaming Multiprocessor (SM) is the fundamental compute unit of an NVIDIA GPU. An H100 GPU contains many SMs operating in parallel, with each SM responsible for executing thousands of lightweight threads concurrently.</p>
-<p>Each SM on an H100 contains:</p>
-<ul>
-<li>128 CUDA cores for FP32 arithmetic operations.</li>
-<li>4 Tensor Cores specialized for matrix multiplication.</li>
-<li>256 KB of registers for storing temporary values used by active threads.</li>
-<li>228 KB of on-chip SRAM, configurable between:
-<ul>
-<li>L1 cache for automatically caching memory accesses.</li>
-<li>Shared memory for explicitly sharing data between threads in the same thread block.</li>
-</ul></li>
-<li>Warp schedulers that determine which groups of threads execute next.</li>
-</ul>
-<p>GPU threads execute in groups called warps, where each warp consists of 32 threads. Unlike CPU threads, which execute independently, all threads within a warp execute the same instruction at the same time on different pieces of data. NVIDIA refers to this execution model as SIMT (Single Instruction, Multiple Threads).</p>
-<p>For example, consider the following code executed by a warp:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> a <span class="op">+</span> b</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> c <span class="op">+</span> d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Suppose that among the 32 threads in the warp 20 threads satisfy <span class="math inline">\(x &gt; 0\)</span> and 12 threads satisfy <span class="math inline">\(x &lt;= 0\)</span> The GPU cannot execute both branches simultaneously within the same warp. Instead, it execute <span class="math inline">\(y = a + b\)</span> for the 20 relevant threads while the other 12 threads remain temporarily inactive and than execute <span class="math inline">\(y = c + d\)</span> for the remaining 12 threads while the first 20 threads remain inactive. Conceptually, execution looks like:</p>
-<pre><code>Cycle 1:
-[Active]   Threads 0-19  -&gt; y = a + b
-[Inactive] Threads 20-31
-
-Cycle 2:
-[Inactive] Threads 0-19
-[Active]   Threads 20-31 -&gt; y = c + d</code></pre>
-<p>Although each thread only needs one branch, the warp executes both branches sequentially, reducing parallel efficiency whcih is known as branch divergence.</p>
-<p>An H100 has 132 SMs. With 4 warp schedulers per SM and 32 threads per warp, the H100 can keep 132 × 4 × 32 = 16,896 threads active simultaneously.</p>
+<section id="the-prediction-task-at-each-position" class="level3" data-number="23.2.3">
+<h3 data-number="23.2.3" class="anchored" data-anchor-id="the-prediction-task-at-each-position"><span class="header-section-number">23.2.3</span> The Prediction Task at Each Position</h3>
+<p>At each position in a training sequence, the model produces a probability distribution over the entire vocabulary (typically 32,000 to 128,000 tokens). The loss at that position is the negative log-probability assigned to the correct token.</p>
+<p>Consider a training sequence: “The cat sat on the mat.” After tokenization this might be [“The”, “▁cat”, “▁sat”, “▁on”, “▁the”, “▁mat”, “.”]. At position 3 (predicting “▁sat”), the model sees [“The”, “▁cat”] and must assign a probability to every vocabulary token. If it assigns probability 0.8 to “▁sat”, the loss at this position is <span class="math inline">\(-\log(0.8) \approx 0.22\)</span> nats. If it assigns probability 0.01, the loss is <span class="math inline">\(-\log(0.01) \approx 4.61\)</span> nats.</p>
+<p>Across billions of such positions, the model learns to assign high probability to contextually likely continuations. Initially, when parameters are random, the loss is approximately <span class="math inline">\(\log(\text{vocab\_size})\)</span>: about 10.4 nats for a 32,000-token vocabulary, 11.8 nats for 128,000 tokens. A well-trained LLaMA 2 7B achieves roughly 1.8–2.2 nats on held-out English text, depending on domain. This corresponds to a perplexity of approximately <span class="math inline">\(e^{2.0} \approx 7.4\)</span>: the model is, on average, about as surprised as if it were choosing uniformly among 7 equally likely options.</p>
 </section>
-<section id="tensor-cores" class="level3" data-number="8.2.4">
-<h3 data-number="8.2.4" class="anchored" data-anchor-id="tensor-cores"><span class="header-section-number">8.2.4</span> Tensor cores</h3>
-<p>Standard CUDA cores perform scalar floating point operations. Tensor cores perform matrix multiplications directly in hardware, at much higher throughput.</p>
-<p>An H100 tensor core performs a 16×16×16 matrix multiplication in a single operation. The H100 has 528 tensor cores, delivering approximately:</p>
-<ul>
-<li>1,000 TFLOPS for BF16/FP16 matrix multiplications</li>
-<li>1,979 TFLOPS for FP8 matrix multiplications</li>
-<li>66 TFLOPS for FP32 scalar operations</li>
-</ul>
-<p>The gap between tensor core throughput and scalar throughput explains why matrix multiplication is fast and why all other operations are relatively expensive on modern GPUs.</p>
-</section>
-</section>
-<section id="the-roofline-model" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="the-roofline-model"><span class="header-section-number">8.3</span> The roofline model</h2>
-<p>The roofline model is a simple framework for understanding whether a given operation is compute-bound or memory-bandwidth-bound, and what the theoretical maximum performance is:</p>
-<pre><code>Attainable performance = min(Peak FLOPS, Memory bandwidth × Arithmetic intensity)</code></pre>
-<p>Where arithmetic intensity = FLOPs executed / bytes read from memory.</p>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/roofline_model.svg" class="img-fluid figure-img" style="width:70.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.2: The roofline Model.
-</figcaption>
-</figure>
-</div>
-<p>The ridge point is where the roofline transitions from memory-bound to compute-bound which is approximately 300 FLOPs/byte for the H100 (1,000 TFLOPS / 3.35 TB/s). Operations with arithmetic intensity above 300 are compute-bound and those below are memory-bandwidth-bound.</p>
-<section id="llm-operations-on-the-roofline" class="level3" data-number="8.3.1">
-<h3 data-number="8.3.1" class="anchored" data-anchor-id="llm-operations-on-the-roofline"><span class="header-section-number">8.3.1</span> LLM operations on the roofline</h3>
-<p>Different operations in LLM inference have very different arithmetic intensities:</p>
-<p><strong>Large matrix multiplications</strong> (prefill, large batches): Matrix multiplication achieves high arithmetic intensity by reusing each byte of weight data for every sequence in the batch. For example, with a batch size of 32 and <span class="math inline">\(d_model = 4,096\)</span>, the arithmetic intensity is approximately 32 FLOPs/byte. This value approaches the roofline model’s ridge point, indicating that performance is primarily limited by computational throughput rather than memory bandwidth.</p>
-<p><strong>Vector-matrix products</strong> (decode, batch size 1): The Q projection at a batch size of 1 exhibits low arithmetic intensity because each byte of weight data is used in only one multiply operation. Consequently, the arithmetic intensity is approximately 1 FLOP/byte, which is about 300× below the roofline model’s ridge point. As a result, performance is severely limited by memory bandwidth, leaving the tensor cores underutilized.</p>
-<p><strong>Attention with KV cache</strong> (decode): extremely low arithmetic intensity. Reading the full KV cache and computing a dot product with the query vector. Memory- bandwidth-bound with near-zero compute utilization.</p>
-<p><strong>Softmax, layer norm, element-wise ops</strong>: essentially zero arithmetic intensity. Read data, apply a simple function, write it back. Pure memory bandwidth operations. No tensor core involvement.</p>
-<p>The practical implication: for decode at small batch sizes, the GPU is almost entirely idle arithmetically, waiting for data from HBM. Increasing batch size is the primary lever for improving GPU utilization during decode, because it amortizes weight reads across multiple sequences and increases arithmetic intensity toward the ridge point.</p>
+<section id="data-formatting" class="level3" data-number="23.2.4">
+<h3 data-number="23.2.4" class="anchored" data-anchor-id="data-formatting"><span class="header-section-number">23.2.4</span> Data Formatting</h3>
+<p>CLM requires no annotation. The loss signal is derived entirely from the structure of the text itself: every token is simultaneously a context token (for predicting the next token) and a prediction target (for the preceding context). This is the property that makes CLM scalable to internet-scale datasets, no human labeling, no task specification, just raw text.</p>
+<p>In practice, training sequences are formed by concatenating documents and splitting into fixed-length chunks (typically matching the model’s context window). A special end-of-document token (<code>&lt;|endoftext|&gt;</code>, <code>&lt;/s&gt;</code>) is inserted between documents so the model learns that one document ending is not a continuation of the next.</p>
+<p>Cross-document attention is typically masked: the model is not trained to predict the first token of a document from the last token of an unrelated preceding document, since this would introduce spurious statistical dependencies. Some implementations simply ensure that each training sequence starts at a document boundary.</p>
 <hr>
 </section>
 </section>
-<section id="prefill-vs.-decode-two-different-regimes" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="prefill-vs.-decode-two-different-regimes"><span class="header-section-number">8.4</span> Prefill vs.&nbsp;decode: two different regimes</h2>
-<p>The roofline analysis explains why prefill and decode behave so differently and they are not just slow and fast versions of the same operation. They are different hardware bottlenecks entirely.</p>
-<section id="prefill-compute-bound" class="level3" data-number="8.4.1">
-<h3 data-number="8.4.1" class="anchored" data-anchor-id="prefill-compute-bound"><span class="header-section-number">8.4.1</span> Prefill: compute-bound</h3>
-<p>During prefill, all prompt tokens are processed simultaneously. The Q projection operates on a matrix of shape <code>[n_prompt, d_model]</code>:</p>
-<pre><code>Q projection: [n_prompt, d_model] @ [d_model, d_model]
-FLOPs:        2 × n_prompt × d_model²
-Bytes:        d_model² × 2    (weight matrix, loaded once)
-
-Arithmetic intensity = n_prompt FLOPs/byte</code></pre>
-<p>For n_prompt = 1,024 and d_model = 4,096: arithmetic intensity = 1,024 FLOPs/byte which is above the ridge point. Prefill is compute-bound. The H100 runs near its theoretical FLOPs ceiling. In order to make prefill faster it requires more FLOPs (more GPUs, higher clock speeds, or more efficient kernels).</p>
+<section id="why-next-token-prediction-produces-capable-models" class="level2" data-number="23.3">
+<h2 data-number="23.3" class="anchored" data-anchor-id="why-next-token-prediction-produces-capable-models"><span class="header-section-number">23.3</span> Why Next-Token Prediction Produces Capable Models</h2>
+<p>The capability of GPT-class models far exceeds what the training objective appears to require. Predicting the next word in a document should, naively, produce a sophisticated autocomplete system. It has instead produced systems capable of multi-step reasoning, code generation, translation into unseen languages, and generating plausible scientific hypotheses. This gap between the apparent simplicity of the objective and the observed capability of trained models is the central puzzle in understanding modern LLMs.</p>
+<section id="the-world-model-argument" class="level3" data-number="23.3.1">
+<h3 data-number="23.3.1" class="anchored" data-anchor-id="the-world-model-argument"><span class="header-section-number">23.3.1</span> The World Model Argument</h3>
+<p>The most compelling explanation is that accurate next-token prediction <em>requires</em> a world model. Consider what a model must represent to correctly predict the next token in a diverse corpus at low loss.</p>
+<p>A sequence of text about a chess game requires the model to track the board state (which pieces are where) to predict legal moves and plausible continuations. A sequence of Python code requires the model to track variable bindings, scoping rules, and the semantics of already-defined functions to predict syntactically and semantically valid continuations. A medical discharge summary requires the model to represent the patient’s condition, the treatments administered, and their interactions to predict what a clinician would plausibly write next.</p>
+<p>No single special case requires a world model. But achieving low loss across millions of documents spanning chess, code, medicine, history, mathematics, literature, and conversation requires that the model build internal representations that encode, for each domain, the causal structure that determines what comes next. The model that minimizes next-token prediction loss over a sufficiently diverse corpus is, in this view, a system that has compressed a large fraction of human structured knowledge into its parameters.</p>
 </section>
-<section id="decode-memory-bandwidth-bound" class="level3" data-number="8.4.2">
-<h3 data-number="8.4.2" class="anchored" data-anchor-id="decode-memory-bandwidth-bound"><span class="header-section-number">8.4.2</span> Decode: memory-bandwidth-bound</h3>
-<p>During decode, only one new token is processed at a time. The Q projection operates on a vector of shape <code>[1, d_model]</code>:</p>
-<pre><code>Q projection: [1, d_model] @ [d_model, d_model]
-FLOPs:        2 × 1 × d_model²
-Bytes:        d_model² × 2    (same weight matrix)
-
-Arithmetic intensity = 1 FLOPs/byte</code></pre>
-<p>For d_model = 4,096: arithmetic intensity = 1 FLOPs/byte which makes decode memory-bandwidth-bound. The H100 runs at approximately 1/300th of its peak FLOPs utilization. Making decode faster requires loading weights faster, higher bandwidth memory, quantization (fewer bytes per parameter), or larger batches (sharing weight reads across sequences).</p>
+<section id="in-context-learning-as-evidence" class="level3" data-number="23.3.2">
+<h3 data-number="23.3.2" class="anchored" data-anchor-id="in-context-learning-as-evidence"><span class="header-section-number">23.3.2</span> In-Context Learning as Evidence</h3>
+<p>The emergence of in-context learning (the ability to perform new tasks from a few demonstrations in the prompt, without any weight update) provides strong evidence for the world model interpretation. A model that had merely memorized statistical co-occurrences could not, in principle, solve arithmetic problems formatted as few-shot examples that it had never seen in training. The fact that it does suggests that the model has learned something about the structure of task descriptions and the general strategy of pattern completion from examples, not just the specific patterns it was exposed to.</p>
 <hr>
 </section>
 </section>
-<section id="kernel-fusion" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="kernel-fusion"><span class="header-section-number">8.5</span> Kernel fusion</h2>
-<p>Each operation in a transformer block, such as layer normalization, Q/K/V projection, softmax, and residual addition, can be implemented as a separate CUDA kernel. In this approach, every kernel reads its inputs from HBM and writes its outputs back to HBM before the next kernel executes. While this design is straightforward to implement, it is inefficient because intermediate results are repeatedly transferred to and from HBM despite being needed only by subsequent operations.</p>
-<p>Kernel fusion addresses this inefficiency by combining multiple operations into a single CUDA kernel. Intermediate results are retained in registers or on-chip shared memory (SRAM) rather than being written to HBM after each operation. Only the final output is stored in HBM, reducing memory traffic, increasing arithmetic intensity, and improving overall performance.</p>
-<section id="example-fused-layer-norm-and-linear-projection" class="level3" data-number="8.5.1">
-<h3 data-number="8.5.1" class="anchored" data-anchor-id="example-fused-layer-norm-and-linear-projection"><span class="header-section-number">8.5.1</span> Example: fused layer norm and linear projection</h3>
-<p>Without fusion:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x_norm <span class="op">=</span> layer_norm(x)     <span class="co"># read x from HBM, write x_norm to HBM</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> x_norm <span class="op">@</span> W_Q           <span class="co"># read x_norm from HBM, write q to HBM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Two HBM reads, two HBM writes, for data that is only an intermediate result.</p>
-<p>With fusion:</p>
-<pre><code>Single kernel:
-  Read x from HBM once
-  Compute layer norm in registers/SRAM
-  Apply W_Q projection immediately
-  Write q to HBM once</code></pre>
-<p>One HBM read, one HBM write. Memory traffic halved for this pair of operations. The intermediate <code>x_norm</code> never leaves the chip.</p>
+<section id="masked-language-modeling" class="level2" data-number="23.4">
+<h2 data-number="23.4" class="anchored" data-anchor-id="masked-language-modeling"><span class="header-section-number">23.4</span> Masked Language Modeling</h2>
+<section id="the-objective-1" class="level3" data-number="23.4.1">
+<h3 data-number="23.4.1" class="anchored" data-anchor-id="the-objective-1"><span class="header-section-number">23.4.1</span> The Objective</h3>
+<p>Masked language modeling (MLM) is the pretraining objective introduced by BERT (Devlin et al., 2019). Where CLM predicts each token from its left context only, MLM predicts masked tokens from both left and right context simultaneously. The model is bidirectional.</p>
+<p>The procedure: given a sequence of tokens, randomly replace approximately 15% of tokens with a <code>[MASK]</code> token. The model processes the entire masked sequence and must predict the original identity of each masked token. The loss is the mean negative log-likelihood over masked positions only:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{MLM}} = -\frac{1}{\lvert \mathcal{M} \rvert} \sum_{t \in \mathcal{M}} \log P_\theta(x_t \mid \tilde{x}_1, \ldots, \tilde{x}_T)
+\]</span></p>
+<p>where <span class="math inline">\(\mathcal{M}\)</span> is the set of masked positions and <span class="math inline">\(\tilde{x}\)</span> is the masked sequence.</p>
+<p>BERT’s specific masking scheme adds noise to the 15% mask rate: - 80% of selected tokens are replaced with <code>[MASK]</code> - 10% are replaced with a random token - 10% are left unchanged</p>
+<p>This prevents the model from learning to simply ignore all <code>[MASK]</code> tokens and forces it to maintain a useful representation of every token, since any token might be the one it is asked to predict.</p>
 </section>
-<section id="flashattention-as-kernel-fusion" class="level3" data-number="8.5.2">
-<h3 data-number="8.5.2" class="anchored" data-anchor-id="flashattention-as-kernel-fusion"><span class="header-section-number">8.5.2</span> FlashAttention as kernel fusion</h3>
-<p>FlashAttention is the most impactful example of kernel fusion in LLM inference. The naive attention computation reads and writes the n×n score matrix multiple times (scaling, masking, softmax, and the final weighted sum). FlashAttention fuses all of these into a single kernel that keeps intermediate scores in SRAM.</p>
-<p>The memory traffic reduction is from O(n²) to O(n). At long sequence lengths, this is the difference between attention fitting in available memory and not fitting at all. Chapter REFF covers FlashAttention in detail; the point here is that it is fundamentally a kernel fusion optimization, not an algorithmic approximation. The result is mathematically identical to naive attention.</p>
+<section id="the-bidirectional-advantage" class="level3" data-number="23.4.2">
+<h3 data-number="23.4.2" class="anchored" data-anchor-id="the-bidirectional-advantage"><span class="header-section-number">23.4.2</span> The Bidirectional Advantage</h3>
+<p>MLM’s key property is that the model can attend to the full context in both directions when making each prediction. This is architecturally different from CLM: MLM transformers have no causal mask. The attention operation at each position can incorporate information from all other positions.</p>
+<p>Bidirectional context improves representation quality for tasks that require understanding of a complete input. Named entity recognition, for example, requires understanding that “Apple” in “Apple released its quarterly earnings today” is a company, not a fruit, a judgment that often depends on words that appear <em>after</em> “Apple” in the sentence. A causal model must make this judgment with only left context; a bidirectional model has access to both.</p>
+<p>For sentence classification, question answering over a fixed document, and token labeling tasks, MLM-pretrained models (BERT, RoBERTa, DeBERTa) held state of the art for several years after BERT’s release in 2018.</p>
 </section>
-<section id="kernel-fusion-in-practice" class="level3" data-number="8.5.3">
-<h3 data-number="8.5.3" class="anchored" data-anchor-id="kernel-fusion-in-practice"><span class="header-section-number">8.5.3</span> Kernel fusion in practice</h3>
-<p>Production inference frameworks apply kernel fusion throughout the model:</p>
+<section id="the-generation-problem" class="level3" data-number="23.4.3">
+<h3 data-number="23.4.3" class="anchored" data-anchor-id="the-generation-problem"><span class="header-section-number">23.4.3</span> The Generation Problem</h3>
+<p>The cost of bidirectionality is that MLM models cannot straightforwardly generate text. The causal constraint that enables autoregressive generation is absent. To generate a token at position <span class="math inline">\(t\)</span>, a CLM model simply conditions on positions <span class="math inline">\(1\)</span> through <span class="math inline">\(t-1\)</span>. An MLM model, trained to condition on all positions simultaneously, has no natural procedure for sequential generation: it would need to mask future positions during generation, but it was never trained with that masking pattern.</p>
+<p>Attempts to use MLM models for generation exist (masked diffusion language models, iterative refinement) but remain less capable than autoregressive CLM models at open-ended generation tasks. The practical consequence: MLM models are fine-tuned for fixed-output tasks (classification, span extraction, sequence labeling) while CLM models handle generation.</p>
+</section>
+<section id="fine-tuning-with-a-cls-token" class="level3" data-number="23.4.4">
+<h3 data-number="23.4.4" class="anchored" data-anchor-id="fine-tuning-with-a-cls-token"><span class="header-section-number">23.4.4</span> Fine-Tuning With a [CLS] Token</h3>
+<p>BERT adds a <code>[CLS]</code> token at the beginning of every input. After pretraining, the embedding of this token at the final layer captures a pooled representation of the entire sequence, because it has attended to all other tokens. For classification tasks, fine-tuning adds a linear layer on top of the <code>[CLS]</code> embedding and trains it (along with some or all of the transformer weights) on labeled examples.</p>
+<p>This two-stage procedure )pretrain with MLM, fine-tune with task-specific head) became the dominant paradigm for NLP from 2018 to 2020. GPT-3’s demonstration of in-context learning without fine-tuning shifted the field, but BERT-style fine-tuning remains standard for latency-sensitive classification tasks where a smaller model with a dedicated head outperforms a large generative model asked to produce labels as text.</p>
+<hr>
+</section>
+</section>
+<section id="sequence-to-sequence-objectives" class="level2" data-number="23.5">
+<h2 data-number="23.5" class="anchored" data-anchor-id="sequence-to-sequence-objectives"><span class="header-section-number">23.5</span> Sequence-to-Sequence Objectives</h2>
+<p>T5 (Raffel et al., 2020) and BART (Lewis et al., 2020) use encoder-decoder architectures trained with sequence-to-sequence objectives. The encoder processes the input with full bidirectional attention (like BERT). The decoder generates the output autoregressively, attending to both the encoder’s output and the previously generated tokens (like GPT).</p>
+<p>T5 frames every NLP task as text-to-text: translation, summarization, classification, and question answering all become “given this text input, produce this text output.” The pretraining objective is a span corruption task: random contiguous spans of input tokens are masked, and the decoder is trained to reconstruct them. This is MLM generalized to spans rather than individual tokens.</p>
+<p>BART uses a more aggressive corruption scheme for pretraining: sentence permutation, token deletion, text infilling, and document rotation, all combined. The decoder is trained to reconstruct the original document from the corrupted input. This makes BART particularly strong for generation tasks that involve transforming one piece of text into another (translation, summarization, dialogue).</p>
+<p>Encoder-decoder models are well-suited to tasks with a natural input-output structure. Their limitation is computational: running both an encoder and a decoder requires more memory than a decoder-only CLM model of equivalent parameter count, and the two-component architecture is more complex to serve. The field has largely converged on decoder-only CLM models for general-purpose use, with encoder-decoder architectures retained for specialized translation and summarization applications.</p>
+<hr>
+</section>
+<section id="the-cross-entropy-loss-in-practice" class="level2" data-number="23.6">
+<h2 data-number="23.6" class="anchored" data-anchor-id="the-cross-entropy-loss-in-practice"><span class="header-section-number">23.6</span> The Cross-Entropy Loss in Practice</h2>
+<p>All three objectives (CLM, MLM, and seq2seq) minimize some form of cross-entropy loss. Cross-entropy between the model’s predicted distribution <span class="math inline">\(P_\theta\)</span> and the true distribution (a one-hot vector at the correct token) is:</p>
+<p><span class="math display">\[
+H(y, P_\theta) = -\sum_{v \in V} y_v \log P_\theta(v) = -\log P_\theta(x_t)
+\]</span></p>
+<p>since <span class="math inline">\(y_v = 1\)</span> only for the correct token and <span class="math inline">\(0\)</span> elsewhere. This reduces to the negative log-probability of the correct token, which is the quantity being minimized at each prediction position.</p>
+<section id="label-smoothing" class="level3" data-number="23.6.1">
+<h3 data-number="23.6.1" class="anchored" data-anchor-id="label-smoothing"><span class="header-section-number">23.6.1</span> Label Smoothing</h3>
+<p>Hard one-hot targets can lead to overconfident models, the model pushes probability mass toward 1.0 for the correct token and toward 0.0 for all others, which degrades calibration and can impair generalization. Label smoothing (Szegedy et al., 2016) replaces the one-hot target with a softened version:</p>
+<p><span class="math display">\[
+y_v^{\text{smooth}} = \begin{cases} 1 - \epsilon &amp; \text{if } v = x_t \\ \epsilon / (|V| - 1) &amp; \text{otherwise} \end{cases}
+\]</span></p>
+<p>With <span class="math inline">\(\epsilon = 0.1\)</span> (a common value), the correct token receives target probability 0.9 rather than 1.0, and all other tokens receive a small positive target probability. This prevents the model from becoming arbitrarily confident and improves calibration of the predicted probability distributions.</p>
+<p>Label smoothing is used in most large model training runs. T5 uses <span class="math inline">\(\epsilon =
+0.1\)</span>. The original transformer paper used <span class="math inline">\(\epsilon = 0.1\)</span> for machine translation. GPT-style models have used both smoothed and unsmoothed objectives; the LLaMA technical reports do not specify but performance suggests standard cross-entropy without smoothing.</p>
+<hr>
+</section>
+</section>
+<section id="from-pretraining-to-instruction-following" class="level2" data-number="23.7">
+<h2 data-number="23.7" class="anchored" data-anchor-id="from-pretraining-to-instruction-following"><span class="header-section-number">23.7</span> From Pretraining to Instruction Following</h2>
+<p>The pretraining objectives described above train models on raw text. The result is a base model: a powerful next-token predictor that continues arbitrary text in a statistically plausible way. A base model given the prompt “Translate this sentence to French:” will often produce a continuation that looks like more examples of translation prompts (because that is the kind of text that follows such a prompt in a training corpus) rather than actually translating the sentence.</p>
+<p>Transforming a base model into an assistant that follows instructions requires additional training on instruction-formatted data. This is covered in Chapter REFF (alignment and RLHF), but the connection to the pretraining objective is worth noting here. The pretraining objective gives the model the underlying capability (language understanding, factual knowledge, reasoning patterns) while instruction tuning teaches the model to <em>apply</em> those capabilities in response to user requests. The capabilities cannot be fine-tuned in; they must be pretrained. The behavior of applying them in response to instructions can be fine-tuned efficiently once the capabilities exist.</p>
+<p>The practical implication: scaling pretraining data and compute improves the base capability ceiling. Instruction tuning effectiveness is bounded by what is already in the base model. A model that cannot solve a reasoning problem as a base model will not be able to solve it after instruction tuning, because instruction tuning does not add capability, it redirects it.</p>
+<hr>
+</section>
+<section id="continued-pretraining-and-domain-adaptation" class="level2" data-number="23.8">
+<h2 data-number="23.8" class="anchored" data-anchor-id="continued-pretraining-and-domain-adaptation"><span class="header-section-number">23.8</span> Continued Pretraining and Domain Adaptation</h2>
+<p>A base model can be continued-pretrained on a domain-specific corpus to improve its performance on that domain’s tasks. The objective is identical to original pretraining (CLM over raw text) but the data distribution shifts toward the target domain.</p>
+<p>For example, a general-purpose model like LLaMA 2 can be continued-pretrained on a corpus of medical literature, clinical notes, and biomedical databases. The resulting model (analogous to BioMedLM or Med-PaLM in spirit) achieves substantially lower loss on medical text and scores higher on medical question- answering benchmarks, without architecture changes. The pretraining objective is unchanged; only the data changes.</p>
+<p>The practical considerations for continued pretraining:</p>
+<p><strong>Catastrophic forgetting.</strong> Continued pretraining on a narrow domain tends to degrade performance on out-of-domain tasks. The optimizer, minimizing the domain-specific loss, adjusts weights in ways that reduce their utility for general text. Mitigation strategies include mixing domain data with general data at some ratio (typically 10–30% general data), using lower learning rates than original pretraining, and using replay buffers that interleave examples from the original training distribution.</p>
+<p><strong>Learning rate schedule.</strong> Continued pretraining typically restarts the learning rate from a small value (rather than the near-zero value the schedule had reached at the end of original pretraining) and uses a cosine decay to a near-zero endpoint. The warmup phase is often shortened or eliminated, since the model is not initializing from random weights.</p>
+<p><strong>Data quality matters more, not less.</strong> At the domain-specialization stage, the corpus is smaller and the model has more capacity than the data requires. Noisy data (OCR errors in scanned documents, truncated records, formatting artifacts) exerts more influence per token than it would in the original pretraining corpus of trillions of tokens.</p>
+<hr>
+</section>
+<section id="connecting-the-objective-to-what-the-model-learns" class="level2" data-number="23.9">
+<h2 data-number="23.9" class="anchored" data-anchor-id="connecting-the-objective-to-what-the-model-learns"><span class="header-section-number">23.9</span> Connecting the Objective to What the Model Learns</h2>
+<p>The training objective does not specify what representations the model should build internally, it only specifies the scalar loss to minimize. The representations that emerge depend on what is useful for minimizing that loss.</p>
+<p>For CLM, a complete characterization of what emerges from minimizing <span class="math inline">\(\mathcal{L}_{\text{CLM}}\)</span> does not exist. Empirically, the following have been observed to emerge as loss decreases on a sufficiently large corpus:</p>
+<p><strong>Syntactic structure.</strong> Probing classifiers can extract parse trees and grammatical roles from the intermediate representations of well-trained models, even though no syntactic annotation was present in training data. Predicting the next token reliably across varied sentence structures requires tracking syntactic dependencies.</p>
+<p><strong>Factual associations.</strong> The feedforward layers of transformer models store factual associations of the form “subject — relation — object” in a key-value structure. Models can complete “The capital of France is ___” not because the exact string appears in training data but because the factual association is encoded in weights. Meng et al.&nbsp;(2022) demonstrated that specific factual associations can be localized to specific layers and edited.</p>
+<p><strong>Reasoning patterns.</strong> Models trained on sufficient data develop the ability to complete multi-step reasoning chains in context, particularly when such chains appear frequently in the training corpus (mathematics textbooks, competitive programming editorials, legal reasoning documents). Whether this constitutes reasoning in a principled sense or sophisticated pattern completion is an open question, the empirical fact of the capability is sufficient here.</p>
+<p><strong>Stylistic and discourse structure.</strong> Document-level structure (introductions that motivate, arguments that proceed from premise to conclusion, narratives that resolve introduced conflicts) emerges from training on documents that exhibit these structures. Predicting each token correctly in a well-structured document requires modeling the discourse-level plan of the document.</p>
+<p>All of these emerge from the same objective, none of them were specified. The training objective is the entire specification of the model’s learning target, and the diversity of what emerges from it is the empirical basis for the world model interpretation above.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="23.10">
+<h2 data-number="23.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">23.10</span> Key Takeaways</h2>
 <ul>
-<li>Layer norm fused into linear projections (Q, K, V, output projections)</li>
-<li>Attention scores, masking, and softmax fused (FlashAttention)</li>
-<li>Residual addition fused with layer norm</li>
-<li>Activation functions fused into FFN computation</li>
-<li>RoPE application fused into Q and K projection</li>
-</ul>
-<p>The cumulative impact is typically 1.5–2× throughput improvement over naively separate kernels, primarily by reducing HBM traffic.</p>
-<hr>
-</section>
-</section>
-<section id="precision-and-quantization-at-the-kernel-level" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="precision-and-quantization-at-the-kernel-level"><span class="header-section-number">8.6</span> Precision and quantization at the kernel level</h2>
-<p>Quantization affects GPU execution at the kernel level, not just memory footprint. Understanding this distinction separates knowing what quantization does from knowing why it helps.</p>
-<section id="weight-only-quantization" class="level3" data-number="8.6.1">
-<h3 data-number="8.6.1" class="anchored" data-anchor-id="weight-only-quantization"><span class="header-section-number">8.6.1</span> Weight-only quantization</h3>
-<p>The most common serving quantization scheme: model weights are stored in INT4 or INT8, but computation happens in BF16/FP16.</p>
-<p>During a weight-only quantized matrix multiplication:</p>
-<pre><code>1. Load INT4 weights from HBM          (4× fewer bytes than BF16)
-2. Dequantize to BF16 in registers     (fast, negligible compute overhead)
-3. Multiply with BF16 activations via tensor cores
-4. Accumulate in FP32, write BF16 output to HBM</code></pre>
-<p>The benefit: decode is memory-bandwidth-bound. Reducing weight bytes by 4× means 4× more weights can be streamed per second, directly improving decode throughput by approximately 4× for bandwidth-limited operations.</p>
-<p>The cost: dequantization adds compute overhead. For bandwidth-bound operations (decode), this overhead is negligible. For compute-bound operations (prefill, large batches), dequantization adds meaningful overhead. Weight-only quantization therefore improves decode more than prefill, which is precisely where the improvement is most needed.</p>
-</section>
-<section id="activation-quantization-int8-and-fp8" class="level3" data-number="8.6.2">
-<h3 data-number="8.6.2" class="anchored" data-anchor-id="activation-quantization-int8-and-fp8"><span class="header-section-number">8.6.2</span> Activation quantization: INT8 and FP8</h3>
-<p>For compute-bound operations, quantizing both weights and activations to INT8 or FP8 allows tensor cores to operate at higher throughput:</p>
-<ul>
-<li>BF16 tensor cores: 1,000 TFLOPS</li>
-<li>FP8 tensor cores: 1,979 TFLOPS on H100 (approximately 2× faster)</li>
-</ul>
-<p>Activation quantization is more complex than weight quantization because activations have more dynamic range and they can contain outlier values that cause large quantization errors when mapped to a narrow integer range.</p>
-<p><strong>The outlier problem.</strong> LLM activations contain outlier values in a small fraction of channels, values that are orders of magnitude larger than typical. These outliers are consistent across inputs and are a known property of large language models. Naive quantization sets the scale by the outlier, compressing all normal values to near-zero and destroying information.</p>
-<p><strong>LLM.int8()</strong> (Dettmers et al., 2022) addresses this by decomposing the matrix multiplication: outlier channels are computed in full BF16 precision, and the remaining channels (typically 99%+) are computed in INT8. The results are combined. Quality is preserved while most of the memory savings are retained.</p>
-<p><strong>SmoothQuant</strong> (Xiao et al., 2023) migrates the quantization difficulty from activations to weights, mathematically equivalent to scaling the activation channels down and the corresponding weight rows up before quantization. The result is more uniform activation distributions that quantize cleanly to INT8 without special outlier handling.</p>
-<p><strong>FP8 inference</strong> is available on H100 GPUs and has become the recommended precision for large-scale serving: near-BF16 quality at roughly 2× the arithmetic throughput. The H100’s Transformer Engine handles FP8 scaling automatically, making it practical without manual calibration.</p>
-<hr>
-</section>
-</section>
-<section id="tensor-parallelism-at-the-kernel-level" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="tensor-parallelism-at-the-kernel-level"><span class="header-section-number">8.7</span> Tensor parallelism at the kernel level</h2>
-<p>When a model is too large for a single GPU, tensor parallelism distributes weight matrices across multiple GPUs. The kernel-level implementation requires communication between GPUs at each layer.</p>
-<section id="column-and-row-parallelism" class="level3" data-number="8.7.1">
-<h3 data-number="8.7.1" class="anchored" data-anchor-id="column-and-row-parallelism"><span class="header-section-number">8.7.1</span> Column and row parallelism</h3>
-<p>A linear projection <code>Y = X @ W</code> can be split in two ways:</p>
-<p><strong>Column parallelism</strong> splits W by columns:</p>
-<pre><code>W split into [W₁ | W₂] across 2 GPUs
-GPU 0: Y₁ = X @ W₁    (partial output — subset of output dimensions)
-GPU 1: Y₂ = X @ W₂    (partial output — complementary subset)
-Combine: Y = [Y₁ | Y₂]    (concatenation, no communication needed here)</code></pre>
-<p><strong>Row parallelism</strong> splits W by rows and requires split input:</p>
-<pre><code>W split into [W₁; W₂], X split into [X₁, X₂] across 2 GPUs
-GPU 0: Y_partial₀ = X₁ @ W₁
-GPU 1: Y_partial₁ = X₂ @ W₂
-Combine: Y = Y_partial₀ + Y_partial₁    (all-reduce required)</code></pre>
-<p>In a transformer layer: Q, K, V projections use column parallelism, each GPU computes a subset of attention heads. The output projection uses row parallelism. Attention within each GPU is independent; an all-reduce synchronizes after the output projection. The FFN follows the same pattern: column parallelism on the first layer, row parallelism on the second, with one all-reduce between them.</p>
-</section>
-<section id="pipeline-parallelism-and-bubble-overhead" class="level3" data-number="8.7.2">
-<h3 data-number="8.7.2" class="anchored" data-anchor-id="pipeline-parallelism-and-bubble-overhead"><span class="header-section-number">8.7.2</span> Pipeline parallelism and bubble overhead</h3>
-<p>Pipeline parallelism splits a transformer model across multiple GPUs by assigning different sets of layers to different devices. Instead of each GPU holding the full model, computation flows through GPUs sequentially, like an assembly line and each GPU processes a contiguous block of layers. To keep all GPUs busy, the input batch is divided into microbatches, which are then streamed through the pipeline:</p>
-<pre><code>Time step:        1    2    3  |  4    5    6    7    8  | 9   10   11
-                 &lt;-- Fill --&gt;  | &lt;---- Steady state ---&gt; | &lt;-- Drain --&gt;
-
-GPU 0 (L0 –L24): [1]  [2]  [3]   [4]  [5]  [6]  [7]  [8]   ·    ·    ·
-GPU 1 (L25–L48):  ·   [1]  [2]   [3]  [4]  [5]  [6]  [7]  [8]   ·    ·
-GPU 2 (L49–L72):  ·    ·   [1]   [2]  [3]  [4]  [5]  [6]  [7]  [8]   ·
-GPU 3 (L73–L96):  ·    ·    ·    [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]</code></pre>
-<p>This creates a wave-like execution pattern where different GPUs work on different microbatches at different stages of the model. However, pipeline parallelism introduces idle time, known as the pipeline bubble. This occurs during pipeline fill (startup) and pipeline drain (shutdown), when not all GPUs are fully utilized.</p>
-<p>Increasing the number of microbatches reduces bubble overhead by improving pipeline utilization, but it also increases memory usage and scheduling complexity. In practice, systems use 8–32 microbatches to keep bubble overhead under 10% while maintaining efficiency.</p>
-<hr>
-</section>
-</section>
-<section id="cuda-graph-capture" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="cuda-graph-capture"><span class="header-section-number">8.8</span> CUDA graph capture</h2>
-<p>Every GPU operation requires a kernel launch: the CPU sends an instruction to the GPU specifying which kernel to run with which parameters. For small operations, kernel launch overhead can dominate the actual execution time.</p>
-<p>For a transformer decode step at batch size 1:</p>
-<ul>
-<li>Total arithmetic work: small (bandwidth-bound, most of step time is HBM reads)</li>
-<li>Number of kernel launches: hundreds (one per operation across all layers)</li>
-<li>Kernel launch overhead: ~5–10 microseconds per launch</li>
-</ul>
-<p>Hundreds of launches × 5–10 microseconds = milliseconds of CPU overhead per decode step, for a step that may itself take only a few milliseconds of actual GPU work. The CPU becomes the bottleneck.</p>
-<p>CUDA graphs capture the sequence of kernel launches and their data dependencies as a static graph, replayed without CPU involvement for each step. After the initial capture, subsequent replays bypass CPU overhead entirely.</p>
-<p>For decode at batch size 1, CUDA graph capture reduces per-step latency by 30–50%. The tradeoff: the graph is captured for a specific batch size and sequence length; changing these requires recapture. Production inference frameworks use CUDA graphs for decode (fixed batch size and one new token per step) and not for prefill (variable sequence length per request).</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="8.9">
-<h2 data-number="8.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">8.9</span> Key takeaways</h2>
-<ul>
-<li>GPUs are throughput-optimized processors with thousands of simple cores; LLM inference maps well to GPUs because transformer operations are highly data- parallel — the same computation applied to every token and every weight element</li>
-<li>The GPU memory hierarchy spans registers (80 TB/s) to HBM (3.35 TB/s) to PCIe (64 GB/s); kernel optimization is the art of keeping hot data in fast memory and minimizing HBM round trips</li>
-<li>Tensor cores perform 16×16×16 matrix multiplications in hardware at ~15× the throughput of scalar CUDA cores; every operation expressible as matrix multiplication should be</li>
-<li>The roofline model predicts whether an operation is compute-bound (arithmetic intensity above ~300 FLOPs/byte for H100) or memory-bandwidth-bound (below); prefill is compute-bound, decode is severely memory-bandwidth-bound at ~1 FLOPs/byte</li>
-<li>MFU for decode at batch size 1 is approximately 0.3% — the GPU is nearly idle arithmetically; batching and quantization are the primary levers for improving this</li>
-<li>Kernel fusion eliminates intermediate HBM reads and writes between operations; FlashAttention reduces attention memory traffic from O(n²) to O(n) by keeping scores in SRAM throughout computation</li>
-<li>Weight-only INT4/INT8 quantization reduces decode latency proportionally to the bit reduction, with negligible dequantization overhead when bandwidth-bound; FP8 activation quantization improves prefill throughput by ~2×</li>
-<li>CUDA graph capture eliminates CPU kernel launch overhead — 30–50% latency reduction for decode at small batch sizes — by replaying a static kernel sequence without CPU involvement</li>
+<li>Causal language modeling (CLM) trains the model to predict each token from all preceding tokens; masked language modeling (MLM) trains it to predict masked tokens from full bidirectional context.</li>
+<li>CLM loss at position <span class="math inline">\(t\)</span> is the negative log-probability of the correct token: <span class="math inline">\(-\log P_\theta(x_t \mid x_1, \ldots, x_{t-1})\)</span>; the total training loss is the mean over all positions and all training sequences.</li>
+<li>The causal attention mask enforces the left-to-right constraint during training and makes CLM training efficient: a single forward pass over a sequence of length <span class="math inline">\(T\)</span> produces <span class="math inline">\(T\)</span> prediction targets simultaneously.</li>
+<li>A randomly initialized model predicts approximately <span class="math inline">\(\log(\text{vocab\_size})\)</span> nats of loss; a well-trained LLaMA 2 7B achieves roughly 1.8–2.2 nats on English held-out text, corresponding to a perplexity of about 7.</li>
+<li>Accurate next-token prediction over a sufficiently diverse corpus requires building internal representations that track causal structure across domains — the world model argument for why CLM produces capable models.</li>
+<li>MLM models (BERT, RoBERTa, DeBERTa) are stronger for classification and span extraction tasks; CLM models dominate generation; neither architecture advantage is absolute, but their inference procedures differ fundamentally.</li>
+<li>Encoder-decoder models (T5, BART) pair a bidirectional encoder with a causal decoder; the combination is strong for structured input-output transformation tasks but more expensive to serve than decoder-only models.</li>
+<li>Label smoothing replaces one-hot targets with soft targets (typically <span class="math inline">\(\epsilon
+= 0.1\)</span>) to prevent overconfidence and improve probability calibration.</li>
+<li>Pretraining builds capability; instruction tuning redirects it. A capability that is absent from the base model cannot be fine-tuned in — it must be pretrained.</li>
+<li>Continued pretraining on domain-specific data can substantially improve domain performance while risking catastrophic forgetting of general capabilities; mixing in general data at 10–30% mitigates this.</li>
+<li>Syntactic structure, factual associations, reasoning patterns, and discourse coherence all emerge from CLM training without explicit specification — they are what the model learns because learning them reduces loss.</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch1/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/ch4/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8.3: Cheat sheet.
+Figure&nbsp;23.2: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="8.10">
-<h2 data-number="8.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">8.10</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="23.11">
+<h2 data-number="23.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">23.11</span> Further Reading</h2>
 <ul>
-<li>Williams et al.&nbsp;(2009). <em>Roofline: An Insightful Visual Performance Model for Multicore Architectures.</em> — The roofline model; essential reading for GPU performance analysis regardless of domain.</li>
-<li>Dao et al.&nbsp;(2022). <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.</em> — The most important kernel fusion example in LLM inference; the IO complexity analysis is the key insight.</li>
-<li>Dettmers et al.&nbsp;(2022). <em>LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale.</em> — The outlier problem and mixed-precision INT8 quantization.</li>
-<li>Xiao et al.&nbsp;(2023). <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models.</em> — Migrating quantization difficulty from activations to weights for clean INT8 inference.</li>
-<li>Shoeybi et al.&nbsp;(2019). <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism.</em> — Tensor and pipeline parallelism; the foundational implementation reference.</li>
+<li><p>Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.</em> NAACL. — Introduces MLM and the [CLS]/[SEP]/[MASK] special token framework; the comparison between CLM and MLM in the appendix is the clearest early treatment of the bidirectionality tradeoff.</p></li>
+<li><p>Radford, A., Wu, J., Child, R., Luan, D., Amodei, D., &amp; Sutskever, I. (2019). <em>Language Models are Unsupervised Multitask Learners.</em> OpenAI. — The GPT-2 paper; the central argument that next-token prediction at scale produces multitask learners is stated here, with zero-shot evaluation across eight tasks as evidence.</p></li>
+<li><p>Raffel, C., et al.&nbsp;(2020). <em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.</em> JMLR. — Introduces T5 and the text-to-text framing; the systematic comparison of pretraining objectives (span corruption, deshuffling, prefix LM) across 24 tasks is a rigorous treatment of objective choice.</p></li>
+<li><p>Lewis, M., et al.&nbsp;(2020). <em>BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension.</em> ACL. — Introduces BART’s multi-corruption pretraining objective; the ablation of individual corruption strategies is the key empirical contribution.</p></li>
+<li><p>Brown, T., et al.&nbsp;(2020). <em>Language Models are Few-Shot Learners.</em> NeurIPS. — GPT-3; the in-context learning results are the clearest empirical demonstration that CLM pretraining produces general-purpose learners; the few-shot vs. zero-shot vs.&nbsp;fine-tuning comparisons motivate the world model interpretation.</p></li>
+<li><p>Szegedy, C., Vanhoucke, V., Ioffe, S., Shlens, J., &amp; Wojna, Z. (2016). <em>Rethinking the Inception Architecture for Computer Vision.</em> CVPR. — Introduces label smoothing; the motivation and calibration analysis apply directly to language model training despite the computer vision context.</p></li>
+<li><p>Meng, K., et al.&nbsp;(2022). <em>Locating and Editing Factual Associations in GPT.</em> NeurIPS. — Demonstrates that factual knowledge is localized to specific feedforward layers in transformer models; the causal tracing methodology is the key technical contribution.</p></li>
+<li><p>Gururangan, S., et al.&nbsp;(2020). <em>Don’t Stop Pretraining: Adapt Language Models to Domains and Tasks.</em> ACL. — Systematic study of domain-adaptive pretraining (continued pretraining on domain text); demonstrates consistent gains across biomedical, computer science, news, and reviews domains with analysis of the data quantity and quality tradeoffs.</p></li>
 </ul>
 <hr>
 
@@ -1327,14 +1199,11 @@ Figure&nbsp;8.3: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/kv-cache.html" class="pagination-link" aria-label="KV Cache">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span>
+      <a href="../../book/part5/training_tokenization.html" class="pagination-link" aria-label="Tokenization During Training">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/quantization.html" class="pagination-link" aria-label="Quantization and Model Compression">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
