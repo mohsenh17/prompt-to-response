@@ -1,0 +1,198 @@
+<svg width="1200" height="1800" viewBox="0 0 1200 1800" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- Tokenization Problem -->
+<rect class="box" x="40" y="30" width="1120" height="220"/>
+<text class="section" x="65" y="65">The Tokenization Problem</text>
+
+<text class="text" x="65" y="105">
+  <tspan x="65" dy="0">Language models operate on sequences of discrete symbols.</tspan>
+  <tspan x="65" dy="25">The choice of symbol set creates a tradeoff between sequence length, vocabulary size,</tspan>
+  <tspan x="65" dy="25">representation, and computational cost.</tspan>
+</text>
+
+<text class="text" x="80" y="185">
+  <tspan font-weight="700">Character:</tspan>
+  <tspan> tiny vocabulary, but very long sequences</tspan>
+</text>
+
+<text class="text" x="430" y="185">
+  <tspan font-weight="700">Word:</tspan>
+  <tspan> short sequences, but huge vocabulary + OOV</tspan>
+</text>
+
+<text class="text" x="800" y="185">
+  <tspan font-weight="700">Subword:</tspan>
+  <tspan> practical compromise</tspan>
+</text>
+
+
+<!-- Character -->
+<rect class="box" x="40" y="280" width="350" height="300"/>
+<text class="section" x="65" y="315">Character-Level</text>
+
+<text class="text" x="65" y="355">
+  <tspan x="65" dy="0">Every character = one token</tspan>
+  <tspan x="65" dy="28">+ No out-of-vocabulary problem</tspan>
+  <tspan x="65" dy="28">+ Tiny vocabulary</tspan>
+  <tspan x="65" dy="28">− Very long sequences</tspan>
+  <tspan x="65" dy="28">− Expensive self-attention</tspan>
+</text>
+
+<text class="text" x="65" y="505">Example:</text>
+<text class="code" x="65" y="535">uncharacteristically</text>
+<text class="code" x="65" y="560">→ approximately 20 tokens</text>
+
+
+<!-- Word -->
+<rect class="box" x="425" y="280" width="350" height="300"/>
+<text class="section" x="450" y="315">Word-Level</text>
+
+<text class="text" x="450" y="355">
+  <tspan x="450" dy="0">Every word = one token</tspan>
+  <tspan x="450" dy="28">+ Short sequences</tspan>
+  <tspan x="450" dy="28">− Huge vocabulary</tspan>
+  <tspan x="450" dy="28">− Unknown words become [UNK]</tspan>
+  <tspan x="450" dy="28">− Input information can be lost</tspan>
+</text>
+
+<text class="text" x="450" y="505">Example:</text>
+<text class="code" x="450" y="535">COVID-19 → [UNK]</text>
+<text class="code" x="450" y="560">New words → unknown token</text>
+
+
+<!-- Subword -->
+<rect class="box" x="810" y="280" width="350" height="300"/>
+<text class="section" x="835" y="315">Subword-Level</text>
+
+<text class="text" x="835" y="355">
+  <tspan x="835" dy="0">Common words → whole tokens</tspan>
+  <tspan x="835" dy="28">Rare words → smaller pieces</tspan>
+  <tspan x="835" dy="28">+ Shorter sequences</tspan>
+  <tspan x="835" dy="28">+ Small vocabulary</tspan>
+  <tspan x="835" dy="28">+ No OOV with byte-level BPE</tspan>
+</text>
+
+<text class="text" x="835" y="505">Example:</text>
+<text class="code" x="835" y="535">un + character + istic + ally</text>
+<text class="code" x="835" y="560">→ 4 tokens</text>
+
+
+<!-- BPE -->
+<rect class="box" x="40" y="620" width="540" height="430"/>
+<text class="section" x="65" y="655">Byte Pair Encoding (BPE)</text>
+
+<text class="text" x="65" y="700">
+  <tspan x="65" dy="0">1. Start with base symbols</tspan>
+  <tspan x="65" dy="30">2. Count all adjacent symbol pairs</tspan>
+  <tspan x="65" dy="30">3. Select the most frequent pair</tspan>
+  <tspan x="65" dy="30">4. Merge the pair into one token</tspan>
+  <tspan x="65" dy="30">5. Repeat until target vocabulary size</tspan>
+</text>
+
+<text class="code" x="85" y="900">
+  <tspan x="85" dy="0">e + s → es</tspan>
+  <tspan x="85" dy="30">es + t → est</tspan>
+  <tspan x="85" dy="30">l + o → lo</tspan>
+  <tspan x="85" dy="30">lo + w → low</tspan>
+</text>
+
+<text class="text" x="65" y="1010">
+  <tspan x="65" dy="0">Byte-level BPE starts from all 256 byte values.</tspan>
+  <tspan x="65" dy="25">Therefore, every input string is representable.</tspan>
+</text>
+
+
+<!-- WordPiece -->
+<rect class="box" x="620" y="620" width="540" height="430"/>
+<text class="section" x="645" y="655">WordPiece</text>
+
+<text class="text" x="645" y="700">
+  <tspan x="645" dy="0">Similar to BPE, but uses a different merge criterion.</tspan>
+</text>
+
+<text class="code" x="665" y="755">
+  <tspan x="665" dy="0">BPE:</tspan>
+  <tspan x="665" dy="28">highest raw frequency</tspan>
+</text>
+
+<text class="code" x="665" y="845">
+  <tspan x="665" dy="0">WordPiece:</tspan>
+  <tspan x="665" dy="28">count(AB) / (count(A) × count(B))</tspan>
+</text>
+
+<text class="text" x="645" y="935">
+  <tspan x="645" dy="0">Uses ## to mark continuation pieces.</tspan>
+</text>
+
+<text class="code" x="665" y="975">un + ##common + ##ly</text>
+
+
+<!-- Unigram -->
+<rect class="box" x="40" y="1090" width="540" height="340"/>
+<text class="section" x="65" y="1125">Unigram Language Model</text>
+
+<text class="text" x="65" y="1170">
+  <tspan x="65" dy="0">Starts with a large candidate vocabulary.</tspan>
+  <tspan x="65" dy="30">→ Assign probabilities to tokens</tspan>
+  <tspan x="65" dy="30">→ Measure each token's likelihood contribution</tspan>
+  <tspan x="65" dy="30">→ Remove low-value tokens</tspan>
+  <tspan x="65" dy="30">→ Repeat until target vocabulary size</tspan>
+</text>
+
+<text class="text" x="65" y="1360">
+  <tspan x="65" dy="0">Can represent multiple possible tokenizations.</tspan>
+  <tspan x="65" dy="25">Enables subword regularization during training.</tspan>
+</text>
+
+
+<!-- SentencePiece -->
+<rect class="box" x="620" y="1090" width="540" height="340"/>
+<text class="section" x="645" y="1125">SentencePiece</text>
+
+<text class="text" x="645" y="1170">
+  <tspan x="645" dy="0">A toolkit, not a tokenization algorithm.</tspan>
+  <tspan x="645" dy="30">+ Implements BPE and Unigram</tspan>
+  <tspan x="645" dy="30">+ Works directly on raw text</tspan>
+  <tspan x="645" dy="30">+ No whitespace pre-tokenization required</tspan>
+  <tspan x="645" dy="30">+ Useful for languages without spaces</tspan>
+</text>
+
+<text class="code" x="665" y="1360">▁hello ▁world</text>
+
+
+<!-- Vocabulary Size -->
+<rect class="box" x="40" y="1470" width="1120" height="330"/>
+<text class="section" x="65" y="1505">Vocabulary Size — Fundamental Tradeoff</text>
+
+<text class="text" x="80" y="1555">
+  <tspan x="80" dy="0" font-weight="700">Larger Vocabulary</tspan>
+  <tspan x="80" dy="30">+ Fewer tokens per text</tspan>
+  <tspan x="80" dy="27">+ Better rare-word and multilingual coverage</tspan>
+  <tspan x="80" dy="27">− Larger embedding and LM head</tspan>
+  <tspan x="80" dy="27">− Rare tokens receive less training signal</tspan>
+</text>
+
+<text class="text" x="620" y="1555">
+  <tspan x="620" dy="0" font-weight="700">Smaller Vocabulary</tspan>
+  <tspan x="620" dy="30">+ Smaller embedding and LM head</tspan>
+  <tspan x="620" dy="27">+ Denser training signal</tspan>
+  <tspan x="620" dy="27">− Longer sequences</tspan>
+  <tspan x="620" dy="27">− Higher fertility for code, math, and non-English</tspan>
+</text>
+
+<text class="code" x="80" y="1750">
+  <tspan>Embedding: [vocab_size × d_model]</tspan>
+</text>
+
+<text class="code" x="620" y="1750">
+  <tspan>LM Head: [d_model × vocab_size]</tspan>
+</text>
+
+</svg>
