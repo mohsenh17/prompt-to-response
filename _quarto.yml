@@ -55,6 +55,7 @@ book:
         - book/part5/synthetic_data.md
         - book/part5/training_tokenization.md
         - book/part5/training_objectives.md
+        - book/part5/training_loop.md
 
     - part: "The Trial of the Answer"
       chapters: []
