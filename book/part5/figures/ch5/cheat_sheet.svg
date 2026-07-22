@@ -1,0 +1,115 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- Objective -->
+
+<rect class="box" x="40" y="30" width="360" height="190"/>
+<text class="section" x="65" y="65">Objective</text>
+<text class="text" x="65" y="95">Next-token prediction minimizes</text>
+<text class="text" x="65" y="118">cross-entropy loss over the corpus.</text>
+<text class="code" x="65" y="155">L = -1/n Σ log P(tᵢ | t₁...tᵢ₋₁)</text>
+<text class="text" x="65" y="190">Correct prediction → low loss</text>
+
+<!-- Forward -->
+
+<rect class="box" x="420" y="30" width="360" height="190"/>
+<text class="section" x="445" y="65">Forward Pass</text>
+<text class="text" x="445" y="95">Token IDs → embeddings → transformer</text>
+<text class="text" x="445" y="120">→ logits → softmax → probabilities</text>
+<text class="text" x="445" y="155">All positions computed in parallel.</text>
+<text class="text" x="445" y="180">Causal mask prevents seeing future tokens.</text>
+
+<!-- Backward -->
+
+<rect class="box" x="800" y="30" width="360" height="190"/>
+<text class="section" x="825" y="65">Backward Pass</text>
+<text class="text" x="825" y="95">Backpropagation computes gradients</text>
+<text class="text" x="825" y="120">for every model parameter.</text>
+<text class="text" x="825" y="155">Gradient = direction of loss change.</text>
+<text class="text" x="825" y="180">Residual connections improve gradient flow.</text>
+
+<!-- AdamW -->
+
+<rect class="box" x="40" y="250" width="360" height="190"/>
+<text class="section" x="65" y="285">AdamW Optimizer</text>
+<text class="text" x="65" y="315">Maintains first and second gradient moments.</text>
+<text class="code" x="65" y="350">mₜ = β₁mₜ₋₁ + (1-β₁)gₜ</text>
+<text class="code" x="65" y="375">vₜ = β₂vₜ₋₁ + (1-β₂)gₜ²</text>
+<text class="text" x="65" y="410">Adaptive updates + decoupled weight decay.</text>
+
+<!-- LR -->
+
+<rect class="box" x="420" y="250" width="360" height="190"/>
+<text class="section" x="445" y="285">Learning Rate</text>
+<text class="text" x="445" y="315">Warmup: gradually increase LR.</text>
+<text class="text" x="445" y="345">Cosine decay: smoothly reduce LR.</text>
+<text class="code" x="445" y="385">lr = lrₘᵢₙ + ½(lrₘₐₓ-lrₘᵢₙ)</text>
+<text class="code" x="445" y="410">      × (1 + cos(π · step / total))</text>
+
+<!-- Gradient clipping -->
+
+<rect class="box" x="800" y="250" width="360" height="190"/>
+<text class="section" x="825" y="285">Gradient Clipping</text>
+<text class="text" x="825" y="315">Controls unusually large gradient spikes.</text>
+<text class="text" x="825" y="350">If ‖g‖ > threshold:</text>
+<text class="code" x="825" y="380">g ← g × threshold / ‖g‖</text>
+<text class="text" x="825" y="415">Changes magnitude, not direction.</text>
+
+<!-- Mixed precision -->
+
+<rect class="box" x="40" y="470" width="360" height="190"/>
+<text class="section" x="65" y="505">Mixed Precision</text>
+<text class="text" x="65" y="535">BF16: forward + backward computation</text>
+<text class="text" x="65" y="565">FP32: master parameters + optimizer states</text>
+<text class="text" x="65" y="605">Lower memory and faster tensor-core compute.</text>
+<text class="text" x="65" y="635">BF16 has FP32-like exponent range.</text>
+
+<!-- Batch -->
+
+<rect class="box" x="420" y="470" width="360" height="190"/>
+<text class="section" x="445" y="505">Batch &amp; Accumulation</text>
+<text class="text" x="445" y="535">Larger batches → lower gradient noise.</text>
+<text class="text" x="445" y="565">Gradient accumulation simulates</text>
+<text class="text" x="445" y="590">larger batches without extra GPU memory.</text>
+<text class="code" x="445" y="630">effective batch = batch × accumulation</text>
+
+<!-- Memory -->
+
+<rect class="box" x="800" y="470" width="360" height="190"/>
+<text class="section" x="825" y="505">Memory Efficiency</text>
+<text class="text" x="825" y="540">Activation checkpointing:</text>
+<text class="text" x="825" y="565">store fewer activations, recompute later.</text>
+<text class="text" x="825" y="600">Trade: less memory ↔ more computation.</text>
+<text class="text" x="825" y="635">Optimizer states are a major memory cost.</text>
+
+<!-- Distributed -->
+
+<rect class="box" x="40" y="690" width="360" height="170"/>
+<text class="section" x="65" y="725">Distributed Training</text>
+<text class="text" x="65" y="755">Each GPU processes different data.</text>
+<text class="text" x="65" y="785">Gradients are averaged with all-reduce.</text>
+<text class="text" x="65" y="820">Parameters remain synchronized.</text>
+
+<!-- Checkpoint -->
+
+<rect class="box" x="420" y="690" width="360" height="170"/>
+<text class="section" x="445" y="725">Checkpointing</text>
+<text class="text" x="445" y="755">Save model parameters + optimizer states.</text>
+<text class="text" x="445" y="785">Enables recovery after hardware failures.</text>
+<text class="text" x="445" y="820">Large models require distributed storage.</text>
+
+<!-- Monitoring -->
+
+<rect class="box" x="800" y="690" width="360" height="170"/>
+<text class="section" x="825" y="725">Monitor</text>
+<text class="text" x="825" y="755">Training / validation loss</text>
+<text class="text" x="825" y="785">Gradient norm · MFU · token throughput</text>
+<text class="text" x="825" y="815">Weight norms · numerical stability</text>
+
+</svg>

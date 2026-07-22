@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>16&nbsp; Retrieval Algorithms – From Prompt to Response</title>
+<title>24&nbsp; The Training Loop – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,8 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part4/reranking.html" rel="next">
-<link href="../../book/part4/vector_databases.html" rel="prev">
+<link href="../../book/part5/training_objectives.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -144,13 +143,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="16&nbsp; Retrieval Algorithms – From Prompt to Response">
+<meta property="og:title" content="24&nbsp; The Training Loop – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part4/figures/ch7/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="16&nbsp; Retrieval Algorithms – From Prompt to Response">
+<meta name="twitter:title" content="24&nbsp; The Training Loop – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part4/figures/ch7/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -325,7 +324,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/retrieval_algorithms.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_loop.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -494,7 +493,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
   </div>
 </li>
@@ -553,7 +552,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/training_loop.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/training_loop.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></span></a>
   </div>
 </li>
@@ -577,17 +576,22 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-retrieval-problem" id="toc-the-retrieval-problem" class="nav-link active" data-scroll-target="#the-retrieval-problem"><span class="header-section-number">16.1</span> The retrieval problem</a></li>
-  <li><a href="#dense-retrieval-vector-similarity-search" id="toc-dense-retrieval-vector-similarity-search" class="nav-link" data-scroll-target="#dense-retrieval-vector-similarity-search"><span class="header-section-number">16.2</span> Dense retrieval: vector similarity search</a></li>
-  <li><a href="#sparse-retrieval-bm25" id="toc-sparse-retrieval-bm25" class="nav-link" data-scroll-target="#sparse-retrieval-bm25"><span class="header-section-number">16.3</span> Sparse retrieval: BM25</a></li>
-  <li><a href="#hybrid-retrieval" id="toc-hybrid-retrieval" class="nav-link" data-scroll-target="#hybrid-retrieval"><span class="header-section-number">16.4</span> Hybrid retrieval</a></li>
-  <li><a href="#query-expansion-and-reformulation" id="toc-query-expansion-and-reformulation" class="nav-link" data-scroll-target="#query-expansion-and-reformulation"><span class="header-section-number">16.5</span> Query expansion and reformulation</a></li>
-  <li><a href="#contextual-and-conversational-retrieval" id="toc-contextual-and-conversational-retrieval" class="nav-link" data-scroll-target="#contextual-and-conversational-retrieval"><span class="header-section-number">16.6</span> Contextual and conversational retrieval</a></li>
-  <li><a href="#knowledge-graph-retrieval" id="toc-knowledge-graph-retrieval" class="nav-link" data-scroll-target="#knowledge-graph-retrieval"><span class="header-section-number">16.7</span> Knowledge graph retrieval</a></li>
-  <li><a href="#retrieval-evaluation" id="toc-retrieval-evaluation" class="nav-link" data-scroll-target="#retrieval-evaluation"><span class="header-section-number">16.8</span> Retrieval evaluation</a></li>
-  <li><a href="#the-full-retrieval-pipeline" id="toc-the-full-retrieval-pipeline" class="nav-link" data-scroll-target="#the-full-retrieval-pipeline"><span class="header-section-number">16.9</span> The full retrieval pipeline</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">16.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">16.11</span> Further reading</a></li>
+  <li><a href="#what-learning-means-for-a-language-model" id="toc-what-learning-means-for-a-language-model" class="nav-link active" data-scroll-target="#what-learning-means-for-a-language-model"><span class="header-section-number">24.1</span> What learning means for a language model</a></li>
+  <li><a href="#the-objective-cross-entropy-loss" id="toc-the-objective-cross-entropy-loss" class="nav-link" data-scroll-target="#the-objective-cross-entropy-loss"><span class="header-section-number">24.2</span> The objective: cross-entropy loss</a></li>
+  <li><a href="#the-forward-pass" id="toc-the-forward-pass" class="nav-link" data-scroll-target="#the-forward-pass"><span class="header-section-number">24.3</span> The forward pass</a></li>
+  <li><a href="#the-backward-pass-backpropagation" id="toc-the-backward-pass-backpropagation" class="nav-link" data-scroll-target="#the-backward-pass-backpropagation"><span class="header-section-number">24.4</span> The backward pass: backpropagation</a></li>
+  <li><a href="#the-optimizer" id="toc-the-optimizer" class="nav-link" data-scroll-target="#the-optimizer"><span class="header-section-number">24.5</span> The optimizer</a></li>
+  <li><a href="#the-learning-rate-schedule" id="toc-the-learning-rate-schedule" class="nav-link" data-scroll-target="#the-learning-rate-schedule"><span class="header-section-number">24.6</span> The learning rate schedule</a></li>
+  <li><a href="#gradient-clipping" id="toc-gradient-clipping" class="nav-link" data-scroll-target="#gradient-clipping"><span class="header-section-number">24.7</span> Gradient clipping</a></li>
+  <li><a href="#mixed-precision-training" id="toc-mixed-precision-training" class="nav-link" data-scroll-target="#mixed-precision-training"><span class="header-section-number">24.8</span> Mixed precision training</a></li>
+  <li><a href="#batch-size-and-gradient-accumulation" id="toc-batch-size-and-gradient-accumulation" class="nav-link" data-scroll-target="#batch-size-and-gradient-accumulation"><span class="header-section-number">24.9</span> Batch size and gradient accumulation</a></li>
+  <li><a href="#activation-checkpointing" id="toc-activation-checkpointing" class="nav-link" data-scroll-target="#activation-checkpointing"><span class="header-section-number">24.10</span> Activation checkpointing</a></li>
+  <li><a href="#checkpointing-and-fault-tolerance" id="toc-checkpointing-and-fault-tolerance" class="nav-link" data-scroll-target="#checkpointing-and-fault-tolerance"><span class="header-section-number">24.11</span> Checkpointing and fault tolerance</a></li>
+  <li><a href="#the-full-training-step-assembled" id="toc-the-full-training-step-assembled" class="nav-link" data-scroll-target="#the-full-training-step-assembled"><span class="header-section-number">24.12</span> The full training step, assembled</a></li>
+  <li><a href="#what-to-monitor-during-training" id="toc-what-to-monitor-during-training" class="nav-link" data-scroll-target="#what-to-monitor-during-training"><span class="header-section-number">24.13</span> What to monitor during training</a></li>
+  <li><a href="#the-chinchilla-finding-compute-optimal-training" id="toc-the-chinchilla-finding-compute-optimal-training" class="nav-link" data-scroll-target="#the-chinchilla-finding-compute-optimal-training"><span class="header-section-number">24.14</span> The Chinchilla finding: compute-optimal training</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">24.15</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">24.16</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -595,9 +599,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part4/parametric-vs-external-memory.html">The Forbidden Archive</a></li><li class="breadcrumb-item"><a href="../../book/part4/retrieval_algorithms.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/training_loop.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></h1>
+<h1 class="title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></h1>
 </div>
 
 
@@ -615,7 +619,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>Given a user query and a corpus of embedded chunks, what algorithms actually find the right chunks, and why is vector similarity alone not enough?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>Given a transformer architecture and a corpus of text, how does the model actually learn, what happens in a single training step, and how do millions of steps produce a capable model?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -628,304 +632,332 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch7/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch1/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.1: The journey through the Model Mind.
+Figure&nbsp;24.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The vector database is now in ready, and the queries are coming to be processed. This chapter explores the algorithms that transform a natural language query into a ranked list of relevant chunks, and explains why combining multiple retrieval methods consistently delivers better results than relying on any single approach. In a Retrieval-Augmented Generation (RAG) system, the retrieval stage has the greatest impact on answer quality, often more than the choice of language model or prompt design.</p>
+<p>Previous chapter covered training objectives, what the model is trying to minimize. This chapter covers the mechanism: how one training step actually works, from sampling a batch to updating 175 billion parameters. The training loop is conceptually simple. The devil is entirely in the details of doing it stably and efficiently at scale.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="the-retrieval-problem" class="level2" data-number="16.1">
-<h2 data-number="16.1" class="anchored" data-anchor-id="the-retrieval-problem"><span class="header-section-number">16.1</span> The retrieval problem</h2>
-<p>Retrieval is deceptively simple to describe: given a query, return the most relevant chunks. In practice, no single algorithm reliably finds the right chunks across all query types, corpus structures, and domain vocabularies.</p>
-<p>Vector similarity search finds semantically related content but fails on exact string matches, rare terms, and out-of-distribution vocabulary. Keyword search (BM25) finds exact matches but fails when the query and document use different words for the same concept. Re-ranking models produce better relevance signals than either but are too slow to run over the full corpus. Each algorithm has failure modes the others compensate for.</p>
-<p>Production RAG systems that work reliably across diverse query types combine multiple retrieval algorithms, using each where it performs best. This chapter covers each algorithm in depth, then covers how to combine them.</p>
+<section id="what-learning-means-for-a-language-model" class="level2" data-number="24.1">
+<h2 data-number="24.1" class="anchored" data-anchor-id="what-learning-means-for-a-language-model"><span class="header-section-number">24.1</span> What learning means for a language model</h2>
+<p>Before the first training step, the model’s parameters are random. Every weight in every attention matrix, every FFN weight, every embedding, initialized from a small random distribution. The model produces nonsense. Given “The capital of France is”, it assigns roughly equal probability to every token in the vocabulary.</p>
+<p>After training, those same parameters encode enough structure about language and the world that the model assigns high probability to “Paris” in that context. Learning is the process of adjusting parameters until they do this, not just for one example, but for trillions of them, simultaneously and without memorizing any individual one.</p>
+<p>The training loop is the mechanism that does this adjustment. Show the model text, measure how wrong it is, compute how to be less wrong, update the parameters. Repeat hundreds of millions of times. The devil is entirely in the details.</p>
 <hr>
 </section>
-<section id="dense-retrieval-vector-similarity-search" class="level2" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="dense-retrieval-vector-similarity-search"><span class="header-section-number">16.2</span> Dense retrieval: vector similarity search</h2>
-<p>Dense retrieval embeds the query and retrieves chunks whose embeddings are nearest to the query embedding in vector space.</p>
-<section id="what-dense-retrieval-is-good-at" class="level3" data-number="16.2.1">
-<h3 data-number="16.2.1" class="anchored" data-anchor-id="what-dense-retrieval-is-good-at"><span class="header-section-number">16.2.1</span> What dense retrieval is good at</h3>
-<p><strong>Semantic matching.</strong> The query “how long before my session expires” retrieves the chunk “the default token expiration is 3600 seconds” because the embeddings are nearby even though no words overlap.</p>
-<p><strong>Paraphrase matching.</strong> The query “terminate an employee” retrieves documents about “offboarding” and “separation from the company”, different words, same concept.</p>
-<p><strong>Cross-lingual retrieval.</strong> With a multilingual embedding model, an English query retrieves a French document about the same topic.</p>
-<p><strong>Conceptual queries.</strong> “Explain the difference between authentication and authorization” retrieves relevant conceptual explanations even when the query phrasing does not match any document passage verbatim.</p>
-</section>
-<section id="what-dense-retrieval-fails-at" class="level3" data-number="16.2.2">
-<h3 data-number="16.2.2" class="anchored" data-anchor-id="what-dense-retrieval-fails-at"><span class="header-section-number">16.2.2</span> What dense retrieval fails at</h3>
-<p><strong>Rare and out-of-vocabulary terms.</strong> The query “error code E1042” may produce a poor embedding if E1042 is rare in the embedding model’s training data. The model has no strong statistical association to learn from, so E1042 gets embedded near generic “error code” content rather than near the specific documentation for E1042. The correct chunk may rank 500th.</p>
-<p><strong>Exact string matching.</strong> Product names, model numbers, person names, and technical identifiers must match exactly. “GPT-4o” and “GPT-4” should not be treated as semantically equivalent, they are different products and embedding models can easily conflate them.</p>
-<p><strong>High-specificity queries.</strong> “What is the difference between TCP and UDP?” embeds similarly to “compare two network protocols.” Dense retrieval may surface documents about other protocol comparisons that are not specifically about TCP vs.&nbsp;UDP.</p>
-<p><strong>Numerical and structured queries.</strong> “Find all incidents from Q3 2024” requires exact date matching. Embedding similarity cannot handle structured numerical constraints.</p>
-<hr>
-</section>
-</section>
-<section id="sparse-retrieval-bm25" class="level2" data-number="16.3">
-<h2 data-number="16.3" class="anchored" data-anchor-id="sparse-retrieval-bm25"><span class="header-section-number">16.3</span> Sparse retrieval: BM25</h2>
-<p>BM25 (Best Match 25) is the dominant keyword retrieval algorithm. It extends TF-IDF with term frequency saturation and length normalization, producing relevance scores that behave well across a wide range of corpus and query types.</p>
-<section id="the-bm25-formula" class="level3" data-number="16.3.1">
-<h3 data-number="16.3.1" class="anchored" data-anchor-id="the-bm25-formula"><span class="header-section-number">16.3.1</span> The BM25 formula</h3>
-<p>For a query Q and document D:</p>
+<section id="the-objective-cross-entropy-loss" class="level2" data-number="24.2">
+<h2 data-number="24.2" class="anchored" data-anchor-id="the-objective-cross-entropy-loss"><span class="header-section-number">24.2</span> The objective: cross-entropy loss</h2>
+<p>The training objective for a language model is next-token prediction, formalized as minimizing cross-entropy loss.</p>
+<p>For a sequence of tokens [t_1, t_2, …, t_n], the model predicts each token given all previous tokens. The loss for a single sequence is:</p>
 <p><span class="math display">\[
-\mathrm{BM25}(D,Q) = \sum_{t \in Q} \mathrm{IDF}(t) \times
-\frac{\mathrm{TF}(t,D)\times(k_1+1)}
-{\mathrm{TF}(t,D)+k_1\left(1-b+b\times\frac{|D|}{\mathrm{avgdl}}\right)}
+L = -1/n * sum_i log P(t_i | t_1, ..., t_{i-1})
 \]</span></p>
-<p>Where <code>t</code> iterates over query terms, <code>TF(t,D)</code> is term frequency in document D, <code>IDF(t)</code> is <span class="math inline">\(\log\left(\frac{N-\mathrm{df}(t)+0.5}{\mathrm{df}(t)+0.5}+1\right)\)</span>, N is total documents, df(t) is documents containing term t, |D| is document length in tokens, avgdl is average document length, k1 is the term frequency saturation parameter (typically 1.2-2.0), and b is the length normalization parameter (typically 0.75).</p>
-<p><strong>IDF</strong> penalizes terms that appear in many documents (“the” and “is” get near- zero IDF and a rare technical term gets high IDF).</p>
-<p><strong>TF saturation</strong> (k1 parameter) limits the advantage of high repetition. A term appearing 100 times scores only marginally higher than one appearing 10 times.</p>
-<p><strong>Length normalization</strong> (b parameter) favors shorter documents. A document that mentions a query term once in 100 words scores higher than one that mentions it once in 10,000 words.</p>
+<p>Where <span class="math inline">\(P(t_i | t_1, ..., t_{i-1})\)</span> is the probability the model assigns to the correct next token at position i.</p>
+<p>If the model assigns probability 1.0 to the correct token: log(1.0) = 0, no loss. If it assigns probability 0.01: log(0.01) ≈ -4.6, high loss. The objective is to maximize the probability assigned to correct tokens across all positions in the training corpus.</p>
+<p>This objective is applied to every position in every sequence simultaneously. For a sequence of 4,096 tokens, the model makes 4,096 predictions in a single forward pass. The causal mask enforces that position i only attends to positions 0 through i-1, the model cannot cheat by looking at what it is trying to predict. This is why training is computationally efficient: one forward pass on a sequence of length n produces n training signal examples simultaneously.</p>
+<hr>
 </section>
-<section id="what-bm25-is-good-at" class="level3" data-number="16.3.2">
-<h3 data-number="16.3.2" class="anchored" data-anchor-id="what-bm25-is-good-at"><span class="header-section-number">16.3.2</span> What BM25 is good at</h3>
-<p><strong>Exact term matching.</strong> “Error code E1042” retrieves documents containing “E1042” precisely, regardless of whether the embedding model has seen E1042 in training.</p>
-<p><strong>Named entities.</strong> Person names, organization names, product names, and proper nouns are retrieved reliably by exact match.</p>
-<p><strong>Technical and domain-specific terminology.</strong> Medical codes, legal citations, scientific terms, and other domain vocabulary with precise meaning are handled by exact matching.</p>
+<section id="the-forward-pass" class="level2" data-number="24.3">
+<h2 data-number="24.3" class="anchored" data-anchor-id="the-forward-pass"><span class="header-section-number">24.3</span> The forward pass</h2>
+<p>The forward pass is the computation from input tokens to output probabilities.</p>
+<pre><code>Input:  [t_1, t_2, t_3, ..., t_n]     &lt;- token IDs
+Output: [P_1, P_2, P_3, ..., P_n]     &lt;- probability distributions over vocab</code></pre>
+<p>For each position i, P_i is the model’s probability distribution over the vocabulary for what token comes next. The actual next token t_{i+1} is the label. The loss is computed by comparing P_i to a one-hot distribution over the correct token.</p>
+<p>During the forward pass, the model:</p>
+<ol type="1">
+<li>Looks up token embeddings for all input tokens</li>
+<li>Adds positional encodings (or applies RoPE inside attention)</li>
+<li>Passes through all transformer blocks sequentially</li>
+<li>Projects the final hidden states to vocabulary logits via the output embedding matrix (weight-tied with the input embedding table)</li>
+<li>Computes softmax to get probabilities</li>
+<li>Computes cross-entropy loss against the shifted target sequence</li>
+</ol>
+<p>The forward pass is fully parallelized across the sequence dimension, all positions are computed simultaneously, with the causal mask enforcing the autoregressive constraint. This is the architectural property that made transformers faster to train than recurrent networks.</p>
+<hr>
 </section>
-<section id="what-bm25-fails-at" class="level3" data-number="16.3.3">
-<h3 data-number="16.3.3" class="anchored" data-anchor-id="what-bm25-fails-at"><span class="header-section-number">16.3.3</span> What BM25 fails at</h3>
-<p><strong>Vocabulary mismatch.</strong> “Car” and “automobile” are the same concept but BM25 treats them as different terms. The query “automobile maintenance” does not retrieve documents about “car repair.”</p>
-<p><strong>Conceptual queries.</strong> “Explain how transformers work” has no single discriminating term. Every technical document might contain “work”; many contain “transformer.” BM25 cannot reason about the conceptual relationship.</p>
-<p><strong>Short queries.</strong> BM25 degrades for one or two word queries because there are few terms to score. “Timeout” as a query retrieves all documents mentioning timeout regardless of whether they are about network timeouts, session timeouts, or database timeouts.</p>
+<section id="the-backward-pass-backpropagation" class="level2" data-number="24.4">
+<h2 data-number="24.4" class="anchored" data-anchor-id="the-backward-pass-backpropagation"><span class="header-section-number">24.4</span> The backward pass: backpropagation</h2>
+<p>After the forward pass produces a loss value, the backward pass computes the gradient of that loss with respect to every parameter in the model.</p>
+<p>The gradient tells you: if I increase this parameter by a tiny amount, does the loss go up or down, and by how much? A negative gradient means increasing the parameter reduces loss, move it up. A positive gradient means increasing the parameter increases loss, move it down.</p>
+<p>Backpropagation applies the chain rule of calculus recursively from the output layer back to the input embeddings. For a model with 175 billion parameters, this computation visits every parameter and produces a gradient for each one.</p>
+<p>The backward pass is approximately 2x as expensive as the forward pass in compute. It also requires storing the activations computed during the forward pass, intermediate values that are needed to compute gradients during the backward pass. For a large model with a large batch, storing all activations requires significant GPU memory. This is one of the central constraints of training large models and the motivation for activation checkpointing.</p>
+<section id="gradient-flow-through-the-residual-stream" class="level3" data-number="24.4.1">
+<h3 data-number="24.4.1" class="anchored" data-anchor-id="gradient-flow-through-the-residual-stream"><span class="header-section-number">24.4.1</span> Gradient flow through the residual stream</h3>
+<p>One key insight about why transformers train well at depth: residual connections provide a direct gradient highway from the loss back to the early layers.</p>
+<p>Without residuals, the gradient must pass through every nonlinearity in every layer before reaching layer 1. Deep chains of multiplications cause gradients to either vanish or explode.</p>
+<p>With residuals:</p>
+<pre><code>x_L = x_0 + F_1(x_0) + F_2(x_1) + ... + F_L(x_{L-1})
+
+dL/dx_0 = dL/dx_L * (1 + sum of partial derivatives through each sublayer)</code></pre>
+<p>The identity path (the “1” in the derivative) ensures gradients reach early layers reliably, even in 96-layer or 126-layer networks. This is why very deep transformers are trainable while very deep plain networks of the same depth are not.</p>
 <hr>
 </section>
 </section>
-<section id="hybrid-retrieval" class="level2" data-number="16.4">
-<h2 data-number="16.4" class="anchored" data-anchor-id="hybrid-retrieval"><span class="header-section-number">16.4</span> Hybrid retrieval</h2>
-<p>Combining dense and sparse retrieval consistently outperforms either alone on real world RAG benchmarks. Their failure modes are complementary: BM25 catches exact matches that dense retrieval misses; dense retrieval catches semantic matches that BM25 misses.</p>
-<section id="reciprocal-rank-fusion-rrf" class="level3" data-number="16.4.1">
-<h3 data-number="16.4.1" class="anchored" data-anchor-id="reciprocal-rank-fusion-rrf"><span class="header-section-number">16.4.1</span> Reciprocal Rank Fusion (RRF)</h3>
-<p>RRF is the simplest and most robust fusion method that relies only on rank positions rather than score magnitudes, eliminating the need for score normalization.</p>
-<p>For a set of retrieval systems, each producing a ranked list, RRF score for a chunk <code>c</code> is defined as:</p>
+<section id="the-optimizer" class="level2" data-number="24.5">
+<h2 data-number="24.5" class="anchored" data-anchor-id="the-optimizer"><span class="header-section-number">24.5</span> The optimizer</h2>
+<p>Once gradients are computed, parameters are updated to reduce the loss. Vanilla gradient descent moves each parameter in the direction of the negative gradient, which is conceptually correct but practically unusable for large model training.</p>
+<section id="adam-adaptive-moment-estimation" class="level3" data-number="24.5.1">
+<h3 data-number="24.5.1" class="anchored" data-anchor-id="adam-adaptive-moment-estimation"><span class="header-section-number">24.5.1</span> Adam: adaptive moment estimation</h3>
+<p>Adam maintains two running statistics per parameter:</p>
 <p><span class="math display">\[
-\mathrm{RRF}(c) = \sum_{s \in S} \frac{1}{k + \mathrm{rank}_s(c)}
+\begin{aligned}
+m_t &amp;= \beta_1 m_{t-1} + (1 - \beta_1) g_t \\
+v_t &amp;= \beta_2 v_{t-1} + (1 - \beta_2) g_t^2 \\
+\hat{m}_t &amp;= \frac{m_t}{1 - \beta_1^t} \\
+\hat{v}_t &amp;= \frac{v_t}{1 - \beta_2^t} \\
+\theta_t &amp;= \theta_{t-1}
+- \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \varepsilon}
+\end{aligned}
 \]</span></p>
-<p>where <code>S</code> represents the set of retrieval systems, and <span class="math inline">\(\mathrm{rank}_s(c)\)</span> denotes the 1-indexed rank of chunk <code>c</code> in the result list returned by system <code>s</code>. The parameter <code>k</code> is a smoothing constant, typically set to 60, that controls the influence of lower-ranked results. If a chunk does not appear in a system’s result list, that system contributes a score of 0 for the chunk.</p>
-<p><strong>Why RRF is robust.</strong> RRF relies on rank positions rather than raw retrieval scores. For example, a chunk with a dense retrieval score of 0.99 receives the same contribution as a chunk with a score of 0.51 if both are ranked first. This avoids the need to normalize or align score scales across different retrieval systems. Additionally, RRF naturally handles varying result sets by rewarding chunks that consistently appear across multiple systems</p>
-<p><strong>RRF in practice.</strong> Retrieve a larger candidate pool from each system (e.g., top-50 or top-100 results) before applying fusion. RRF can promote chunks that are ranked moderately across multiple systems, for example, a chunk ranked 30th by one system and 5th by another may outperform a chunk appearing only in the top-10 of a single system.</p>
-</section>
-<section id="weighted-score-combination" class="level3" data-number="16.4.2">
-<h3 data-number="16.4.2" class="anchored" data-anchor-id="weighted-score-combination"><span class="header-section-number">16.4.2</span> Weighted score combination</h3>
-<p>This is an alternative approach to normalize scores from each retrieval system to the same range, typically ([0,1]), and combine them using system-specific weights:</p>
-<pre><code>hybrid_score = α × normalized_dense_score + (1 - α) × normalized_bm25_score</code></pre>
-<p>Where <code>α = 1.0</code> is pure dense and <code>α = 0.0</code> is pure sparse. Weaviate uses this with its <code>alpha</code> parameter. The limitation: BM25 scores are unbounded and skewed; cosine similarity is bounded to [-1, 1] and normalization artifacts can cause instability.</p>
-<p>RRF is generally more robust than weighted combination in practice because it does not require score normalization. Use weighted combination only when you have domain-specific knowledge about the relative importance of semantic vs. keyword matching for your query distribution.</p>
-<hr>
-</section>
-</section>
-<section id="query-expansion-and-reformulation" class="level2" data-number="16.5">
-<h2 data-number="16.5" class="anchored" data-anchor-id="query-expansion-and-reformulation"><span class="header-section-number">16.5</span> Query expansion and reformulation</h2>
-<p>Retrieval quality depends heavily on query phrasing. Users phrase queries differently from how documents phrase answers. Query expansion and reformulation bridge this gap.</p>
-<p><strong>Synonym expansion</strong> Expand queries with synonyms and related terms before performing BM25 retrieval. Simple synonym expansion can improve recall by matching additional relevant terms, but it may also introduce noise by adding less relevant matches. Careful tuning of the BM25 <code>k_1</code> parameter can help reduce the impact of these added terms on the final scoring.</p>
-<p><strong>Multi-query retrieval.</strong> Generate multiple semantically equivalent or complementary reformulations of the original query and retrieve results for each. The retrieved results are then merged and deduplicated to produce a more comprehensive candidate set. This approach consistently improves recall, particularly for ambiguous, underspecified, or poorly phrased queries. Although generating multiple queries with an LLM typically adds 200–500 ms of latency, the improvement in retrieval quality often justifies the additional cost when answer accuracy is the primary objective.</p>
-<p><strong>Step-back prompting.</strong> For complex analytical queries, first generate or retrieve information for a broader, more general “step-back” question and use it as additional context for answering the original query. This provides foundational knowledge that may be missing from the specific question.</p>
-<p>For example, the query <em>“What causes the token refresh to fail?”</em> can benefit from retrieving background information on <em>“How does token refresh work?”</em> first. The broader context helps explain the underlying mechanism and makes it easier to identify and answer the specific failure causes.</p>
-<hr>
-</section>
-<section id="contextual-and-conversational-retrieval" class="level2" data-number="16.6">
-<h2 data-number="16.6" class="anchored" data-anchor-id="contextual-and-conversational-retrieval"><span class="header-section-number">16.6</span> Contextual and conversational retrieval</h2>
-<p>In a multi-turn conversation, follow-up messages are often not self-contained. “What about for enterprise customers?” makes no sense as a standalone retrieval query without the previous turn’s context.</p>
-<p><strong>Standalone query generation</strong> Rewrite the user’s message into a self-contained query that incorporates the necessary context from previous conversation turns before performing retrieval.</p>
-<p>Without standalone query generation, retrieval for follow-up questions often fails because the query lacks the context needed to identify the intended topic. For example, <em>“What about for enterprise customers?”</em> may retrieve general information about enterprise customers rather than information related to the specific subject discussed earlier. Generating standalone queries is one of the most common and effective improvements for conversational RAG systems.</p>
-<p><strong>Conversation-aware embedding</strong>, A faster alternative to standalone query generation is to concatenate recent conversation context with the current user query before creating the embedding.</p>
-<p>This approach avoids the additional latency of an LLM-based rewriting step, but it is generally less reliable because the combined text may not accurately represent the user’s true information need. The embedding can be influenced by irrelevant conversational details rather than focusing on the core query intent. Use standalone query generation when retrieval quality is the priority, and conversation-aware embedding when lower latency is more important.</p>
-<hr>
-</section>
-<section id="knowledge-graph-retrieval" class="level2" data-number="16.7">
-<h2 data-number="16.7" class="anchored" data-anchor-id="knowledge-graph-retrieval"><span class="header-section-number">16.7</span> Knowledge graph retrieval</h2>
-<p>For some domains, structured knowledge in graph form enables retrieval that pure text search cannot support.</p>
-<section id="when-graphs-help" class="level3" data-number="16.7.1">
-<h3 data-number="16.7.1" class="anchored" data-anchor-id="when-graphs-help"><span class="header-section-number">16.7.1</span> When graphs help</h3>
-<p>Consider a question about a complex regulatory requirement that depends on: the regulation text (in documents), which entities are subject to it (structured data), how it relates to other regulations (graph relationships), and which exceptions apply (structured rules). Text retrieval finds the regulation document. It cannot navigate the relationships between regulatory entities, exceptions, and cross-references.</p>
-<p>GraphRAG (Edge et al., 2024) extracts entities and relationships from documents and builds a knowledge graph. Retrieval traverses the graph to gather related entities before generating a response.</p>
-</section>
-<section id="entity-extraction-for-graph-building" class="level3" data-number="16.7.2">
-<h3 data-number="16.7.2" class="anchored" data-anchor-id="entity-extraction-for-graph-building"><span class="header-section-number">16.7.2</span> Entity extraction for graph building</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_entities_and_relations(text: <span class="bu">str</span>, llm) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""Extract entities and relationships from the following text.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ss">Return a JSON object with:</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- "entities": list of </span><span class="ch">{{</span><span class="ss">name, type, description</span><span class="ch">}}</span><span class="ss"> objects</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- "relations": list of </span><span class="ch">{{</span><span class="ss">subject, predicate, object</span><span class="ch">}}</span><span class="ss"> triples</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ss">Text: </span><span class="sc">{</span>text<span class="sc">}</span><span class="ss">"""</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> llm.complete(prompt)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> json.loads(response)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Build graph incrementally from corpus</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>graph <span class="op">=</span> nx.DiGraph()</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> chunk <span class="kw">in</span> corpus_chunks:</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    extracted <span class="op">=</span> extract_entities_and_relations(chunk.text, llm)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> extracted[<span class="st">"entities"</span>]:</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        graph.add_node(entity[<span class="st">"name"</span>], <span class="op">**</span>entity)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> relation <span class="kw">in</span> extracted[<span class="st">"relations"</span>]:</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        graph.add_edge(</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            relation[<span class="st">"subject"</span>], relation[<span class="st">"object"</span>],</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span>relation[<span class="st">"predicate"</span>],</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            source_chunk<span class="op">=</span>chunk.<span class="bu">id</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="graph-retrieval-at-query-time" class="level3" data-number="16.7.3">
-<h3 data-number="16.7.3" class="anchored" data-anchor-id="graph-retrieval-at-query-time"><span class="header-section-number">16.7.3</span> Graph retrieval at query time</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> graph_retrieve(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    query: <span class="bu">str</span>, graph, text_retriever, k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    query_entities <span class="op">=</span> extract_entities(query)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Expand to related entities via graph traversal</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    expanded <span class="op">=</span> <span class="bu">set</span>(query_entities)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> query_entities:</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> entity <span class="kw">in</span> graph:</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            expanded.update(nx.neighbors(graph, entity))</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gather chunks associated with expanded entities</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    entity_chunks <span class="op">=</span> []</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entity <span class="kw">in</span> expanded:</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        entity_chunks.extend(graph.nodes[entity].get(<span class="st">"source_chunks"</span>, []))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Merge with standard text retrieval</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    text_results <span class="op">=</span> text_retriever.retrieve(query, top_k<span class="op">=</span>k)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(<span class="bu">set</span>(entity_chunks) <span class="op">|</span> <span class="bu">set</span>(r[<span class="dv">0</span>] <span class="cf">for</span> r <span class="kw">in</span> text_results))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>GraphRAG is powerful for corpora with rich entity relationships (medical knowledge bases, legal systems, financial networks) but adds significant ingestion complexity (entity extraction per chunk) and retrieval complexity (graph traversal). —</p>
-</section>
-</section>
-<section id="retrieval-evaluation" class="level2" data-number="16.8">
-<h2 data-number="16.8" class="anchored" data-anchor-id="retrieval-evaluation"><span class="header-section-number">16.8</span> Retrieval evaluation</h2>
-<section id="metrics" class="level3" data-number="16.8.1">
-<h3 data-number="16.8.1" class="anchored" data-anchor-id="metrics"><span class="header-section-number">16.8.1</span> Metrics</h3>
-<p><strong>Recall@k</strong>: of all truly relevant chunks, what fraction appear in the top-k retrieved chunks?</p>
-<p><span class="math display">\[
-\mathrm{Recall@k} =
-\frac{
-\left|\{\mathrm{relevant}\} \cap \{\mathrm{top\text{-}k\ retrieved}\}\right|
-}{
-\left|\{\mathrm{relevant}\}\right|
-}
-\]</span></p>
-<p>This is the primary metric for RAG. If the relevant chunk is not in the top-k, the language model cannot use it and no downstream component can compensate.</p>
-<p><strong>Precision@k</strong>: of the top-k retrieved chunks, what fraction are truly relevant?</p>
-<p><span class="math display">\[
-\mathrm{Precision@k} =
-\frac{
-\left|\{\mathrm{relevant}\} \cap \{\mathrm{top\text{-}k\ retrieved}\}\right|
-}{
-k
-}
-\]</span></p>
-<p><strong>Mean Reciprocal Rank (MRR)</strong>: average reciprocal rank of the first relevant result across queries.</p>
-<p><span class="math display">\[
-\mathrm{MRR} =
-\frac{1}{|\mathrm{queries}|}
-\sum_{q \in \mathrm{queries}}
-\frac{1}{\mathrm{rank\_of\_first\_relevant}(q)}
-\]</span></p>
-<p><strong>NDCG@k</strong>: accounts for graded relevance and position. A relevant chunk at rank 1 contributes more than the same chunk at rank 5. <span class="math display">\[
-\mathrm{NDCG@k} =
-\frac{\mathrm{DCG@k}}{\mathrm{IDCG@k}}
-\]</span></p>
-<p><span class="math display">\[
-\mathrm{DCG@k} =
-\sum_{i=1}^{k}
-\frac{2^{rel_i}-1}{\log_2(i+1)}
-\]</span></p>
-<p><span class="math display">\[
-\mathrm{IDCG@k} =
-\sum_{i=1}^{k}
-\frac{2^{rel_i^*}-1}{\log_2(i+1)}
-\]</span></p>
-<hr>
-</section>
-</section>
-<section id="the-full-retrieval-pipeline" class="level2" data-number="16.9">
-<h2 data-number="16.9" class="anchored" data-anchor-id="the-full-retrieval-pipeline"><span class="header-section-number">16.9</span> The full retrieval pipeline</h2>
-<p>A production pipeline combining the techniques from this chapter:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HybridRetriever:</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, vector_db, bm25_index, embedding_model, llm):</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vector_db     <span class="op">=</span> vector_db</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bm25          <span class="op">=</span> bm25_index</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.embedding_model <span class="op">=</span> embedding_model</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.llm           <span class="op">=</span> llm</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> retrieve(</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        query: <span class="bu">str</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        conversation_history: <span class="bu">list</span>[<span class="bu">dict</span>] <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        filters: <span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span> <span class="op">=</span> <span class="va">None</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        top_k: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]:</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 1: Resolve conversational context</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        retrieval_query <span class="op">=</span> query</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> conversation_history:</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            retrieval_query <span class="op">=</span> generate_standalone_query(</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                conversation_history, query, <span class="va">self</span>.llm</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 2: Dense retrieval</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        query_embedding <span class="op">=</span> <span class="va">self</span>.embedding_model.encode(</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"query: </span><span class="sc">{</span>retrieval_query<span class="sc">}</span><span class="ss">"</span>, normalize_embeddings<span class="op">=</span><span class="va">True</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        dense_results <span class="op">=</span> <span class="va">self</span>.vector_db.search(</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            query_embedding, top_k<span class="op">=</span><span class="dv">50</span>, filters<span class="op">=</span>filters</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 3: Sparse retrieval</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        sparse_results <span class="op">=</span> <span class="va">self</span>.bm25.search(retrieval_query, top_k<span class="op">=</span><span class="dv">50</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 4: Fuse with RRF</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        fused <span class="op">=</span> reciprocal_rank_fusion([dense_results, sparse_results], k<span class="op">=</span><span class="dv">60</span>)</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        candidates <span class="op">=</span> fused[:<span class="dv">100</span>]  <span class="co"># top-100 for re-ranking</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 5: Re-rank (chapter 23)</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># reranked = reranker.rerank(retrieval_query, candidates, top_k)</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Step 6: Return top results</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="va">self</span>.get_chunk(chunk_id) <span class="cf">for</span> chunk_id, _ <span class="kw">in</span> candidates[:top_k]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="16.10">
-<h2 data-number="16.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">16.10</span> Key takeaways</h2>
+<p>where:</p>
 <ul>
-<li>No single retrieval algorithm works well for all query types; dense retrieval excels at semantic matching, BM25 excels at exact term matching, and their failure modes are complementary — hybrid retrieval consistently outperforms either alone</li>
-<li>BM25 scores by term frequency (saturated), inverse document frequency, and length normalization; it is essential for exact matching of rare terms, product codes, and named entities that embedding models handle poorly</li>
-<li>Reciprocal Rank Fusion is the most robust fusion method because it depends only on rank positions, not score magnitudes — no normalization required; retrieve top-50 or top-100 from each system before fusing</li>
-<li>Multi-query retrieval generates paraphrase variants and fuses results, improving recall for ambiguous queries at the cost of one LLM call per query</li>
-<li>Standalone query generation is mandatory for multi-turn conversations; direct retrieval on follow-up questions without context rewriting consistently fails and is one of the most common fixable RAG failures</li>
-<li>GraphRAG adds entity-relationship traversal for domains with rich structured relationships; adds significant complexity and is only worth it when text retrieval quality is provably insufficient for relationship-dependent queries</li>
-<li>Recall@k on a held-out evaluation set is the only reliable way to measure retrieval quality; build this before tuning anything else in the RAG pipeline</li>
+<li><span class="math inline">\(m_t\)</span>: first moment (moving average of gradients)</li>
+<li><span class="math inline">\(v_t\)</span>: second moment (moving average of squared gradients)</li>
+<li><span class="math inline">\(\hat{m}_t\)</span>: bias-corrected first moment</li>
+<li><span class="math inline">\(\hat{v}_t\)</span>: bias-corrected second moment</li>
+<li><span class="math inline">\(\alpha\)</span>: learning rate</li>
+</ul>
+<p>Standard hyperparameters: beta_1 = 0.9, beta_2 = 0.95 or 0.999, epsilon = 1e-8.</p>
+<p>The key insight: each parameter gets its own effective learning rate, adapted based on the history of its gradients. Parameters that receive large, consistent gradients get smaller effective learning rates, they are already moving fast. Parameters that receive small or noisy gradients get larger effective learning rates, they need more help.</p>
+<p>This makes training much more robust to the heterogeneous gradient magnitudes across different parts of a transformer, attention weights, embedding gradients, and FFN weights behave very differently, and Adam handles all of them without manual per-layer tuning.</p>
+</section>
+<section id="decoupled-weight-decay-adamw" class="level3" data-number="24.5.2">
+<h3 data-number="24.5.2" class="anchored" data-anchor-id="decoupled-weight-decay-adamw"><span class="header-section-number">24.5.2</span> Decoupled weight decay: AdamW</h3>
+<p>L2 regularization is commonly introduced by adding a penalty on the squared magnitude of the model parameters to the training loss:</p>
+<p><span class="math display">\[
+L_{\text{total}}(\theta)
+=
+L(\theta)
++
+\frac{\lambda}{2}\|\theta\|_2^2
+\]</span></p>
+<p>Taking the gradient gives:</p>
+<p><span class="math display">\[
+\nabla_\theta L_{\text{total}}
+=
+\nabla_\theta L
++
+\lambda\theta
+\]</span></p>
+<p>Thus, the L2 penalty adds <span class="math inline">\(\lambda\theta\)</span> to the gradient before the Adam update. Because Adam applies parameter-wise adaptive scaling to the gradient, the regularization term is also affected by this scaling.</p>
+<p>AdamW decouples weight decay from the gradient update. Instead of adding the regularization term to the gradient, it directly shrinks the parameters separately from the adaptive gradient step:</p>
+<p><span class="math display">\[
+\theta_t
+=
+(1-\alpha\lambda)\theta_{t-1}
+-
+\alpha
+\frac{\hat{m}_t}
+{\sqrt{\hat{v}_t}+\varepsilon}
+\]</span></p>
+<p>Where <span class="math inline">\(\lambda\)</span> is the weight decay coefficient, typically set to <span class="math inline">\(0.1\)</span> in many transformer training setups. This encourages parameters to remain small, which acts as a form of regularization and can improve generalization. Because AdamW applies this weight decay directly to the parameters, there is typically no need to add a separate L2 regularization penalty to the loss for the same purpose.</p>
+</section>
+<section id="memory-cost-of-the-optimizer" class="level3" data-number="24.5.3">
+<h3 data-number="24.5.3" class="anchored" data-anchor-id="memory-cost-of-the-optimizer"><span class="header-section-number">24.5.3</span> Memory cost of the optimizer</h3>
+<p>Adam maintains two additional values per parameter (m and v). For a 175B parameter model in float32:</p>
+<pre><code>Parameters:       175B * 4 bytes = 700 GB
+Adam m states:    175B * 4 bytes = 700 GB
+Adam v states:    175B * 4 bytes = 700 GB
+Total:                            2.1 TB</code></pre>
+<p>This is why optimizer state is one of the dominant memory costs in large model training, and why techniques like 8-bit Adam (quantizing optimizer states to INT8) and ZeRO (sharding optimizer state across GPUs) exist. Without these techniques, training a 70B model requires more memory for optimizer state than for the model itself.</p>
+<hr>
+</section>
+</section>
+<section id="the-learning-rate-schedule" class="level2" data-number="24.6">
+<h2 data-number="24.6" class="anchored" data-anchor-id="the-learning-rate-schedule"><span class="header-section-number">24.6</span> The learning rate schedule</h2>
+<p>The learning rate is not constant across training. A carefully designed schedule is critical for stable and effective training.</p>
+<section id="warmup" class="level3" data-number="24.6.1">
+<h3 data-number="24.6.1" class="anchored" data-anchor-id="warmup"><span class="header-section-number">24.6.1</span> Warmup</h3>
+<p>Training starts with a very small learning rate and increases linearly to the target rate over the first few thousand steps.</p>
+<p>Without warmup, the large random gradients at initialization cause the Adam moment estimates (m and v) to be poorly calibrated, leading to unstable early training or divergence. The warmup period gives the optimizer time to accumulate accurate moment estimates before taking large steps.</p>
+<p>A typical warmup: 2,000 steps from lr = 0 to lr = 3e-4.</p>
+</section>
+<section id="cosine-decay" class="level3" data-number="24.6.2">
+<h3 data-number="24.6.2" class="anchored" data-anchor-id="cosine-decay"><span class="header-section-number">24.6.2</span> Cosine decay</h3>
+<p>After warmup, the learning rate follows a cosine decay schedule:</p>
+<pre><code>lr(step) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * step / total_steps))</code></pre>
+<p>The learning rate decreases smoothly from the peak to a small final value (typically lr_max / 10). The cosine shape is empirically better than linear decay: it maintains a higher learning rate during most of training, allowing the model to escape local optima, then decays rapidly at the end to converge to a good solution.</p>
+</section>
+<section id="why-the-schedule-matters-as-much-as-the-learning-rate" class="level3" data-number="24.6.3">
+<h3 data-number="24.6.3" class="anchored" data-anchor-id="why-the-schedule-matters-as-much-as-the-learning-rate"><span class="header-section-number">24.6.3</span> Why the schedule matters as much as the learning rate</h3>
+<p>The peak learning rate controls the step size. The schedule controls how that step size changes over training. A training run with the wrong schedule (too fast decay, or no warmup) can produce a significantly worse model than the same training run with the correct schedule, even with identical architecture and data.</p>
+<hr>
+</section>
+</section>
+<section id="gradient-clipping" class="level2" data-number="24.7">
+<h2 data-number="24.7" class="anchored" data-anchor-id="gradient-clipping"><span class="header-section-number">24.7</span> Gradient clipping</h2>
+<p>Large gradient spikes occur naturally during training, a particularly surprising batch produces unusually large gradients that could cause a large parameter update and destabilize training. Gradient clipping prevents this.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clip gradient norm to max_norm</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>total_norm <span class="op">=</span> sqrt(<span class="bu">sum</span>(p.grad.norm()<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> p <span class="kw">in</span> model.parameters()))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>clip_coef  <span class="op">=</span> max_norm <span class="op">/</span> <span class="bu">max</span>(total_norm, max_norm)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> model.parameters():</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    p.grad <span class="op">*=</span> clip_coef</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If the global gradient norm (the L2 norm across all parameters) exceeds a threshold (typically 1.0), all gradients are scaled down proportionally so the global norm equals the threshold.</p>
+<p>Clipping does not change the direction of the update, only its magnitude. It prevents a single bad batch from destabilizing training without distorting the direction of learning. Monitoring the gradient norm (and the frequency of clipping) is one of the primary diagnostic signals during training: frequent clipping or a consistently elevated norm indicates the learning rate is too high.</p>
+<hr>
+</section>
+<section id="mixed-precision-training" class="level2" data-number="24.8">
+<h2 data-number="24.8" class="anchored" data-anchor-id="mixed-precision-training"><span class="header-section-number">24.8</span> Mixed precision training</h2>
+<p>Frontier model training uses BF16 rather than FP32 for the forward and backward passes, halving memory requirements for activations and parameters at the cost of some numerical precision.</p>
+<pre><code>Full precision (FP32):
+  Forward pass:       FP32 activations
+  Backward pass:      FP32 gradients
+  Optimizer step:     FP32 parameter update
+
+Mixed precision (BF16 compute, FP32 master):
+  Forward pass:       BF16 activations (2x faster on tensor cores)
+  Backward pass:      BF16 gradients
+  Gradient cast:      BF16 -&gt; FP32
+  Optimizer step:     FP32 parameter update (numerical accuracy preserved)
+  Parameter cast:     FP32 -&gt; BF16 for next step</code></pre>
+<p>BF16 was chosen over FP16 because it has the same exponent range as FP32 (8 bits), preventing overflow on the large gradient values common in deep network training. FP16’s limited range (max ≈ 65,504) caused frequent overflow in practice.</p>
+<p>The float32 master copy is necessary because BF16 has insufficient precision to accumulate small gradient updates correctly over many steps. BF16 represents values with only 7 mantissa bits (≈ 2 decimal digits of precision); the optimizer states and parameters need more precision than this to make the tiny updates that characterize late-stage training.</p>
+<hr>
+</section>
+<section id="batch-size-and-gradient-accumulation" class="level2" data-number="24.9">
+<h2 data-number="24.9" class="anchored" data-anchor-id="batch-size-and-gradient-accumulation"><span class="header-section-number">24.9</span> Batch size and gradient accumulation</h2>
+<p>The batch size determines how many training examples are processed before each parameter update. Larger batches produce more accurate gradient estimates (averaging over more examples reduces noise) but require more memory.</p>
+<section id="gradient-accumulation" class="level3" data-number="24.9.1">
+<h3 data-number="24.9.1" class="anchored" data-anchor-id="gradient-accumulation"><span class="header-section-number">24.9.1</span> Gradient accumulation</h3>
+<p>When the target batch size exceeds what fits in GPU memory, gradient accumulation accumulates gradients over multiple forward-backward passes before taking an optimizer step:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>optimizer.zero_grad()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (inputs, targets) <span class="kw">in</span> <span class="bu">enumerate</span>(dataloader):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(inputs)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    loss    <span class="op">=</span> criterion(outputs, targets) <span class="op">/</span> accumulation_steps</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    loss.backward()                          <span class="co"># accumulate gradients</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> accumulation_steps <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        optimizer.step()                     <span class="co"># update parameters</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()                <span class="co"># clear accumulated gradients</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>4 accumulation steps with batch size 256 is mathematically equivalent to one step with batch size 1,024, but uses 4x less memory. The tradeoff is that 4 forward-backward passes take longer than 1.</p>
+</section>
+<section id="the-batch-sizelearning-rate-relationship" class="level3" data-number="24.9.2">
+<h3 data-number="24.9.2" class="anchored" data-anchor-id="the-batch-sizelearning-rate-relationship"><span class="header-section-number">24.9.2</span> The batch size/learning rate relationship</h3>
+<p>Increasing batch size without adjusting the learning rate undertrains the model, fewer parameter updates per epoch. Linear scaling rule: when batch size is multiplied by k, multiply the learning rate by k. This preserves the ratio of gradient signal to noise across different batch sizes.</p>
+<hr>
+</section>
+</section>
+<section id="activation-checkpointing" class="level2" data-number="24.10">
+<h2 data-number="24.10" class="anchored" data-anchor-id="activation-checkpointing"><span class="header-section-number">24.10</span> Activation checkpointing</h2>
+<p>During the backward pass, the model needs the activations computed during the forward pass to compute gradients. Storing all activations for a large model and large batch requires enormous memory.</p>
+<p>Activation checkpointing trades compute for memory: instead of storing all activations, store only a subset (checkpoints). During the backward pass, recompute activations between checkpoints from the stored ones.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.checkpoint <span class="im">import</span> checkpoint</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward_with_checkpointing(<span class="va">self</span>, x):</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> layer <span class="kw">in</span> <span class="va">self</span>.layers:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> checkpoint(layer, x)  <span class="co"># recompute activations during backward</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The cost is additional computation because some forward operations must be recomputed during the backward pass. The exact overhead depends on the checkpointing strategy and model architecture and it is standard in all frontier model training.</p>
+<hr>
+</section>
+<section id="checkpointing-and-fault-tolerance" class="level2" data-number="24.11">
+<h2 data-number="24.11" class="anchored" data-anchor-id="checkpointing-and-fault-tolerance"><span class="header-section-number">24.11</span> Checkpointing and fault tolerance</h2>
+<p>Training a frontier model takes weeks to months on thousands of GPUs. Hardware failures are not exceptions, they are statistical certainties at this scale. A GPU cluster of 10,000 nodes where each node has a mean time between failures of one year will experience approximately 27 failures per day.</p>
+<p>Model checkpoints (snapshots of parameters, optimizer states, and training metadata) are saved to distributed storage at regular intervals (typically every few hundred steps). If a failure occurs, training restarts from the last checkpoint, losing only the steps since then.</p>
+<p>The tradeoff is I/O overhead. Checkpointing a 175B model with optimizer states is terabytes of data per checkpoint. Asynchronous checkpointing (saving in the background while training continues) reduces this overhead significantly.</p>
+<hr>
+</section>
+<section id="the-full-training-step-assembled" class="level2" data-number="24.12">
+<h2 data-number="24.12" class="anchored" data-anchor-id="the-full-training-step-assembled"><span class="header-section-number">24.12</span> The full training step, assembled</h2>
+<p>A complete single training step:</p>
+<pre><code>1.  Sample a batch of sequences from the training corpus
+
+2.  Forward pass (in BF16):
+    - Token embedding lookup
+    - Add positional encodings / apply RoPE
+    - Pass through N transformer blocks (attention + FFN + residuals + layernorm)
+    - Project to vocabulary logits
+    - Compute cross-entropy loss against shifted target sequence
+
+3.  Backward pass:
+    - Compute gradients via backpropagation (in BF16)
+    - Cast gradients to float32
+
+4.  Gradient clipping:
+    - Compute global gradient norm
+    - Rescale all gradients if norm &gt; threshold
+
+5.  All-reduce (distributed training):
+    - Average gradients across all data-parallel ranks
+
+6.  Optimizer step (AdamW, in float32):
+    - Update first and second moment estimates
+    - Apply weight decay
+    - Update float32 master parameters
+
+7.  Cast updated parameters back to BF16 for next step
+
+8.  Update learning rate schedule
+
+9.  Log metrics (loss, gradient norm, learning rate, throughput)
+
+10. Save checkpoint if at checkpoint interval
+
+11. Repeat</code></pre>
+<hr>
+</section>
+<section id="what-to-monitor-during-training" class="level2" data-number="24.13">
+<h2 data-number="24.13" class="anchored" data-anchor-id="what-to-monitor-during-training"><span class="header-section-number">24.13</span> What to monitor during training</h2>
+<p>A training run is not something you start and leave. Active monitoring is required.</p>
+<p><strong>Training loss.</strong> The primary signal and should decrease steadily and smoothly. Spikes indicate bad batches or numerical instability. A plateau may indicate the learning rate is too small or the model is at capacity for its size. Loss divergence (increasing without recovering) requires immediate intervention: reduce the learning rate, restore an earlier checkpoint, and investigate the bad batch that triggered the spike.</p>
+<p><strong>Validation loss.</strong> Loss on a held-out set not seen during training. Divergence between training and validation loss indicates overfitting. For large models on large corpora, the model rarely sees the same sequence twice, so overfitting is uncommon, but benchmark contamination can cause deceptively low validation loss.</p>
+<p><strong>Gradient norm.</strong> Should be stable and well below the clipping threshold. Frequent clipping or consistently elevated norms indicate the learning rate is too high. Sudden spikes that persist indicate a corrupted batch or numerical issue.</p>
+<p><strong>MFU (Model FLOPs Utilization).</strong> The fraction of peak theoretical GPU compute actually used. Well-optimized distributed training achieves 40–60% MFU. Lower values indicate communication bottlenecks, pipeline bubbles, or data loading delays.</p>
+<p><strong>Token throughput.</strong> Tokens processed per second across the cluster. The primary efficiency metric for benchmarking training setups.</p>
+<p><strong>Weight norms.</strong> If weight norms grow continuously, weight decay is insufficient or there is a regularization issue.</p>
+<hr>
+</section>
+<section id="the-chinchilla-finding-compute-optimal-training" class="level2" data-number="24.14">
+<h2 data-number="24.14" class="anchored" data-anchor-id="the-chinchilla-finding-compute-optimal-training"><span class="header-section-number">24.14</span> The Chinchilla finding: compute-optimal training</h2>
+<p>How do you decide how large a model to train and on how many tokens?</p>
+<p>This was largely heuristic until Hoffmann et al.&nbsp;(2022). For a fixed compute budget C (measured in FLOPs), the optimal allocation trains a model of N parameters on D = 20N tokens:</p>
+<pre><code>Optimal model size:      N* proportional to C^0.5
+Optimal training tokens: D* proportional to C^0.5</code></pre>
+<p>A 10B parameter model optimally requires approximately 200B tokens. A 70B model requires approximately 1.4T tokens. Previous models (GPT-3, Gopher) were significantly undertrained, too many parameters, too few tokens for their compute budget.</p>
+<p>The practical implication shifted after Chinchilla: inference cost is paid many times while training cost is paid once. Training a smaller model for longer produces a model cheaper to run at inference time with comparable quality. LLaMA 2 and LLaMA 3 train on far more tokens than Chinchilla-optimal for exactly this reason.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="24.15">
+<h2 data-number="24.15" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">24.15</span> Key takeaways</h2>
+<ul>
+<li>The training objective is cross-entropy loss on next-token prediction; one forward pass on a sequence of length n produces n training examples simultaneously — this is why transformer training is computationally efficient</li>
+<li>Backpropagation computes gradients for every parameter; residual connections ensure gradients reach early layers without vanishing, enabling 96-layer+ networks to train reliably</li>
+<li>AdamW maintains per-parameter adaptive learning rates via first and second moment estimates; its memory cost is 2x the parameter count, making optimizer state the dominant memory consumer in large model training</li>
+<li>The learning rate schedule — warmup then cosine decay — is as important as the peak learning rate itself; wrong schedules produce significantly worse models even with identical architecture and data</li>
+<li>Gradient clipping prevents loss spikes from destabilizing training by scaling down large gradient norms; monitoring norm and clipping frequency is a primary training health signal</li>
+<li>Mixed precision training uses BF16 for compute (2x faster on tensor cores) and float32 for optimizer states (numerical accuracy preserved); BF16 is preferred over FP16 because it has the same exponent range as FP32</li>
+<li>Activation checkpointing trades ~30% compute for O(sqrt(n)) rather than O(n) activation memory, enabling training of models that would otherwise not fit in GPU memory</li>
+<li>The Chinchilla finding — optimal training requires roughly 20 tokens per parameter — reshaped compute budget allocation; in practice, models are overtrained relative to Chinchilla-optimal because inference cost is paid many more times than training cost</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch6/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/ch5/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16.2: Cheat sheet.
+Figure&nbsp;24.2: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="16.11">
-<h2 data-number="16.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">16.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="24.16">
+<h2 data-number="24.16" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">24.16</span> Further reading</h2>
 <ul>
-<li>Robertson &amp; Zaragoza (2009). <em>The Probabilistic Relevance Framework: BM25 and Beyond.</em> — The authoritative BM25 reference; explains the mathematical motivation for saturation and length normalization.</li>
-<li>Karpukhin et al.&nbsp;(2020). <em>Dense Passage Retrieval for Open-Domain Question Answering.</em> — established dense retrieval for question answering.</li>
-<li>Cormack et al.&nbsp;(2009). <em>Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods.</em> — The RRF paper.</li>
-<li>Ma et al.&nbsp;(2023). <em>Fine-Tuning LLaMA for Multi-Stage Text Retrieval.</em> — LLM- based query reformulation for improved retrieval.</li>
-<li>Edge et al.&nbsp;(2024). <em>From Local to Global: A Graph RAG Approach to Query- Focused Summarization.</em> — GraphRAG; entity-based retrieval for complex multi-document reasoning.</li>
-<li>Es et al.&nbsp;(2023). <em>RAGAS: Automated Evaluation of Retrieval Augmented Generation.</em> — End-to-end RAG evaluation framework including retrieval metrics.</li>
-<li>Thakur et al.&nbsp;(2021). <em>BEIR: A Heterogeneous Benchmark for Zero-Shot Evaluation of Information Retrieval Models.</em> — The standard benchmark for comparing retrieval algorithms across diverse domains.</li>
+<li>Kingma &amp; Ba (2015). <em>Adam: A Method for Stochastic Optimization.</em> — The original Adam paper.</li>
+<li>Loshchilov &amp; Hutter (2019). <em>Decoupled Weight Decay Regularization.</em> — The AdamW paper.</li>
+<li>Hoffmann et al.&nbsp;(2022). <em>Training Compute-Optimal Large Language Models.</em> — The Chinchilla paper; required reading for anyone thinking about training compute allocation.</li>
+<li>Rajbhandari et al.&nbsp;(2020). <em>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models.</em> — DeepSpeed ZeRO; the standard approach to optimizer state sharding covered in chapter 32.</li>
+<li>Chen et al.&nbsp;(2016). <em>Training Deep Nets with Sublinear Memory Cost.</em> — Activation checkpointing.</li>
+<li>Karpathy, A. (2022). <em>nanoGPT.</em> — A clean, minimal GPT training implementation in ~300 lines of PyTorch; the best way to understand the training loop concretely before the distributed complexity of chapter 32.</li>
 </ul>
 <hr>
 
@@ -1348,14 +1380,11 @@ Figure&nbsp;16.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part4/vector_databases.html" class="pagination-link" aria-label="Vector Databases">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Vector Databases</span></span>
+      <a href="../../book/part5/training_objectives.html" class="pagination-link" aria-label="Training Objectives">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part4/reranking.html" class="pagination-link" aria-label="Reranking">
-        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reranking</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
