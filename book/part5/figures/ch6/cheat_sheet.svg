@@ -1,0 +1,112 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- Memory Problem -->
+
+<rect class="box" x="40" y="30" width="360" height="200"/>
+<text class="section" x="65" y="65">Why Distributed Training?</text>
+<text class="text" x="65" y="98">LLaMA 2 7B — FP32 training:</text>
+<text class="text" x="65" y="128">Weights:          28 GB</text>
+<text class="text" x="65" y="155">Gradients:        28 GB</text>
+<text class="text" x="65" y="182">Adam states:      56 GB</text>
+<text class="text" x="65" y="209">Total:            112 GB</text>
+
+<!-- Activation -->
+
+<rect class="box" x="420" y="30" width="360" height="200"/>
+<text class="section" x="445" y="65">Activations</text>
+<text class="text" x="445" y="98">Backward pass needs forward activations.</text>
+<text class="text" x="445" y="130">Memory grows with:</text>
+<text class="text" x="445" y="158">• Model depth</text>
+<text class="text" x="445" y="183">• Batch size</text>
+<text class="text" x="445" y="208">• Sequence length</text>
+
+<!-- Main strategies -->
+
+<rect class="box" x="800" y="30" width="360" height="200"/>
+<text class="section" x="825" y="65">Three Parallelism Strategies</text>
+<text class="text" x="825" y="105">Data Parallelism (DP)</text>
+<text class="text" x="825" y="135">Tensor Parallelism (TP)</text>
+<text class="text" x="825" y="165">Pipeline Parallelism (PP)</text>
+<text class="text" x="825" y="205">Production: 3D Parallelism</text>
+
+<!-- DP -->
+
+<rect class="box" x="40" y="260" width="360" height="270"/>
+<text class="section" x="65" y="295">Data Parallelism (DP)</text>
+<text class="text" x="65" y="330">Each GPU holds a full model copy.</text>
+<text class="text" x="65" y="360">Batch is split across GPUs.</text>
+<text class="text" x="65" y="390">Each GPU computes local gradients.</text>
+<text class="text" x="65" y="420">Gradients synchronized with all-reduce.</text>
+<text class="text" x="65" y="460">Pros: simple, high throughput</text>
+<text class="text" x="65" y="490">Limit: model must fit on one GPU</text>
+<text class="code" x="65" y="520">DDP = standard PyTorch implementation</text>
+
+<!-- ZeRO -->
+
+<rect class="box" x="420" y="260" width="360" height="270"/>
+<text class="section" x="445" y="295">ZeRO / FSDP</text>
+<text class="text" x="445" y="330">Remove redundant memory across GPUs.</text>
+<text class="text" x="445" y="365">Stage 1: shard optimizer states</text>
+<text class="text" x="445" y="395">Stage 2: shard optimizer + gradients</text>
+<text class="text" x="445" y="425">Stage 3: shard optimizer + gradients + parameters</text>
+<text class="text" x="445" y="465">FSDP ≈ PyTorch implementation of ZeRO-3</text>
+<text class="text" x="445" y="505">Tradeoff: lower memory, more communication</text>
+
+<!-- TP -->
+
+<rect class="box" x="800" y="260" width="360" height="270"/>
+<text class="section" x="825" y="295">Tensor Parallelism (TP)</text>
+<text class="text" x="825" y="330">Split computation inside each layer.</text>
+<text class="text" x="825" y="365">Column parallelism:</text>
+<text class="code" x="825" y="390">W = [W₁ | W₂]</text>
+<text class="text" x="825" y="425">Row parallelism:</text>
+<text class="code" x="825" y="450">Y = X₁W₁ + X₂W₂</text>
+<text class="text" x="825" y="485">Usually TP = 2, 4, or 8 within a node.</text>
+<text class="text" x="825" y="515">Requires fast NVLink communication.</text>
+
+<!-- PP -->
+
+<rect class="box" x="40" y="560" width="360" height="290"/>
+<text class="section" x="65" y="595">Pipeline Parallelism (PP)</text>
+<text class="text" x="65" y="630">Split transformer layers across GPUs.</text>
+<text class="text" x="65" y="665">GPU 1: Layers 1–8</text>
+<text class="text" x="65" y="695">GPU 2: Layers 9–16</text>
+<text class="text" x="65" y="725">GPU 3: Layers 17–24</text>
+<text class="text" x="65" y="765">Main issue: pipeline bubble</text>
+<text class="text" x="65" y="795">More micro-batches → smaller bubble</text>
+<text class="code" x="65" y="830">bubble = (p - 1) / (m + p - 1)</text>
+
+<!-- 3D -->
+
+<rect class="box" x="420" y="560" width="360" height="290"/>
+<text class="section" x="445" y="595">3D Parallelism</text>
+<text class="text" x="445" y="635">TP — split computation within layers</text>
+<text class="text" x="445" y="675">PP — split layers across devices</text>
+<text class="text" x="445" y="715">DP — replicate model groups</text>
+<text class="text" x="445" y="755">Example:</text>
+<text class="code" x="445" y="785">TP = 8, PP = 4, DP = 16</text>
+<text class="code" x="445" y="815">8 × 4 × 16 = 512 GPUs</text>
+
+<!-- Communication -->
+
+<rect class="box" x="800" y="560" width="360" height="290"/>
+<text class="section" x="825" y="595">Communication Primitives</text>
+<text class="text" x="825" y="635">All-reduce</text>
+<text class="text" x="975" y="635">DP gradients</text>
+<text class="text" x="825" y="675">Reduce-scatter</text>
+<text class="text" x="975" y="675">ZeRO gradients</text>
+<text class="text" x="825" y="715">All-gather</text>
+<text class="text" x="975" y="715">ZeRO parameters</text>
+<text class="text" x="825" y="755">Point-to-point</text>
+<text class="text" x="975" y="755">PP activations</text>
+<text class="text" x="825" y="805">NCCL</text>
+<text class="text" x="975" y="805">GPU collectives</text>
+
+</svg>
