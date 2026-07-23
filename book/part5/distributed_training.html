@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; KV Cache – From Prompt to Response</title>
+<title>25&nbsp; Distributed Training – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -33,8 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/gpu-execution.html" rel="next">
-<link href="../../book/part3/attention-computation.html" rel="prev">
+<link href="../../book/part5/training_loop.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -109,13 +108,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="7&nbsp; KV Cache – From Prompt to Response">
+<meta property="og:title" content="25&nbsp; Distributed Training – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch3/journey_part3_ch3.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch6/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="7&nbsp; KV Cache – From Prompt to Response">
+<meta name="twitter:title" content="25&nbsp; Distributed Training – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch3/journey_part3_ch3.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch6/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -290,7 +289,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/kv-cache.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/distributed_training.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -394,7 +393,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
   </div>
 </li>
@@ -524,7 +523,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/distributed_training.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/distributed_training.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></span></a>
   </div>
 </li>
@@ -548,17 +547,15 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-problem-that-kv-cache-solves" id="toc-the-problem-that-kv-cache-solves" class="nav-link active" data-scroll-target="#the-problem-that-kv-cache-solves"><span class="header-section-number">7.1</span> The problem that KV cache solves</a></li>
-  <li><a href="#what-is-stored" id="toc-what-is-stored" class="nav-link" data-scroll-target="#what-is-stored"><span class="header-section-number">7.2</span> What is stored</a></li>
-  <li><a href="#attention-with-and-without-a-kv-cache" id="toc-attention-with-and-without-a-kv-cache" class="nav-link" data-scroll-target="#attention-with-and-without-a-kv-cache"><span class="header-section-number">7.3</span> Attention with and without a KV cache</a></li>
-  <li><a href="#memory-arithmetic" id="toc-memory-arithmetic" class="nav-link" data-scroll-target="#memory-arithmetic"><span class="header-section-number">7.4</span> Memory arithmetic</a></li>
-  <li><a href="#the-lifecycle-of-a-kv-cache-entry" id="toc-the-lifecycle-of-a-kv-cache-entry" class="nav-link" data-scroll-target="#the-lifecycle-of-a-kv-cache-entry"><span class="header-section-number">7.5</span> The lifecycle of a KV cache entry</a></li>
-  <li><a href="#naive-allocation-and-its-problems" id="toc-naive-allocation-and-its-problems" class="nav-link" data-scroll-target="#naive-allocation-and-its-problems"><span class="header-section-number">7.6</span> Naive allocation and its problems</a></li>
-  <li><a href="#pagedattention" id="toc-pagedattention" class="nav-link" data-scroll-target="#pagedattention"><span class="header-section-number">7.7</span> PagedAttention</a></li>
-  <li><a href="#kv-cache-quantization" id="toc-kv-cache-quantization" class="nav-link" data-scroll-target="#kv-cache-quantization"><span class="header-section-number">7.8</span> KV cache quantization</a></li>
-  <li><a href="#kv-cache-eviction" id="toc-kv-cache-eviction" class="nav-link" data-scroll-target="#kv-cache-eviction"><span class="header-section-number">7.9</span> KV cache eviction</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">7.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">7.11</span> Further reading</a></li>
+  <li><a href="#the-problem-nothing-fits" id="toc-the-problem-nothing-fits" class="nav-link active" data-scroll-target="#the-problem-nothing-fits"><span class="header-section-number">25.1</span> The Problem: Nothing Fits</a></li>
+  <li><a href="#data-parallelism" id="toc-data-parallelism" class="nav-link" data-scroll-target="#data-parallelism"><span class="header-section-number">25.2</span> Data Parallelism</a></li>
+  <li><a href="#zero-sharding-optimizer-state-gradients-and-parameters" id="toc-zero-sharding-optimizer-state-gradients-and-parameters" class="nav-link" data-scroll-target="#zero-sharding-optimizer-state-gradients-and-parameters"><span class="header-section-number">25.3</span> ZeRO: Sharding Optimizer State, Gradients, and Parameters</a></li>
+  <li><a href="#tensor-parallelism" id="toc-tensor-parallelism" class="nav-link" data-scroll-target="#tensor-parallelism"><span class="header-section-number">25.4</span> Tensor Parallelism</a></li>
+  <li><a href="#pipeline-parallelism" id="toc-pipeline-parallelism" class="nav-link" data-scroll-target="#pipeline-parallelism"><span class="header-section-number">25.5</span> Pipeline Parallelism</a></li>
+  <li><a href="#d-parallelism-combining-all-three" id="toc-d-parallelism-combining-all-three" class="nav-link" data-scroll-target="#d-parallelism-combining-all-three"><span class="header-section-number">25.6</span> 3D Parallelism: Combining All Three</a></li>
+  <li><a href="#communication-primitives-and-interconnects" id="toc-communication-primitives-and-interconnects" class="nav-link" data-scroll-target="#communication-primitives-and-interconnects"><span class="header-section-number">25.7</span> Communication Primitives and Interconnects</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">25.8</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">25.9</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -566,9 +563,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/kv-cache.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/distributed_training.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></h1>
+<h1 class="title"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></h1>
 </div>
 
 
@@ -586,7 +583,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>Generating one token requires attending to every previous token. How do we avoid recomputing all of that work on every single generation step and what does managing that memory look like in a production system?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How do you train a model whose parameters, gradients, and activations do not fit in a single GPU and what does each parallelism strategy cost you in communication overhead, memory, and engineering complexity?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -599,311 +596,314 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/journey_part3_ch3.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch6/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: The journey through the Model Mind.
+Figure&nbsp;25.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The previous chapter showed how attention is computed in inference and this chapter focuses on the engineering implications of that process when generation happens sequentially: at each step, the model must retain access to the keys and values from all previously generated tokens. While the KV cache makes this computationally practical, it becomes the primary memory management challenge in production scale LLM serving.</p>
+<p>We are in Part IV. Chapter 31 covered the single-machine training loop: the forward pass, loss computation, backward pass, and optimizer step as they execute on one device. This chapter asks what happens when the model, the data, or both are too large for one device to hold which is the case for every large language model trained in the past five years.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="the-problem-that-kv-cache-solves" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="the-problem-that-kv-cache-solves"><span class="header-section-number">7.1</span> The problem that KV cache solves</h2>
-<p>Autoregressive generation is fundamentally sequential and generating each token requires attending to all previously generated tokens. To generate token <code>t</code>, the model must attend to all preceding tokens <code>0</code> through <code>t−1</code>, and generating each subsequent token expands the context by one, requiring the model to repeatedly process the entire accumulated sequence.</p>
-<p>Without caching, generating a 500 token response to a 100 token prompt would require:</p>
-<pre><code>Step 1:   process 101 tokens → generate token 101
-Step 2:   process 102 tokens → generate token 102
-...
-Step 500: process 600 tokens → generate token 600</code></pre>
-<p>Total compute proportional to <span class="math inline">\(101 + 102 + ... + 600 ≈ 175,000\)</span> token processing steps. For large models, this process is highly inefficient: by step 500, most of the computation power is spent to reprocess tokens that were already handled at step 1, recomputing the same key and value vectors even though the underlying inputs have not changed.</p>
-<p>The KV cache eliminates this redundancy by computing key and value vectors only once and stores them in memory. At each new generation step, the model computes the new token’s Q, K, and V vectors, retrieves the cached keys and values for all previous tokens, and performs attention over the full cached context.</p>
-<p>With the KV cache:</p>
-<pre><code>Prefill:          process all 100 prompt tokens once, store their K and V
-Each decode step: compute K, V for one new token, append to cache, attend
-Total work:       proportional to 100 (prefill) + 500 (one step per token)</code></pre>
-<p>The savings grow with sequence length. Without the KV cache, practical LLM deployment at today’s context lengths would be economically infeasible.</p>
+<section id="the-problem-nothing-fits" class="level2" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="the-problem-nothing-fits"><span class="header-section-number">25.1</span> The Problem: Nothing Fits</h2>
+<p>The numbers make the problem concrete. LLaMA 2 7B has 7 billion parameters. In float32, each parameter occupies 4 bytes: 28 GB just for the weights. Training also requires storing gradients, another 28 GB, and Adam optimizer state (first and second moment estimates for every parameter), another 56 GB. Total: 112 GB for 7 billion parameters in full precision. An H100 GPU has 80 GB of HBM. The weights alone saturate the memory budget; gradients and optimizer state overflow it by a factor of two.</p>
+<p>For LLaMA 2 70B: 1.12 TB of optimizer state, gradients, and weights combined. For GPT-3 175B: 2.8 TB. For the largest models in active research, parameter counts reach into the hundreds of billions or trillions, with optimizer state occupying multiple petabytes. No single GPU has ever existed that could hold these numbers, and none is on the near-term roadmap.</p>
+<p>Training activations compound the problem. During the backward pass, the gradient of the loss with respect to each layer’s input must be computed. Computing this gradient requires the layer’s activations (the intermediate values computed during the forward pass) to be available at backward time. For a 7B-parameter model trained with context length 4,096 and batch size 1, storing full activations requires roughly 70 GB using float16. For batch size 32: 2.24 TB. Activation recomputation (gradient checkpointing) can trade this memory cost for additional compute (the activations are discarded during the forward pass and recomputed during the backward pass) but introduces a 30–40% compute overhead.</p>
+<p>Distributed training resolves the memory problem by distributing the model and the data across multiple GPUs and multiple nodes. The price is communication: moving tensors across GPUs requires interconnect bandwidth and introduces synchronization points that can dominate runtime if not carefully managed. The field has developed three orthogonal parallelism strategies (data parallelism, tensor parallelism, and pipeline parallelism) each addressing a different aspect of the memory and compute problem, and several frameworks for combining them.</p>
 <hr>
 </section>
-<section id="what-is-stored" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="what-is-stored"><span class="header-section-number">7.2</span> What is stored</h2>
-<p>For each token in the sequence, for each transformer layer, for each KV head, the cache stores two vectors: the key and value produced by the linear projections of that token’s hidden state.</p>
-<pre><code>KV cache structure:
-
-Layer 0:
-  K: [seq_len, n_kv_heads, d_k]   ← key vectors for all tokens so far
-  V: [seq_len, n_kv_heads, d_v]   ← value vectors for all tokens so far
-
-Layer 1:
-  K: [seq_len, n_kv_heads, d_k]
-  V: [seq_len, n_kv_heads, d_v]
-
-...
-
-Layer L-1:
-  K: [seq_len, n_kv_heads, d_k]
-  V: [seq_len, n_kv_heads, d_v]</code></pre>
-<p>Query vectors are not cached because they are used only once: the query for token <code>t</code> is needed solely to compute attention at generation step <code>t</code> and becomes irrelevant afterward. On the other hand, the key and value vectors for token <code>t</code> are reused at every subsequent step until generation ends. The KV cache exploit this asymmetry by storing persistent keys and values while recomputing only the transient query vectors.</p>
-<hr>
-</section>
-<section id="attention-with-and-without-a-kv-cache" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="attention-with-and-without-a-kv-cache"><span class="header-section-number">7.3</span> Attention with and without a KV cache</h2>
-<p>Consider a single attention head. After processing a sequence of length (t),</p>
-<p><span class="math display">\[
-K_t =
-\begin{bmatrix}
-k_1 \\
-k_2 \\
-\vdots \\
-k_t
-\end{bmatrix},
-\quad
-V_t =
-\begin{bmatrix}
-v_1 \\
-v_2 \\
-\vdots \\
-v_t
-\end{bmatrix}.
-\]</span></p>
-<p>To generate the next token, the model first computes the hidden state (<span class="math inline">\(h_{t+1}\)</span>) and projects it to</p>
-<p><span class="math display">\[
-q_{t+1} = W_Q h_{t+1}, \quad
-k_{t+1} = W_K h_{t+1}, \quad
-v_{t+1} = W_V h_{t+1}.
-\]</span></p>
-<p>The attention output is</p>
-<p><span class="math display">\[
-o_{t+1} =
-\text{softmax}\!\left(\frac{1}{\sqrt{d_k}} q_{t+1}
-\begin{bmatrix}
-K_t &amp; k_{t+1}
-\end{bmatrix}^T
-\right)
-\begin{bmatrix}
-V_t &amp; v_{t+1}
-\end{bmatrix}.
-\]</span></p>
-<p>The important observation is that all previous keys and values already exist:</p>
-<p><span class="math display">\[
-K_t = [k_1, \dots, k_t], \quad V_t = [v_1, \dots, v_t].
-\]</span></p>
-<p>Only the final column <span class="math inline">\(k_{t+1}, v_{t+1}\)</span> must be computed and appended.</p>
-<hr>
-<section id="without-caching" class="level3" data-number="7.3.1">
-<h3 data-number="7.3.1" class="anchored" data-anchor-id="without-caching"><span class="header-section-number">7.3.1</span> Without caching</h3>
-<p>At step <span class="math inline">\(t+1\)</span>, the model recomputes</p>
-<p><span class="math display">\[
-\{k_1, \dots, k_t, k_{t+1}\}, \quad \{v_1, \dots, v_t, v_{t+1}\}.
-\]</span></p>
-<p>The cost of the key/value projections is therefore <span class="math inline">\(O(t+1)\)</span>. Across an entire generation of length <span class="math inline">\(T\)</span>,</p>
-<p><span class="math display">\[
-\sum_{t=1}^{T} O(t) = O(T^2).
-\]</span></p>
-<hr>
-</section>
-<section id="with-caching" class="level3" data-number="7.3.2">
-<h3 data-number="7.3.2" class="anchored" data-anchor-id="with-caching"><span class="header-section-number">7.3.2</span> With caching</h3>
-<p>The projections</p>
-<p><span class="math display">\[
-k_i = W_K h_i, \quad v_i = W_V h_i
-\]</span></p>
-<p>are computed only once when token <span class="math inline">\(i\)</span> is created. During generation of step <span class="math inline">\(t+1\)</span>, the model only needs to compute the new projections <span class="math inline">\(k_{t+1}, v_{t+1}\)</span> which results in <span class="math inline">\(O(1)\)</span> projection cost per step. Over a full sequence of length T, this accumulates to <span class="math inline">\(\sum_{t=1}^{T} O(1) = O(T).\)</span></p>
-<p>The attention computation itself still grows linearly with context length, but the repeated projection cost has been eliminated.</p>
-<hr>
-</section>
-</section>
-<section id="memory-arithmetic" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="memory-arithmetic"><span class="header-section-number">7.4</span> Memory arithmetic</h2>
-<p>KV cache memory is deterministic and computable from model hyperparameters and sequence length:</p>
-<pre><code>KV cache bytes = 2 × L × n_kv_heads × d_k × seq_len × bytes_per_element</code></pre>
-<p>Where <code>2</code> is for K and V, <code>L</code> is the number of transformer layers, <code>n_kv_heads</code> is the number of KV heads (equals <code>n_heads</code> for MHA, fewer for GQA), <code>d_k</code> is the key/value dimension per head, and <code>bytes_per_element</code> is 2 for BF16.</p>
-<section id="examples" class="level3" data-number="7.4.1">
-<h3 data-number="7.4.1" class="anchored" data-anchor-id="examples"><span class="header-section-number">7.4.1</span> Examples</h3>
-<p><strong>LLaMA 2 7B</strong> (L=32, n_kv_heads=32, d_k=128, BF16):</p>
-<pre><code>Per token: 2 × 32 × 32 × 128 × 2 = 524,288 bytes = 512 KB
-4,096 tokens: 512 KB × 4,096 = 2 GB</code></pre>
-<p><strong>LLaMA 2 70B</strong> (L=80, n_kv_heads=8, d_k=128, BF16):</p>
-<pre><code>Per token: 2 × 80 × 8 × 128 × 2 = 327,680 bytes = 320 KB
-4,096 tokens:  320 KB × 4,096  = 1.28 GB
-32,768 tokens: 320 KB × 32,768 = 10 GB</code></pre>
-<p><strong>GPT-3 175B</strong> (L=96, n_kv_heads=96, d_k=128, BF16):</p>
-<pre><code>Per token: 2 × 96 × 96 × 128 × 2 = 4,718,592 bytes ≈ 4.5 MB
-4,096 tokens: 4.5 MB × 4,096 = 18 GB</code></pre>
-<p>The GPT-3 numbers explain why GQA was adopted: reducing <code>n_kv_heads</code> from 96 to 8 reduces the per-token cache from 4.5 MB to 375 KB (12 times reduction) with modest quality loss. GQA is now standard in nearly every new model architecture for exactly this reason.</p>
-</section>
-<section id="the-memory-budget" class="level3" data-number="7.4.2">
-<h3 data-number="7.4.2" class="anchored" data-anchor-id="the-memory-budget"><span class="header-section-number">7.4.2</span> The memory budget</h3>
-<p>A serving instance has a fixed GPU memory budget, divided between competing claims:</p>
-<pre><code>Total GPU memory (e.g., 80 GB H100)
-├── Model weights     (fixed, e.g., ~35 GB for LLaMA 2 70B in BF16 with GQA)
-├── Activation memory (fixed per batch, ~1–3 GB)
-├── KV cache          (variable that grow with sequence length and batch size)
-└── Reserved          (CUDA overhead, fragmentation buffer, ~3 GB)
-
-Available for KV cache: 80 - 35 - 2 - 3 ≈ 40 GB</code></pre>
-<p>For LLaMA 2 70B with 40 GB available:</p>
-<pre><code>Max tokens in cache: 40 GB / 320 KB ≈ 125,000 tokens
-
-Batch size 32, avg sequence 4,096 tokens:
-  32 × 4,096 = 131,072 tokens → barely fits
-
-Batch size 32, avg sequence 8,192 tokens:
-  32 × 8,192 = 262,144 tokens → does not fit</code></pre>
-<p>This is the core serving constraint: KV cache capacity limits concurrency at long sequence lengths. Every additional token in context competes directly with additional concurrent users for the same GPU memory.</p>
-<hr>
-</section>
-</section>
-<section id="the-lifecycle-of-a-kv-cache-entry" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="the-lifecycle-of-a-kv-cache-entry"><span class="header-section-number">7.5</span> The lifecycle of a KV cache entry</h2>
-<p>Understanding the sequence of operations that touch the KV cache during a single request makes the memory management problem concrete.</p>
-<section id="prefill" class="level3" data-number="7.5.1">
-<h3 data-number="7.5.1" class="anchored" data-anchor-id="prefill"><span class="header-section-number">7.5.1</span> Prefill</h3>
-<p>When a request arrives, the full prompt is tokenized and processed in a single forward pass (the prefill phase). For each layer, K and V are computed for every prompt token simultaneously and written to the KV cache:</p>
-<pre><code>Input:  [tok_0, tok_1, tok_2, ..., tok_n]  ← full prompt
-Output: KV cache populated for positions 0 through n
-        Model output: logits at position n → first generated token</code></pre>
-<p>Prefill is compute-bound and processing all prompt tokens in parallel is a large batch matrix multiply that saturates GPU arithmetic throughput. It is the phase where prompt length most directly affects latency: time to first token scales with prompt length.</p>
-</section>
-<section id="decode" class="level3" data-number="7.5.2">
-<h3 data-number="7.5.2" class="anchored" data-anchor-id="decode"><span class="header-section-number">7.5.2</span> Decode</h3>
-<p>Each decode step generates exactly one new token:</p>
-<pre><code>1. Embed new token → hidden state
-2. Compute K, V for new token → append to KV cache
-3. Compute Q for new token
-4. Attend: Q against full KV cache (all positions 0 through current)
-5. FFN and residual → logits → sample next token</code></pre>
-<p>Step 4 is memory-bandwidth-bound. The GPU reads the entire KV cache to compute attention for a single query vector. Arithmetic work is trivial compared to the memory transfer. This is why decode throughput is limited by HBM bandwidth, not by compute, and why longer sequences are slower per token.</p>
-</section>
-<section id="request-completion" class="level3" data-number="7.5.3">
-<h3 data-number="7.5.3" class="anchored" data-anchor-id="request-completion"><span class="header-section-number">7.5.3</span> Request completion</h3>
-<p>When generation ends (stop token, max_tokens, stop sequence), the KV cache entries for that request are freed. In a naive contiguous allocator this means marking a region of memory as available. In PagedAttention it means returning individual pages to the free pool.</p>
-<hr>
-</section>
-</section>
-<section id="naive-allocation-and-its-problems" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="naive-allocation-and-its-problems"><span class="header-section-number">7.6</span> Naive allocation and its problems</h2>
-<p>The simplest KV cache allocation strategy: at request admission, allocate a contiguous block of memory sized for the maximum possible output length. Hold it until generation completes, then free it.</p>
-<p>This produces two forms of waste:</p>
-<p><strong>Internal fragmentation.</strong> If the request was allocated 8,192 token positions but only generated 200 tokens, the remaining 7,992 positions were reserved but unused for the lifetime of the request. At 320 KB per token for LLaMA 2 70B, that is 2.55 GB of unusable memory per such request.</p>
-<p><strong>External fragmentation.</strong> As requests arrive and complete with variable lengths, the free memory becomes fragmented into non-contiguous gaps. A new request requiring 1 GB may fail to be admitted even if 2 GB is technically free, because no single contiguous 1 GB region is available.</p>
-<p>On real workloads with variable request lengths, naive allocation wastes 60–80% of available KV cache memory.</p>
-<hr>
-</section>
-<section id="pagedattention" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="pagedattention"><span class="header-section-number">7.7</span> PagedAttention</h2>
-<p>PagedAttention (Kwon et al., 2023) solves the fragmentation problem by borrowing the virtual memory paging idea from operating systems.</p>
-<p>Instead of allocating a contiguous block per request, PagedAttention divides the KV cache into fixed-size pages which typically has 16 tokens per page. A page table maps logical token positions to physical page locations. Pages are allocated on demand as generation proceeds and freed immediately on completion.</p>
-<pre><code>Page table for three concurrent requests:
-
-Request A (generating, 48 tokens so far):
-  Logical positions 0–15  → Physical page 3
-  Logical positions 16–31 → Physical page 7
-  Logical positions 32–47 → Physical page 12
-
-Request B (generating, 32 tokens so far):
-  Logical positions 0–15  → Physical page 1
-  Logical positions 16–31 → Physical page 9
-
-Request C (generating, 64 tokens so far):
-  Logical positions 0–15  → Physical page 2
-  Logical positions 16–31 → Physical page 4
-  Logical positions 32–47 → Physical page 5
-  Logical positions 48–63 → Physical page 11
-
-Free pages: [0, 6, 8, 10, 13, 14, 15, ...]</code></pre>
-<p>Physical pages are non-contiguous. Logical positions map to whatever physical page is available. A new request needs four pages for a 64-token sequence; it gets four pages from the free pool regardless of where they are in physical memory.</p>
-<p>Internal fragmentation is bounded to at most one partially filled page per request (the current page being written). External fragmentation is eliminated entirely and all free pages are usable regardless of their physical location. PagedAttention achieves over 90% KV cache utilization on typical workloads, compared to 20–40% for naive contiguous allocation.</p>
-<section id="prefix-sharing" class="level3" data-number="7.7.1">
-<h3 data-number="7.7.1" class="anchored" data-anchor-id="prefix-sharing"><span class="header-section-number">7.7.1</span> Prefix sharing</h3>
-<p>PagedAttention enables a further optimization: memory sharing between requests with a common prefix.</p>
-<p>If two requests share the same system prompt like a 1,000-token system prompt that appears in every request to a production API, their KV cache pages for that prefix are identical. There is no reason to store them twice.</p>
-<p>With prefix sharing, the pages for the common prefix are marked as shared and reference-counted. Multiple requests point to the same physical pages via their page tables:</p>
-<pre><code>Request A page table:
-  Positions 0–15   → Physical page 7  (shared system prompt, page 1)
-  Positions 16–31  → Physical page 8  (shared system prompt, page 2)
-  Positions 32–47  → Physical page 12 (private request A's user message)
-
-Request B page table:
-  Positions 0–15   → Physical page 7  (shared same physical pages)
-  Positions 16–31  → Physical page 8
-  Positions 48–63  → Physical page 15 (private request B's user message)</code></pre>
-<p>When both requests complete, the shared pages are not freed until all references are released. This is copy-on-write semantics: pages are shared until a write is required, at which point a private copy is made.</p>
-<p>For a 1,000-token system prompt with 16 tokens per page: 63 pages of KV cache are shared across all concurrent requests using that prompt. At 320 KB per token for LLaMA 2 70B, this is 320 MB of KV cache that does not need to be recomputed or stored per-request.</p>
-</section>
-<section id="radix-attention" class="level3" data-number="7.7.2">
-<h3 data-number="7.7.2" class="anchored" data-anchor-id="radix-attention"><span class="header-section-number">7.7.2</span> Radix attention</h3>
-<p>Radix attention (SGLang, Zheng et al., 2023) generalizes prefix sharing to arbitrary prefix trees rather than just common prefixes.</p>
-<p>In applications with structured multi-step prompts system like agentic workflows, few-shot templates, and multi-document retrieval, requests may share prefixes at multiple points in their structure, not just at the beginning. Radix attention maintains a trie (prefix tree) of all cached KV sequences. When a new request arrives, the longest matching prefix in the trie is found and reused:</p>
-<pre><code>Prefix tree:
-  [System prompt] → shared by all requests
-    ├── [Document A] → shared by requests querying document A
-    │   ├── [Query 1] → private to request 1
-    │   └── [Query 2] → private to request 2
-    └── [Document B] → shared by requests querying document B
-        └── [Query 3] → private to request 3</code></pre>
-<p>This turns prefix sharing from a single-level optimization into a general caching system for the KV cache. For agentic applications where many requests share substantial common context, radix attention can dramatically reduce both memory and compute.</p>
-<hr>
-</section>
-</section>
-<section id="kv-cache-quantization" class="level2" data-number="7.8">
-<h2 data-number="7.8" class="anchored" data-anchor-id="kv-cache-quantization"><span class="header-section-number">7.8</span> KV cache quantization</h2>
-<p>The KV cache can be stored in reduced precision to trade a small amount of quality for significant memory savings.</p>
-<p><strong>INT8 KV cache</strong> stores key and value vectors as 8-bit integers rather than 16-bit floats. This provides a 2× memory reduction. Quality loss is typically negligible for standard generation tasks K and V vectors have bounded ranges as outputs of linear projections of layer-normalized hidden states, making them well-suited to quantization.</p>
-<p><strong>FP8 KV cache</strong> uses 8-bit floating point rather than integer quantization. H100 GPUs have native FP8 support. Better precision characteristics than INT8 for values with non-uniform distributions, with the same 2× memory reduction.</p>
-<p><strong>INT4 KV cache</strong> reduces to 4 bits for a 4× memory reduction. More quality loss; requires careful calibration. Used in memory-constrained scenarios where the alternative is rejecting requests.</p>
-<p>The quality tradeoff for KV cache quantization is typically smaller than for weight quantization for two reasons: quantization errors in the KV cache are averaged across many attention heads (reducing their impact), and modern calibration techniques can minimize the effect on attention score distributions.</p>
-<p>INT8 KV cache quantization is now standard in production and is supported by vLLM, TensorRT-LLM, and most major inference frameworks. The 2× memory savings effectively doubles serving concurrency on fixed hardware.</p>
-<hr>
-</section>
-<section id="kv-cache-eviction" class="level2" data-number="7.9">
-<h2 data-number="7.9" class="anchored" data-anchor-id="kv-cache-eviction"><span class="header-section-number">7.9</span> KV cache eviction</h2>
-<p>Some applications require sequences longer than the KV cache can hold. Rather than rejecting these requests, The serving system can evict cached entries to make room for new ones, at the cost of a quality trade-off.</p>
-<section id="eviction-policies" class="level3" data-number="7.9.1">
-<h3 data-number="7.9.1" class="anchored" data-anchor-id="eviction-policies"><span class="header-section-number">7.9.1</span> Eviction policies</h3>
-<p><strong>Sliding window</strong> evicts the oldest tokens, keeping only the most recent <code>w</code> token positions in cache. Simple to implement. Degrades quality for any task requiring long-range context, the model simply cannot attend to evicted positions.</p>
-<p><strong>H2O (Heavy-Hitter Oracle)</strong> evicts tokens with the lowest cumulative attention scores. Tokens that have received little attention weight in recent steps are unlikely to be needed in future steps. Empirically preserves quality better than sliding window eviction at the same cache budget.</p>
-<p><strong>Attention sink preservation</strong> always keeps the BOS (beginning of sequence) token regardless of other eviction decisions. The BOS token functions as an attention sink and many heads route excess attention weight to it when no other token is highly relevant. Evicting the BOS token causes attention distributions to become erratic and output quality to degrade unpredictably. Any eviction policy should treat the BOS token as eviction-exempt.</p>
-<p><strong>SnapKV</strong> identifies important KV vectors per head using attention patterns from a recent observation window, then evicts the remaining positions. Can maintain quality at 10–20% of the full KV cache size for long documents make it useful for very long context workloads where even INT8 quantization is insufficient.</p>
-<hr>
-</section>
-</section>
-<section id="key-takeaways" class="level2" data-number="7.10">
-<h2 data-number="7.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">7.10</span> Key takeaways</h2>
+<section id="data-parallelism" class="level2" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="data-parallelism"><span class="header-section-number">25.2</span> Data Parallelism</h2>
+<p>Data parallelism is the simplest and oldest distributed training strategy. Each GPU holds a complete copy of the model. The training batch is split across GPUs: if the global batch size is 2,048 sequences and there are 64 GPUs, each GPU processes 32 sequences. Each GPU performs a full forward and backward pass on its local mini-batch, producing local gradients. After the backward pass, the gradients from all GPUs are aggregated (summed and then divided by the number of GPUs) so that each GPU updates its weights using the gradient that would have been computed from the full global batch. This gradient aggregation step is an all-reduce operation.</p>
+<section id="the-all-reduce" class="level3" data-number="25.2.1">
+<h3 data-number="25.2.1" class="anchored" data-anchor-id="the-all-reduce"><span class="header-section-number">25.2.1</span> The All-Reduce</h3>
+<p>An all-reduce takes <span class="math inline">\(N\)</span> values distributed across <span class="math inline">\(N\)</span> participants, reduces them with an associative operation (summation, in this case), and returns the result to all participants. For gradient aggregation in data parallelism:</p>
 <ul>
-<li>The KV cache stores key and value vectors for all previous tokens, avoiding quadratic recomputation cost; query vectors are not cached because they are used exactly once per step</li>
-<li>KV cache memory is precisely computable: <code>2 × L × n_kv_heads × d_k × seq_len × bytes_per_element</code>; GQA’s reduction in KV heads is the primary architectural lever for reducing this cost</li>
-<li>Naive contiguous allocation wastes 60–80% of KV cache memory through internal and external fragmentation; PagedAttention eliminates both by allocating fixed-size pages on demand, achieving 90%+ utilization</li>
-<li>Prefix sharing lets multiple requests reference the same physical KV cache pages for a shared prompt prefix — identical K/V vectors computed once, stored once; radix attention generalizes this to arbitrary shared structure</li>
-<li>INT8 KV cache quantization provides a 2× memory reduction with negligible quality loss, effectively doubling serving concurrency on fixed hardware</li>
-<li>Eviction policies (sliding window, H2O, SnapKV) enable sequences longer than the cache capacity; attention sink preservation is mandatory — evicting the BOS token causes unpredictable quality degradation</li>
-<li>StreamingLLM enables unbounded generation on a fixed cache budget by combining BOS token preservation with a sliding recent window</li>
-<li>CPU offloading moves inactive request caches to DRAM, freeing GPU HBM for active requests at the cost of PCIe transfer latency on resumption</li>
-<li>KV cache metrics — utilization, prefix hit rate, eviction rate, throughput vs. sequence length — are the primary production signals for diagnosing memory pressure and serving efficiency</li>
+<li>Each GPU has a gradient tensor <span class="math inline">\(g_i\)</span> for its local batch.</li>
+<li>After all-reduce, every GPU holds <span class="math inline">\(\bar{g} = \sum_{i=1}^{N} g_i / N\)</span>.</li>
+<li>Each GPU applies <span class="math inline">\(\bar{g}\)</span> to its weight update.</li>
+</ul>
+<p>The communication volume is <span class="math inline">\(2 \times P \times \text{dtype\_bytes}\)</span> per all-reduce operation (the factor of 2 accounts for the reduce followed by broadcast), where <span class="math inline">\(P\)</span> is the number of parameters. For LLaMA 2 7B in float16: <span class="math inline">\(2 \times 7 \times 10^9 \times 2 = 28\)</span> GB per step.</p>
+<p>NVLink (within a node) provides 600 GB/s bidirectional bandwidth on H100 SXM. A 28 GB all-reduce over NVLink takes approximately 47 milliseconds, ignoring latency. Across nodes over InfiniBand (400 Gb/s = 50 GB/s per port), the same all-reduce takes over half a second, longer than a typical training step for a 7B model. Data parallelism across nodes is therefore bandwidth-limited and practical only when the compute-to-communication ratio is high (large batch sizes, long sequences, large models).</p>
+</section>
+<section id="gradient-accumulation" class="level3" data-number="25.2.2">
+<h3 data-number="25.2.2" class="anchored" data-anchor-id="gradient-accumulation"><span class="header-section-number">25.2.2</span> Gradient Accumulation</h3>
+<p>When the desired global batch size exceeds what GPU memory can hold in a single step, gradient accumulation allows accumulating gradients over multiple forward- backward passes before performing the all-reduce and weight update. If target global batch size is 2,048 and each GPU can hold a micro-batch of 4 sequences, the GPU performs 512 forward-backward passes, accumulating gradients, before synchronizing.</p>
+<p>Gradient accumulation decouples the effective batch size from the per-step memory requirement. It does not reduce memory consumption for the model weights, gradients, or optimizer state, those are determined by the model, not the batch size, but it allows using a global batch size that would otherwise require more GPUs than are available.</p>
+<p>The cost is throughput: 512 micro-batches require 512 forward-backward passes per update. CUDA graph capture can reduce the per-step overhead, but the fundamental compute cost is unchanged. Gradient accumulation is a memory-compute tradeoff that trades latency for batch size flexibility.</p>
+</section>
+<section id="ddp-pytorch-distributeddataparallel" class="level3" data-number="25.2.3">
+<h3 data-number="25.2.3" class="anchored" data-anchor-id="ddp-pytorch-distributeddataparallel"><span class="header-section-number">25.2.3</span> DDP: PyTorch DistributedDataParallel</h3>
+<p>PyTorch’s DistributedDataParallel (DDP) is the standard implementation of data parallelism. DDP wraps a model and, after each backward pass, performs an all-reduce of gradients across all participating processes using NCCL (NVIDIA Collective Communications Library). DDP overlaps gradient communication with the backward pass using gradient bucketing: as gradients for later layers are computed, gradients for earlier layers (whose backward pass is already complete) are all-reduced while the backward pass continues. This overlap can hide a substantial fraction of the communication latency.</p>
+<p>DDP’s limitation is the memory requirement: every GPU holds the full model. For models that fit in GPU memory with some headroom, DDP is the lowest- complexity distributed training option. It scales to thousands of GPUs with near-linear throughput scaling, limited primarily by the all-reduce bandwidth. GPT-3 was trained using data parallelism as a component of a hybrid strategy. At 96 GPUs with a global batch size of roughly 3.2 million tokens, DDP communication overhead was manageable.</p>
+<hr>
+</section>
+</section>
+<section id="zero-sharding-optimizer-state-gradients-and-parameters" class="level2" data-number="25.3">
+<h2 data-number="25.3" class="anchored" data-anchor-id="zero-sharding-optimizer-state-gradients-and-parameters"><span class="header-section-number">25.3</span> ZeRO: Sharding Optimizer State, Gradients, and Parameters</h2>
+<p>DDP requires each GPU to hold a full copy of the model parameters, gradients, and optimizer state. For large models, this redundancy is the binding memory constraint. ZeRO (Zero Redundancy Optimizer), introduced by Rajbhandari et al. (2020) at Microsoft, eliminates this redundancy through sharding.</p>
+<p>ZeRO defines three stages, each eliminating a different component of per-GPU redundancy:</p>
+<p><strong>ZeRO Stage 1: Optimizer State Partitioning.</strong> The optimizer state (Adam moments) is sharded across GPUs: each GPU holds the optimizer state for a <span class="math inline">\(1/N\)</span> partition of the parameters. Gradients are still all-reduced (giving each GPU the full gradient), but each GPU only updates and stores the optimizer state for its partition. After the optimizer step, an all-gather reconstructs the full updated parameters on each GPU.</p>
+<p>Memory reduction: optimizer state drops from <span class="math inline">\(O(P)\)</span> to <span class="math inline">\(O(P/N)\)</span> per GPU. For Adam in float32 with N=64 GPUs: 56 GB of optimizer state per GPU becomes 875 MB.</p>
+<p><strong>ZeRO Stage 2: Gradient Partitioning.</strong> In addition to Stage 1, gradients are also sharded. Each GPU accumulates and stores only the gradients for its parameter partition. A reduce-scatter (rather than all-reduce) delivers the summed gradient only to the GPU responsible for that partition, after which each GPU applies the optimizer step to its shard. An all-gather then reconstructs full parameters.</p>
+<p>Memory reduction: gradients drop from <span class="math inline">\(O(P)\)</span> to <span class="math inline">\(O(P/N)\)</span> per GPU. With N=64: 28 GB of gradients per GPU becomes 437 MB.</p>
+<p><strong>ZeRO Stage 3: Parameter Partitioning.</strong> Parameters themselves are sharded. Each GPU permanently holds only a <span class="math inline">\(1/N\)</span> slice of the parameters. During the forward pass, an all-gather reconstructs the full parameters for each layer as it is needed, then discards them after the layer’s computation is complete. The backward pass similarly all-gathers parameters as needed and performs reduce-scatter for gradients.</p>
+<p>Memory reduction: the per-GPU parameter memory drops from <span class="math inline">\(O(P)\)</span> to <span class="math inline">\(O(P/N)\)</span>. For LLaMA 2 7B with float16 weights across 64 GPUs: 14 GB → 219 MB per GPU. The total optimizer state, gradient, and weight memory per GPU drops from 112 GB to approximately 1.75 GB.</p>
+<p>The cost of ZeRO-3 is communication volume. Where DDP performs one all-reduce of <span class="math inline">\(2P\)</span> bytes per step, ZeRO-3 performs three communication operations, an all-gather for parameters during the forward pass (<span class="math inline">\(P\)</span> bytes), a reduce-scatter for gradients during the backward pass (<span class="math inline">\(P\)</span> bytes), and another all-gather for parameters during the backward pass (<span class="math inline">\(P\)</span> bytes), totaling <span class="math inline">\(3P\)</span> bytes. This is 50% more communication than DDP’s <span class="math inline">\(2P\)</span> bytes, but the memory savings are often decisive for large models.</p>
+<section id="zero-a-concrete-example-n4-gpus-4-parameter-partitions" class="level3" data-number="25.3.1">
+<h3 data-number="25.3.1" class="anchored" data-anchor-id="zero-a-concrete-example-n4-gpus-4-parameter-partitions"><span class="header-section-number">25.3.1</span> ZeRO: A Concrete Example (N=4 GPUs, 4 Parameter Partitions)</h3>
+<p>We track three state types per GPU: <strong>parameters</strong> <span class="math inline">\(W\)</span>, <strong>gradients</strong> <span class="math inline">\(G\)</span>, and <strong>optimizer state</strong> (Adam moments <span class="math inline">\(m,v\)</span>).</p>
+<hr>
+<section id="baseline-ddp" class="level4" data-number="25.3.1.1">
+<h4 data-number="25.3.1.1" class="anchored" data-anchor-id="baseline-ddp"><span class="header-section-number">25.3.1.1</span> Baseline: DDP</h4>
+<p>Every GPU holds everything, full redundancy.</p>
+<pre class="text"><code>GPU 0            GPU 1            GPU 2            GPU 3
+W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3
+G0 G1 G2 G3      G0 G1 G2 G3      G0 G1 G2 G3      G0 G1 G2 G3
+m0 v0            m0 v0            m0 v0            m0 v0
+m1 v1            m1 v1            m1 v1            m1 v1
+m2 v2            m2 v2            m2 v2            m2 v2
+m3 v3            m3 v3            m3 v3            m3 v3</code></pre>
+<p><strong>Step:</strong> Each GPU runs forward and backward on its local mini-batch, producing local gradients. An <strong>all-reduce</strong> sums and averages these gradients, so every GPU obtains the same full gradient <span class="math inline">\(G\)</span>. Every GPU then independently runs the optimizer update:</p>
+<p><span class="math display">\[
+W' = \operatorname{Opt}(W,G,m,v)
+\]</span></p>
+<p>Because all GPUs have identical <span class="math inline">\(W\)</span>, <span class="math inline">\(G\)</span>, and optimizer states, they all compute the same updated parameters <span class="math inline">\(W'\)</span>. No parameter communication is required after the optimizer step.</p>
+<hr>
+</section>
+<section id="stage-1-shard-optimizer-states" class="level4" data-number="25.3.1.2">
+<h4 data-number="25.3.1.2" class="anchored" data-anchor-id="stage-1-shard-optimizer-states"><span class="header-section-number">25.3.1.2</span> Stage 1: Shard Optimizer States</h4>
+<p>Optimizer state is split across GPUs; parameters and gradients are still replicated.</p>
+<pre class="text"><code>GPU 0            GPU 1            GPU 2            GPU 3
+W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3
+G0 G1 G2 G3      G0 G1 G2 G3      G0 G1 G2 G3      G0 G1 G2 G3
+m0 v0            m1 v1            m2 v2            m3 v3</code></pre>
+<p><strong>Step:</strong> After backward, an <strong>all-reduce</strong> gives every GPU the full gradient <span class="math inline">\(G=[G_0,G_1,G_2,G_3]\)</span>. Each GPU is responsible for updating only the parameter partition for which it owns the optimizer state:</p>
+<pre class="text"><code>GPU 0 → update W0 using G0, m0, v0
+GPU 1 → update W1 using G1, m1, v1
+GPU 2 → update W2 using G2, m2, v2
+GPU 3 → update W3 using G3, m3, v3</code></pre>
+<p>After the optimizer step, the updated parameters exist as separate shards:</p>
+<pre class="text"><code>GPU 0 → W0'
+GPU 1 → W1'
+GPU 2 → W2'
+GPU 3 → W3'</code></pre>
+<p>Because ZeRO-1 still expects every GPU to hold the complete model for the next forward pass, an <strong>all-gather</strong> combines these updated shards so that every GPU again has:</p>
+<pre class="text"><code>W0' W1' W2' W3'</code></pre>
+<p>The optimizer state remains sharded; only the updated parameters are reconstructed on every GPU.</p>
+<hr>
+</section>
+<section id="stage-2-shard-optimizer-states-gradients" class="level4" data-number="25.3.1.3">
+<h4 data-number="25.3.1.3" class="anchored" data-anchor-id="stage-2-shard-optimizer-states-gradients"><span class="header-section-number">25.3.1.3</span> Stage 2: Shard Optimizer States + Gradients</h4>
+<p>Replace the all-reduce with a <strong>reduce-scatter</strong>: each GPU receives only the gradient shard it owns.</p>
+<pre class="text"><code>GPU 0            GPU 1            GPU 2            GPU 3
+W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3      W0 W1 W2 W3
+G0               G1               G2               G3
+m0 v0            m1 v1            m2 v2            m3 v3</code></pre>
+<p><strong>Step:</strong> Each GPU first computes local gradients for the full model. The <strong>reduce-scatter</strong> sums the corresponding gradients across GPUs and leaves only the relevant gradient partition on each GPU:</p>
+<pre class="text"><code>GPU 0 → G0
+GPU 1 → G1
+GPU 2 → G2
+GPU 3 → G3</code></pre>
+<p>Each GPU can now update its own parameter partition using its local gradient and optimizer state:</p>
+<pre class="text"><code>GPU 0 → W0' = Opt(W0, G0, m0, v0)
+GPU 1 → W1' = Opt(W1, G1, m1, v1)
+GPU 2 → W2' = Opt(W2, G2, m2, v2)
+GPU 3 → W3' = Opt(W3, G3, m3, v3)</code></pre>
+<p>The updated parameter shards are then <strong>all-gathered</strong>, reconstructing the full updated model <span class="math inline">\([W_0',W_1',W_2',W_3']\)</span> on every GPU. The parameters are therefore still replicated during the next forward pass, but the gradients and optimizer states remain sharded.</p>
+<hr>
+</section>
+<section id="stage-3-shard-everything" class="level4" data-number="25.3.1.4">
+<h4 data-number="25.3.1.4" class="anchored" data-anchor-id="stage-3-shard-everything"><span class="header-section-number">25.3.1.4</span> Stage 3: Shard Everything</h4>
+<p>No GPU permanently holds a full copy of anything.</p>
+<pre class="text"><code>GPU 0            GPU 1            GPU 2            GPU 3
+W[:,0:k]         W[:,k:2k]        W[:,2k:3k]       W[:,3k:4k]   ← parameter shards
+G0               G1               G2               G3
+m0 v0            m1 v1            m2 v2            m3 v3</code></pre>
+<p>The parameter shards represent slices of the parameters of every layer; GPU 0 does not own one complete layer while GPU 1 owns another.</p>
+<p>Full parameters are reconstructed <strong>on demand</strong> via all-gather, used for computation, and then discarded.</p>
+<p><strong>Forward:</strong> For each layer <span class="math inline">\(\ell\)</span>:</p>
+<p><span class="math display">\[
+\text{all-gather } W_\ell
+\rightarrow
+\text{compute layer } \ell
+\rightarrow
+\text{discard full } W_\ell
+\]</span></p>
+<p>Only the parameters needed for the current layer are temporarily reconstructed on each GPU.</p>
+<p><strong>Backward:</strong> For each layer <span class="math inline">\(\ell\)</span>:</p>
+<p><span class="math display">\[
+\text{all-gather } W_\ell
+\rightarrow
+\text{compute gradients}
+\rightarrow
+\text{reduce-scatter } G_\ell
+\rightarrow
+\text{discard full } W_\ell
+\]</span></p>
+<p>The reduce-scatter leaves each GPU with only the gradient corresponding to its parameter shard.</p>
+<p><strong>Step:</strong> Each GPU now has the three pieces of state required to update its local parameter shard:</p>
+<pre class="text"><code>GPU 0 → W[:,0:k]  + G0 + m0,v0 → W'[:,0:k]
+GPU 1 → W[:,k:2k] + G1 + m1,v1 → W'[:,k:2k]
+GPU 2 → W[:,2k:3k]+ G2 + m2,v2 → W'[:,2k:3k]
+GPU 3 → W[:,3k:4k]+ G3 + m3,v3 → W'[:,3k:4k]</code></pre>
+<p>Crucially, unlike ZeRO-1 and ZeRO-2, the updated parameter shards are <strong>not all-gathered permanently after the optimizer step</strong>. They remain distributed. On the next forward pass, the parameters are again all-gathered temporarily, layer by layer, when they are needed for computation. This is what allows ZeRO-3 to keep the model parameters sharded throughout training.</p>
+<hr>
+</section>
+</section>
+<section id="fsdp-pytorchs-zero-3-implementation" class="level3" data-number="25.3.2">
+<h3 data-number="25.3.2" class="anchored" data-anchor-id="fsdp-pytorchs-zero-3-implementation"><span class="header-section-number">25.3.2</span> FSDP: PyTorch’s ZeRO-3 Implementation</h3>
+<p>PyTorch’s Fully Sharded Data Parallel (FSDP) is the standard production implementation of ZeRO-3, available from PyTorch 1.12. FSDP shards parameters, gradients, and optimizer state across GPUs within a process group. It integrates with PyTorch’s autograd system and supports mixed precision, gradient checkpointing, and CPU offloading.</p>
+<p>FSDP’s key configuration decision is the sharding unit. Sharding at the module level (per transformer block, for example) limits the all-gather to one block’s parameters at a time, reducing peak memory usage during forward and backward passes. Sharding at finer granularity reduces memory further but increases the number of all-gather calls and the associated latency.</p>
+<p>A typical FSDP training configuration for a 70B-parameter model on 64 H100s: - Parameter dtype: bfloat16 (2 bytes per parameter) - Optimizer dtype: float32 (8 bytes per parameter for Adam) - Per-GPU parameter memory: <span class="math inline">\(140 \times 10^9 \times 2 / 64 \approx 4.4\)</span> GB - Per-GPU optimizer state: <span class="math inline">\(140 \times 10^9 \times 8 / 64 \approx 17.5\)</span> GB - Total per-GPU: ~22 GB, well within an 80 GB H100</p>
+<hr>
+</section>
+</section>
+<section id="tensor-parallelism" class="level2" data-number="25.4">
+<h2 data-number="25.4" class="anchored" data-anchor-id="tensor-parallelism"><span class="header-section-number">25.4</span> Tensor Parallelism</h2>
+<p>Data parallelism and ZeRO shard the data and the optimizer state, but the forward pass through a single transformer layer still runs on a single device. For very large models (hundreds of billions of parameters) individual layers are too large to fit on one GPU even with ZeRO-3. Tensor parallelism shards the computation within individual layers.</p>
+<section id="column-and-row-parallelism-for-linear-layers" class="level3" data-number="25.4.1">
+<h3 data-number="25.4.1" class="anchored" data-anchor-id="column-and-row-parallelism-for-linear-layers"><span class="header-section-number">25.4.1</span> Column and Row Parallelism for Linear Layers</h3>
+<p>The key insight, from Megatron-LM (Shoeybi et al., 2019), is that large matrix multiplications in transformer layers can be split across devices with minimal communication.</p>
+<p>Consider a linear layer <span class="math inline">\(Y = XW\)</span> where <span class="math inline">\(X \in \mathbb{R}^{B \times d}\)</span> is the input and <span class="math inline">\(W \in \mathbb{R}^{d \times h}\)</span> is the weight matrix. This can be parallelized two ways:</p>
+<p><strong>Column parallelism</strong> splits <span class="math inline">\(W\)</span> along columns: <span class="math inline">\(W = [W_1 \mid W_2]\)</span> across two GPUs, with <span class="math inline">\(W_1, W_2 \in \mathbb{R}^{d \times h/2}\)</span>. Each GPU computes <span class="math inline">\(Y_i = X W_i \in \mathbb{R}^{B \times h/2}\)</span> independently, since both GPUs need the full input <span class="math inline">\(X\)</span>. The outputs are concatenated: <span class="math inline">\(Y = [Y_1 \mid Y_2]\)</span>. No communication is required during the forward pass (assuming <span class="math inline">\(X\)</span> is already replicated on both GPUs). An all-gather concatenates outputs.</p>
+<p><strong>Row parallelism</strong> splits <span class="math inline">\(W\)</span> along rows: <span class="math inline">\(W = [W_1^T \mid W_2^T]^T\)</span>, with each GPU holding <span class="math inline">\(W_i \in \mathbb{R}^{d/2 \times h}\)</span>. The input must be split correspondingly: <span class="math inline">\(X = [X_1 \mid X_2]\)</span>, with each GPU receiving its slice. Each GPU computes <span class="math inline">\(Y_i = X_i W_i \in \mathbb{R}^{B \times h}\)</span>. The outputs are summed: <span class="math inline">\(Y = Y_1 + Y_2\)</span>. An all-reduce sums the partial outputs.</p>
+<p>In a transformer’s self-attention layer, the Q/K/V projection matrices are parallelized with column parallelism (output is split across heads, which maps naturally to column splits). The output projection after attention is parallelized with row parallelism. Together, this requires exactly two communication operations per attention layer, one all-reduce after the output projection during the forward pass and one during the backward pass. For a transformer with <span class="math inline">\(L\)</span> layers, tensor parallelism introduces <span class="math inline">\(2L\)</span> all-reduce operations per forward-backward pass.</p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch6/tensor.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.2: Tensor parallelism in transformer.
+</figcaption>
+</figure>
+</div>
+<p>For GPT-3 with 96 layers and tensor parallelism degree 8: 192 all-reduce operations per step. On NVLink (600 GB/s), where each all-reduce involves roughly <span class="math inline">\(2 \times h \times \text{dtype\_bytes} \approx 2 \times 12{,}288 \times 2 = 48\)</span> KB per operation, the communication overhead is manageable within a single node. Across nodes (InfiniBand at 50 GB/s), the same all-reduces are approximately 12× slower, making cross-node tensor parallelism impractical for most model sizes.</p>
+<p><strong>Tensor parallelism degree</strong> is typically 2, 4, or 8 (powers of 2, matching NVLink topology) and is applied within a node. An 8-way tensor-parallel split across 8 H100s connected by NVLink has minimal communication overhead. Extending to 16-way requires cross-node links and pays a substantial bandwidth penalty.</p>
+</section>
+<section id="attention-heads-as-natural-split-units" class="level3" data-number="25.4.2">
+<h3 data-number="25.4.2" class="anchored" data-anchor-id="attention-heads-as-natural-split-units"><span class="header-section-number">25.4.2</span> Attention Heads as Natural Split Units</h3>
+<p>Multi-head attention is naturally amenable to tensor parallelism because each attention head is independent. With 96 attention heads (GPT-3’s configuration) and 8-way tensor parallelism, each GPU handles 12 heads. The head outputs are concatenated and projected back to the model dimension with row parallelism. This is architecturally clean and communication-efficient: the 8-way split exactly partitions the head dimension without any cross-head dependencies during the attention computation.</p>
+<p>Grouped-query attention (GQA, used in LLaMA 2 70B and most subsequent models) reduces the number of KV heads relative to query heads. With 8 KV heads and tensor parallelism degree 8, each GPU holds exactly 1 KV head, an efficient split. At tensor parallelism degree greater than the number of KV heads, GQA and tensor parallelism become incompatible without replication.</p>
+<hr>
+</section>
+</section>
+<section id="pipeline-parallelism" class="level2" data-number="25.5">
+<h2 data-number="25.5" class="anchored" data-anchor-id="pipeline-parallelism"><span class="header-section-number">25.5</span> Pipeline Parallelism</h2>
+<p>Tensor parallelism splits computation within a layer. Pipeline parallelism splits computation across layers, assigning different layers to different devices. Device 0 holds layers 1–8; device 1 holds layers 9–16; and so on.</p>
+<p>The forward pass moves left to right: device 0 processes a micro-batch and passes its output activation to device 1, which processes it and passes to device 2, and so on. The backward pass moves right to left: device 3 computes gradients for its layers and passes gradient tensors to device 2, which continues back to device 0.</p>
+<section id="the-pipeline-bubble" class="level3" data-number="25.5.1">
+<h3 data-number="25.5.1" class="anchored" data-anchor-id="the-pipeline-bubble"><span class="header-section-number">25.5.1</span> The Pipeline Bubble</h3>
+<p>Naive pipeline parallelism has a critical inefficiency: pipeline bubbles. When device 0 finishes its forward pass and passes activations to device 1, device 0 must wait, it has nothing to do until the backward pass gradient arrives from device 1. This idle time is the pipeline bubble.</p>
+<p>For a pipeline of <span class="math inline">\(p\)</span> stages and a mini-batch split into <span class="math inline">\(m\)</span> micro-batches, the pipeline bubble occupies a fraction <span class="math inline">\(\frac{p-1}{m + p - 1}\)</span> of the total training time. With <span class="math inline">\(p = 4\)</span> stages and <span class="math inline">\(m = 8\)</span> micro-batches: bubble fraction = <span class="math inline">\(3/11 \approx 27\%\)</span>. With <span class="math inline">\(m = 32\)</span>: <span class="math inline">\(3/35 \approx 8.6\%\)</span>. Larger micro-batch counts reduce the bubble overhead but increase memory for in-flight activations.</p>
+<p>Megatron-LM’s interleaved pipeline schedule reduces the bubble further by assigning non-contiguous layer chunks to each device (device 0 holds layers 1–4 and layers 17–20, device 1 holds layers 5–8 and layers 21–24, etc.). The interleaved schedule reduces the bubble fraction to <span class="math inline">\(\frac{1}{m}
+\cdot \frac{p-1}{p}\)</span>, cutting the overhead by roughly a factor of the number of interleaved chunks per device. The cost is increased communication: activations must be passed between non-adjacent layer chunks at interleaving boundaries.</p>
+<hr>
+</section>
+</section>
+<section id="d-parallelism-combining-all-three" class="level2" data-number="25.6">
+<h2 data-number="25.6" class="anchored" data-anchor-id="d-parallelism-combining-all-three"><span class="header-section-number">25.6</span> 3D Parallelism: Combining All Three</h2>
+<p>Production training of large models combines data, tensor, and pipeline parallelism simultaneously. This combination is called 3D parallelism.</p>
+<p>The standard configuration, used in Megatron-LM and adopted broadly:</p>
+<ul>
+<li><strong>Tensor parallelism (TP)</strong> within a node, using NVLink. Typical TP degree: 4 or 8. This is the inner loop, tightest communication requirement.</li>
+<li><strong>Pipeline parallelism (PP)</strong> across nodes at small scale, or within a node at large TP degree. Typical PP degree: 2–8. Communication is point-to-point between adjacent stages (only activation tensors, not all-reduces) so it tolerates higher latency than TP.</li>
+<li><strong>Data parallelism (DP)</strong> at the outermost level, across the largest dimension of the GPU cluster. Typical DP degree: 8–1,024. All-reduces run over InfiniBand between data-parallel replica groups.</li>
+</ul>
+<p>For a training run on 512 H100s with TP=8, PP=4, DP=16: - 8 GPUs in each tensor-parallel group (within a single node) - 4 nodes in each pipeline-parallel group (across nearby nodes, low latency) - 16 data-parallel replicas (all-reduce across 16 groups of 32 GPUs)</p>
+<p>The total GPU count: <span class="math inline">\(8 \times 4 \times 16 = 512\)</span>. This maps naturally to a cluster of 64 8-GPU nodes organized into 16 groups of 4 nodes.</p>
+<p>GPT-3 was trained with TP=8, PP=8, DP=6 on 384 A100 GPUs. LLaMA 2 70B was trained with TP=8, PP=1, DP=56 on 2,048 A100 80GB GPUs.</p>
+<hr>
+</section>
+<section id="communication-primitives-and-interconnects" class="level2" data-number="25.7">
+<h2 data-number="25.7" class="anchored" data-anchor-id="communication-primitives-and-interconnects"><span class="header-section-number">25.7</span> Communication Primitives and Interconnects</h2>
+<p>Efficient distributed training requires efficient collective communication operations. NCCL (NVIDIA Collective Communications Library) implements these for GPU clusters. The key collectives:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 25%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>Description</th>
+<th>Use in distributed training</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All-reduce</td>
+<td>Sum tensors across all ranks, return result to all</td>
+<td>DDP gradient aggregation</td>
+</tr>
+<tr class="even">
+<td>Reduce-scatter</td>
+<td>Sum tensors, distribute partial results</td>
+<td>ZeRO gradient reduction</td>
+</tr>
+<tr class="odd">
+<td>All-gather</td>
+<td>Concatenate shards from all ranks</td>
+<td>ZeRO parameter reconstruction</td>
+</tr>
+<tr class="even">
+<td>Broadcast</td>
+<td>Send tensor from one rank to all</td>
+<td>Parameter initialization</td>
+</tr>
+<tr class="odd">
+<td>Point-to-point</td>
+<td>Send tensor from rank <span class="math inline">\(i\)</span> to rank <span class="math inline">\(j\)</span></td>
+<td>Pipeline stage activation passing</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="25.8">
+<h2 data-number="25.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">25.8</span> Key Takeaways</h2>
+<ul>
+<li>A 7B-parameter model requires approximately 112 GB for weights, gradients, and Adam optimizer state in mixed precision — exceeding a single H100’s 80 GB HBM even before activations, requiring distributed training for all models at and above this scale.</li>
+<li>Data parallelism replicates the full model on each GPU and splits the batch; ZeRO stages 1–3 eliminate the redundant optimizer state, gradients, and parameters respectively, reducing per-GPU memory from <span class="math inline">\(O(P)\)</span> to <span class="math inline">\(O(P/N)\)</span>.</li>
+<li>ZeRO-3 (implemented as PyTorch FSDP) enables training models of arbitrary size on any number of GPUs at the cost of 50% more communication volume than standard DDP (<span class="math inline">\(3P\)</span> bytes versus <span class="math inline">\(2P\)</span> bytes per step).</li>
+<li>Tensor parallelism splits matrix multiplications within layers across devices, requiring two all-reduce operations per transformer layer; the bandwidth requirement limits tensor parallelism to within-node NVLink connections.</li>
+<li>Pipeline parallelism splits layers across devices; the pipeline bubble wastes a fraction <span class="math inline">\(\frac{p-1}{m+p-1}\)</span> of compute time, which shrinks toward zero as the number of micro-batches <span class="math inline">\(m\)</span> grows.</li>
+<li>3D parallelism combines tensor parallelism (inner, NVLink), pipeline parallelism (middle, cross-node), and data parallelism (outer, InfiniBand) to scale to thousands of GPUs with each dimension exploiting the appropriate interconnect.</li>
+<li>NVLink (900 GB/s on H100 SXM) is 18× faster than InfiniBand NDR (50 GB/s); this bandwidth gap is the primary reason tensor parallelism is confined within nodes.</li>
+<li>Mixed-precision training uses bfloat16 for forward and backward passes (matching float32’s dynamic range without overflow) and float32 for optimizer state; total memory footprint is <span class="math inline">\(16P\)</span> bytes for Adam.</li>
+<li>Gradient checkpointing reduces activation memory from <span class="math inline">\(O(L \times B \times T)\)</span> to <span class="math inline">\(O(\sqrt{L})\)</span> at 30–40% additional compute; FlashAttention already recomputes attention within this budget.</li>
+<li>Well-optimized training runs on H100 clusters achieve 38–46% MFU; the remaining 54–62% is lost to communication, pipeline bubbles, and memory bandwidth bottlenecks.</li>
+<li>At 4,096 GPUs, expect roughly 4 GPU failures per hour; asynchronous checkpointing eliminates checkpoint latency from the critical path by snapshotting to host RAM while training continues.</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/ch6/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.2: Cheat sheet.
+Figure&nbsp;25.3: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="7.11">
-<h2 data-number="7.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">7.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="25.9">
+<h2 data-number="25.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">25.9</span> Further Reading</h2>
 <ul>
-<li>Kwon et al.&nbsp;(2023). <em>Efficient Memory Management for Large Language Model Serving with PagedAttention.</em> — the foundational work on paged KV cache management.</li>
-<li>Zheng et al.&nbsp;(2023). <em>SGLang: Efficient Execution of Structured Language Model Programs.</em> — Introduces radix attention for generalized prefix tree sharing.</li>
-<li>Xiao et al.&nbsp;(2023). <em>Efficient Streaming Language Models with Attention Sinks.</em> — StreamingLLM and the attention sink phenomenon; directly relevant to eviction strategy design.</li>
-<li>Zhang et al.&nbsp;(2023). <em>H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models.</em> — Attention-score-based eviction.</li>
-<li></li>
+<li><p>Rajbhandari, S., Rasley, J., Ruwase, O., &amp; He, Y. (2020). <em>ZeRO: Memory Optimizations Toward Training Trillion Parameter Models.</em> SC. — Introduces the three stages of ZeRO; the memory analysis is precise and the scaling experiments demonstrate near-linear throughput scaling to 400+ GPUs.</p></li>
+<li><p>Shoeybi, M., Patwary, M., Puri, R., LeGresley, P., Casper, J., &amp; Catanzaro, B. (2019). <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism.</em> arXiv. — Introduces column/row parallelism for transformer layers and the interleaved pipeline schedule; the communication analysis is the foundational treatment of tensor parallelism for LLMs.</p></li>
+<li><p>Narayanan, D., et al.&nbsp;(2021). <em>Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM.</em> SC. — Combines tensor, pipeline, and data parallelism into 3D parallelism; the analysis of pipeline bubble fraction and the 1F1B schedule are the key contributions.</p></li>
+<li><p>Micikevicius, P., et al.&nbsp;(2018). <em>Mixed Precision Training.</em> ICLR. — Introduces the float16/float32 mixed-precision training procedure with dynamic loss scaling; the gradient underflow analysis motivates loss scaling clearly.</p></li>
+<li><p>Chen, T., et al.&nbsp;(2016). <em>Training Deep Nets with Sublinear Memory Cost.</em> arXiv. — Introduces gradient checkpointing; the <span class="math inline">\(O(\sqrt{n})\)</span> memory-compute tradeoff analysis is the key result.</p></li>
+<li><p>Chowdhery, A., et al.&nbsp;(2022). <em>PaLM: Scaling Language Modeling with Pathways.</em> JMLR. — Reports 46.2% MFU on TPU v4 with detailed analysis of communication overlap and efficiency at 6,144 chips; the infrastructure section is unusually detailed for a model paper.</p></li>
+<li><p>Touvron, H., et al.&nbsp;(2023). <em>LLaMA 2: Open Foundation and Fine-Tuned Chat Models.</em> — Section 2.1 describes the training infrastructure: 2,048 A100 GPUs, custom fast interconnect, training efficiency optimizations, and MFU figures; a concise real-world 3D parallelism case study.</p></li>
+<li><p>Lian, X., et al.&nbsp;(2023). <em>FSDP: Fully Sharded Data Parallel Training.</em> PyTorch Blog. — The engineering design document for PyTorch FSDP; covers the sharding unit tradeoffs, mixed precision integration, and the async checkpoint API.</p></li>
 </ul>
 <hr>
 
@@ -1326,14 +1326,11 @@ Figure&nbsp;7.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/attention-computation.html" class="pagination-link" aria-label="Attention Computation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span>
+      <a href="../../book/part5/training_loop.html" class="pagination-link" aria-label="The Training Loop">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/gpu-execution.html" class="pagination-link" aria-label="GPU Execution">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
