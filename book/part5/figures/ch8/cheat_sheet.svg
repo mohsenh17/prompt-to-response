@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500" viewBox="0 0 1000 1500">
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- ROW 1: What Fine-Tuning Is / Is Not -->
+<rect class="box" x="40" y="30" width="440" height="230"/>
+<text class="section" x="65" y="60">What Fine-Tuning Is</text>
+<text class="text" x="65" y="95">Pretrained weights + targeted data</text>
+<text class="text" x="65" y="120">→ update parameters toward target distribution</text>
+<text class="text" x="65" y="155">Persistent behavior encoded in weights</text>
+<text class="text" x="65" y="180">No examples required at inference time</text>
+<text class="text" x="65" y="215">Core tension: adaptation ↔ forgetting</text>
+<text class="code" x="65" y="245">Pretrained model → Fine-tuning → Adapted model</text>
+
+<rect class="box" x="520" y="30" width="440" height="230"/>
+<text class="section" x="545" y="60">What Fine-Tuning Is Not</text>
+<text class="text" x="545" y="95">In-context learning:</text>
+<text class="text" x="545" y="120">Examples in prompt, no weight updates</text>
+<text class="text" x="545" y="155">Prompting:</text>
+<text class="text" x="545" y="180">Shapes behavior but does not update weights</text>
+<text class="text" x="545" y="215">Fine-tuning = persistent weight-level adaptation</text>
+
+
+<!-- ROW 2: Full Fine-Tuning / Loss Masking -->
+<rect class="box" x="40" y="290" width="440" height="260"/>
+<text class="section" x="65" y="320">Full Fine-Tuning</text>
+<text class="text" x="65" y="355">All model parameters are trainable.</text>
+<text class="code" x="65" y="390">Load checkpoint</text>
+<text class="code" x="65" y="415">→ Format chat data</text>
+<text class="code" x="65" y="440">→ Low LR (≈ 1–5 × 10⁻⁵)</text>
+<text class="code" x="65" y="465">→ Warmup + cosine decay</text>
+<text class="code" x="65" y="490">→ Validate + early stop</text>
+<text class="text" x="65" y="525">Best for large domain shifts and large datasets.</text>
+
+<rect class="box" x="520" y="290" width="440" height="260"/>
+<text class="section" x="545" y="320">Loss Masking</text>
+<text class="text" x="545" y="355">Train only on tokens the assistant generates.</text>
+<text class="code" x="545" y="395">&lt;system&gt;  MASK</text>
+<text class="code" x="545" y="420">&lt;user&gt;    MASK</text>
+<text class="code" x="545" y="445">&lt;assistant&gt; LOSS ✓</text>
+<text class="text" x="545" y="485">Prevents learning to reproduce user turns</text>
+<text class="text" x="545" y="510">instead of learning to respond to them.</text>
+
+
+<!-- ROW 3: Full FT vs PEFT -->
+<rect class="box" x="40" y="580" width="440" height="250"/>
+<text class="section" x="65" y="610">Why Parameter Efficiency?</text>
+<text class="text" x="65" y="650">7B model, bfloat16 weights:</text>
+<text class="code" x="65" y="675">Weights     ≈ 14 GB</text>
+<text class="code" x="65" y="700">Gradients   ≈ 14 GB</text>
+<text class="code" x="65" y="725">Adam state  ≈ 28 GB</text>
+<text class="code" x="65" y="750">Total       ≈ 56 GB</text>
+<text class="text" x="65" y="790">PEFT freezes base weights and trains only adapters.</text>
+<text class="text" x="65" y="815">Much smaller optimizer state and easy adapter swapping.</text>
+
+<rect class="box" x="520" y="580" width="440" height="250"/>
+<text class="section" x="545" y="610">Full Fine-Tuning vs. PEFT</text>
+<text class="text" x="545" y="655">Full FT:</text>
+<text class="code" x="650" y="655">Update all W</text>
+<text class="text" x="545" y="695">PEFT:</text>
+<text class="code" x="650" y="695">Freeze W₀ + train ΔW</text>
+<text class="text" x="545" y="735">1% trainable params:</text>
+<text class="code" x="545" y="760">28 GB optimizer → ≈ 280 MB</text>
+<text class="text" x="545" y="800">One base + many small task adapters</text>
+
+
+<!-- ROW 4: LoRA -->
+<rect class="box" x="40" y="860" width="440" height="300"/>
+<text class="section" x="65" y="890">LoRA: Low-Rank Adaptation</text>
+<text class="text" x="65" y="925">Freeze pretrained weights W₀.</text>
+<text class="text" x="65" y="950">Learn a low-rank update:</text>
+<text class="code" x="65" y="980">ΔW ≈ BA</text>
+<text class="code" x="65" y="1010">W' = W₀ + BA</text>
+<text class="code" x="65" y="1040">h = W₀x + BAx</text>
+<text class="text" x="65" y="1080">A = random initialization</text>
+<text class="text" x="65" y="1105">B = zero initialization</text>
+<text class="text" x="65" y="1135">Starts exactly at pretrained behavior.</text>
+
+<rect class="box" x="520" y="860" width="440" height="300"/>
+<text class="section" x="545" y="890">LoRA: Rank &amp; Target Modules</text>
+<text class="text" x="545" y="925">Rank r controls adapter capacity.</text>
+<text class="code" x="545" y="960">(d + k) × r</text>
+<text class="text" x="545" y="1000">Typical targets:</text>
+<text class="code" x="545" y="1025">Q, K, V, O projections</text>
+<text class="code" x="545" y="1050">+ FFN for stronger adaptation</text>
+<text class="text" x="545" y="1090">Typical rank:</text>
+<text class="code" x="545" y="1115">Style 4–8 | Instruction 8–32</text>
+<text class="code" x="545" y="1140">Domain 32–64 | Task 64–128</text>
+
+
+<!-- ROW 5: QLoRA / Other PEFT -->
+<rect class="box" x="40" y="1190" width="440" height="260"/>
+<text class="section" x="65" y="1220">QLoRA</text>
+<text class="text" x="65" y="1255">Quantize frozen base weights to 4-bit NF4.</text>
+<text class="code" x="65" y="1290">W₀ → NF4</text>
+<text class="text" x="65" y="1325">Keep LoRA adapters in bf16.</text>
+<text class="code" x="65" y="1360">NF4 Base + bf16 LoRA</text>
+<text class="text" x="65" y="1400">Makes very large-model fine-tuning</text>
+<text class="text" x="65" y="1425">practical on a single large GPU.</text>
+
+<rect class="box" x="520" y="1190" width="440" height="260"/>
+<text class="section" x="545" y="1220">Other PEFT Methods</text>
+<text class="text" x="545" y="1260">Prefix tuning:</text>
+<text class="code" x="545" y="1285">Learned K/V prefixes at each layer</text>
+<text class="text" x="545" y="1325">Prompt tuning:</text>
+<text class="code" x="545" y="1350">Learned soft tokens at input</text>
+<text class="text" x="545" y="1390">Adapters:</text>
+<text class="code" x="545" y="1415">Small bottleneck modules</text>
+<text class="text" x="545" y="1440">LoRA preferred when mergeability matters.</text>
+
+</svg>
