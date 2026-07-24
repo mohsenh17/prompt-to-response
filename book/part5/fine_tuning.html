@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>27&nbsp; Fine-Tuning and Parameter-Efficient Adaptation – From Prompt to Response</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../book/part5/distillation.html" rel="prev">
+<link href="../../images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4e5c8a923c97ced843d0652dafb23d7b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="27&nbsp; Fine-Tuning and Parameter-Efficient Adaptation – From Prompt to Response">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch8/journey.svg">
+<meta property="og:site_name" content="From Prompt to Response">
+<meta name="twitter:title" content="27&nbsp; Fine-Tuning and Parameter-Efficient Adaptation – From Prompt to Response">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch8/journey.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/fine_tuning.html"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">From Prompt to Response</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mohsenh17/prompt-to-response" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Art of the True Name</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Runes Beneath Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Labyrinth of Attention</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/quantization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Forbidden Archive</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/chunking_strategies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/embedding_for_search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/vector_databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Vector Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/reranking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reranking</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/context_construction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Context Construction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/grounded_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Grounded Generation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Forging of Intelligence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/synthetic_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_objectives.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_loop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/distributed_training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/distillation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/fine_tuning.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Trial of the Answer</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Keepers of the Waking Engine</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#what-fine-tuning-is-and-what-it-is-not" id="toc-what-fine-tuning-is-and-what-it-is-not" class="nav-link active" data-scroll-target="#what-fine-tuning-is-and-what-it-is-not"><span class="header-section-number">27.1</span> What Fine-Tuning Is and What It Is Not</a></li>
+  <li><a href="#full-fine-tuning" id="toc-full-fine-tuning" class="nav-link" data-scroll-target="#full-fine-tuning"><span class="header-section-number">27.2</span> Full Fine-Tuning</a></li>
+  <li><a href="#the-case-for-parameter-efficiency" id="toc-the-case-for-parameter-efficiency" class="nav-link" data-scroll-target="#the-case-for-parameter-efficiency"><span class="header-section-number">27.3</span> The Case for Parameter Efficiency</a></li>
+  <li><a href="#lora-low-rank-adaptation" id="toc-lora-low-rank-adaptation" class="nav-link" data-scroll-target="#lora-low-rank-adaptation"><span class="header-section-number">27.4</span> LoRA: Low-Rank Adaptation</a></li>
+  <li><a href="#qlora-quantized-lora" id="toc-qlora-quantized-lora" class="nav-link" data-scroll-target="#qlora-quantized-lora"><span class="header-section-number">27.5</span> QLoRA: Quantized LoRA</a></li>
+  <li><a href="#prefix-tuning-and-prompt-tuning" id="toc-prefix-tuning-and-prompt-tuning" class="nav-link" data-scroll-target="#prefix-tuning-and-prompt-tuning"><span class="header-section-number">27.6</span> Prefix Tuning and Prompt Tuning</a></li>
+  <li><a href="#adapter-layers" id="toc-adapter-layers" class="nav-link" data-scroll-target="#adapter-layers"><span class="header-section-number">27.7</span> Adapter Layers</a></li>
+  <li><a href="#lora-variants-and-extensions" id="toc-lora-variants-and-extensions" class="nav-link" data-scroll-target="#lora-variants-and-extensions"><span class="header-section-number">27.8</span> LoRA Variants and Extensions</a></li>
+  <li><a href="#instruction-fine-tuning" id="toc-instruction-fine-tuning" class="nav-link" data-scroll-target="#instruction-fine-tuning"><span class="header-section-number">27.9</span> Instruction Fine-Tuning</a></li>
+  <li><a href="#catastrophic-forgetting-and-how-to-manage-it" id="toc-catastrophic-forgetting-and-how-to-manage-it" class="nav-link" data-scroll-target="#catastrophic-forgetting-and-how-to-manage-it"><span class="header-section-number">27.10</span> Catastrophic Forgetting and How to Manage It</a></li>
+  <li><a href="#serving-multiple-fine-tuned-models" id="toc-serving-multiple-fine-tuned-models" class="nav-link" data-scroll-target="#serving-multiple-fine-tuned-models"><span class="header-section-number">27.11</span> Serving Multiple Fine-Tuned Models</a></li>
+  <li><a href="#choosing-between-fine-tuning-approaches" id="toc-choosing-between-fine-tuning-approaches" class="nav-link" data-scroll-target="#choosing-between-fine-tuning-approaches"><span class="header-section-number">27.12</span> Choosing Between Fine-Tuning Approaches</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">27.13</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">27.14</span> Further Reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/fine_tuning.html"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>The canonical question for this chapter:</strong> <em>How do you take a pretrained model and make it reliably good at a specific task or domain and when is it better to update all the weights, a small adapter, or none of them?</em></p>
+</blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch8/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;27.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
+<p>This chapter addresses a common problem: you already have the right-sized model, but it does the wrong things. Fine-tuning adjusts a pretrained model’s behavior toward a target distribution. Parameter-efficient methods do this while touching only a small fraction of the model’s weights.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="what-fine-tuning-is-and-what-it-is-not" class="level2" data-number="27.1">
+<h2 data-number="27.1" class="anchored" data-anchor-id="what-fine-tuning-is-and-what-it-is-not"><span class="header-section-number">27.1</span> What Fine-Tuning Is and What It Is Not</h2>
+<p>A pretrained language model is a general-purpose next-token predictor. It has learned, from a large and diverse corpus, a compressed representation of language, factual knowledge, and reasoning patterns. What it has not learned is how to behave usefully in response to a specific type of input, a medical question, a customer support query, a legal document, a Python function stub.</p>
+<p>Fine-tuning adjusts the model’s parameters using a smaller, targeted dataset that represents the behavior you want. The optimizer runs the same forward- backward-update loop as pretraining, but on a different data distribution, typically for far fewer steps, and usually with a much lower learning rate. The pretrained weights are the starting point; fine-tuning moves them in the direction that reduces loss on the target distribution.</p>
+<p>This is not the same as in-context learning, where the model’s behavior is shaped by examples in the prompt without any weight updates. In-context learning is fast and requires no training, but it is limited by context length and is not persistent: the model reverts to its base behavior as soon as the examples leave the context window. Fine-tuning is persistent: the adjusted behavior is encoded in the weights and requires no prompt-time examples to activate.</p>
+<p>It is also not the same as prompting or system prompt engineering. A well-crafted system prompt can substantially shape model behavior, but it cannot install new knowledge or reliably suppress deeply ingrained behaviors. Fine-tuning can do both, within limits set by the pretrained model’s capacity.</p>
+<p>The central tension in fine-tuning is between adaptation and forgetting. Every gradient step that reduces loss on the target distribution risks increasing loss on the original distribution. A model fine-tuned aggressively on medical text may forget how to write Python. A model fine-tuned on customer support transcripts may lose nuance in open-ended generation. Managing this tension (adapting without catastrophically forgetting) is the core engineering challenge that parameter-efficient methods address.</p>
+<hr>
+</section>
+<section id="full-fine-tuning" class="level2" data-number="27.2">
+<h2 data-number="27.2" class="anchored" data-anchor-id="full-fine-tuning"><span class="header-section-number">27.2</span> Full Fine-Tuning</h2>
+<section id="the-basic-procedure" class="level3" data-number="27.2.1">
+<h3 data-number="27.2.1" class="anchored" data-anchor-id="the-basic-procedure"><span class="header-section-number">27.2.1</span> The Basic Procedure</h3>
+<p>Full fine-tuning updates all model parameters. The procedure:</p>
+<ol type="1">
+<li>Load the pretrained checkpoint.</li>
+<li>Format the fine-tuning dataset in the model’s chat template, marking which tokens should contribute to the loss (typically the assistant turns only, not the system prompt or user inputs, which the model cannot control).</li>
+<li>Run the training loop with a low learning rate, typically 1–5 × 10⁻⁵, substantially below the peak learning rate used during pretraining.</li>
+<li>Apply a short warmup (100–500 steps) and cosine decay to near zero.</li>
+<li>Evaluate on a held-out validation split at regular intervals; stop when validation loss plateaus or begins increasing.</li>
+</ol>
+</section>
+<section id="loss-masking" class="level3" data-number="27.2.2">
+<h3 data-number="27.2.2" class="anchored" data-anchor-id="loss-masking"><span class="header-section-number">27.2.2</span> Loss Masking</h3>
+<p>One critical implementation detail: loss masking. In instruction fine-tuning, the model is trained to produce assistant responses to user queries. The model should not receive loss signal for predicting the user’s question, it has no control over what the user asks. Standard practice masks the loss on all non-assistant tokens, computing the cross-entropy only over tokens the model is being trained to generate.</p>
+<p>Without loss masking, the model receives gradient signal from predicting the user’s tokens, which teaches it to complete user-turn patterns rather than respond to them. The resulting model generates text that looks like a conversation rather than one side of a conversation, a subtle but consequential difference that is easy to miss and consistently degrades instruction following quality.</p>
+<p>Concretely, for a sequence formatted as:</p>
+<pre><code>&lt;|system|&gt;You are a helpful assistant.&lt;|end|&gt;
+&lt;|user|&gt;What is the capital of France?&lt;|end|&gt;
+&lt;|assistant|&gt;The capital of France is Paris.&lt;|end|&gt;</code></pre>
+<p>The loss is computed only over the tokens in the <code>&lt;|assistant|&gt;</code> turn: “The capital of France is Paris.” The system prompt and user turn are in the input but not in the loss.</p>
+</section>
+<section id="learning-rate-selection" class="level3" data-number="27.2.3">
+<h3 data-number="27.2.3" class="anchored" data-anchor-id="learning-rate-selection"><span class="header-section-number">27.2.3</span> Learning Rate Selection</h3>
+<p>Full fine-tuning is sensitive to learning rate. Too high: the pretrained representations are overwritten before the optimizer can find a stable solution, producing incoherent outputs or loss spikes. Too low: the model does not adapt meaningfully within a reasonable number of steps.</p>
+<p>The standard heuristic: use 10–100× lower learning rate than the peak learning rate used during pretraining. For a model pretrained at peak LR = 3 × 10⁻⁴, fine-tuning typically uses 1–3 × 10⁻⁵. Layerwise learning rate decay (applying a lower learning rate to earlier layers and a higher rate to later layers) can preserve general representations in early layers while allowing task-specific adaptation in later layers. Typical decay factor: 0.8–0.9 per layer from the top.</p>
+</section>
+<section id="when-full-fine-tuning-is-appropriate" class="level3" data-number="27.2.4">
+<h3 data-number="27.2.4" class="anchored" data-anchor-id="when-full-fine-tuning-is-appropriate"><span class="header-section-number">27.2.4</span> When Full Fine-Tuning Is Appropriate</h3>
+<p>Full fine-tuning is appropriate when:</p>
+<ul>
+<li>The target distribution is substantially different from the pretraining distribution (medical text, legal text, a specialized programming language).</li>
+<li>The fine-tuning dataset is large enough to justify the parameter count being updated (roughly 100K–1M examples for a 7B model; fewer for smaller models).</li>
+<li>Serving infrastructure allows storing multiple fine-tuned model copies, since each full fine-tune produces a separate set of weights.</li>
+<li>The compute budget permits full fine-tuning: for a 70B model, full fine-tuning requires the same distributed infrastructure as pretraining, since all parameters, gradients, and optimizer state must be held in memory.</li>
+</ul>
+<p>For most practitioners working with models above 7B parameters, full fine-tuning is impractical without significant GPU resources. Parameter-efficient methods exist precisely to make adaptation tractable on smaller hardware.</p>
+<hr>
+</section>
+</section>
+<section id="the-case-for-parameter-efficiency" class="level2" data-number="27.3">
+<h2 data-number="27.3" class="anchored" data-anchor-id="the-case-for-parameter-efficiency"><span class="header-section-number">27.3</span> The Case for Parameter Efficiency</h2>
+<p>A 7B-parameter model in float16 requires 14 GB for weights alone. Full fine- tuning additionally requires gradients (14 GB) and Adam optimizer state (28 GB): 56 GB total before activations. An H100 has 80 GB; full fine-tuning of a 7B model fits on a single H100, but barely. A 13B model requires 104 GB which exceedes a single GPU’s capacity. A 70B model requires 560 GB for full fine-tuning, seven H100s at minimum, just for optimizer state.</p>
+<p>Parameter-efficient fine-tuning (PEFT) methods reduce this cost by updating only a small subset of parameters while holding the pretrained weights frozen. The optimizer state is computed only for the trainable parameters. For a method that trains 1% of parameters, the optimizer state shrinks to 1% of its full fine-tuning size: from 28 GB to 280 MB for a 7B model. The fine-tuned adapter weights are similarly small (a 1% adapter for a 7B model occupies roughly 140 MB) making it practical to maintain many task-specific adapters simultaneously and swap them at inference time.</p>
+<hr>
+</section>
+<section id="lora-low-rank-adaptation" class="level2" data-number="27.4">
+<h2 data-number="27.4" class="anchored" data-anchor-id="lora-low-rank-adaptation"><span class="header-section-number">27.4</span> LoRA: Low-Rank Adaptation</h2>
+<p>LoRA (Low-Rank Adaptation, Hu et al., 2021) is the dominant parameter-efficient fine-tuning method in current practice. It is conceptually simple, works across model families without architectural changes, and consistently delivers performance competitive with full fine-tuning at a fraction of the trainable parameter count.</p>
+<section id="the-core-idea" class="level3" data-number="27.4.1">
+<h3 data-number="27.4.1" class="anchored" data-anchor-id="the-core-idea"><span class="header-section-number">27.4.1</span> The Core Idea</h3>
+<p>The hypothesis underlying LoRA: the update to a weight matrix during fine-tuning has low intrinsic rank. That is, the change <span class="math inline">\(\Delta W\)</span> that fine-tuning would apply to a weight matrix <span class="math inline">\(W_0 \in \mathbb{R}^{d \times k}\)</span> can be approximated by a low-rank decomposition:</p>
+<p><span class="math display">\[
+\Delta W \approx BA
+\]</span></p>
+<p>where <span class="math inline">\(B \in \mathbb{R}^{d \times r}\)</span> and <span class="math inline">\(A \in \mathbb{R}^{r \times k}\)</span>, with rank <span class="math inline">\(r \ll \min(d, k)\)</span>.</p>
+<p>During training, <span class="math inline">\(W_0\)</span> is frozen and only <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are updated. The forward pass computes:</p>
+<p><span class="math display">\[
+h = W_0 x + \Delta W x = W_0 x + BAx
+\]</span></p>
+<p><span class="math inline">\(A\)</span> is initialized from a random Gaussian; <span class="math inline">\(B\)</span> is initialized to zero, so <span class="math inline">\(\Delta W = BA = 0\)</span> at the start of training and the model begins from exactly the pretrained behavior. As training proceeds, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> adjust to represent the task-specific update.</p>
+<p>At inference time, the adapter can be merged: <span class="math inline">\(W' = W_0 + BA\)</span> is a weight matrix of the same shape as <span class="math inline">\(W_0\)</span> that incorporates the fine-tuning update. Merging adds zero inference overhead, the merged model runs at identical speed to the base model with no adapter infrastructure required. Alternatively, multiple adapters can be kept separate and swapped at serving time, supporting multi-tenant serving of many fine-tuned models from a single base checkpoint.</p>
+</section>
+<section id="rank-and-parameter-count" class="level3" data-number="27.4.2">
+<h3 data-number="27.4.2" class="anchored" data-anchor-id="rank-and-parameter-count"><span class="header-section-number">27.4.2</span> Rank and Parameter Count</h3>
+<p>The rank <span class="math inline">\(r\)</span> is the primary hyperparameter. For a typical transformer weight matrix with <span class="math inline">\(d = k = 4096\)</span> (LLaMA 2 7B’s hidden dimension), a LoRA adapter at rank <span class="math inline">\(r = 16\)</span> has:</p>
+<p><span class="math display">\[
+(d + k) \times r = (4096 + 4096) \times 16 = 131{,}072 \text{ parameters}
+\]</span></p>
+<p>The original matrix has <span class="math inline">\(d \times k = 16{,}777{,}216\)</span> parameters. The LoRA adapter at rank 16 represents 0.78% of the original matrix’s parameters.</p>
+<p>For a 7B model where LoRA is applied to all attention projection matrices (Q, K, V, O) and both FFN matrices across 32 layers, at rank <span class="math inline">\(r = 16\)</span>:</p>
+<p><span class="math display">\[
+\text{Adapters} = 32 \text{ layers} \times 6 \text{ matrices} \times 2 \times 4096 \times 16 \approx 25M \text{ parameters}
+\]</span></p>
+<p>25 million trainable parameters out of 7 billion total: 0.36%. The optimizer state for these 25M parameters requires approximately 200 MB in float32 Adam. Compare to full fine-tuning’s 28 GB optimizer state.</p>
+</section>
+<section id="which-matrices-to-apply-lora-to" class="level3" data-number="27.4.3">
+<h3 data-number="27.4.3" class="anchored" data-anchor-id="which-matrices-to-apply-lora-to"><span class="header-section-number">27.4.3</span> Which Matrices to Apply LoRA To</h3>
+<p>The original LoRA paper applied adapters only to the Q and V attention projection matrices, based on the observation that these matrices show the most task-specific variation during full fine-tuning. Subsequent work found that applying LoRA to all attention matrices (Q, K, V, O) and optionally the FFN layers produces better performance at the cost of more trainable parameters.</p>
+<p>The current standard for instruction fine-tuning: apply LoRA to Q, K, V, and O projections at rank 16–64. For domain adaptation requiring more substantial weight changes, extend to the FFN up and down projection matrices. For embedding adaptation (useful when the fine-tuning data introduces vocabulary not well-represented in the base model), apply LoRA to the embedding layer as well.</p>
+</section>
+<section id="rank-selection-in-practice" class="level3" data-number="27.4.4">
+<h3 data-number="27.4.4" class="anchored" data-anchor-id="rank-selection-in-practice"><span class="header-section-number">27.4.4</span> Rank Selection in Practice</h3>
+<p>The optimal rank depends on the complexity of the adaptation task:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Typical rank</th>
+<th>Trainable params (7B model)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Style adaptation</td>
+<td>4–8</td>
+<td>6M–12M</td>
+</tr>
+<tr class="even">
+<td>Instruction following</td>
+<td>8–32</td>
+<td>12M–50M</td>
+</tr>
+<tr class="odd">
+<td>Domain adaptation</td>
+<td>32–64</td>
+<td>50M–100M</td>
+</tr>
+<tr class="even">
+<td>Task-specific fine-tuning</td>
+<td>64–128</td>
+<td>100M–200M</td>
+</tr>
+</tbody>
+</table>
+<p>Higher rank captures more of the full fine-tuning update but requires more memory and compute. Ranks above 128 rarely improve over full fine-tuning and sometimes perform worse, suggesting that the low-rank hypothesis breaks down at high ranks: the adapter can represent arbitrary updates, losing the regularization benefit of the low-rank constraint.</p>
+<hr>
+</section>
+</section>
+<section id="qlora-quantized-lora" class="level2" data-number="27.5">
+<h2 data-number="27.5" class="anchored" data-anchor-id="qlora-quantized-lora"><span class="header-section-number">27.5</span> QLoRA: Quantized LoRA</h2>
+<p>QLoRA (Dettmers et al., 2023) extends LoRA to make fine-tuning of very large models practical on consumer hardware by quantizing the frozen base model weights while keeping the LoRA adapters in full precision.</p>
+<section id="the-method" class="level3" data-number="27.5.1">
+<h3 data-number="27.5.1" class="anchored" data-anchor-id="the-method"><span class="header-section-number">27.5.1</span> The Method</h3>
+<p>The base model weights <span class="math inline">\(W_0\)</span> are quantized to 4-bit NormalFloat (NF4), a quantization format optimized for normally distributed weights (which transformer weights approximately are). NF4 quantization reduces the base model’s memory footprint by roughly 8× relative to float32, or 4× relative to bfloat16.</p>
+<p>The LoRA adapters <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are kept in bfloat16. During the forward pass, <span class="math inline">\(W_0\)</span> is dequantized from NF4 to bfloat16 for the computation <span class="math inline">\(W_0 x\)</span>, then requantized for storage. The adapter computation <span class="math inline">\(BAx\)</span> runs in bfloat16 throughout.</p>
+<p>Memory for fine-tuning a 65B model with QLoRA on a single A100 80GB: - Base weights in NF4: approximately 33 GB - LoRA adapters in bfloat16: approximately 600 MB - Optimizer state for adapters: approximately 1.2 GB - Activations: approximately 6 GB - <strong>Total: approximately 41 GB</strong> which fits on a single A100 80GB</p>
+<p>Without QLoRA, fine-tuning a 65B model requires a minimum of eight A100s for model weights alone, plus distributed optimizer state across additional GPUs. QLoRA makes this a single-GPU task, with performance within 1–2 percentage points of full fine-tuning on most benchmarks.</p>
+<hr>
+</section>
+</section>
+<section id="prefix-tuning-and-prompt-tuning" class="level2" data-number="27.6">
+<h2 data-number="27.6" class="anchored" data-anchor-id="prefix-tuning-and-prompt-tuning"><span class="header-section-number">27.6</span> Prefix Tuning and Prompt Tuning</h2>
+<p>Before LoRA, the dominant parameter-efficient approach was prefix tuning (Li and Liang, 2021) and its simpler variant, prompt tuning (Lester et al., 2021).</p>
+<section id="prefix-tuning" class="level3" data-number="27.6.1">
+<h3 data-number="27.6.1" class="anchored" data-anchor-id="prefix-tuning"><span class="header-section-number">27.6.1</span> Prefix Tuning</h3>
+<p>Prefix tuning prepends a sequence of learned continuous vectors (the prefix) to the key and value matrices at every attention layer. The prefix vectors are not token embeddings; they are free parameters optimized directly by gradient descent to minimize loss on the fine-tuning task.</p>
+<p>Formally, for attention layer <span class="math inline">\(l\)</span>, the prefix tuning method augments the key and value matrices:</p>
+<p><span class="math display">\[
+K_l' = [P_K^l \| K_l], \quad V_l' = [P_V^l \| V_l]
+\]</span></p>
+<p>where <span class="math inline">\(P_K^l\)</span> and <span class="math inline">\(P_V^l\)</span> are learned prefix matrices of shape <span class="math inline">\([\text{prefix\_length} \times d_{\text{head}}]\)</span>, and <span class="math inline">\([\cdot \| \cdot]\)</span> denotes concatenation. The model’s attention at each layer can attend to both the prefix vectors and the original sequence.</p>
+<p>With a prefix length of 10 tokens and a 12-layer, 768-dimensional BERT-base model, prefix tuning requires: <span class="math display">\[
+2 \times 10 \times 768 \times 12 = 184{,}320 \text{ parameters}
+\]</span></p>
+<p>approximately 0.1% of BERT-base’s 110M parameters. Li and Liang showed that prefix tuning at this parameter count reaches within 0.1–2% of full fine-tuning performance on table-to-text generation and summarization tasks.</p>
+</section>
+<section id="prompt-tuning" class="level3" data-number="27.6.2">
+<h3 data-number="27.6.2" class="anchored" data-anchor-id="prompt-tuning"><span class="header-section-number">27.6.2</span> Prompt Tuning</h3>
+<p>Prompt tuning is a simplified version of prefix tuning that prepends learned vectors only to the input embedding layer rather than to every attention layer. The prefix is a sequence of “soft tokens” (continuous vectors that occupy positions before the actual input in the embedding space) that are optimized to steer the model toward the target task.</p>
+<p>Lester et al.&nbsp;demonstrated that at model scale (11B parameters), prompt tuning matches full fine-tuning performance with only a few hundred tunable parameters. At smaller scales (below roughly 1B parameters), there is a significant performance gap. This scale-dependence limits prompt tuning’s applicability: it works well for very large models but poorly for the 7B–13B models that practitioners most commonly fine-tune.</p>
+<p>LoRA has largely supplanted prefix and prompt tuning in practice because LoRA works well across the full range of model sizes without the scale-dependence limitation and is easier to implement and tune.</p>
+<hr>
+</section>
+</section>
+<section id="adapter-layers" class="level2" data-number="27.7">
+<h2 data-number="27.7" class="anchored" data-anchor-id="adapter-layers"><span class="header-section-number">27.7</span> Adapter Layers</h2>
+<p>Adapter tuning (Houlsby et al., 2019) inserts small bottleneck modules between existing transformer layers. Each adapter consists of a down-projection from the model dimension <span class="math inline">\(d\)</span> to a bottleneck dimension <span class="math inline">\(r\)</span>, a nonlinearity, and an up-projection back to <span class="math inline">\(d\)</span>:</p>
+<p><span class="math display">\[
+\text{Adapter}(h) = h + W_{\text{up}} \cdot \text{ReLU}(W_{\text{down}} \cdot h)
+\]</span></p>
+<p>where <span class="math inline">\(W_{\text{down}} \in \mathbb{R}^{r \times d}\)</span> and <span class="math inline">\(W_{\text{up}} \in \mathbb{R}^{d \times r}\)</span>. The residual connection ensures that the adapter begins as an identity function when <span class="math inline">\(W_{\text{up}}\)</span> is initialized to zero.</p>
+<p>With <span class="math inline">\(r = 64\)</span> and <span class="math inline">\(d = 768\)</span> (BERT-base), each adapter adds <span class="math inline">\(2 \times 64 \times 768 = 98{,}304\)</span> parameters. With two adapters per layer (after self-attention and after FFN) across 12 layers: approximately 2.4M parameters, or 2.2% of BERT-base.</p>
+<p>Adapter layers add inference latency because they introduce extra matrix multiplications in the forward pass. Unlike LoRA, adapter layers cannot be merged into the base weights, the bottleneck structure prevents the algebraic simplification that makes LoRA merging possible. For latency-sensitive applications, this is a meaningful disadvantage. LoRA has largely replaced adapter layers as the preferred PEFT method, precisely because LoRA can be merged at inference time while adapters cannot.</p>
+<hr>
+</section>
+<section id="lora-variants-and-extensions" class="level2" data-number="27.8">
+<h2 data-number="27.8" class="anchored" data-anchor-id="lora-variants-and-extensions"><span class="header-section-number">27.8</span> LoRA Variants and Extensions</h2>
+<section id="dora-weight-decomposed-low-rank-adaptation" class="level3" data-number="27.8.1">
+<h3 data-number="27.8.1" class="anchored" data-anchor-id="dora-weight-decomposed-low-rank-adaptation"><span class="header-section-number">27.8.1</span> DoRA: Weight-Decomposed Low-Rank Adaptation</h3>
+<p>DoRA (Liu et al., 2024) decomposes the weight matrix into magnitude and direction components and applies LoRA to the direction component only:</p>
+<p><span class="math display">\[
+W' = \frac{m}{\|W_0 + BA\|_c} (W_0 + BA)
+\]</span></p>
+<p>where <span class="math inline">\(m\)</span> is a learned magnitude vector and <span class="math inline">\(\|\cdot\|_c\)</span> is the column-wise norm. By separating magnitude adaptation (a scalar per column) from directional adaptation (the LoRA component), DoRA improves performance on tasks requiring both fine-grained feature adjustment and large-scale representation changes. DoRA consistently outperforms LoRA at the same rank, with minimal additional parameter overhead from the magnitude vectors.</p>
+</section>
+<section id="lora" class="level3" data-number="27.8.2">
+<h3 data-number="27.8.2" class="anchored" data-anchor-id="lora"><span class="header-section-number">27.8.2</span> LoRA+</h3>
+<p>LoRA+ (Hayou et al., 2024) observes that the optimal learning rates for the <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> matrices in LoRA are not equal. The <span class="math inline">\(B\)</span> matrix, initialized to zero, starts with zero gradient and requires a higher learning rate to adapt quickly. The <span class="math inline">\(A\)</span> matrix, initialized randomly, starts with larger gradients and benefits from a lower learning rate. LoRA+ sets a fixed ratio between the <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> learning rates (typically 16×), improving convergence speed with no additional parameters or architectural changes.</p>
+</section>
+<section id="vera-vector-based-random-matrix-adaptation" class="level3" data-number="27.8.3">
+<h3 data-number="27.8.3" class="anchored" data-anchor-id="vera-vector-based-random-matrix-adaptation"><span class="header-section-number">27.8.3</span> VeRA: Vector-based Random Matrix Adaptation</h3>
+<p>VeRA (Kopiczko et al., 2024) takes the low-rank hypothesis further. Rather than training full <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> matrices, VeRA uses fixed random matrices <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> (not trained) and trains only scalar vectors <span class="math inline">\(d\)</span> and <span class="math inline">\(b\)</span> that scale the columns of <span class="math inline">\(B\)</span> and <span class="math inline">\(A\)</span> respectively:</p>
+<p><span class="math display">\[
+\Delta W = \Lambda_b B \Lambda_d A
+\]</span></p>
+<p>where <span class="math inline">\(\Lambda_b\)</span> and <span class="math inline">\(\Lambda_d\)</span> are diagonal scaling matrices. VeRA reduces the trainable parameter count to roughly 1.6M for a 7B model — an order of magnitude below LoRA at rank 16 — while achieving 90–95% of LoRA’s performance on most tasks. For extremely memory-constrained settings, VeRA extends the PEFT frontier further toward the “train almost nothing” extreme.</p>
+<hr>
+</section>
+</section>
+<section id="instruction-fine-tuning" class="level2" data-number="27.9">
+<h2 data-number="27.9" class="anchored" data-anchor-id="instruction-fine-tuning"><span class="header-section-number">27.9</span> Instruction Fine-Tuning</h2>
+<p>Instruction fine-tuning which is training a base model to follow natural language instructions, deserves its own treatment because it is the most consequential application of fine-tuning in practice. It is what transforms a base model (a powerful but unruly next-token predictor) into an assistant (a model that reliably responds to requests).</p>
+<section id="the-data-format" class="level3" data-number="27.9.1">
+<h3 data-number="27.9.1" class="anchored" data-anchor-id="the-data-format"><span class="header-section-number">27.9.1</span> The Data Format</h3>
+<p>Instruction fine-tuning data consists of (instruction, response) pairs, often with an optional context or system prompt. These are formatted using the model’s chat template and trained with loss masking on the response tokens:</p>
+<pre><code>&lt;|system|&gt;
+You are a helpful, harmless, and honest assistant.
+&lt;|end|&gt;
+&lt;|user|&gt;
+Explain the difference between supervised and unsupervised learning.
+&lt;|end|&gt;
+&lt;|assistant|&gt;
+Supervised learning trains a model on labeled examples — pairs of input
+and desired output — while unsupervised learning finds structure in
+unlabeled data without explicit targets. In supervised learning, the
+training signal is the error between predictions and labels...
+&lt;|end|&gt;</code></pre>
+</section>
+<section id="data-volume-and-quality" class="level3" data-number="27.9.2">
+<h3 data-number="27.9.2" class="anchored" data-anchor-id="data-volume-and-quality"><span class="header-section-number">27.9.2</span> Data Volume and Quality</h3>
+<p>The surprising finding from early instruction tuning research (Wei et al., 2022; Sanh et al., 2022) was that a small number of high-quality instruction-response pairs (on the order of 1,000 to 50,000 examples) can substantially improve instruction following, even for models with billions of parameters. FLAN (Wei et al., 2022) showed improvements from fine-tuning on 60 tasks; Alpaca (Taori et al., 2023) used 52,000 GPT-3.5-generated examples to produce a competitive instruction follower from LLaMA.</p>
+<p>More recent work has established that quality matters more than quantity. The LIMA paper (Zhou et al., 2023) trained on only 1,000 carefully curated examples and produced a model competitive with those trained on orders of magnitude more data. The implication: instruction tuning teaches the model a format and response style, not new knowledge. The knowledge is already in the pretrained weights; fine-tuning activates it in the right pattern. Given this, a small number of high-quality demonstrations suffices to establish the pattern; low-quality examples dilute the signal without contributing knowledge.</p>
+</section>
+<section id="multi-task-instruction-tuning" class="level3" data-number="27.9.3">
+<h3 data-number="27.9.3" class="anchored" data-anchor-id="multi-task-instruction-tuning"><span class="header-section-number">27.9.3</span> Multi-Task Instruction Tuning</h3>
+<p>Training on diverse instruction types improves generalization beyond any single task. FLAN-T5 (Chung et al., 2022) fine-tuned on 1,836 tasks from 473 datasets, covering classification, generation, reasoning, translation, and summarization. The diversity prevents the model from overfitting to the instruction format of any single task family and produces a model that generalizes to instruction formats not seen during fine-tuning.</p>
+<p>The practical lesson: instruction fine-tuning datasets should sample broadly across task types, domain contexts, response lengths, and instruction phrasings. A dataset that is narrow in any of these dimensions will produce a model that responds well to instructions resembling those in the training set and poorly to others.</p>
+<hr>
+</section>
+</section>
+<section id="catastrophic-forgetting-and-how-to-manage-it" class="level2" data-number="27.10">
+<h2 data-number="27.10" class="anchored" data-anchor-id="catastrophic-forgetting-and-how-to-manage-it"><span class="header-section-number">27.10</span> Catastrophic Forgetting and How to Manage It</h2>
+<p>Fine-tuning on a narrow distribution degrades performance on the original distribution. This is catastrophic forgetting: the gradient updates that improve performance on the target task also move weight values away from configurations that support the base model’s broader capabilities.</p>
+<p>The empirical pattern: catastrophic forgetting is most severe when the fine-tuning distribution is very different from the pretraining distribution, when the learning rate is high, when training runs for many epochs, and when the fine-tuning dataset is small. Any of these conditions allows the optimizer to move weights far from the pretrained values.</p>
+<section id="mitigation-strategies" class="level3" data-number="27.10.1">
+<h3 data-number="27.10.1" class="anchored" data-anchor-id="mitigation-strategies"><span class="header-section-number">27.10.1</span> Mitigation Strategies</h3>
+<p><strong>Data mixing.</strong> Include a fraction of general-purpose data (from the original pretraining distribution or a proxy for it) alongside the fine-tuning data. A mixing ratio of 5–20% general data is typically sufficient to substantially reduce forgetting while minimally degrading task-specific performance. The cost is a slight reduction in task performance, since some gradient steps go toward maintaining general capability rather than improving task performance.</p>
+<p><strong>Lower learning rates and fewer epochs.</strong> The most direct lever. Running for 1–3 epochs at 1 × 10⁻⁵ learning rate causes less forgetting than running for 10 epochs at 5 × 10⁻⁵. Early stopping on validation loss prevents overadaptation.</p>
+<p><strong>LoRA as implicit regularization.</strong> Because LoRA constrains weight updates to a low-rank subspace, it intrinsically limits how far the adapted weights can deviate from the pretrained values. Full fine-tuning allows arbitrary weight changes; LoRA allows only rank-<span class="math inline">\(r\)</span> changes. This acts as a regularizer that reduces catastrophic forgetting, which is one reason LoRA often matches full fine-tuning quality while using far fewer resources.</p>
+<hr>
+</section>
+</section>
+<section id="serving-multiple-fine-tuned-models" class="level2" data-number="27.11">
+<h2 data-number="27.11" class="anchored" data-anchor-id="serving-multiple-fine-tuned-models"><span class="header-section-number">27.11</span> Serving Multiple Fine-Tuned Models</h2>
+<p>A significant operational advantage of LoRA over full fine-tuning is the ability to serve multiple fine-tuned models from a single base checkpoint.</p>
+<p>With full fine-tuning, each fine-tuned model is a separate set of 7B (or 13B, or 70B) weights. Serving <span class="math inline">\(N\)</span> fine-tuned models requires <span class="math inline">\(N\)</span> full model copies in memory, or dynamically loading models from storage at request time, which introduces unacceptable latency.</p>
+<p>With LoRA, the base model weights are shared across all adapters. Serving <span class="math inline">\(N\)</span> LoRA-fine-tuned models requires one copy of the base weights (14 GB for 7B bfloat16) plus <span class="math inline">\(N\)</span> small adapters (roughly 150 MB each at rank 16 for a 7B model). For <span class="math inline">\(N = 100\)</span> adapters, the memory footprint is approximately 29 GB versus 1,400 GB for full fine-tuning.</p>
+<hr>
+</section>
+<section id="choosing-between-fine-tuning-approaches" class="level2" data-number="27.12">
+<h2 data-number="27.12" class="anchored" data-anchor-id="choosing-between-fine-tuning-approaches"><span class="header-section-number">27.12</span> Choosing Between Fine-Tuning Approaches</h2>
+<p>The decision between full fine-tuning, LoRA, QLoRA, and other PEFT methods depends on available hardware, dataset size, performance requirements, and operational constraints.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 67%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Recommended approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>7B model, 1× A100 80GB, large dataset</td>
+<td>Full fine-tuning or LoRA rank 64</td>
+</tr>
+<tr class="even">
+<td>7B model, 1× consumer GPU (24 GB), any dataset</td>
+<td>QLoRA rank 16–32</td>
+</tr>
+<tr class="odd">
+<td>13B–70B model, limited GPUs</td>
+<td>QLoRA rank 16–64</td>
+</tr>
+<tr class="even">
+<td>70B+ model, large GPU cluster</td>
+<td>Full fine-tuning with FSDP</td>
+</tr>
+<tr class="odd">
+<td>Many tasks from one base model</td>
+<td>LoRA rank 16, separate adapters per task</td>
+</tr>
+<tr class="even">
+<td>Very small dataset (&lt;1K examples)</td>
+<td>LoRA rank 4–8, with data mixing</td>
+</tr>
+<tr class="odd">
+<td>Minimal memory, acceptable quality drop</td>
+<td>VeRA</td>
+</tr>
+</tbody>
+</table>
+<p>A practical benchmark for 7B models: LoRA rank 16 trained for 3 epochs on 50,000 instruction pairs runs in approximately 4–6 hours on a single A100 80GB and consistently achieves 95–98% of full fine-tuning quality on instruction- following benchmarks. This is the most common fine-tuning workload in practice and the appropriate baseline for evaluating whether a more expensive approach is warranted.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="27.13">
+<h2 data-number="27.13" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">27.13</span> Key Takeaways</h2>
+<ul>
+<li>Fine-tuning adjusts a pretrained model’s behavior using a targeted dataset; it is persistent (encoded in weights), unlike in-context learning, and installs behavioral patterns rather than new knowledge.</li>
+<li>Loss masking on non-assistant tokens is essential for instruction fine-tuning: computing loss over user turns teaches the model to complete conversations rather than respond to them.</li>
+<li>Full fine-tuning requires optimizer state equal to roughly 4× the weight memory in float32 Adam; a 7B model needs approximately 56 GB for weights, gradients, and optimizer state combined.</li>
+<li>LoRA freezes base weights and trains low-rank updates <span class="math inline">\(\Delta W = BA\)</span> with <span class="math inline">\(r \ll d\)</span>; at rank 16 on a 7B model, this trains approximately 25M parameters (0.36% of total) while achieving 95–98% of full fine-tuning quality.</li>
+<li>LoRA adapters can be merged into base weights at inference time (<span class="math inline">\(W' = W_0 + BA\)</span>), adding zero latency overhead compared to the unmodified base model.</li>
+<li>QLoRA quantizes base weights to 4-bit NF4 and trains LoRA adapters in bfloat16, reducing fine-tuning memory for a 65B model from 500+ GB to approximately 41 GB — fitting on a single A100 80GB.</li>
+<li>Instruction fine-tuning data quality dominates quantity: LIMA demonstrated that 1,000 carefully curated examples produce competitive instruction following, because fine-tuning teaches response format rather than knowledge.</li>
+<li>Catastrophic forgetting is mitigated by data mixing (5–20% general data), low learning rates (1–5 × 10⁻⁵), short training runs (1–3 epochs), and LoRA’s intrinsic low-rank regularization.</li>
+<li>Multi-adapter serving from a shared base model requires one base checkpoint plus small adapter files (~150 MB each); 100 LoRA adapters for a 7B model occupy ~29 GB versus ~1,400 GB for 100 full fine-tuned copies.</li>
+<li>DoRA improves over LoRA by decomposing weight updates into magnitude and direction; LoRA+ improves convergence by using a 16× higher learning rate for <span class="math inline">\(B\)</span> than <span class="math inline">\(A\)</span>; VeRA reduces trainable parameters to ~1.6M for a 7B model using fixed random matrices with learned scalars.</li>
+</ul>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch8/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;27.2: Cheat sheet.
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="27.14">
+<h2 data-number="27.14" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">27.14</span> Further Reading</h2>
+<ul>
+<li><p>Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., Wang, L., &amp; Chen, W. (2021). <em>LoRA: Low-Rank Adaptation of Large Language Models.</em> ICLR. — The founding paper; the low-rank weight update hypothesis and the merge-at-inference property are introduced here; the GPT-3 fine-tuning experiments establish the quality-efficiency tradeoff clearly.</p></li>
+<li><p>Dettmers, T., Pagnoni, A., Holtzman, A., &amp; Zettlemoyer, L. (2023). <em>QLoRA: Efficient Finetuning of Quantized LLMs.</em> NeurIPS. — Introduces NF4 quantization, double quantization, and paged optimizers; the 65B fine-tuning on a single GPU result is the key empirical contribution.</p></li>
+<li><p>Li, X. L., &amp; Liang, P. (2021). <em>Prefix-Tuning: Optimizing Continuous Prompts for Generation.</em> ACL. — Introduces prefix tuning; the comparison to full fine-tuning on table-to-text and summarization tasks is the key evaluation; the soft prompt interpretation motivates the design.</p></li>
+<li><p>Houlsby, N., et al.&nbsp;(2019). <em>Parameter-Efficient Transfer Learning for NLP.</em> ICML. — Introduces adapter layers; the bottleneck architecture and the near-full-fine-tuning performance at 3% parameter overhead established parameter-efficient fine-tuning as a serious alternative to full fine-tuning.</p></li>
+<li><p>Zhou, C., Liu, P., Xu, P., Iyer, S., Sun, J., Mao, Y., Ma, X., Efrat, A., Yu, P., Yu, L., Zhang, S., Ghosh, G., Lewis, M., Zettlemoyer, L., &amp; Levy, O. (2023). <em>LIMA: Less Is More for Alignment.</em> NeurIPS. — Demonstrates that 1,000 high-quality instruction examples suffice for competitive alignment; the central argument that fine-tuning teaches format rather than knowledge is stated and supported clearly.</p></li>
+<li><p>Chung, H. W., et al.&nbsp;(2022). <em>Scaling Instruction-Finetuned Language Models.</em> JMLR. — The FLAN-T5 paper; systematic evaluation of instruction tuning across 1,836 tasks demonstrates that task diversity is the primary driver of generalization beyond the fine-tuning distribution.</p></li>
+<li><p>Liu, S.-Y., et al.&nbsp;(2024). <em>DoRA: Weight-Decomposed Low-Rank Adaptation.</em> ICML. — Introduces magnitude-direction decomposition; the consistent improvements over LoRA across NLP and vision tasks make it the strongest current alternative to base LoRA.</p></li>
+<li><p>Kirkpatrick, J., et al.&nbsp;(2017). <em>Overcoming catastrophic forgetting in neural networks.</em> PNAS. — Introduces Elastic Weight Consolidation; the Fisher information regularization framing is the key theoretical contribution; the sequential task learning experiments establish the catastrophic forgetting problem quantitatively.</p></li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/llm\.hosseini\.work");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../book/part5/distillation.html" class="pagination-link" aria-label="Distillation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
