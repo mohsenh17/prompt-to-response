@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1050" viewBox="0 0 1000 1050">
+<style>
+.section { font: 700 18px sans-serif; fill:#111; }
+.text { font: 14px sans-serif; fill:#222; }
+.code { font: 13px monospace; fill:#222; }
+.box { fill:#ffffff; stroke:#cccccc; stroke-width:1.2; rx:10; }
+</style>
+
+<!-- LEFT COLUMN: Deployment Problem -->
+<rect class="box" x="40" y="30" width="440" height="220"/>
+<text class="section" x="65" y="60">The Deployment Problem</text>
+<text class="text" x="65" y="90">70B model → better quality, but expensive and slow</text>
+<text class="text" x="65" y="118">7B model → cheaper and faster, but worse from scratch</text>
+<text class="text" x="65" y="155">Question:</text>
+<text class="text" x="65" y="180">Can we transfer the 70B model's knowledge</text>
+<text class="text" x="65" y="202">into a smaller 7B model?</text>
+<text class="text" x="65" y="232">Distillation: large teacher → small student</text>
+
+
+<!-- RIGHT COLUMN: Core Mechanism -->
+<rect class="box" x="520" y="30" width="440" height="220"/>
+<text class="section" x="545" y="60">Core Mechanism</text>
+<text class="text" x="545" y="92">Hard label:</text>
+<text class="code" x="635" y="92">Paris = 1.0, others = 0</text>
+<text class="text" x="545" y="125">Soft target:</text>
+<text class="code" x="635" y="125">Paris .94 | Lyon .02 | ...</text>
+<text class="text" x="545" y="160">Soft targets encode uncertainty</text>
+<text class="text" x="545" y="182">and relationships between outputs.</text>
+<text class="code" x="545" y="215">L = α CE + (1−α) T² KL</text>
+<text class="code" x="545" y="238">T &gt; 1 → softer distribution</text>
+
+
+<!-- LEFT COLUMN: Types -->
+<rect class="box" x="40" y="280" width="440" height="330"/>
+<text class="section" x="65" y="310">Types of Distillation</text>
+
+<text class="section" x="65" y="350">Output / Response</text>
+<text class="text" x="65" y="375">Match teacher token probabilities.</text>
+<text class="code" x="65" y="400">Teacher logits → Student</text>
+
+<text class="section" x="65" y="445">Sequence-Level / Black-Box</text>
+<text class="text" x="65" y="470">Train on teacher-generated sequences.</text>
+<text class="code" x="65" y="495">Teacher → Synthetic data → Student</text>
+
+<text class="section" x="65" y="540">Feature / Intermediate</text>
+<text class="text" x="65" y="565">Match hidden states or attention.</text>
+<text class="code" x="65" y="590">Hˢ W → Hᵀ   |   Aˢ → Aᵀ</text>
+
+
+<!-- RIGHT COLUMN: Speculative Sampling -->
+<rect class="box" x="520" y="280" width="440" height="330"/>
+<text class="section" x="545" y="310">Speculative Sampling ≠ Distillation</text>
+
+<text class="text" x="545" y="350">Inference:</text>
+<text class="code" x="545" y="375">Draft → Propose → Target verifies</text>
+<text class="code" x="545" y="400">→ Accept or Correct</text>
+
+<text class="text" x="545" y="440">The draft is NOT trained.</text>
+<text class="text" x="545" y="465">The target remains the source of output.</text>
+
+<text class="text" x="545" y="510">But verifier feedback can train the draft:</text>
+<text class="code" x="545" y="540">Draft → Target evaluates</text>
+<text class="code" x="545" y="565">→ Training signal → Update Draft</text>
+
+
+<!-- LEFT COLUMN: Scale -->
+<rect class="box" x="40" y="640" width="440" height="330"/>
+<text class="section" x="65" y="670">Distillation at Scale</text>
+
+<text class="text" x="65" y="705">Large capacity gap:</text>
+<text class="code" x="65" y="730">70B Teacher → 7B Student</text>
+
+<text class="text" x="65" y="765">Student cannot reproduce every</text>
+<text class="text" x="65" y="788">difficult teacher distribution.</text>
+
+<text class="text" x="65" y="825">Selective distillation focuses on</text>
+<text class="text" x="65" y="848">informative teacher outputs.</text>
+
+<text class="code" x="65" y="890">Lweighted = Σₜ wₜ KL(qₜ || pₜ)</text>
+<text class="code" x="65" y="920">wₜ = 1 − H(qₜ) / log(V)</text>
+
+
+<!-- RIGHT COLUMN: On vs Off Policy -->
+<rect class="box" x="520" y="640" width="440" height="330"/>
+<text class="section" x="545" y="670">Off-Policy vs. On-Policy</text>
+
+<text class="section" x="545" y="710">Off-Policy</text>
+<text class="text" x="545" y="735">Train on fixed or teacher-generated data.</text>
+<text class="code" x="545" y="760">Fixed data → Student</text>
+
+<text class="section" x="545" y="810">On-Policy</text>
+<text class="text" x="545" y="835">Student generates its own sequences.</text>
+<text class="text" x="545" y="860">Teacher evaluates where student visits.</text>
+<text class="code" x="545" y="890">Student → Teacher → Update Student</text>
+
+<text class="text" x="545" y="935">Better for large capacity gaps,</text>
+<text class="text" x="545" y="958">but more expensive to train.</text>
+
+</svg>

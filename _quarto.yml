@@ -57,6 +57,7 @@ book:
         - book/part5/training_objectives.md
         - book/part5/training_loop.md
         - book/part5/distributed_training.md
+        - book/part5/distillation.md
 
     - part: "The Trial of the Answer"
       chapters: []
