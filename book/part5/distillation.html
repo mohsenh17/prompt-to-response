@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Tokenization during inference – From Prompt to Response</title>
+<title>26&nbsp; Distillation – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -68,8 +33,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part2/Embeddings_and_meaning.html" rel="next">
-<link href="../../book/part2/APIs_and_serving.html" rel="prev">
+<link href="../../book/part5/distributed_training.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,14 +78,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="3&nbsp; Tokenization during inference – From Prompt to Response">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="26&nbsp; Distillation – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part2/figures/ch4/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch7/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="3&nbsp; Tokenization during inference – From Prompt to Response">
+<meta property="og:image:alt" content="The journey through the Model Mind.">
+<meta name="twitter:title" content="26&nbsp; Distillation – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part2/figures/ch4/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch7/journey.svg">
+<meta name="twitter:image:alt" content="The journey through the Model Mind.">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -296,7 +291,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/distillation.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -365,7 +360,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></span></a>
   </div>
 </li>
@@ -536,7 +531,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/distillation.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part5/distillation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></span></a>
   </div>
 </li>
@@ -560,14 +555,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#two-tokenization-chapters-two-different-problems" id="toc-two-tokenization-chapters-two-different-problems" class="nav-link active" data-scroll-target="#two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</a></li>
-  <li><a href="#the-encoding-pipeline" id="toc-the-encoding-pipeline" class="nav-link" data-scroll-target="#the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</a></li>
-  <li><a href="#token-continuation-and-context-window-management" id="toc-token-continuation-and-context-window-management" class="nav-link" data-scroll-target="#token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</a></li>
-  <li><a href="#the-decoding-pipeline-from-numbers-back-to-text" id="toc-the-decoding-pipeline-from-numbers-back-to-text" class="nav-link" data-scroll-target="#the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</a></li>
-  <li><a href="#logprobs-and-their-uses-at-inference-time" id="toc-logprobs-and-their-uses-at-inference-time" class="nav-link" data-scroll-target="#logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</a></li>
-  <li><a href="#common-failure-modes" id="toc-common-failure-modes" class="nav-link" data-scroll-target="#common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.8</span> Further reading</a></li>
+  <li><a href="#the-deployment-problem-that-distillation-solves" id="toc-the-deployment-problem-that-distillation-solves" class="nav-link active" data-scroll-target="#the-deployment-problem-that-distillation-solves"><span class="header-section-number">26.1</span> The Deployment Problem That Distillation Solves</a></li>
+  <li><a href="#knowledge-distillation-the-core-mechanism" id="toc-knowledge-distillation-the-core-mechanism" class="nav-link" data-scroll-target="#knowledge-distillation-the-core-mechanism"><span class="header-section-number">26.2</span> Knowledge Distillation: The Core Mechanism</a></li>
+  <li><a href="#types-of-distillation-for-language-models" id="toc-types-of-distillation-for-language-models" class="nav-link" data-scroll-target="#types-of-distillation-for-language-models"><span class="header-section-number">26.3</span> Types of Distillation for Language Models</a></li>
+  <li><a href="#distillation-at-scale-llm-to-llm" id="toc-distillation-at-scale-llm-to-llm" class="nav-link" data-scroll-target="#distillation-at-scale-llm-to-llm"><span class="header-section-number">26.4</span> Distillation at Scale: LLM-to-LLM</a></li>
+  <li><a href="#reasoning-distillation" id="toc-reasoning-distillation" class="nav-link" data-scroll-target="#reasoning-distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</a></li>
+  <li><a href="#self-distillation-and-compression-without-a-teacher" id="toc-self-distillation-and-compression-without-a-teacher" class="nav-link" data-scroll-target="#self-distillation-and-compression-without-a-teacher"><span class="header-section-number">26.6</span> Self-Distillation and Compression Without a Teacher</a></li>
+  <li><a href="#distillation-vs.-fine-tuning-vs.-training-from-scratch" id="toc-distillation-vs.-fine-tuning-vs.-training-from-scratch" class="nav-link" data-scroll-target="#distillation-vs.-fine-tuning-vs.-training-from-scratch"><span class="header-section-number">26.7</span> Distillation vs.&nbsp;Fine-Tuning vs.&nbsp;Training from Scratch</a></li>
+  <li><a href="#distillation-and-quantization-stacking-compression" id="toc-distillation-and-quantization-stacking-compression" class="nav-link" data-scroll-target="#distillation-and-quantization-stacking-compression"><span class="header-section-number">26.8</span> Distillation and Quantization: Stacking Compression</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">26.9</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">26.10</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -575,9 +572,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/Tokenization.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/distillation.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></h1>
+<h1 class="title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></h1>
 </div>
 
 
@@ -595,241 +592,212 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>A user sends a message while a model receive and returns numbers. How does text become numbers on the way in, and how do numbers become text on the way out?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How do you transfer the knowledge of a large, expensive model into a smaller, cheaper one and why does training on a teacher’s output distributions produce a better student than training on the original data alone?</em></p>
 </blockquote>
 <hr>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/journey.svg" class="img-fluid figure-img" style="width:100.0%">
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.1: The journey through the Model Mind.
-</figcaption>
-</figure>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong> <img src="figures/ch7/journey.svg" id="fig-progress" class="img-fluid" style="width:80.0%" alt="The journey through the Model Mind."></p>
+<p>This chapter addresses the gap between the best model you can train and the best model you can serve: distillation transfers capability from a large teacher to a small student, closing that gap at a fraction of the inference cost.</p>
 </div>
-<p>The request has arrived at the inference server. Before the model sees a single character, the text must be converted to numbers. This chapter covers that conversion in both directions and describes everything that can go wrong in between.</p>
+</div>
+</div>
 <hr>
-<section id="two-tokenization-chapters-two-different-problems" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="two-tokenization-chapters-two-different-problems"><span class="header-section-number">3.1</span> Two tokenization chapters, two different problems</h2>
-<p>If you read the training section first, you have already seen tokenization as in a batch preprocessing environment which means a corpus is tokenized once, offline, before training begins. The vocabulary is fixed. The inputs are known and errors are caught early.</p>
-<p>Tokenization at inference is a different story. It runs on arbitrary user input, in real time, and on every request. It supposed to handle every string a user might type which could be multilingual text, source code, emoji, adversarial inputs, or a combination of all four. The encoded output feeds directly into a running model. The decoded output appears on a user’s screen, sometimes token by token while they watch.</p>
-<p>The concerns here are mostly operational, not theoretical. Understanding them is the difference between shipping reliable LLM applications or debugging corruption failures at 2am.</p>
+<section id="the-deployment-problem-that-distillation-solves" class="level2" data-number="26.1">
+<h2 data-number="26.1" class="anchored" data-anchor-id="the-deployment-problem-that-distillation-solves"><span class="header-section-number">26.1</span> The Deployment Problem That Distillation Solves</h2>
+<p>Scaling laws favor large models. A 70B-parameter model achieves lower loss than a 7B-parameter model trained for the same number of tokens on the same data. But serving a 70B model in production costs roughly 10× more per token than serving a 7B model, more GPU memory, more compute per forward pass, more infrastructure. For latency-sensitive applications, the 70B model may not meet response time requirements at all.</p>
+<p>The naive response is to train a smaller model from scratch. But a 7B model trained from scratch on the same data achieves meaningfully lower quality than a 70B model. The question is whether there is a better starting point for the 7B model than random initialization, whether the 70B model’s learned knowledge can be transferred to make the 7B model better than it would be from scratch on the same compute budget.</p>
+<p>Distillation answers yes. Hinton, Vinyals, and Dean (2015) showed that training a small student model to match the output distribution of a large teacher model (rather than to match the one-hot targets of the original training labels) produces students that substantially outperform identically-sized models trained on the original data alone. The mechanism is information-theoretic: the teacher’s soft output distributions carry more signal per example than the hard labels, because they encode the teacher’s uncertainty and the relative similarity between classes or tokens.</p>
 <hr>
 </section>
-<section id="the-encoding-pipeline" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="the-encoding-pipeline"><span class="header-section-number">3.2</span> The encoding pipeline</h2>
-<p>When a request arrives, the first operation is encoding: converting the messages array into a flat sequence of token IDs ready for the model. This happens in two steps that are easy to confuse but are conceptually different.</p>
-<section id="step-1-chat-template-application" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="step-1-chat-template-application"><span class="header-section-number">3.2.1</span> Step 1: chat template application</h3>
-<p>The messages array has structure which includes roles, turns, and system prompts. The model has no concept of a dictionary. Before tokenization, the structured input must be flattened into a single string using a chat template.</p>
-<p>Each model family has its own template. For LLaMA 3:</p>
-<pre><code>&lt;|begin_of_text|&gt;
-&lt;|start_header_id|&gt;system&lt;|end_header_id|&gt;
-
-You are a helpful assistant.&lt;|eot_id|&gt;
-&lt;|start_header_id|&gt;user&lt;|end_header_id|&gt;
-
-What is the capital of France?&lt;|eot_id|&gt;
-&lt;|start_header_id|&gt;assistant&lt;|end_header_id|&gt;</code></pre>
-<p>For Mistral:</p>
-<pre><code>&lt;s&gt;[INST] What is the capital of France? [/INST]</code></pre>
-<p>For ChatML (OpenAI and many others):</p>
-<pre><code>&lt;|im_start|&gt;system
-You are a helpful assistant.&lt;|im_end|&gt;
-&lt;|im_start|&gt;user
-What is the capital of France?&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant</code></pre>
-<p>The special tokens (<code>&lt;|begin_of_text|&gt;</code>, <code>&lt;|eot_id|&gt;</code>, <code>&lt;|im_start|&gt;</code>) are part of the model’s vocabulary and were added during fine-tuning. The model learns to associate these markers with role transitions. Feeding the wrong template to the model causes it to sees an unexpected token sequence which in turn may cause the model to ignore the system prompt, and fail to complete the turn correctly, or produces outputs that look almost right but are systematically wrong in ways that can be hard to diagnose. This is one of the most common sources of bugs: no error is thrown yet the model just quietly misbehaves.</p>
+<section id="knowledge-distillation-the-core-mechanism" class="level2" data-number="26.2">
+<h2 data-number="26.2" class="anchored" data-anchor-id="knowledge-distillation-the-core-mechanism"><span class="header-section-number">26.2</span> Knowledge Distillation: The Core Mechanism</h2>
+<section id="hard-labels-vs.-soft-targets" class="level3" data-number="26.2.1">
+<h3 data-number="26.2.1" class="anchored" data-anchor-id="hard-labels-vs.-soft-targets"><span class="header-section-number">26.2.1</span> Hard Labels vs.&nbsp;Soft Targets</h3>
+<p>In standard training, the loss at each position is the cross-entropy between the model’s predicted distribution and a one-hot target: probability 1.0 on the correct token, probability 0.0 on all others. The one-hot target discards the structure of the probability space, it treats “the wrong answer” as a single undifferentiated category.</p>
+<p>A teacher model’s output distribution over the vocabulary is richer. For a prompt ending in “The capital of France is”, a teacher model might assign: - 0.94 probability to “Paris” - 0.02 probability to “Lyon” - 0.01 probability to “Marseille” - 0.003 probability to “Brussels” - smaller probabilities to hundreds of other tokens</p>
+<p>The non-Paris probabilities carry information. “Lyon” being more probable than “Brussels” encodes that Lyon is a French city, that the model knows France has multiple major cities, and that cities structurally fit this slot better than countries do. A student trained to match this distribution learns all of these relationships from a single example. A student trained on the one-hot target “Paris” learns only that “Paris” is correct and the rest of the probability mass is uninformative noise in the gradient signal.</p>
+<p>Hinton et al.&nbsp;formalized this with temperature-scaled softmax. The teacher’s logits <span class="math inline">\(z_i\)</span> are converted to probabilities using a temperature <span class="math inline">\(T\)</span>:</p>
+<p><span class="math display">\[
+q_i^T = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}
+\]</span></p>
+<p>At <span class="math inline">\(T = 1\)</span>, this is the standard softmax. At <span class="math inline">\(T &gt; 1\)</span>, the distribution is softened: high-probability tokens become less dominant and low-probability tokens become more visible. At <span class="math inline">\(T \to \infty\)</span>, the distribution approaches uniform. The same temperature is applied to the student’s logits when computing the distillation loss, so the student learns to reproduce the teacher’s softened distribution.</p>
 </section>
-<section id="step-2-token-encoding" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="step-2-token-encoding"><span class="header-section-number">3.2.2</span> Step 2: token encoding</h3>
-<p>Once the flat string is constructed, the tokenizer converts it to integer IDs. This is a deterministic step in which the same string always produces the same IDs given the same tokenizer.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"You are a helpful assistant."</span>},</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"role"</span>: <span class="st">"user"</span>,   <span class="st">"content"</span>: <span class="st">"What is the capital of France?"</span>}</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: flatten with chat template</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>flat_string <span class="op">=</span> apply_chat_template(messages, tokenizer)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># → "&lt;|im_start|&gt;system\nYou are a helpful assistant.&lt;|im_end|&gt;\n..."</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: convert to integers</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> tokenizer.encode(flat_string)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># → [151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, ...]</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: pass to model</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>logits <span class="op">=</span> model.forward(token_ids)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The tokenizer runs on CPU and for typical prompt lengths it is fast enough to be negligible relative to model inference time. On the other hand, for very long prompts (100k+ tokens) it can become measurable and there are some inference frameworks that cache tokenized system prompts to avoid repeating this work on every request.</p>
-</section>
-<section id="special-tokens-that-require-explicit-handling" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="special-tokens-that-require-explicit-handling"><span class="header-section-number">3.2.3</span> Special tokens that require explicit handling</h3>
-<p>Several special tokens need attention beyond the template:</p>
-<p><strong>Beginning of sequence (BOS).</strong> Many models expect a BOS token at position 0 and the tokenizer typically adds it automatically while some serving configurations require manual insertion. A missing BOS token causes silent quality degradation which means the model’s input distribution does not match training, and early tokens may be erratic.</p>
-<p><strong>End of turn markers.</strong> The template includes tokens marking the end of each turn and it must appear in the correct positions or the model misidentifies role boundaries.</p>
-<p><strong>Tool call tokens.</strong> Models fine-tuned for function calling have additional special tokens called tool call syntax. These must be in the tokenizer vocabulary and correctly placed in the template.</p>
-<p><strong>The generation prompt.</strong> The template typically ends with the opening of the assistant turn (e.g., <code>&lt;|im_start|&gt;assistant\n</code>) without closing it. This will signal the model that it should continue from here and omitting it causes the model to generate an incorrect turn structure.</p>
+<section id="the-distillation-loss" class="level3" data-number="26.2.2">
+<h3 data-number="26.2.2" class="anchored" data-anchor-id="the-distillation-loss"><span class="header-section-number">26.2.2</span> The Distillation Loss</h3>
+<p>The student is trained on a weighted combination of two losses:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{distill}} = \alpha \cdot \mathcal{L}_{\text{CE}}(y, p_s)
++ (1 - \alpha) \cdot T^2 \cdot \mathcal{L}_{\text{KL}}(q^T_\tau, p^T_s)
+\]</span></p>
+<p>where: - <span class="math inline">\(\mathcal{L}_{\text{CE}}(y, p_s)\)</span> is the standard cross-entropy loss between the student’s predictions and the ground-truth hard labels <span class="math inline">\(y\)</span> - <span class="math inline">\(\mathcal{L}_{\text{KL}}(q^T_\tau, p^T_s)\)</span> is the KL divergence between the teacher’s temperature-softened distribution <span class="math inline">\(q^T\)</span> and the student’s temperature-softened distribution <span class="math inline">\(p^T_s\)</span> - <span class="math inline">\(\alpha \in [0, 1]\)</span> controls the relative weight of the two losses - <span class="math inline">\(T^2\)</span> is a scaling factor that compensates for the reduced magnitude of gradients from the softened distributions</p>
+<p>The <span class="math inline">\(T^2\)</span> scaling term deserves explanation. When temperature <span class="math inline">\(T\)</span> is applied, the softmax output values are compressed toward <span class="math inline">\(1/V\)</span> (where <span class="math inline">\(V\)</span> is the vocabulary size). The gradients of the KL loss with respect to the student’s logits are proportional to <span class="math inline">\(1/T^2\)</span> relative to the hard-label gradients. Multiplying by <span class="math inline">\(T^2\)</span> restores the gradient magnitudes to the same scale, ensuring that the distillation signal and the hard-label signal contribute comparably to the weight update regardless of temperature.</p>
+<p>In practice for language model distillation: - <span class="math inline">\(\alpha = 0.5\)</span> is a common default, giving equal weight to both losses - <span class="math inline">\(T = 2\)</span> to <span class="math inline">\(T = 4\)</span> is typical; higher temperatures are used when the teacher is much more confident than the student - When ground-truth labels are unavailable (the student is trained on teacher-generated text), the hard-label term is dropped: <span class="math inline">\(\alpha = 0\)</span>, pure distillation</p>
 <hr>
 </section>
 </section>
-<section id="token-continuation-and-context-window-management" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="token-continuation-and-context-window-management"><span class="header-section-number">3.3</span> Token continuation and context window management</h2>
-<p>The context window is the maximum sequence length the model can process in a single forward pass which is typically a range between 8k to 128k tokens for current models. Managing what fits in this window is a critical operational concern.</p>
-<section id="count-with-the-tokenizer-not-your-intuition" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="count-with-the-tokenizer-not-your-intuition"><span class="header-section-number">3.3.1</span> Count with the tokenizer, not your intuition</h3>
-<p>Token counts are not characters divided by four, or words divided by 0.75. They are the actual output of the tokenizer on the specific input string. Heuristics are inaccurate enough to cause real failures:</p>
+<section id="types-of-distillation-for-language-models" class="level2" data-number="26.3">
+<h2 data-number="26.3" class="anchored" data-anchor-id="types-of-distillation-for-language-models"><span class="header-section-number">26.3</span> Types of Distillation for Language Models</h2>
+<p>Distillation for language models comes in several flavors that differ in what is transferred from teacher to student, and when.</p>
+<section id="output-response-distillation" class="level3" data-number="26.3.1">
+<h3 data-number="26.3.1" class="anchored" data-anchor-id="output-response-distillation"><span class="header-section-number">26.3.1</span> Output (Response) Distillation</h3>
+<p>The simplest form: train the student to match the teacher’s token-level output distributions. For each token position in a training sequence, the teacher produces a probability distribution over the vocabulary; the student is trained to minimize KL divergence from that distribution.</p>
+<p>This requires running the teacher model on the training corpus to generate soft targets, which are then stored and used for student training. Storage cost is substantial: for a vocabulary of 100,000 tokens and float16 precision, each token position requires 200 KB of soft targets. A training corpus of 100 billion tokens would require 20 petabytes of stored soft targets which is infeasible. In practice, soft targets are either computed on-the-fly during student training (requiring the teacher to be available in memory alongside the student) or truncated to the top-<span class="math inline">\(k\)</span> logits (storing only the <span class="math inline">\(k\)</span> highest teacher probabilities, discarding the long tail which contributes little signal).</p>
+<p>Top-<span class="math inline">\(k\)</span> logit storage with <span class="math inline">\(k = 20{,}000\)</span> retains roughly 95% of the KL divergence signal while reducing storage by 5×. DistilBERT and DistilGPT-2 used top-<span class="math inline">\(k\)</span> approximations for exactly this reason.</p>
+</section>
+<section id="sequence-level-black-box-distillation" class="level3" data-number="26.3.2">
+<h3 data-number="26.3.2" class="anchored" data-anchor-id="sequence-level-black-box-distillation"><span class="header-section-number">26.3.2</span> Sequence-Level (Black-Box) Distillation</h3>
+<p>When the teacher’s internal logits are unavailable (either because it is a proprietary API or because storing full distributions is infeasible) the student can be trained on sequences generated by the teacher rather than on the teacher’s distributions.</p>
+<p>The student treats teacher-generated sequences as training data and minimizes standard next-token prediction loss against them. This is called black-box distillation or data distillation. It is strictly less efficient than distribution-level distillation (the student sees only samples from the teacher’s distribution, not the distribution itself) but it is the only option when internal model access is unavailable.</p>
+<p>This is the mechanism underlying most current synthetic data pipelines. When GPT-4 generates 10,000 instruction-response pairs and those pairs are used to train a smaller model, the smaller model is being distilled from GPT-4 via sequence-level distillation. The term “synthetic data” emphasizes the data generation aspect; the term “distillation” emphasizes the knowledge transfer aspect.</p>
+</section>
+<section id="feature-intermediate-distillation" class="level3" data-number="26.3.3">
+<h3 data-number="26.3.3" class="anchored" data-anchor-id="feature-intermediate-distillation"><span class="header-section-number">26.3.3</span> Feature (Intermediate) Distillation</h3>
+<p>Rather than matching only the teacher’s output distributions, feature distillation trains the student to match the teacher’s intermediate representations, the hidden states at each layer. This transfers more information but requires architectural compatibility between teacher and student: the student’s hidden dimension must match the teacher’s, or an additional projection layer must bridge the mismatch.</p>
+<p>PKD (Patient Knowledge Distillation, Sun et al., 2019) distills BERT by matching the student’s intermediate layer outputs to selected layers of the teacher. TinyBERT (Jiao et al., 2020) extends this to match attention matrices, hidden states, and the embedding layer simultaneously, using learned projection matrices to handle dimension mismatches:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{attn}} = \frac{1}{h} \sum_{i=1}^{h} \text{MSE}(A_i^S, A_i^T)
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{hidden}} = \text{MSE}(H^S W_h, H^T)
+\]</span></p>
+<p>where <span class="math inline">\(A_i^S\)</span> and <span class="math inline">\(A_i^T\)</span> are the student’s and teacher’s attention matrices for head <span class="math inline">\(i\)</span>, <span class="math inline">\(H^S\)</span> and <span class="math inline">\(H^T\)</span> are hidden states, and <span class="math inline">\(W_h\)</span> is a learned projection. TinyBERT achieves 96.8% of BERT-base performance at 7.5× faster inference and 7.5× smaller model size, the most favorable efficiency tradeoff published for BERT-family distillation.</p>
+<p>Feature distillation is less commonly applied to generative LLMs, where architectural differences between teacher and student are larger and the intermediate representations are harder to align meaningfully. Attention pattern matching works well when the student has the same number of heads as the teacher but fails when the student uses GQA and the teacher uses MHA, for example.</p>
+</section>
+<section id="speculative-sampling-and-its-connection-to-distillation" class="level3" data-number="26.3.4">
+<h3 data-number="26.3.4" class="anchored" data-anchor-id="speculative-sampling-and-its-connection-to-distillation"><span class="header-section-number">26.3.4</span> Speculative Sampling and Its Connection to Distillation</h3>
+<p>Speculative sampling (covered in the Decoding and Sampling chapter) is primarily an <strong>inference technique</strong>, not a model-training technique. It uses two models: a small, fast <strong>draft model</strong> and a large, more accurate <strong>target model</strong> (also called the verifier). The draft model quickly generates several candidate tokens. The target model then evaluates these tokens and decides which ones to accept. Rejected tokens are replaced by samples from a correction distribution defined using the target and draft probabilities.</p>
+<p>The important property is that this procedure preserves the target model’s output distribution. In other words, although the draft model proposes the tokens, the final sequence is distributed exactly as if it had been generated directly by the target model.</p>
+<p>This is <strong>not distillation</strong> because the draft model is not being trained to imitate the target model. The target model is simply being used to verify the draft model’s proposals during inference:</p>
+<p>[ ]</p>
+<p>However, the same verification process can provide a training signal for improving the draft model. If we fine-tune the draft model so that it proposes tokens that the target model is more likely to accept, the draft model gradually learns to approximate the target model’s behavior. The target model therefore acts as a teacher, while the draft model acts as a student.</p>
+<p>Conceptually, the process becomes:</p>
+<p>[ ]</p>
+<p>This creates a connection to <strong>knowledge distillation</strong>. The goal is no longer simply to use the draft model for faster inference; we are actively training it to behave more like the target model. In this setting, the target model provides the supervision signal, often through its probability distribution or through feedback about which draft tokens it accepts.</p>
+<p>Thus, it is useful to distinguish two cases:</p>
 <ul>
-<li>Code tokenizes very differently from prose which means identifiers, operators, and whitespace have their own patterns</li>
-<li>Non-English text is often less efficient than English for most tokenizers</li>
-<li>Special tokens (role markers, tool tokens) add counts that character estimates miss entirely</li>
+<li><strong>Speculative sampling:</strong> the draft model is used to accelerate inference, while the target model remains the source of the final output distribution.</li>
+<li><strong>Distillation-inspired draft training:</strong> feedback from the target model is used to improve the draft model so that it generates proposals closer to the target model’s distribution, increasing the acceptance rate and potentially making speculative sampling more efficient.</li>
 </ul>
-<p>Every production system that needs to stay within a context window must count tokens using the actual tokenizer, not an approximation:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tiktoken</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>enc <span class="op">=</span> tiktoken.encoding_for_model(<span class="st">"gpt-4o"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_tokens(messages: <span class="bu">list</span>[<span class="bu">dict</span>]) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    num_tokens <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> message <span class="kw">in</span> messages:</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        num_tokens <span class="op">+=</span> <span class="dv">4</span>  <span class="co"># role, content, separators overhead</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> value <span class="kw">in</span> message.values():</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            num_tokens <span class="op">+=</span> <span class="bu">len</span>(enc.encode(value))</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    num_tokens <span class="op">+=</span> <span class="dv">2</span>  <span class="co"># reply priming tokens</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> num_tokens</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The exact overhead is varied by model and template. Always validate against the API’s reported token counts on a representative sample.</p>
-</section>
-<section id="the-context-window-budget" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="the-context-window-budget"><span class="header-section-number">3.3.2</span> The context window budget</h3>
-<p>In a typical production request, the context window is shared between several competing claims:</p>
-<pre><code>Total context window (e.g., 128k tokens)
-├── System prompt              (fixed, e.g., 500–2,000 tokens)
-├── Conversation history       (grows with each turn)
-├── Retrieved context (RAG)    (variable, e.g., 2,000–10,000 tokens)
-├── Current user message       (variable)
-└── Reserved for completion    (max_tokens parameter)</code></pre>
-<p>The sum must not exceed the window and if it does, the request will fail or the serving layer silently truncates something which is usually the earliest conversation history, that could be the exact context the user needs the most. Applications must actively manage this budget rather than hoping it fits.</p>
-<p><strong>Rolling window</strong> keeps only the most recent N tokens of history. While it is simple, it loses early context which can be fine for short tasks and problematic for long conversations.</p>
-<p><strong>Summarization</strong> uses the model to compress earlier turns into a compact representation when history approaches the limit. With this approach it preserves semantic content at the cost of an additional model call.</p>
-<p><strong>Hierarchical retrieval</strong> stores full history externally and only retrieve the most relevant portions for the current turn. This approach requires a retrieval component but it can scale to arbitrarily long conversations.</p>
-</section>
-<section id="prompt-caching-and-its-token-implications" class="level3" data-number="3.3.3">
-<h3 data-number="3.3.3" class="anchored" data-anchor-id="prompt-caching-and-its-token-implications"><span class="header-section-number">3.3.3</span> Prompt caching and its token implications</h3>
-<p>Some APIs (Anthropic’s Claude, Google’s Gemini) offer explicit prompt caching: mark a portion of the prompt as cacheable, and subsequent requests that share the same prefix reuse the KV cache from the first request, charged at a reduced rate.</p>
-<p>For cost management, structure prompts with the stable content (system prompt, long documents) first and variable content (user messages, dynamic context) in the end. Token counting for cached prompts will distinguishs between newly processed tokens and cache-read tokens, as the API reports these separately and they have completely different cost implications.</p>
+<p>The key idea is therefore not that speculative sampling itself is a form of distillation. Rather, <strong>the verifier’s feedback during speculative decoding can be used as a training signal to distill some of the target model’s behavior into the draft model</strong>.</p>
 <hr>
 </section>
 </section>
-<section id="the-decoding-pipeline-from-numbers-back-to-text" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="the-decoding-pipeline-from-numbers-back-to-text"><span class="header-section-number">3.4</span> The decoding pipeline: from numbers back to text</h2>
-<p>After the model selects the next token ID (the selection process is covered in chapter “REFF”), the serving layer converts that ID back to text. This is less straightforward than it appears.</p>
-<section id="detokenization" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="detokenization"><span class="header-section-number">3.4.1</span> Detokenization</h3>
-<p>The inverse operation: token IDs to string.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>token_ids <span class="op">=</span> [<span class="dv">15223</span>, <span class="dv">374</span>, <span class="dv">279</span>, <span class="dv">6864</span>, <span class="dv">315</span>, <span class="dv">9822</span>, <span class="dv">13</span>]</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> tokenizer.decode(token_ids)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># → "Paris is the capital of France."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>While it seems that detokenization simply involves looking up each token’s string and concatenating them together, several complications exist:</p>
-<p><strong>Byte-level BPE and UTF-8 reconstruction.</strong> In byte-level tokenizers, tokens represent raw bytes rather than complete characters. Because UTF-8 characters are able to span multiple bytes, a single character (many Chinese characters or emojis) may be splited across several tokens. Decoding each token independently can therefore produce invalid text or replacement symbols. The correct procedure is to concatenate all token bytes first and then perform a single UTF-8 decode, ensuring the original characters are correctly reconstructed.</p>
-<p><strong>Special tokens in output.</strong> If the model produces a special token (end of text, role marker, tool call token), detokenization must strip it, convert it to a meaningful representation, or treat it as a halt signal. Which action is correct totally depends on context and must be handled explicitly.</p>
+<section id="distillation-at-scale-llm-to-llm" class="level2" data-number="26.4">
+<h2 data-number="26.4" class="anchored" data-anchor-id="distillation-at-scale-llm-to-llm"><span class="header-section-number">26.4</span> Distillation at Scale: LLM-to-LLM</h2>
+<p>Distilling a 175B-parameter teacher into a 7B-parameter student is qualitatively different from distilling a 110M-parameter teacher into a 66M-parameter student. The capacity gap is much larger and the student’s ability to represent the teacher’s distributions is correspondingly more limited.</p>
+<section id="the-capacity-gap-problem" class="level3" data-number="26.4.1">
+<h3 data-number="26.4.1" class="anchored" data-anchor-id="the-capacity-gap-problem"><span class="header-section-number">26.4.1</span> The Capacity Gap Problem</h3>
+<p>A 7B-parameter student cannot faithfully reproduce all of a 70B teacher’s probability distributions. For difficult predictions (ambiguous sequences where the teacher assigns roughly equal probability to multiple continuations) the student lacks the capacity to represent the full distribution and will collapse to a lower-entropy approximation. The distillation loss will be large at these positions regardless of training duration.</p>
+<p>The practical implication: distillation with a very large capacity gap produces students that are good at easy predictions (common patterns, high-confidence teacher outputs) but poor at difficult predictions (rare patterns, uncertain teacher outputs). This is not a failure of the distillation algorithm, it is a fundamental capacity constraint. A 7B model cannot represent what a 70B model knows; it can only approximate it.</p>
+<p>This motivates selective distillation: targeting the distillation loss at positions where the teacher’s distribution is most informative and down-weighting positions where the teacher is either highly confident (low information in the soft targets) or highly uncertain (student cannot match the distribution regardless). The confidence-weighted distillation loss:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{weighted}} = \sum_t w_t \cdot \mathcal{L}_{\text{KL}}(q^T_t, p^T_{s,t})
+\]</span></p>
+<p>where <span class="math inline">\(w_t = 1 - H(q_t) / \log V\)</span> is a weight that decreases as the teacher’s entropy <span class="math inline">\(H(q_t)\)</span> approaches its maximum <span class="math inline">\(\log V\)</span>. This concentrates the distillation signal on positions where the teacher’s distribution is informative, neither trivially predictable nor maximally uncertain.</p>
 </section>
-<section id="streaming-detokenization" class="level3" data-number="3.4.2">
-<h3 data-number="3.4.2" class="anchored" data-anchor-id="streaming-detokenization"><span class="header-section-number">3.4.2</span> Streaming detokenization</h3>
-<p>In streaming mode, tokens arrive one at a time and must be decoded incrementally which creates a specific problem: a byte sequence that spans multiple tokens cannot be decoded until all of its bytes have arrived.</p>
-<p>Consider a Chinese character requiring 3 UTF-8 bytes, split across three tokens of 1 byte each:</p>
+<section id="on-policy-vs.-off-policy-distillation" class="level3" data-number="26.4.2">
+<h3 data-number="26.4.2" class="anchored" data-anchor-id="on-policy-vs.-off-policy-distillation"><span class="header-section-number">26.4.2</span> On-Policy vs.&nbsp;Off-Policy Distillation</h3>
+<p>Standard distillation is off-policy: the student is trained on sequences from the original training corpus or teacher-generated sequences, which may not match the distribution of sequences the student itself would generate.</p>
+<p>On-policy distillation trains the student by having it generate sequences, then computing the KL divergence between the student’s and teacher’s distributions on those student-generated sequences. This ensures the student receives gradient signal at the points in distribution space it actually visits, rather than points from a fixed dataset that may be far from the student’s current behavior.</p>
+<p>GKD (Generalized Knowledge Distillation, Agarwal et al., 2024) formalizes this distinction and shows that on-policy distillation consistently outperforms off-policy distillation for language models, particularly at large capacity gaps. The improvement is most pronounced for open-ended generation tasks where the student’s distribution can deviate substantially from the training corpus distribution.</p>
+<p>The cost of on-policy distillation is that it requires generating sequences during training, which adds inference-time compute (running the student in generation mode) to the training-time compute (running the student and teacher in forward-pass mode). This roughly doubles the per-step training cost relative to off-policy distillation.</p>
+<hr>
+</section>
+</section>
+<section id="reasoning-distillation" class="level2" data-number="26.5">
+<h2 data-number="26.5" class="anchored" data-anchor-id="reasoning-distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</h2>
+<p>The distillation of reasoning capability in particular chain-of-thought reasoning, deserves separate treatment because it involves transferring a qualitatively different type of knowledge than factual recall or language modeling.</p>
+<section id="chain-of-thought-distillation" class="level3" data-number="26.5.1">
+<h3 data-number="26.5.1" class="anchored" data-anchor-id="chain-of-thought-distillation"><span class="header-section-number">26.5.1</span> Chain-of-Thought Distillation</h3>
+<p>Large models (70B+) benefit substantially from chain-of-thought prompting: producing a step-by-step reasoning trace before the final answer significantly improves accuracy on mathematical, logical, and multi-step tasks. Small models (7B and below) receive less benefit from standard CoT prompting, apparently because they lack the capacity to generate accurate reasoning traces.</p>
+<p>Distillation of reasoning capability from a large teacher to a small student involves training the student on teacher-generated reasoning traces, not just teacher-generated final answers. The student learns both to produce reasoning traces (the process) and to arrive at correct answers (the outcome).</p>
+<p>Ho et al.&nbsp;(2022) showed that a 250M-parameter student trained on GPT-3’s chain-of-thought outputs substantially outperforms a 540B-parameter model prompted with standard CoT on several reasoning benchmarks, demonstrating that the reasoning capability can be compressed to a dramatically smaller model when the teacher’s reasoning traces are used as training targets.</p>
+</section>
+<section id="step-level-vs.-outcome-level-supervision" class="level3" data-number="26.5.2">
+<h3 data-number="26.5.2" class="anchored" data-anchor-id="step-level-vs.-outcome-level-supervision"><span class="header-section-number">26.5.2</span> Step-Level vs.&nbsp;Outcome-Level Supervision</h3>
+<p>A key design choice in reasoning distillation is whether to supervise the student at the level of individual reasoning steps or only at the final answer.</p>
+<p><strong>Outcome-level supervision</strong> trains the student to produce the correct final answer, regardless of the reasoning path taken. This is what standard sequence-level distillation on teacher-generated outputs provides. The student may learn shortcuts or alternative reasoning paths that differ from the teacher’s.</p>
+<p><strong>Step-level supervision</strong> trains the student to match the teacher’s intermediate reasoning steps, not just the final answer. This requires either parsing the teacher’s reasoning traces into discrete steps (fragile) or using a process reward model that scores each step’s quality (expensive).</p>
+<p>For mathematical reasoning, step-level supervision produces more reliable generalization, students that have learned to execute each reasoning step correctly generalize better to novel problem structures than students trained only on correct final answers.</p>
+</section>
+<section id="deepseek-r1-as-reasoning-distillation" class="level3" data-number="26.5.3">
+<h3 data-number="26.5.3" class="anchored" data-anchor-id="deepseek-r1-as-reasoning-distillation"><span class="header-section-number">26.5.3</span> DeepSeek-R1 as Reasoning Distillation</h3>
+<p>DeepSeek-R1 (2025) provides one of the most striking examples of reasoning distillation at scale. DeepSeek’s large reasoning model (671B parameters) was used to generate long reasoning traces on a diverse set of mathematical, coding, and logical problems. These traces (including both correct and incorrect reasoning paths, with the correct paths labeled) were used to train smaller distilled models at 1.5B, 7B, 14B, 32B, and 70B parameter scales.</p>
+<p>The 70B distilled model achieved performance competitive with o1-level reasoning on mathematical benchmarks, despite being trained for a fraction of the compute of the original reasoning model. The 7B distilled model substantially outperformed models of equivalent size that had not been trained on reasoning traces. The results established reasoning distillation as a practical technique for transferring deliberate reasoning capability to deployable model sizes.</p>
+<hr>
+</section>
+</section>
+<section id="self-distillation-and-compression-without-a-teacher" class="level2" data-number="26.6">
+<h2 data-number="26.6" class="anchored" data-anchor-id="self-distillation-and-compression-without-a-teacher"><span class="header-section-number">26.6</span> Self-Distillation and Compression Without a Teacher</h2>
+<p>A model can be distilled from a previous version of itself, or from a higher-capacity configuration of the same architecture. These self-distillation approaches do not require a separate teacher model.</p>
+<section id="born-again-networks" class="level3" data-number="26.6.1">
+<h3 data-number="26.6.1" class="anchored" data-anchor-id="born-again-networks"><span class="header-section-number">26.6.1</span> Born-Again Networks</h3>
+<p>Furlanello et al.&nbsp;(2018) showed that training a model of the same architecture to reproduce its own predictions (using the trained model as teacher for a freshly initialized student of identical size) consistently improves performance. The improvement comes from the same mechanism as standard distillation: the soft targets from the trained model carry more gradient signal than the original hard labels. Repeating this process (the student becomes the teacher for the next generation) produces “born-again network ensembles” that outperform the original model despite having identical capacity.</p>
+<p>For language models, self-distillation is sometimes applied as a final training stage: after a full training run, the model is used as a teacher for an additional fine-tuning pass over high-quality data. The model corrects its own errors, sharpens its distributions on high-confidence outputs, and reduces inconsistency across similar inputs.</p>
+</section>
+<section id="layer-dropping-and-progressive-shrinking" class="level3" data-number="26.6.2">
+<h3 data-number="26.6.2" class="anchored" data-anchor-id="layer-dropping-and-progressive-shrinking"><span class="header-section-number">26.6.2</span> Layer Dropping and Progressive Shrinking</h3>
+<p>A different approach to distillation without a separate teacher: start with a large trained model and progressively remove layers or attention heads, fine- tuning after each removal to recover performance. This is sometimes called structured pruning but is mechanistically similar to distillation when the remaining layers are fine-tuned to reproduce the full model’s behavior.</p>
+<p>The Michel et al.&nbsp;(2019) analysis of BERT attention heads found that many attention heads can be removed with minimal performance impact, and that the removal order matters: removing the least important heads first and fine-tuning after each step produces much better results than removing all low-importance heads simultaneously. This sequential pruning-and-fine-tuning procedure is equivalent to distilling the pruned model from the full model after each step.</p>
+<hr>
+</section>
+</section>
+<section id="distillation-vs.-fine-tuning-vs.-training-from-scratch" class="level2" data-number="26.7">
+<h2 data-number="26.7" class="anchored" data-anchor-id="distillation-vs.-fine-tuning-vs.-training-from-scratch"><span class="header-section-number">26.7</span> Distillation vs.&nbsp;Fine-Tuning vs.&nbsp;Training from Scratch</h2>
+<p>The three primary approaches to obtaining a capable small model have different cost structures, performance profiles, and use cases.</p>
+<p><strong>Training from scratch on the original data</strong> gives the most architectural freedom (the student can use any architecture, vocabulary, and training procedure) and avoids any intellectual property concerns about using a proprietary teacher’s outputs. The cost is that the student achieves significantly lower quality than either distillation or fine-tuning at the same parameter count, because it lacks any guidance from a better model. Scaling laws predict the outcome exactly: the trained-from-scratch model follows the power law for its size and data budget.</p>
+<p><strong>Fine-tuning a pretrained model</strong> is the dominant paradigm for adapting general models to specific domains or tasks. Fine-tuning starts from a pretrained checkpoint (which already encodes language understanding and world knowledge) and adjusts weights to improve performance on a target distribution. Fine-tuning is fast and effective but does not produce a smaller model: the student has the same parameter count as the starting checkpoint.</p>
+<p><strong>Distillation</strong> produces a smaller model with better performance than training from scratch at the same size. It requires access to either a teacher model’s outputs or the teacher’s internal distributions, and it requires a training run of the student (unlike pure inference-time compression techniques like quantization). The performance gain over training from scratch is real and consistent, but the gap between a distilled 7B model and the original 70B teacher is substantial, distillation compresses knowledge but does not fully preserve it.</p>
+<hr>
+</section>
+<section id="distillation-and-quantization-stacking-compression" class="level2" data-number="26.8">
+<h2 data-number="26.8" class="anchored" data-anchor-id="distillation-and-quantization-stacking-compression"><span class="header-section-number">26.8</span> Distillation and Quantization: Stacking Compression</h2>
+<p>Distillation and quantization are complementary compression techniques that can be applied together. Quantization reduces precision of weights (FP32 → INT8 → INT4) and reduces memory and sometimes compute cost. Distillation reduces model size (70B → 7B parameters) and reduces memory and compute cost.</p>
+<p>Applied in sequence (distill to a small model, then quantize) the compression factors multiply. A 70B model quantized to INT4 occupies roughly 35 GB (70B × 0.5 bytes/param), which fits on a single H100 but with no headroom. A 7B model distilled from the 70B model and then quantized to INT4 occupies approximately 3.5 GB, fitting on a consumer GPU with substantial headroom.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="26.9">
+<h2 data-number="26.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">26.9</span> Key Takeaways</h2>
 <ul>
-<li>After token 1: 1 byte received and it is not a valid UTF-8 codepoint yet and cannot emit</li>
-<li>After token 2: 2 bytes received and it is still incomplete</li>
-<li>After token 3: 3 bytes received finally it is completed, decode and emit the character</li>
-</ul>
-<p>A streaming decoder must buffer incomplete byte sequences and emit characters only once a complete Unicode codepoint is available. A naive implementations that pass <code>errors="ignore"</code> or <code>errors="replace"</code> will silently corrupt non-ASCII output while the HuggingFace <code>TextStreamer</code> and similar utilities handle this correctly.</p>
-<hr>
-</section>
-</section>
-<section id="logprobs-and-their-uses-at-inference-time" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="logprobs-and-their-uses-at-inference-time"><span class="header-section-number">3.5</span> Logprobs and their uses at inference time</h2>
-<p>Most APIs can optionally return the log probabilities of generated tokens which is more useful than it might initially appear.</p>
-<section id="what-logprobs-tell-you" class="level3" data-number="3.5.1">
-<h3 data-number="3.5.1" class="anchored" data-anchor-id="what-logprobs-tell-you"><span class="header-section-number">3.5.1</span> What logprobs tell you</h3>
-<p>For each generated token, logprobs report the log probability the model assigned to the chosen token, and optionally the top-k alternatives with their probabilities:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Paris"</span><span class="fu">,</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-0.0023</span><span class="fu">,</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"top_logprobs"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Paris"</span><span class="fu">,</span> <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-0.0023</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Lyon"</span><span class="fu">,</span>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-6.12</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"token"</span><span class="fu">:</span> <span class="st">"Nice"</span><span class="fu">,</span>  <span class="dt">"logprob"</span><span class="fu">:</span> <span class="fl">-7.88</span><span class="fu">}</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>A logprob of -0.0023 means the model assigned probability <code>exp(-0.0023) ≈ 0.998</code> to this token which means the model is essentially certain. A logprob of -6.12 means <code>exp(-6.12) ≈ 0.002</code> and represent a distant second choice.</p>
-</section>
-<section id="classification-without-generation" class="level3" data-number="3.5.2">
-<h3 data-number="3.5.2" class="anchored" data-anchor-id="classification-without-generation"><span class="header-section-number">3.5.2</span> Classification without generation</h3>
-<p>For binary or multiple-choice tasks, logprobs let you skip generating a full response and instead read the probabilities of specific tokens directly which is faster and cheaper:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.completions.create(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-4o"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    prompt<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>text<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">Is this sentiment positive? Answer with yes or no."</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    max_tokens<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    logprobs<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    top_logprobs<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>top <span class="op">=</span> response.choices[<span class="dv">0</span>].logprobs.top_logprobs[<span class="dv">0</span>]</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>yes_logprob <span class="op">=</span> <span class="bu">next</span>(t.logprob <span class="cf">for</span> t <span class="kw">in</span> top <span class="cf">if</span> t.token.strip().lower() <span class="op">==</span> <span class="st">"yes"</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>no_logprob  <span class="op">=</span> <span class="bu">next</span>(t.logprob <span class="cf">for</span> t <span class="kw">in</span> top <span class="cf">if</span> t.token.strip().lower() <span class="op">==</span> <span class="st">"no"</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>is_positive <span class="op">=</span> yes_logprob <span class="op">&gt;</span> no_logprob</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="calibration-and-uncertainty-estimation" class="level3" data-number="3.5.3">
-<h3 data-number="3.5.3" class="anchored" data-anchor-id="calibration-and-uncertainty-estimation"><span class="header-section-number">3.5.3</span> Calibration and uncertainty estimation</h3>
-<p>The perplexity of a generated response which is represented by the average negative log probability per token is a rough proxy for the model’s confidence:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>logprobs <span class="op">=</span> [token.logprob <span class="cf">for</span> token <span class="kw">in</span> response.choices[<span class="dv">0</span>].logprobs.content]</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>perplexity <span class="op">=</span> np.exp(<span class="op">-</span>np.mean(logprobs))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># High perplexity → model was uncertain about this response</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is not a hallucination detector which means the model can be confidently wrong, and often is. But it is a useful routing signal: responses with high perplexity can be flagged for human review or follow-up verification without running a separate evaluation model.</p>
-<hr>
-</section>
-</section>
-<section id="common-failure-modes" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="common-failure-modes"><span class="header-section-number">3.6</span> Common failure modes</h2>
-<p>Tokenization at inference produces specific, reproducible failure patterns. Knowing them saves significant debugging time.</p>
-<p><strong>Wrong tokenizer for the model.</strong> Using the GPT-2 tokenizer with a LLaMA model produces completely wrong token ID sequences. The model interprets unrelated IDs as completely different tokens which in turn leads to a garbage output.</p>
-<p><strong>Wrong chat template.</strong> Applying the wrong template produces subtly wrong token sequences. The model may ignore the system prompt, continue the user turn instead of starting an assistant turn, or generate role labels as content. This also fails silently and is especially confusing because outputs look almost right but are systematically off.</p>
-<p><strong>BOS token doubling.</strong> Some serving frameworks add BOS automatically while some expect the caller to add it. If BOS appears twice, the model sees an unexpected sequence at position 0 and may behave erratically.</p>
-<p><strong>Context overflow without truncation.</strong> If the total token count exceeds the context window and the serving layer does not truncate explicitly, some APIs return an error while some silently truncate from the beginning.</p>
-<p><strong>Encoding/decoding asymmetry.</strong> <code>decode(encode(s))</code> may not equal <code>s</code> for strings containing Unicode normalization differences, special tokens with non-standard decoding, or whitespace that the tokenizer normalizes.</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">3.7</span> Key takeaways</h2>
-<ul>
-<li>Chat template application: flattening the messages array into a string with model-specific role delimiters it happens before tokenization and is model-specific; the wrong template produces silent quality degradation</li>
-<li>Token counting must use the actual tokenizer, not character or word heuristics; accurate counting is essential for context window management and cost control</li>
-<li>The context window budget must be actively managed across system prompt, conversation history, retrieved context, and completion reservation</li>
-<li>Streaming detokenization must buffer incomplete UTF-8 byte sequences and emit characters only once a complete codepoint is available; naive implementations corrupt non-ASCII output</li>
-<li>Stop sequence detection operates on decoded strings, not token IDs, and must handle sequences that span token boundaries and appear at buffer edges</li>
-<li>Token healing solves the boundary problem for prompts ending at arbitrary character positions, improving completion quality for structured generation</li>
-<li>Logprobs enable efficient classification, uncertainty estimation, and confidence- based routing without generating full responses</li>
+<li>Distillation trains a small student model to match a large teacher model’s output distributions rather than hard training labels; the soft targets carry more information per example because they encode the teacher’s uncertainty and the relative similarity between wrong answers.</li>
+<li>The distillation loss combines cross-entropy on hard labels and KL divergence from temperature-softened teacher distributions; the <span class="math inline">\(T^2\)</span> scaling factor compensates for reduced gradient magnitudes from the softened distributions.</li>
+<li>Temperature scaling softens the teacher’s output: at <span class="math inline">\(T = 1\)</span> the standard distribution is used; at <span class="math inline">\(T &gt; 1\)</span> low-probability tokens become more visible, providing richer gradient signal to the student.</li>
+<li>Output distillation requires either on-the-fly teacher inference or storing soft targets; full vocabulary storage at 100k tokens costs 200 KB per token position, making top-<span class="math inline">\(k\)</span> truncation (<span class="math inline">\(k \approx 20{,}000\)</span>) standard practice.</li>
+<li>Black-box (sequence-level) distillation — training on teacher-generated text rather than teacher distributions — is the mechanism underlying most synthetic data pipelines; it is less efficient than distribution-level distillation but requires no access to teacher internals.</li>
+<li>Feature distillation matches intermediate layer representations as well as outputs; TinyBERT achieves 96.8% of BERT performance at 7.5× smaller size by matching attention matrices and hidden states with learned projections.</li>
+<li>The capacity gap is the binding constraint for large-to-small distillation: a 7B student cannot faithfully represent a 70B teacher’s distributions at difficult, high-entropy positions regardless of training duration.</li>
+<li>On-policy distillation — generating student sequences and computing KL divergence on them — outperforms off-policy distillation at large capacity gaps, at the cost of inference-time compute during training.</li>
+<li>Reasoning distillation transfers chain-of-thought capability by training on teacher-generated reasoning traces; DeepSeek-R1 distilled reasoning traces from a 671B model into models as small as 7B with substantial reasoning capability retained.</li>
+<li>Distillation and quantization are complementary: distilling 70B → 7B and then quantizing to INT4 reduces memory from ~140 GB to ~3.5 GB, a 40× compression that makes the model runnable on a consumer GPU.</li>
 </ul>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch4/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+<img src="figures/ch7/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3.2: Cheat sheet.
+Figure&nbsp;26.1: Cheat sheet.
 </figcaption>
 </figure>
 </div>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.8</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="26.10">
+<h2 data-number="26.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">26.10</span> Further Reading</h2>
 <ul>
-<li>HuggingFace Tokenizers documentation: Fast tokenizers and chat templates.</li>
-<li>OpenAI Cookbook: How to count tokens with tiktoken.</li>
-<li>HuggingFace (2023): Chat Templating Guide.</li>
+<li><p>Hinton, G., Vinyals, O., &amp; Dean, J. (2015). <em>Distilling the Knowledge in a Neural Network.</em> NeurIPS Deep Learning Workshop. — The founding paper; the temperature-scaled softmax and the <span class="math inline">\(T^2\)</span> gradient scaling are introduced here; the MNIST and speech recognition experiments establish the mechanism cleanly.</p></li>
+<li><p>Sanh, V., Debut, L., Chaumond, J., &amp; Wolf, T. (2019). <em>DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter.</em> NeurIPS EMC2 Workshop. — The most cited practical distillation result; the 40% size reduction at 97% GLUE performance defined practitioner expectations for distillation efficiency.</p></li>
+<li><p>Jiao, X., et al.&nbsp;(2020). <em>TinyBERT: Distilling BERT for Natural Language Understanding.</em> EMNLP. — Extends distillation to attention matrices and hidden states with learned projections; the two-stage distillation procedure (general pre-training distillation then task-specific distillation) is the key engineering contribution.</p></li>
+<li><p>Ho, N., et al.&nbsp;(2022). <em>Large Language Models are Reasoning Teachers.</em> ACL. — Demonstrates chain-of-thought distillation; the result that a 250M student trained on GPT-3 CoT outputs outperforms much larger models prompted with CoT is the key finding.</p></li>
+<li><p>Agarwal, R., et al.&nbsp;(2024). <em>On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes.</em> ICLR. — Introduces GKD and the on-policy vs.&nbsp;off-policy distillation distinction for language models; the theoretical analysis of why on-policy signal matters at large capacity gaps is the key contribution.</p></li>
+<li><p>Furlanello, T., Lipton, Z., Tschannen, M., Itti, L., &amp; Anandkumar, A. (2018). <em>Born Again Neural Networks.</em> ICML. — Demonstrates that self- distillation improves performance; the ensemble interpretation of born-again networks is the key theoretical framing.</p></li>
+<li><p>DeepSeek-AI. (2025). <em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning.</em> arXiv. — Covers the distillation of reasoning traces from the 671B model to 1.5B–70B student models.</p></li>
+<li><p>Michel, P., Levy, O., &amp; Neubig, G. (2019). <em>Are Sixteen Heads Really Better than One?</em> NeurIPS. — Analysis of attention head importance in BERT; the finding that most heads can be removed with minimal impact motivates structured pruning approaches; the sequential pruning-and-fine-tuning result motivates the distillation framing.</p></li>
 </ul>
 <hr>
 
@@ -1252,14 +1220,11 @@ Figure&nbsp;3.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part2/APIs_and_serving.html" class="pagination-link" aria-label="APIs and Model Serving">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span>
+      <a href="../../book/part5/distributed_training.html" class="pagination-link" aria-label="Distributed Training">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part2/Embeddings_and_meaning.html" class="pagination-link" aria-label="Embeddings and Meaning Representation">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
