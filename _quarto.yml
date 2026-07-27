@@ -9,6 +9,8 @@ book:
   subtitle: "An End-to-End Journey Inside LLM and RAG Systems"
   site-url: "https://llm.hosseini.work"
   repo-url: "https://github.com/mohsenh17/prompt-to-response"
+  sidebar:
+    collapse-level: 1
 
   favicon: images/favicon.png
   open-graph: true
