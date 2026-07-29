@@ -62,6 +62,7 @@ book:
         - book/part5/distillation.md
         - book/part5/fine_tuning.md
         - book/part5/alignment.md
+        - book/part5/reasoning.md
 
     - part: "The Trial of the Answer"
       chapters: []
