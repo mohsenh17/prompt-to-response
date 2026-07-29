@@ -106,7 +106,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/distillation.html</loc>
-    <lastmod>2026-07-24T15:10:49.167Z</lastmod>
+    <lastmod>2026-07-29T17:20:36.055Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/fine_tuning.html</loc>
@@ -114,14 +114,18 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/alignment.html</loc>
-    <lastmod>2026-07-29T16:31:09.884Z</lastmod>
+    <lastmod>2026-07-29T17:24:09.783Z</lastmod>
+  </url>
+  <url>
+    <loc>https://llm.hosseini.work/book/part5/reasoning.html</loc>
+    <lastmod>2026-07-29T17:54:42.807Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-07-29T17:02:14.340Z</lastmod>
+    <lastmod>2026-07-29T18:03:33.987Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-07-29T17:02:20.988Z</lastmod>
+    <lastmod>2026-07-29T18:03:41.187Z</lastmod>
   </url>
 </urlset>

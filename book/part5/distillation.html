@@ -548,6 +548,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Alignment and Preference Optimization</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/reasoning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Reasoning Models and Test-Time Compute</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -572,7 +578,7 @@ window.Quarto = {
   <li><a href="#knowledge-distillation-the-core-mechanism" id="toc-knowledge-distillation-the-core-mechanism" class="nav-link" data-scroll-target="#knowledge-distillation-the-core-mechanism"><span class="header-section-number">26.2</span> Knowledge Distillation: The Core Mechanism</a></li>
   <li><a href="#types-of-distillation-for-language-models" id="toc-types-of-distillation-for-language-models" class="nav-link" data-scroll-target="#types-of-distillation-for-language-models"><span class="header-section-number">26.3</span> Types of Distillation for Language Models</a></li>
   <li><a href="#distillation-at-scale-llm-to-llm" id="toc-distillation-at-scale-llm-to-llm" class="nav-link" data-scroll-target="#distillation-at-scale-llm-to-llm"><span class="header-section-number">26.4</span> Distillation at Scale: LLM-to-LLM</a></li>
-  <li><a href="#reasoning-distillation" id="toc-reasoning-distillation" class="nav-link" data-scroll-target="#reasoning-distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</a></li>
+  <li><a href="#sec-Reasoning-Distillation" id="toc-sec-Reasoning-Distillation" class="nav-link" data-scroll-target="#sec-Reasoning-Distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</a></li>
   <li><a href="#self-distillation-and-compression-without-a-teacher" id="toc-self-distillation-and-compression-without-a-teacher" class="nav-link" data-scroll-target="#self-distillation-and-compression-without-a-teacher"><span class="header-section-number">26.6</span> Self-Distillation and Compression Without a Teacher</a></li>
   <li><a href="#distillation-vs.-fine-tuning-vs.-training-from-scratch" id="toc-distillation-vs.-fine-tuning-vs.-training-from-scratch" class="nav-link" data-scroll-target="#distillation-vs.-fine-tuning-vs.-training-from-scratch"><span class="header-section-number">26.7</span> Distillation vs.&nbsp;Fine-Tuning vs.&nbsp;Training from Scratch</a></li>
   <li><a href="#distillation-and-quantization-stacking-compression" id="toc-distillation-and-quantization-stacking-compression" class="nav-link" data-scroll-target="#distillation-and-quantization-stacking-compression"><span class="header-section-number">26.8</span> Distillation and Quantization: Stacking Compression</a></li>
@@ -722,8 +728,8 @@ q_i^T = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}
 <hr>
 </section>
 </section>
-<section id="reasoning-distillation" class="level2" data-number="26.5">
-<h2 data-number="26.5" class="anchored" data-anchor-id="reasoning-distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</h2>
+<section id="sec-Reasoning-Distillation" class="level2" data-number="26.5">
+<h2 data-number="26.5" class="anchored" data-anchor-id="sec-Reasoning-Distillation"><span class="header-section-number">26.5</span> Reasoning Distillation</h2>
 <p>The distillation of reasoning capability in particular chain-of-thought reasoning, deserves separate treatment because it involves transferring a qualitatively different type of knowledge than factual recall or language modeling.</p>
 <section id="chain-of-thought-distillation" class="level3" data-number="26.5.1">
 <h3 data-number="26.5.1" class="anchored" data-anchor-id="chain-of-thought-distillation"><span class="header-section-number">26.5.1</span> Chain-of-Thought Distillation</h3>
