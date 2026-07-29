@@ -1,4 +1,4 @@
-# Fine-Tuning and Parameter-Efficient Adaptation
+# Fine-Tuning and Parameter-Efficient Adaptation {#sec-fine-tuning}
 
 > **The canonical question for this chapter:**
 > *How do you take a pretrained model and make it reliably good at a
