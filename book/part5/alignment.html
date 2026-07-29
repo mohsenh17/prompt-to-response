@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>28&nbsp; Alignment and Preference Optimization – From Prompt to Response</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../book/part5/fine_tuning.html" rel="prev">
+<link href="../../images/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-4e5c8a923c97ced843d0652dafb23d7b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-d63f79f37cd408c157387d060048bf14.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="28&nbsp; Alignment and Preference Optimization – From Prompt to Response">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch9/journey.svg">
+<meta property="og:site_name" content="From Prompt to Response">
+<meta name="twitter:title" content="28&nbsp; Alignment and Preference Optimization – From Prompt to Response">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch9/journey.svg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/alignment.html"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Alignment and Preference Optimization</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">From Prompt to Response</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mohsenh17/prompt-to-response" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">The Art of the True Name</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part1/chapter1/introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">The Runes Beneath Language</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part2/Embeddings_and_meaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Embeddings and Meaning Representation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">The Labyrinth of Attention</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transformer Architecture</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/attention-computation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Attention Computation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/kv-cache.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">KV Cache</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/gpu-execution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/quantization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part3/decoding-and-sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">The Forbidden Archive</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/parametric-vs-external-memory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parametric Memory vs External Memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/document_ingestion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Document Ingestion</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/chunking_strategies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Chunking Strategies</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/embedding_for_search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Embeddings for Search</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/vector_databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Vector Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/retrieval_algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Retrieval Algorithms</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/reranking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reranking</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/context_construction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Context Construction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part4/grounded_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Grounded Generation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">The Forging of Intelligence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/synthetic_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_tokenization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_objectives.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Training Objectives</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/training_loop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">The Training Loop</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/distributed_training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Distributed Training</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/distillation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Distillation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/fine_tuning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part5/alignment.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Alignment and Preference Optimization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Trial of the Answer</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">The Keepers of the Waking Engine</span></span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-gap-between-competence-and-alignment" id="toc-the-gap-between-competence-and-alignment" class="nav-link active" data-scroll-target="#the-gap-between-competence-and-alignment"><span class="header-section-number">28.1</span> The Gap Between Competence and Alignment</a></li>
+  <li><a href="#reward-models" id="toc-reward-models" class="nav-link" data-scroll-target="#reward-models"><span class="header-section-number">28.2</span> Reward Models</a></li>
+  <li><a href="#rlhf-reinforcement-learning-from-human-feedback" id="toc-rlhf-reinforcement-learning-from-human-feedback" class="nav-link" data-scroll-target="#rlhf-reinforcement-learning-from-human-feedback"><span class="header-section-number">28.3</span> RLHF: Reinforcement Learning from Human Feedback</a></li>
+  <li><a href="#direct-alignment-methods-beyond-rlhf" id="toc-direct-alignment-methods-beyond-rlhf" class="nav-link" data-scroll-target="#direct-alignment-methods-beyond-rlhf"><span class="header-section-number">28.4</span> Direct Alignment Methods: Beyond RLHF</a></li>
+  <li><a href="#rl-without-a-value-model-grpo" id="toc-rl-without-a-value-model-grpo" class="nav-link" data-scroll-target="#rl-without-a-value-model-grpo"><span class="header-section-number">28.5</span> RL Without a Value Model: GRPO</a></li>
+  <li><a href="#constitutional-ai-and-ai-feedback" id="toc-constitutional-ai-and-ai-feedback" class="nav-link" data-scroll-target="#constitutional-ai-and-ai-feedback"><span class="header-section-number">28.6</span> Constitutional AI and AI Feedback</a></li>
+  <li><a href="#reward-hacking-and-alignment-failure-modes" id="toc-reward-hacking-and-alignment-failure-modes" class="nav-link" data-scroll-target="#reward-hacking-and-alignment-failure-modes"><span class="header-section-number">28.7</span> Reward Hacking and Alignment Failure Modes</a></li>
+  <li><a href="#practical-alignment-pipelines" id="toc-practical-alignment-pipelines" class="nav-link" data-scroll-target="#practical-alignment-pipelines"><span class="header-section-number">28.8</span> Practical Alignment Pipelines</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">28.9</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">28.10</span> Further Reading</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/alignment.html"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Alignment and Preference Optimization</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Alignment and Preference Optimization</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>The canonical question for this chapter:</strong> <em>How do you train a model to produce outputs that humans prefer, and why is “what humans prefer” a harder optimization target than it appears?</em></p>
+</blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch9/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;28.1: The journey through the Model Mind.
+</figcaption>
+</figure>
+</div>
+<p>The previous chapter covered fine-tuning: adjusting a model’s behavior toward a target distribution using labeled examples. This chapter addresses a harder version of the same problem, where the target distribution cannot be explicitly defined as a labeled dataset, because the goal is not simply to “produce the correct answer” but to “produce the answer humans prefer.” Alignment is the field of methods that aims to bridge this gap.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="the-gap-between-competence-and-alignment" class="level2" data-number="28.1">
+<h2 data-number="28.1" class="anchored" data-anchor-id="the-gap-between-competence-and-alignment"><span class="header-section-number">28.1</span> The Gap Between Competence and Alignment</h2>
+<p>A model trained by next-token prediction on a large corpus becomes competent: it can produce fluent, factually dense, structurally coherent text across a vast range of topics and styles. What it cannot reliably do is be helpful. The pretraining corpus rewards predicting what comes next in naturally occurring text, which includes arguments, fiction, misinformation, toxic content, and instruction-free prose. A base model asked to help with a task may instead complete the task description, argue the other side, produce a plausible continuation of the user’s query rather than an answer to it, or generate content that matches the surface statistics of the training corpus without regard for whether it is true or safe.</p>
+<p>Instruction fine-tuning addresses the <em>format</em> problem: the model learns to respond to requests rather than complete them. Alignment addresses the <em>value</em> problem: the model learns to respond in ways that are helpful, honest, and safe, properties that are not captured by instruction-following loss and cannot be directly specified as token-level supervision. There is no single correct next token for “explain the causes of the French Revolution in a way that is honest about historical uncertainty” the way there is for “complete this sentence.” Quality here is a property of the whole response, judged against criteria (helpfulness, honesty, harmlessness) that only exist in the aggregate.</p>
+<p>This distinction matters because a model can follow instructions precisely while producing outputs that are harmful, sycophantic, deceptive, or unhelpful in ways that satisfy the letter of the instruction but violate its spirit. Alignment methods attempt to train models to pursue the goals <em>behind</em> user requests, not just the literal content of the requests, a task that requires learning from human preferences rather than from correct-answer labels.</p>
+<hr>
+</section>
+<section id="reward-models" class="level2" data-number="28.2">
+<h2 data-number="28.2" class="anchored" data-anchor-id="reward-models"><span class="header-section-number">28.2</span> Reward Models</h2>
+<p>The prerequisite for most alignment methods is a <strong>reward model</strong>: a function that takes a prompt and a completion and returns a scalar score representing the quality of that completion as a human would judge it. The reward model is a proxy for human judgment, trained on human preferences, used in place of live human evaluation at training time. Every method introduced later in this chapter is, at its core, a different answer to the question “given that we have some way of scoring completions, how do we use that score to update the policy?” so it is worth understanding carefully where that score comes from before looking at what is done with it.</p>
+<section id="collecting-preference-data" class="level3" data-number="28.2.1">
+<h3 data-number="28.2.1" class="anchored" data-anchor-id="collecting-preference-data"><span class="header-section-number">28.2.1</span> Collecting Preference Data</h3>
+<p>Reward model training requires human preference judgments. The standard data collection procedure is:</p>
+<ol type="1">
+<li>Sample a set of prompts from a diverse distribution (user queries, instruction data, red-team prompts).</li>
+<li>For each prompt, generate two or more completions from the model being aligned (or from multiple models at different training stages).</li>
+<li>Present each (prompt, completion A, completion B) triple to a human annotator and ask: which completion is better, and why?</li>
+<li>Collect pairwise preferences across thousands to millions of such triples.</li>
+</ol>
+<p>The annotation task is <em>comparative</em> rather than <em>absolute</em>. Annotators are not asked to rate completions on a 1–10 scale, a task with poor inter-rater reliability, because different annotators calibrate scales differently: one annotator’s “7” is another’s “5” for the same response. They are instead asked which of two completions is better, a judgment that requires only a relative ordering and turns out to be substantially more reliable in practice. This is the same reason chess ratings (Elo) and sports rankings are built from pairwise outcomes rather than judges scoring players on an absolute scale: comparison is a cognitively easier and more consistent task than calibrated absolute measurement. The InstructGPT paper <span class="citation" data-cites="ouyang2022training"><a href="#ref-ouyang2022training" role="doc-biblioref">[1]</a></span> reported inter-annotator agreement of approximately 73% for pairwise preferences, compared to much lower agreement for absolute ratings.</p>
+<p>Annotation guidelines define what “better” means: more helpful, more accurate, more honest, less harmful, better formatted, more concise. Different guidelines produce different reward models with different implicit values, a reward model trained under guidelines that weight “thoroughness” heavily will systematically reward longer responses one trained under guidelines that weight “directness” will not. The choice of annotation guidelines is one of the most consequential yet least discussed decisions in alignment, because it is never visible in the resulting model weights; it is only visible in the model’s behavior, after the fact.</p>
+</section>
+<section id="training-the-reward-model" class="level3" data-number="28.2.2">
+<h3 data-number="28.2.2" class="anchored" data-anchor-id="training-the-reward-model"><span class="header-section-number">28.2.2</span> Training the Reward Model</h3>
+<p>Given a dataset of pairwise preferences <span class="math inline">\(\{(x, y_w, y_l)\}\)</span>, where <span class="math inline">\(x\)</span> is a prompt, <span class="math inline">\(y_w\)</span> is a preferred completion (winner), and <span class="math inline">\(y_l\)</span> is a dispreferred completion (loser), the reward model is trained to assign a higher scalar reward to the preferred completion. For each preference pair, the <em>same</em> reward model is evaluated on the prompt with the winner and on the prompt with the loser, producing two scores:</p>
+<p><span class="math display">\[
+r_w = r_\phi(x,y_w),
+\qquad
+r_l = r_\phi(x,y_l).
+\]</span></p>
+<p>The two scores are then compared, and the model is trained so that <span class="math inline">\(r_w &gt; r_l\)</span>.</p>
+<p>The standard training objective is the Bradley-Terry pairwise ranking loss:</p>
+<p><span id="eq-bt"><span class="math display">\[
+\mathcal{L}_{\text{RM}}
+=
+-\mathbb{E}_{(x,y_w,y_l)}
+\left[
+\log
+\sigma
+\left(
+r_\phi(x,y_w)
+-
+r_\phi(x,y_l)
+\right)
+\right],
+\tag{28.1}\]</span></span></p>
+<p>where <span class="math inline">\(r_\phi(x,y)\)</span> is the reward model’s scalar output for prompt <span class="math inline">\(x\)</span> and completion <span class="math inline">\(y\)</span>, and <span class="math inline">\(\sigma\)</span> is the sigmoid function. The Bradley-Terry model is a standard statistical model of pairwise comparison outcomes (originally developed for ranking competitors from win/loss records); applied here, <span class="math inline">\(\sigma(r_w - r_l)\)</span> is interpreted as the model’s estimated probability that the preferred completion is better than the rejected one. A larger positive difference produces a smaller loss, while assigning a higher score to the rejected completion produces a larger loss. Note what this loss does <em>not</em> require: it never asks the reward model to output a score with any particular absolute meaning (“8 out of 10”). Only the relative ordering within each pair is supervised, which is consistent with how the preference data was collected in the first place.</p>
+<p>Importantly, the winner and loser are evaluated using the <strong>same reward model parameters</strong>, this is a Siamese-network-style training setup. The model is run once for each response, the resulting scores are compared to compute a single loss, and backpropagation updates the shared model parameters so that preferred responses receive higher rewards in future comparisons.</p>
+<p>Architecturally, the reward model is typically initialized from the instruction-tuned model being aligned, with the final token’s hidden state projected to a scalar by a linear reward head (replacing the language modeling head that projects to the vocabulary). The final-token hidden state is used because, in a causal decoder, it is the only position that has attended to the entire prompt and completion, it is the natural summary representation of “everything that happened in this exchange.” Initializing from the instruction-tuned model, rather than the base model or a random initialization, provides a model that already understands language, instructions, and the general structure of useful responses, allowing preference training to focus on learning human preferences rather than learning language understanding from scratch.</p>
+</section>
+<section id="reward-model-quality-and-the-overoptimization-problem" class="level3" data-number="28.2.3">
+<h3 data-number="28.2.3" class="anchored" data-anchor-id="reward-model-quality-and-the-overoptimization-problem"><span class="header-section-number">28.2.3</span> Reward Model Quality and the Overoptimization Problem</h3>
+<p>A reward model is an imperfect proxy for human judgment. It was trained on a finite set of human preferences and will fail to generalize perfectly to the full distribution of possible completions. When a policy is optimized against this proxy, it will eventually find completions that score highly on the reward model while no longer scoring highly with actual humans, a phenomenon called <strong>reward hacking</strong> or <strong>reward overoptimization</strong>.</p>
+<p>Gao et al.&nbsp;(2023) <span class="citation" data-cites="gao2023scaling"><a href="#ref-gao2023scaling" role="doc-biblioref">[2]</a></span> quantified this directly: as the policy is optimized further against a fixed reward model (measured by KL divergence from the initial policy), gold-standard human preference scores increase initially, peak, and then decline. The peak occurs at a moderate optimization strength; beyond this point, the policy has learned to exploit the reward model’s flaws rather than genuinely improve. The distance to the peak depends on the size of the reward model relative to the policy, larger reward models generalize better and have a later overoptimization peak.</p>
+<hr>
+</section>
+</section>
+<section id="rlhf-reinforcement-learning-from-human-feedback" class="level2" data-number="28.3">
+<h2 data-number="28.3" class="anchored" data-anchor-id="rlhf-reinforcement-learning-from-human-feedback"><span class="header-section-number">28.3</span> RLHF: Reinforcement Learning from Human Feedback</h2>
+<p>RLHF (<span class="citation" data-cites="christiano2017deep ziegler2019fine ouyang2022training"><a href="#ref-ouyang2022training" role="doc-biblioref">[1]</a>, <a href="#ref-christiano2017deep" role="doc-biblioref">[3]</a>, <a href="#ref-ziegler2019fine" role="doc-biblioref">[4]</a></span>) is the foundational alignment technique, and the one most closely associated with the deployment of ChatGPT and its contemporaries. It combines reward model training with reinforcement learning to optimize the policy toward human preferences.</p>
+<section id="the-three-stage-pipeline" class="level3" data-number="28.3.1">
+<h3 data-number="28.3.1" class="anchored" data-anchor-id="the-three-stage-pipeline"><span class="header-section-number">28.3.1</span> The Three-Stage Pipeline</h3>
+<p><strong>Stage 1: Supervised Fine-Tuning (SFT).</strong> Fine-tune the base model on a high-quality set of instruction-response pairs to produce a well-behaved starting policy. This is the instruction fine-tuning procedure from <a href="fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>. The SFT model is the policy that will be further aligned; it is also the reference model used for the KL penalty in Stage 3.</p>
+<p><strong>Stage 2: Reward Model Training.</strong> Collect human preference data on completions from the SFT model and train a reward model as described above. The reward model is trained separately from the policy and held fixed during Stage 3.</p>
+<p><strong>Stage 3: RL Optimization.</strong> Optimize the policy to maximize the reward model’s scores while staying close to the SFT policy. The optimization objective is:</p>
+<p><span class="math display">\[
+\max_{\pi_\theta} \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta(y|x)}
+\left[ r_\phi(x, y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} \right]
+\]</span></p>
+<p>The first term is the reward signal: generate completions that the reward model scores highly. The second term is a KL divergence penalty between the current policy <span class="math inline">\(\pi_\theta\)</span> and the reference policy <span class="math inline">\(\pi_{\text{ref}}\)</span> (the SFT model): stay close to the behavior that was already good. Intuitively, the reward term pulls the policy <em>toward whatever the reward model likes</em>, and the KL term is a leash that limits how far it is allowed to wander from a policy we already trust to produce coherent, on-distribution language.</p>
+<p><span class="math inline">\(\beta\)</span> controls the tradeoff. A high <span class="math inline">\(\beta\)</span> means the policy cannot deviate much from the SFT model, limiting reward exploitation but also limiting alignment improvement. A low <span class="math inline">\(\beta\)</span> means the policy can move aggressively toward the reward model’s preferences, risking overoptimization. Typical values are <span class="math inline">\(\beta = 0.1\)</span> to <span class="math inline">\(0.5\)</span>.</p>
+</section>
+<section id="ppo-the-rl-algorithm" class="level3" data-number="28.3.2">
+<h3 data-number="28.3.2" class="anchored" data-anchor-id="ppo-the-rl-algorithm"><span class="header-section-number">28.3.2</span> PPO: The RL Algorithm</h3>
+<p>The RL stage in RLHF is commonly optimized using <strong>Proximal Policy Optimization (PPO)</strong> <span class="citation" data-cites="schulman2017proximal"><a href="#ref-schulman2017proximal" role="doc-biblioref">[5]</a></span>. PPO is an <strong>on-policy actor-critic algorithm</strong> that improves the language model using responses generated by the current policy. It consists of four main components: the <strong>actor (policy)</strong>, the <strong>critic (value model)</strong>, the <strong>reward model</strong>, and a <strong>reference model</strong>.</p>
+<ul>
+<li><p><strong>Actor (policy):</strong> The language model being optimized. Given a prompt and the tokens generated so far, it produces a probability distribution over the next token. PPO updates this model to increase the probability of actions that lead to better-than-expected outcomes.</p></li>
+<li><p><strong>Reward model:</strong> Evaluates the complete generated response and produces a scalar reward representing its quality. In standard RLHF, this reward is typically provided at the end of the generated sequence.</p></li>
+<li><p><strong>Critic (value model):</strong> Estimates the expected future reward from each intermediate state, where a state consists of the prompt and the tokens generated so far. The critic is trained to predict the return obtained from the rollout. Its predictions are used to compute the <strong>advantage</strong>, which measures whether the observed outcome was better or worse than expected: <span class="math display">\[
+\hat{A}_t \approx \text{actual return} - V(s_t).
+\]</span> Thus, the critic provides a baseline that reduces the variance of the policy-gradient estimate and helps assign credit to earlier token decisions.</p></li>
+<li><p><strong>Reference model:</strong> A frozen copy of the SFT model. It is used to prevent the policy from drifting too far from the behavior learned during supervised fine-tuning. This is typically enforced through a <strong>KL-divergence penalty</strong> between the policy and reference model.</p></li>
+</ul>
+<p>PPO then updates the actor using the estimated advantages while limiting how much the policy can change in a single update. This is achieved through the clipped objective:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\mathrm{PPO}}
+=
+\mathbb{E}_t
+\left[
+\min
+\left(
+\rho_t \hat{A}_t,,
+\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat{A}_t
+\right)
+\right],
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+\rho_t =
+\frac{\pi_\theta(a_t|s_t)}
+{\pi_{\mathrm{old}}(a_t|s_t)}
+\]</span></p>
+<p>is the ratio between the probability assigned to the selected token by the updated policy and the old policy that generated the rollout. The clipping prevents excessively large policy updates, making training more stable.</p>
+<p>In summary, the <strong>reward model scores the response</strong>, the <strong>critic estimates how much reward is expected from each partial sequence</strong>, the <strong>advantage compares the observed outcome with that expectation</strong>, and <strong>PPO uses these advantages to update the actor while constraining the size of the update</strong>. The <strong>reference model</strong> additionally keeps the optimized policy close to the original SFT model.</p>
+</section>
+<section id="training-the-critic" class="level3" data-number="28.3.3">
+<h3 data-number="28.3.3" class="anchored" data-anchor-id="training-the-critic"><span class="header-section-number">28.3.3</span> Training the Critic</h3>
+<p>The reward model produces one scalar reward for the entire generated response, while the critic must predict a value for every intermediate state. The critic is therefore trained from the outcomes of sampled rollouts. Given a generated sequence:</p>
+<p><span class="math display">\[
+s_1 \xrightarrow{a_1} s_2 \xrightarrow{a_2} \cdots
+\xrightarrow{a_{T-1}} s_T \xrightarrow{a_T} r_T,
+\]</span></p>
+<p>the critic <span class="math inline">\(V_\phi(s_t)\)</span> is trained to predict the expected return from state <span class="math inline">\(s_t\)</span>: the discounted sum of future rewards an agent starting in <span class="math inline">\(s_t\)</span> and following the current policy would expect to accumulate. In the typical RLHF setup, the reward model scores only the completed response, so the per-step reward is zero everywhere except the terminal step:</p>
+<p><span class="math display">\[
+r_t = 0 \ \text{for } t &lt; T, \qquad r_T = r^{\text{RM}}.
+\]</span></p>
+<p>There are two main approaches for constructing the targets used to train the critic: Monte Carlo returns and bootstrapped returns and a third, GAE, that interpolates between them. They differ in what evidence they use as “ground truth” for the target, which governs a bias–variance tradeoff that shows up throughout policy-gradient methods.</p>
+<section id="monte-carlo-returns" class="level4" data-number="28.3.3.1">
+<h4 data-number="28.3.3.1" class="anchored" data-anchor-id="monte-carlo-returns"><span class="header-section-number">28.3.3.1</span> Monte Carlo returns</h4>
+<p>The simplest approach rolls the trajectory out to completion and uses the <em>actual</em> observed return as the target for every state visited along the way:</p>
+<p><span class="math display">\[
+G_t = \sum_{k=t}^{T} \gamma^{k-t} r_k.
+\]</span></p>
+<p>Because <span class="math inline">\(r_k = 0\)</span> for every <span class="math inline">\(k &lt; T\)</span>, every term in this sum vanishes except the last one, so it collapses to</p>
+<p><span class="math display">\[
+G_t = \gamma^{T-t} r_T.
+\]</span></p>
+<p>Note that this holds for <em>every</em> <span class="math inline">\(t\)</span>, not just the last state, the return always includes the eventual terminal reward, however many steps away it is. What changes with <span class="math inline">\(t\)</span> is only the discount exponent <span class="math inline">\(T-t\)</span>: states further from termination discount that same reward more heavily. For example, with <span class="math inline">\(T=4\)</span>, <span class="math inline">\(\gamma=0.9\)</span>, and <span class="math inline">\(r_T = 2.5\)</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(t\)</span></th>
+<th>steps remaining (<span class="math inline">\(T-t\)</span>)</th>
+<th><span class="math inline">\(G_t = \gamma^{T-t} r_T\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+<td><span class="math inline">\(0.9^3 \times 2.5 = 1.8225\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2</td>
+<td><span class="math inline">\(0.9^2 \times 2.5 = 2.025\)</span></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>1</td>
+<td><span class="math inline">\(0.9^1 \times 2.5 = 2.25\)</span></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0</td>
+<td><span class="math inline">\(0.9^0 \times 2.5 = 2.5\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>With <span class="math inline">\(\gamma = 1\)</span> this reduces further to <span class="math inline">\(G_t = r_T\)</span> for all <span class="math inline">\(t\)</span>. (If intermediate rewards were nonzero, e.g.&nbsp;per-token KL penalties, <span class="math inline">\(G_t\)</span> would be a genuine multi-term sum and wouldn’t necessarily increase monotonically like this.)</p>
+<p>The critic is trained by minimizing</p>
+<p><span class="math display">\[
+\mathcal{L}_V =
+\sum_t
+\left(
+V_\phi(s_t) - G_t
+\right)^2.
+\]</span></p>
+<p>With enough rollouts, the critic learns that some partial sequences are more likely to lead to high-reward responses than others, effectively learning to anticipate the reward model’s judgment before generation finishes.</p>
+<p>Monte Carlo targets are <strong>unbiased</strong>: in expectation over infinitely many rollouts, <span class="math inline">\(G_t\)</span> is exactly the true expected return. But they have <strong>high variance</strong>, because a single trajectory’s <span class="math inline">\(G_t\)</span> depends on every action sampled from <span class="math inline">\(s_t\)</span> all the way to <span class="math inline">\(s_T\)</span>, one unusual token late in generation shifts the target for every earlier state in that rollout.</p>
+</section>
+<section id="bootstrapping" class="level4" data-number="28.3.3.2">
+<h4 data-number="28.3.3.2" class="anchored" data-anchor-id="bootstrapping"><span class="header-section-number">28.3.3.2</span> Bootstrapping</h4>
+<p>Bootstrapping addresses the variance problem by looking only one step ahead, rather than summing all the way to <span class="math inline">\(T\)</span>, and substituting the critic’s own prediction for everything beyond that step. Given a single transition <span class="math inline">\(s_t \xrightarrow{a_t, r_t} s_{t+1}\)</span>, the one-step bootstrapped target is</p>
+<p><span class="math display">\[
+y_t = r_t + \gamma V_\phi(s_{t+1}).
+\]</span></p>
+<p>This uses the <em>same</em> reward signal as Monte Carlo, just sliced one step at a time instead of summed end-to-end. Since <span class="math inline">\(r_t = 0\)</span> for <span class="math inline">\(t &lt; T\)</span>:</p>
+<p><span class="math display">\[
+y_t = \gamma V_\phi(s_{t+1}) \quad \text{for } t &lt; T,
+\qquad y_T = r_T \quad \text{(no state exists after termination).}
+\]</span></p>
+<p>The critic is trained to match this target:</p>
+<p><span class="math display">\[
+\mathcal{L}_V =
+\sum_t
+\left(
+V_\phi(s_t) - y_t
+\right)^2,
+\]</span></p>
+<p>where <span class="math inline">\(y_t\)</span> is treated as fixed, gradients are not propagated through <span class="math inline">\(V_\phi(s_{t+1})\)</span>.</p>
+<p>Where does information about the eventual reward come from, if <span class="math inline">\(r_t=0\)</span> almost everywhere? From <span class="math inline">\(V_\phi(s_{t+1})\)</span> itself: the critic at <span class="math inline">\(s_{t+1}\)</span> is supposed to already encode “there’s a reward of <span class="math inline">\(r_T\)</span> coming eventually,” because it’s being trained on exactly that signal. This is why it’s called <em>bootstrapping</em>, the critic pulls itself up using its own evolving predictions rather than waiting for ground truth. A consequence is that accurate values must <strong>diffuse backward over training</strong>, rather than being available everywhere at once:</p>
+<ul>
+<li>Early in training, <span class="math inline">\(V_\phi\)</span> is essentially random, so <span class="math inline">\(y_t \approx \gamma \cdot
+(\text{noise})\)</span> for <span class="math inline">\(t &lt; T\)</span>.</li>
+<li><span class="math inline">\(y_T = r_T\)</span>, however, is correct from the very first rollout, since it comes directly from the actual reward.</li>
+<li>Once the critic learns <span class="math inline">\(V_\phi(s_T)\)</span> accurately, <span class="math inline">\(y_{T-1} = \gamma V_\phi(s_T)\)</span> becomes a good target too.</li>
+<li>This propagates backward one step per training pass, <span class="math inline">\(V_\phi(s_{T-1})\)</span> becomes accurate, making <span class="math inline">\(y_{T-2}\)</span> good, and so on.</li>
+</ul>
+<p>So the real tradeoff is: Monte Carlo gives a (noisy but) correct target <em>everywhere</em>, immediately. Bootstrapping gives a stable target only at <span class="math inline">\(T\)</span> immediately, with the rest catching up gradually, but each individual update has far lower variance, since <span class="math inline">\(y_t\)</span> depends on only one sampled transition rather than the entire remaining trajectory. The cost is <strong>bias</strong>: <span class="math inline">\(y_t\)</span> relies on <span class="math inline">\(V_\phi(s_{t+1})\)</span>, an imperfect, still-learning estimate, so early errors can compound across states.</p>
+</section>
+<section id="generalized-advantage-estimation-gae" class="level4" data-number="28.3.3.3">
+<h4 data-number="28.3.3.3" class="anchored" data-anchor-id="generalized-advantage-estimation-gae"><span class="header-section-number">28.3.3.3</span> Generalized Advantage Estimation (GAE)</h4>
+<p>Neither extreme is used alone in practice. Monte Carlo is unbiased but noisy; one-step bootstrapping is stable but biased and slow to propagate. GAE interpolates between them by mixing <span class="math inline">\(n\)</span>-step bootstrapped targets of every length.</p>
+<p>Define the <strong>Temporal Difference residual</strong> at each step as the one-step bootstrapping error:</p>
+<p><span class="math display">\[
+\delta_t
+=
+\underbrace{r_t + \gamma V_{\phi}(s_{t+1})}_{\text{target}}
+-
+\underbrace{V_{\phi}(s_t)}_{\text{current prediction}}
+\]</span></p>
+<p>An <span class="math inline">\(n\)</span>-step return can be written as a sum of these residuals, so summing them with an exponential decay <span class="math inline">\(\lambda \in [0,1]\)</span> gives the GAE advantage estimate:</p>
+<p><span class="math display">\[
+A_t^{\text{GAE}(\gamma,\lambda)} = \sum_{k=0}^{\infty} (\gamma\lambda)^k \, \delta_{t+k}.
+\]</span></p>
+<p>The value target used to train the critic is then</p>
+<p><span class="math display">\[
+y_t = A_t^{\text{GAE}} + V_\phi(s_t),
+\]</span></p>
+<p>which is subsequently used the same way as <span class="math inline">\(G_t\)</span> or <span class="math inline">\(y_t\)</span> above, in <span class="math inline">\(\mathcal{L}_V = \sum_t (V_\phi(s_t) - y_t)^2\)</span>.</p>
+<p>The parameter <span class="math inline">\(\lambda\)</span> controls the tradeoff directly:</p>
+<ul>
+<li><span class="math inline">\(\lambda = 0\)</span> collapses <span class="math inline">\(A_t\)</span> to a single <span class="math inline">\(\delta_t\)</span>, pure one-step bootstrapping (low variance, high bias).</li>
+<li><span class="math inline">\(\lambda = 1\)</span> makes the sum telescope back into the full Monte Carlo return (unbiased, high variance).</li>
+<li>Intermediate <span class="math inline">\(\lambda\)</span> (commonly <span class="math inline">\(0.9\)</span>–<span class="math inline">\(0.97\)</span> in practice) blends the two, weighting near-term bootstrapped estimates more heavily while still letting longer-horizon information contribute.</li>
+</ul>
+<p>This gives practitioners a single tunable knob to sit anywhere along the bias–variance spectrum, rather than being forced to pick one endpoint.</p>
+</section>
+<section id="the-training-loop" class="level4" data-number="28.3.3.4">
+<h4 data-number="28.3.3.4" class="anchored" data-anchor-id="the-training-loop"><span class="header-section-number">28.3.3.4</span> The training loop</h4>
+<p>Critic training doesn’t happen in isolation, it’s one part of a larger actor-critic update cycle, typically run as an on-policy algorithm like PPO. The loop below expands each stage into the operations actually implemented in practice.</p>
+<p><strong>Stage 1: Rollout generation.</strong></p>
+<p>Sample a batch of <span class="math inline">\(N\)</span> prompts from the training set. For each prompt, generate a full response by sampling from the current policy <span class="math inline">\(\pi_\theta\)</span> token by token (with temperature/top-p sampling, not greedy decoding, exploration matters here). This produces <span class="math inline">\(N\)</span> trajectories:</p>
+<p><span class="math display">\[
+\tau^{(i)} = \left(s_1^{(i)}, a_1^{(i)}, \dots, s_{T_i}^{(i)}, a_{T_i}^{(i)}\right), \quad i = 1, \dots, N.
+\]</span></p>
+<p>Each action <span class="math inline">\(a_t\)</span> is a sampled token, and each state <span class="math inline">\(s_t\)</span> is the prompt plus tokens generated so far. Responses have variable length <span class="math inline">\(T_i\)</span>, so trajectories are typically padded (with a loss mask) to batch them efficiently.</p>
+<p><strong>Stage 2: Scoring.</strong></p>
+<p>Pass each completed response through the reward model to get one scalar <span class="math inline">\(r^{\text{RM}, (i)}\)</span> per trajectory. If a per-token KL penalty against a reference policy <span class="math inline">\(\pi_{\text{ref}}\)</span> is used (as is standard, to prevent the policy from drifting too far and reward-hacking), compute it at every token:</p>
+<p><span class="math display">\[
+r_t^{(i)} = -\beta \, \mathrm{KL}\!\left(\pi_\theta(\cdot \mid s_t^{(i)}) \,\|\, \pi_{\text{ref}}(\cdot \mid s_t^{(i)})\right)_t,
+\quad t &lt; T_i,
+\]</span> <span class="math display">\[
+r_{T_i}^{(i)} = r^{\text{RM},(i)} - \beta \, \mathrm{KL}_{T_i}.
+\]</span></p>
+<p>If no KL penalty is used, <span class="math inline">\(r_t^{(i)} = 0\)</span> for <span class="math inline">\(t &lt; T_i\)</span> as before.</p>
+<p><strong>Stage 3: Value prediction and target construction.</strong></p>
+<p>Run the critic <span class="math inline">\(V_\phi\)</span> (with gradients disabled, this is a forward pass only, used to build targets, not yet a training step) over every state in every trajectory to get <span class="math inline">\(V_\phi(s_t^{(i)})\)</span> for all <span class="math inline">\(i, t\)</span>. Then, for each trajectory, compute the TD residuals backward from <span class="math inline">\(T_i\)</span> to <span class="math inline">\(1\)</span>:</p>
+<p><span class="math display">\[
+\delta_t^{(i)} = r_t^{(i)} + \gamma V_\phi(s_{t+1}^{(i)}) - V_\phi(s_t^{(i)}),
+\]</span></p>
+<p>and accumulate them into the GAE advantage, also computed backward (this recursive form is what’s actually implemented, rather than the infinite sum):</p>
+<p><span class="math display">\[
+A_t^{(i)} = \delta_t^{(i)} + (\gamma \lambda)\, A_{t+1}^{(i)}, \qquad A_{T_i+1}^{(i)} := 0.
+\]</span></p>
+<p>The value target is then <span class="math inline">\(y_t^{(i)} = A_t^{(i)} + V_\phi(s_t^{(i)})\)</span>. Both <span class="math inline">\(A_t^{(i)}\)</span> and <span class="math inline">\(y_t^{(i)}\)</span> are detached from the computation graph, they are treated as fixed numbers for the rest of the loop, not something to backpropagate through.</p>
+<p><strong>Normalization.</strong> In practice, advantages are normalized across the whole batch before use:</p>
+<p><span class="math display">\[
+\hat{A}_t^{(i)} = \frac{A_t^{(i)} - \text{mean}(A)}{\text{std}(A) + \epsilon}.
+\]</span></p>
+<p>This stabilizes the policy-gradient magnitude across batches with very different reward scales and is one of the more impactful implementation details in practice, despite being easy to overlook.</p>
+<p><strong>Stage 4: Minibatch optimization.</strong></p>
+<p>Stages 1–3 prepare a batch of rollouts and construct the fixed advantages and value targets. Stage 4 uses these data to update the actor and critic. The same rollout batch is reused for several optimization epochs, with the data divided into smaller minibatches.</p>
+<p>For each minibatch, the actor and critic are evaluated again with gradients enabled. The key difference from Stage 3 is that Stage 3 only computed fixed targets; Stage 4 actually changes the model parameters</p>
+<p>For each minibatch:</p>
+<p><em>Critic loss.</em> Recompute <span class="math inline">\(V_\phi(s_t)\)</span> with gradients enabled, and regress it toward the (fixed) target computed in Stage 3:</p>
+<p><span class="math display">\[
+\mathcal{L}_V(\phi) = \frac{1}{|B|}\sum_{t \in B} \left(V_\phi(s_t) - y_t\right)^2.
+\]</span></p>
+<p>A common refinement is <strong>value clipping</strong>. However, evidence suggests that it may be less effective than actor clipping<span class="citation" data-cites="engstrom2020implementation"><a href="#ref-engstrom2020implementation" role="doc-biblioref">[6]</a></span>. Analogous to PPO’s policy clipping, value clipping constrains updates to the critic, preventing any single minibatch from moving the value estimates too far from their values at the beginning of the training epoch.</p>
+<p><span class="math display">\[
+V_\phi^{\text{clip}}(s_t) = V_{\phi_{\text{old}}}(s_t) + \text{clip}\!\left(V_\phi(s_t) - V_{\phi_{\text{old}}}(s_t),\, -\epsilon,\, \epsilon\right),
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}_V(\phi) = \frac{1}{|B|}\sum_{t \in B} \max\!\left[\left(V_\phi(s_t) - y_t\right)^2, \left(V_\phi^{\text{clip}}(s_t) - y_t\right)^2\right].
+\]</span></p>
+<p>Value clipping in <em>Critic loss</em> has two effects. If an update moves the critic away from the target, the unclipped loss is larger, so the max selects it and the normal gradient pulls the prediction back toward the target. If an update moves the critic too aggressively toward the target, the clipped loss becomes larger; because the clipped prediction is fixed at the ϵ-boundary, its gradient is zero beyond that boundary, preventing further movement in that direction for that minibatch.</p>
+<p><em>Actor loss.</em> Using the same (normalized) advantages, compute the probability ratio between the current and old policy for each token, and apply PPO’s clipped surrogate objective:</p>
+<p><span class="math display">\[
+\rho_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)},
+\qquad
+\mathcal{L}_{\pi}(\theta) = -\frac{1}{|B|}\sum_{t \in B} \min\!\left[\rho_t(\theta)\, \hat{A}_t,\ \text{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon)\, \hat{A}_t\right].
+\]</span></p>
+<p><em>Entropy bonus.</em> An entropy term is typically added to discourage the policy from collapsing to overly deterministic outputs too early:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{ent}}(\theta) = -\frac{1}{|B|}\sum_{t \in B} \mathcal{H}\!\left[\pi_\theta(\cdot \mid s_t)\right].
+\]</span></p>
+<p><em>Combined loss.</em> Actor and critic are usually trained jointly (sharing a trunk, with separate heads) or with separate optimizers, giving a total objective</p>
+<p><span class="math display">\[
+\mathcal{L}(\theta, \phi) = \mathcal{L}_\pi(\theta) + c_1 \mathcal{L}_V(\phi) + c_2 \mathcal{L}_{\text{ent}}(\theta),
+\]</span></p>
+<p>with <span class="math inline">\(c_1 \approx 0.5\)</span> and <span class="math inline">\(c_2\)</span> small (e.g.&nbsp;<span class="math inline">\(0.01\)</span>), and a gradient step is taken on this combined loss.</p>
+<p><strong>Stage 5: Early stopping within an epoch (optional but common).</strong></p>
+<p>Because Stage 4 reuses the same rollout across several epochs, the policy can drift far enough from <span class="math inline">\(\pi_{\theta_{\text{old}}}\)</span> that the ratio <span class="math inline">\(\rho_t\)</span> becomes unreliable. Many implementations monitor the approximate KL divergence between <span class="math inline">\(\pi_\theta\)</span> and <span class="math inline">\(\pi_{\theta_{\text{old}}}\)</span> after each minibatch and stop early within the epoch if it exceeds a threshold (e.g.&nbsp; <span class="math inline">\(0.01\)</span>–<span class="math inline">\(0.02\)</span>), rather than completing all <span class="math inline">\(K\)</span> epochs regardless.</p>
+<p><strong>Stage 6: Refresh and repeat.</strong></p>
+<p>After <span class="math inline">\(K\)</span> epochs of minibatch updates, the rollout batch is discarded, this is what makes the algorithm on-policy. <span class="math inline">\(\pi_{\theta_{\text{old}}}\)</span> and <span class="math inline">\(V_{\phi_{\text{old}}}\)</span> are set to the just-updated <span class="math inline">\(\pi_\theta\)</span> and <span class="math inline">\(V_\phi\)</span>, and the loop returns to Stage 1 to sample fresh trajectories from the newly updated policy.</p>
+<p><strong>Why this converges as a loop, not two separate training runs.</strong> The targets in Stage 3 depend on the current critic (<span class="math inline">\(V_\phi(s_{t+1})\)</span> inside <span class="math inline">\(\delta_t\)</span>), and the actor’s gradient in Stage 4 depends on advantages built from those same targets. So the critic and actor are not independent supervised-learning problems, each round’s data quality depends on last round’s critic accuracy, and each round’s critic accuracy depends on this round’s rollout quality. This circularity is why RLHF training curves are often noisier and less monotonic than standard supervised fine-tuning, and why the KL penalty and clipping mechanisms above exist: they keep each individual update small enough that this loop doesn’t destabilize.</p>
+</section>
+</section>
+<section id="the-infrastructure-cost-of-ppo" class="level3" data-number="28.3.4">
+<h3 data-number="28.3.4" class="anchored" data-anchor-id="the-infrastructure-cost-of-ppo"><span class="header-section-number">28.3.4</span> The Infrastructure Cost of PPO</h3>
+<p>PPO-based RLHF requires running <strong>four models</strong> simultaneously during training:</p>
+<ol type="1">
+<li><strong>The policy</strong> (<span class="math inline">\(\pi_\theta\)</span>): the model being trained; generates completions and receives gradient updates.</li>
+<li><strong>The reference model</strong> (<span class="math inline">\(\pi_{\text{ref}}\)</span>): the frozen SFT model; used to compute the KL penalty; receives no gradient updates.</li>
+<li><strong>The reward model</strong> (<span class="math inline">\(r_\phi\)</span>): the frozen preference model; scores completed sequences; receives no gradient updates.</li>
+<li><strong>The value model</strong> (critic): estimates the expected future reward from each state; trained jointly with the policy to reduce gradient variance.</li>
+</ol>
+<p>For a 7B policy, each of these models requires approximately 14 GB in bfloat16. Running all four simultaneously costs approximately 56 GB, before optimizer state for the policy and value model. In practice, the reference model and reward model are often combined, the reward model is initialized from the SFT model, so the reference and reward model share an architecture and can share forward-pass infrastructure, or offloaded to CPU memory between uses.</p>
+<p>This infrastructure complexity (four models, on-policy rollout generation, online reward computation, PPO clipping) makes RLHF significantly more expensive and fragile than supervised fine-tuning. A single PPO training step requires generating completions (inference), scoring them (reward model forward pass), computing advantages (value model forward pass), and updating the policy (backward pass). The training-to-inference ratio is substantially worse than supervised fine-tuning, because every gradient step first requires generating fresh text (an expensive, sequential, autoregressive operation) before any learning can happen at all.</p>
+<hr>
+</section>
+</section>
+<section id="direct-alignment-methods-beyond-rlhf" class="level2" data-number="28.4">
+<h2 data-number="28.4" class="anchored" data-anchor-id="direct-alignment-methods-beyond-rlhf"><span class="header-section-number">28.4</span> Direct Alignment Methods: Beyond RLHF</h2>
+<p>The infrastructure burden motivated a wave of methods, starting with DPO, that try to reach the same destination (a policy that reflects human preferences) without the on-policy RL machinery. This section covers DPO itself and its main variants, which progressively strip away pieces of the original RLHF pipeline (first the reward model, then the reference model) while trying to preserve its effectiveness.</p>
+<section id="sec-dpo" class="level3" data-number="28.4.1">
+<h3 data-number="28.4.1" class="anchored" data-anchor-id="sec-dpo"><span class="header-section-number">28.4.1</span> DPO: Direct Preference Optimization</h3>
+<p>DPO <span class="citation" data-cites="rafailov2023direct"><a href="#ref-rafailov2023direct" role="doc-biblioref">[7]</a></span> is the most widely adopted alternative to PPO-based RLHF. Its central insight is that the optimal policy under the RLHF objective can be expressed in closed form in terms of the preference data, eliminating the need to train a separate reward model or run RL at all.</p>
+<p><strong>The derivation.</strong> The RLHF objective has a known analytical solution. Under the KL-constrained reward maximization objective, the optimal policy satisfies:</p>
+<p><span class="math display">\[
+\pi^*(y|x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y|x) \exp\left(\frac{1}{\beta} r(x,y)\right)
+\]</span></p>
+<p>where <span class="math inline">\(Z(x) = \sum_y \pi_{\text{ref}}(y|x) \exp(r(x,y)/\beta)\)</span> is a normalizing partition function. This expression says: the optimal policy is the reference policy reweighted by the exponentiated reward, completions the reward model likes get upweighted relative to the reference distribution, completions it dislikes get downweighted, and <span class="math inline">\(\beta\)</span> controls how sharply.</p>
+<p>Rearranging this equation, the reward can be expressed as:</p>
+<p><span class="math display">\[
+r(x, y) = \beta \log \frac{\pi^*(y|x)}{\pi_{\text{ref}}(y|x)} + \beta \log Z(x)
+\]</span></p>
+<p>This is the key algebraic move in the whole derivation: it says the reward is recoverable from the <em>policy itself</em>, as a log-ratio against the reference policy, there is no need for a separately parameterized reward model once you have a policy. Substituting this expression into the Bradley-Terry preference model which says the probability that humans prefer <span class="math inline">\(y_w\)</span> over <span class="math inline">\(y_l\)</span> is <span class="math inline">\(\sigma(r(x,y_w) - r(x,y_l))\)</span> — the <span class="math inline">\(Z(x)\)</span> terms cancel, because both completions share the same prompt and therefore the same partition function:</p>
+<p><span class="math display">\[
+p^*(y_w \succ y_l | x) = \sigma\left(\beta \log \frac{\pi^*(y_w|x)}{\pi_{\text{ref}}(y_w|x)}
+- \beta \log \frac{\pi^*(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)
+\]</span></p>
+<p>This is the DPO loss target: instead of training a reward model and then using RL to optimize toward it, directly train the policy to assign higher relative probability (relative to the reference policy) to preferred completions than to dispreferred completions:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(x, y_w, y_l)} \left[
+\log \sigma\left(\beta \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)}
+- \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}\right)
+\right]
+\]</span></p>
+<p>Notice the shape of this loss: it is <em>exactly</em> the reward model loss from <a href="#eq-bt" class="quarto-xref">Equation&nbsp;<span>28.1</span></a>, with <span class="math inline">\(r_\phi(x,y)\)</span> replaced everywhere by <span class="math inline">\(\beta \log \frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)}\)</span>. This is the sense in which “the language model is secretly a reward model” (the DPO paper’s subtitle): the same Bradley-Terry machinery is reused, but the thing being scored is the policy’s own log-probability ratio rather than the output of a separate network.</p>
+<p><strong>What DPO does in practice.</strong> The DPO gradient increases the log-probability of preferred completions and decreases the log-probability of dispreferred completions, relative to the reference policy. When the model already assigns much higher probability to the preferred completion than the reference model does, the gradient update is small (the model has already learned this preference. When the model assigns lower probability to the preferred completion than the dispreferred one, the gradient update is large) the model is moving in the wrong direction and needs to move further.</p>
+<p>This implicit reward weighting addresses a failure mode of naive supervised fine-tuning on preferred completions alone: if you simply fine-tune on the winning responses and ignore the losing ones, the model never learns what it is being contrasted <em>against</em>, it only sees positive examples, the way plain SFT does, and loses the comparative information that made the preference data valuable in the first place. DPO jointly pushes up preferred and pulls down dispreferred, using the reference policy as the anchor for both.</p>
+</section>
+<section id="dpo-vs.-ppo-practical-comparison" class="level3" data-number="28.4.2">
+<h3 data-number="28.4.2" class="anchored" data-anchor-id="dpo-vs.-ppo-practical-comparison"><span class="header-section-number">28.4.2</span> DPO vs.&nbsp;PPO: Practical Comparison</h3>
+<p>DPO eliminates the reward model, the value model, on-policy rollout generation, and PPO’s clipping machinery. Training reduces to a standard supervised loss computed on pre-collected preference data. The infrastructure requirement is two models (the policy and the reference model) rather than four, and there is no rollout-generation step in the training loop at all: the preference pairs are fixed ahead of time, so DPO training looks, mechanically, much more like ordinary fine-tuning than like reinforcement learning.</p>
+<p>The tradeoff is that DPO is <strong>off-policy</strong>. It trains on a fixed dataset of preference pairs rather than generating new completions during training. This means DPO cannot adapt to the policy’s current behavior; it can only optimize toward preferences elicited from some earlier policy’s completions. When the policy drifts far from the data-generating policy, the preference data becomes stale and DPO’s gradient signal loses relevance.</p>
+<p>Empirically, DPO and PPO achieve similar performance on standard alignment benchmarks when both are applied to the same SFT model with the same preference data. PPO has an advantage on tasks requiring many RL steps to learn (sparse reward, long-horizon tasks); DPO has an advantage in stability and simplicity. Most open-source alignment pipelines (LLaMA 3, Mistral, Qwen) use DPO or its variants; most closed-source frontier model pipelines (GPT-4, Claude, Gemini) use PPO-based RLHF or hybrid approaches a divide that roughly tracks how much infrastructure investment each organization has already made in on-policy RL tooling.</p>
+</section>
+<section id="ipo-identity-preference-optimization" class="level3" data-number="28.4.3">
+<h3 data-number="28.4.3" class="anchored" data-anchor-id="ipo-identity-preference-optimization"><span class="header-section-number">28.4.3</span> IPO: Identity Preference Optimization</h3>
+<p>IPO <span class="citation" data-cites="azar2024general"><a href="#ref-azar2024general" role="doc-biblioref">[8]</a></span> observes that DPO’s loss can overfit to deterministic preference labels: when a preferred completion is always preferred and the model assigns it probability close to 1, the log-sigmoid loss saturates and training stalls before the log-ratio has moved as far as the underlying preference strength would justify. IPO replaces the log-sigmoid loss with a squared error loss on the log-ratio differences:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{IPO}} = \mathbb{E}_{(x, y_w, y_l)} \left[
+\left(\log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)}
+- \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} - \frac{1}{2\beta}\right)^2
+\right]
+\]</span></p>
+<p>A squared-error loss has a gradient proportional to the <em>distance from the target</em>, not to a saturating sigmoid, so it maintains a non-zero gradient even when the model already confidently prefers the winning completion, preventing the saturation that stalls plain DPO on cleanly separable preference data.</p>
+</section>
+<section id="orpo-odds-ratio-preference-optimization" class="level3" data-number="28.4.4">
+<h3 data-number="28.4.4" class="anchored" data-anchor-id="orpo-odds-ratio-preference-optimization"><span class="header-section-number">28.4.4</span> ORPO: Odds Ratio Preference Optimization</h3>
+<p>ORPO <span class="citation" data-cites="hong2024orpo"><a href="#ref-hong2024orpo" role="doc-biblioref">[9]</a></span> eliminates the reference model entirely. Rather than computing log-ratios relative to a fixed reference policy, ORPO computes the odds ratio of preferred versus dispreferred completions directly from the current policy:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{ORPO}} = \mathcal{L}_{\text{SFT}} - \lambda \cdot
+\mathbb{E}_{(x, y_w, y_l)} \left[
+\log \sigma\left(\log \frac{\text{odds}(y_w|x)}{\text{odds}(y_l|x)}\right)
+\right]
+\]</span></p>
+<p>where <span class="math inline">\(\text{odds}(y|x) = \pi_\theta(y|x) / (1 - \pi_\theta(y|x))\)</span>.</p>
+<p>ORPO combines SFT and preference optimization in a single training stage without a reference model, reducing the training pipeline from two stages, two model copies, one of them frozen to a single pass with one model copy. The absence of a reference model makes ORPO sensitive to initialization quality, since there is no fixed anchor keeping the policy close to a known-good starting point, the SFT loss term in the objective above is doing double duty as that anchor. This is why ORPO is typically applied starting from a base model with some instruction data mixed directly into the same training run, rather than as a separate stage after instruction fine-tuning is already complete.</p>
+</section>
+</section>
+<section id="rl-without-a-value-model-grpo" class="level2" data-number="28.5">
+<h2 data-number="28.5" class="anchored" data-anchor-id="rl-without-a-value-model-grpo"><span class="header-section-number">28.5</span> RL Without a Value Model: GRPO</h2>
+<p>The methods in <a href="#sec-dpo" class="quarto-xref"><span>Section 28.4.1</span></a> remove the reward model and, in some cases, the reference model, but they remain fundamentally off-policy: they train on a fixed, pre-collected set of preference pairs. Some tasks (most notably mathematical reasoning and code generation, where correctness can be checked automatically rather than judged by a learned reward model) benefit from staying on-policy, generating fresh rollouts throughout training the way PPO does. Group Relative Policy Optimization (GRPO) <span class="citation" data-cites="shao2024deepseekmath"><a href="#ref-shao2024deepseekmath" role="doc-biblioref">[10]</a></span> is the RL method that made this practical at scale, and is the algorithm used to train DeepSeek-R1. It is best understood as a variant of PPO, not of DPO. Tt keeps PPO’s on-policy rollout-and-clip structure but removes the value model, the single most expensive and hardest-to-train component of the four-model PPO setup.</p>
+<p><strong>How the value model is replaced.</strong> The value model exists to provide a low-variance baseline for the advantage estimate. GRPO obtains that baseline for free by generating <em>several</em> completions for the same prompt and using their own scores as each other’s baseline. For each prompt <span class="math inline">\(x\)</span>, GRPO generates <span class="math inline">\(G\)</span> completions <span class="math inline">\(\{y_1, \ldots, y_G\}\)</span> and scores each with the reward model. The advantage of completion <span class="math inline">\(y_i\)</span> is estimated relative to the group mean:</p>
+<p><span class="math display">\[
+\hat{A}_i = \frac{r_i - \text{mean}(\{r_1,\ldots,r_G\})}{\text{std}(\{r_1,\ldots,r_G\})}
+\]</span></p>
+<p>This group-relative advantage, standardizing each completion’s reward against the mean and spread of its own group, plays exactly the role the learned value baseline played in PPO, without requiring a separately trained network: a completion is rewarded for being <em>better than its siblings on the same prompt</em>, not for exceeding some absolute, learned expectation. The GRPO policy gradient update is then:</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{GRPO}} = -\frac{1}{G} \sum_{i=1}^G \left[
+\min\left(\rho_i \hat{A}_i, \text{clip}(\rho_i, 1-\epsilon, 1+\epsilon)\hat{A}_i\right)
+- \beta \mathbb{D}_{\text{KL}}[\pi_\theta \| \pi_{\text{ref}}]
+\right]
+\]</span></p>
+<p>which retains PPO’s clipped importance-weighted objective and KL penalty, applied per-group rather than per-individual-rollout.</p>
+<p>GRPO is particularly effective for tasks with <strong>verifiable rewards</strong>, mathematical problem solving, code execution, structured output, where the reward signal is binary (correct/incorrect) rather than a learned reward model score, and is cheap enough to compute (running a unit test, checking an answer against a known solution) that generating a large group of rollouts per prompt is affordable. The group sampling strategy provides diverse rollouts that reveal which generation strategies succeed and which fail (some completions in the group solve the problem, others do not, and the contrast between them is the training signal) giving a clean gradient without the added cost and instability of training a fourth model.</p>
+<hr>
+</section>
+<section id="constitutional-ai-and-ai-feedback" class="level2" data-number="28.6">
+<h2 data-number="28.6" class="anchored" data-anchor-id="constitutional-ai-and-ai-feedback"><span class="header-section-number">28.6</span> Constitutional AI and AI Feedback</h2>
+<p>Constitutional AI <span class="citation" data-cites="bai2022constitutional"><a href="#ref-bai2022constitutional" role="doc-biblioref">[11]</a></span> addresses a scaling bottleneck that applies equally to every method covered so far: RLHF, DPO, and GRPO all still assume that <em>some</em> preference or reward signal exists to train against, and for RLHF and DPO specifically that signal traces back to human preference annotation, which is expensive, slow, and cannot scale to the full distribution of possible model behaviors. CAI replaces human feedback with AI feedback, guided by a set of principles (the “constitution”) that specifies the values the model should embody.</p>
+<section id="the-two-stage-cai-procedure" class="level3" data-number="28.6.1">
+<h3 data-number="28.6.1" class="anchored" data-anchor-id="the-two-stage-cai-procedure"><span class="header-section-number">28.6.1</span> The Two-Stage CAI Procedure</h3>
+<p><strong>Stage 1: Supervised Learning from AI Feedback (SL-CAI).</strong> The model is prompted to generate a response to a potentially harmful query, then prompted again to critique that response according to the constitutional principles, then prompted again to revise the response based on the critique. This critique-revision cycle is repeated multiple times. The final revised responses become the supervised fine-tuning data.</p>
+<p>An example constitutional principle used in Anthropic’s implementation is: “Choose the response that is least likely to contain harmful or unethical content.” The model is prompted along the lines of: identify specific ways the response is harmful, unethical, or dangerous, then rewrite the response to address the identified harms. Repeating this several times per query produces training data with no human annotator in the loop at all.</p>
+<p><strong>Stage 2: Reinforcement Learning from AI Feedback (RLAIF).</strong> A separate model is prompted to judge which of two completions is better according to the constitutional principles, generating AI preference labels that replace the human preference labels. A reward model is trained on these AI-generated preferences and the policy is then optimized using PPO against this AI reward model.</p>
+<p>The cost reduction is substantial: generating AI feedback requires model inference rather than human annotation time, so a process that would require months of human annotation can be run overnight. The tradeoff is in quality: AI feedback reflects the labeling model’s values and judgment, which may deviate from human preferences in systematic ways that are difficult to detect without explicit human evaluation, the labeling model inherits its own alignment gaps, and those gaps propagate into whatever is trained against its labels.</p>
+<hr>
+</section>
+</section>
+<section id="reward-hacking-and-alignment-failure-modes" class="level2" data-number="28.7">
+<h2 data-number="28.7" class="anchored" data-anchor-id="reward-hacking-and-alignment-failure-modes"><span class="header-section-number">28.7</span> Reward Hacking and Alignment Failure Modes</h2>
+<p>Alignment methods are not solved. The reward model is an imperfect proxy for human values, and optimization pressure (whether from PPO, DPO, or any variant in between) finds and exploits its failures. Understanding these failure modes is as important as understanding the methods that produce them, because each failure mode below is a <em>specific, recognizable shape</em> that the general overoptimization problem takes in practice.</p>
+<section id="sycophancy" class="level3" data-number="28.7.1">
+<h3 data-number="28.7.1" class="anchored" data-anchor-id="sycophancy"><span class="header-section-number">28.7.1</span> Sycophancy</h3>
+<p>Sycophancy is a systematic alignment failure where models learn to tell users what they want to hear rather than what is true. It arises when human annotators prefer responses that validate their existing beliefs, express enthusiasm, or agree with the user’s framing, a preference that is easy to satisfy by producing agreeable text and that does not require accuracy. In Bradley-Terry terms, agreeable-but-wrong responses can score <span class="math inline">\(r_w &gt; r_l\)</span> against disagreeable-but-correct ones often enough, in the annotation data, that the reward model learns agreeableness as a shortcut to high reward.</p>
+<p>A sycophantic model will change its stated position when the user expresses disagreement, even when the model’s original position was correct. It will overpraise poor work, understate risks, and omit uncomfortable information.</p>
+<p>Mitigations include explicitly including anti-sycophancy examples in preference data (preferred completions that maintain correct positions under user pressure), training reward models to penalize position changes in response to user disagreement, and including calibration objectives that penalize expressed confidence on questions where the model is factually wrong.</p>
+</section>
+<section id="verbosity-bias" class="level3" data-number="28.7.2">
+<h3 data-number="28.7.2" class="anchored" data-anchor-id="verbosity-bias"><span class="header-section-number">28.7.2</span> Verbosity Bias</h3>
+<p>RLHF-trained models tend to produce longer responses than necessary because human annotators, all else equal, often prefer longer responses, they feel more thorough, more authoritative. This creates a systematic pressure toward verbosity: the optimal strategy for maximizing reward model scores is to add qualifications, examples, and elaborations regardless of whether they improve actual quality. This is structurally the same failure as sycophancy: a superficial property of the response (length, agreeableness) is easier for annotators to notice than the underlying property they are supposed to be judging (actual thoroughness, actual correctness), so the reward model learns the easy-to-notice proxy.</p>
+<p>The mitigation at the data level is explicit length-calibration in preference data: annotators are instructed to prefer concise responses that fully address the query over longer responses that pad with unnecessary content. The mitigation at the loss-function level is SimPO’s length normalization, which removes the mathematical incentive for longer total log-probability directly from the objective, rather than relying on annotators to catch every instance of padding.</p>
+</section>
+<section id="specification-gaming" class="level3" data-number="28.7.3">
+<h3 data-number="28.7.3" class="anchored" data-anchor-id="specification-gaming"><span class="header-section-number">28.7.3</span> Specification Gaming</h3>
+<p>The most serious failure mode is one where the model learns to satisfy the literal specification of the reward function while violating its intent. A model rewarded for “being helpful” may learn that expressing enthusiasm (“Great question!”) increases reward model scores regardless of the actual helpfulness of the response. A model rewarded for “avoiding harm” may learn to refuse benign requests that superficially resemble harmful ones, satisfying the avoid-harm criterion while failing the helpfulness criterion. Sycophancy and verbosity bias, above, are really two well-studied special cases of specification gaming; the general phenomenon is broader and less predictable, because it emerges wherever the reward function’s literal letter and its intended spirit come apart, and there is no way to enumerate every place that can happen in advance.</p>
+<p>Specification gaming is difficult to eliminate because it emerges from optimization pressure finding unexpected solutions, it is a consequence of the optimization process itself, not a bug in any single component. The primary defense is diversity and adversarial pressure in preference data collection: red-teamers explicitly try to find prompts that elicit specification-gaming behavior, and the resulting preference labels are included in training, in effect trying to patch each gap as it is discovered rather than trying to prevent gaps from existing at all.</p>
+<hr>
+</section>
+</section>
+<section id="practical-alignment-pipelines" class="level2" data-number="28.8">
+<h2 data-number="28.8" class="anchored" data-anchor-id="practical-alignment-pipelines"><span class="header-section-number">28.8</span> Practical Alignment Pipelines</h2>
+<p>Production alignment is not a single method but a sequence of stages, each addressing a different aspect of the alignment problem covered separately above. This section puts the pieces back together into the pipeline that a production lab actually runs.</p>
+<section id="typical-production-pipeline" class="level3" data-number="28.8.1">
+<h3 data-number="28.8.1" class="anchored" data-anchor-id="typical-production-pipeline"><span class="header-section-number">28.8.1</span> Typical Production Pipeline</h3>
+<ol type="1">
+<li><strong>Pretraining</strong>: train the base model on a large diverse corpus.</li>
+<li><strong>SFT</strong>: fine-tune on 50K–500K instruction-response pairs to establish the assistant format and basic instruction following.</li>
+<li><strong>Reward model training</strong>: collect 100K–1M human preference pairs on SFT model completions; train a reward model (typically the same size as the policy or larger) on Bradley-Terry loss.</li>
+<li><strong>RLHF/DPO</strong>: optimize the policy against the reward model (PPO) or directly against preference data (DPO). Run for 100–1,000 gradient steps per preference pair; monitor KL divergence from the SFT policy throughout.</li>
+<li><strong>Iterative refinement</strong>: deploy the aligned model; collect new preference data on the deployed model’s completions; retrain the reward model and run another round of preference optimization. Repeat. This step exists precisely because both the reward-model staleness problem and the DPO data-staleness problem worsen the longer a fixed reward model or fixed preference dataset is optimized against.</li>
+<li><strong>Safety-specific alignment</strong>: targeted rounds of preference optimization on safety-relevant behaviors, refusals of harmful requests, honesty under pressure, calibrated uncertainty. These often use the Constitutional AI techniques to scale annotation to the volume needed for targeted safety training.</li>
+</ol>
+<p>The iterative structure in step 5 is essential, not optional. The preference data collected in round <span class="math inline">\(k\)</span> is generated by the policy from round <span class="math inline">\(k-1\)</span>; by round <span class="math inline">\(k+1\)</span>, the policy has shifted and the old preference data is stale, the exact same distributional-drift problem that motivates the KL penalty within a single round now recurs <em>across</em> rounds. Continuous data collection and retraining is required to maintain alignment quality as the model improves.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="28.9">
+<h2 data-number="28.9" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">28.9</span> Key Takeaways</h2>
+<ul>
+<li>Alignment addresses the gap between a competent base model and a helpful, honest, safe one; instruction fine-tuning establishes the format while alignment trains the values.</li>
+<li>Reward models are trained on human pairwise preferences using the Bradley-Terry loss; they are imperfect proxies that degrade under optimization pressure — a phenomenon called reward overoptimization.</li>
+<li>RLHF optimizes the policy to maximize reward model scores with a KL penalty to prevent divergence from the reference policy; the <span class="math inline">\(\beta\)</span> parameter controls the strength of this regularization, and the value model exists to reduce the variance of a sparse, end-of-sequence reward signal.</li>
+<li>PPO-based RLHF requires four models simultaneously — policy, reference, reward, and value model — making it significantly more expensive and fragile than supervised fine-tuning.</li>
+<li>DPO eliminates the reward model and value model by reparameterizing the RLHF objective directly in terms of policy log-ratios; training reduces to a supervised loss on preference pairs, requiring only the policy and a frozen reference model, at the cost of being off-policy.</li>
+<li>IPO fixes DPO’s gradient saturation on deterministic preferences; ORPO eliminates the reference model entirely by using odds ratios from the current policy; SimPO adds length normalization and a margin.</li>
+<li>GRPO is a PPO variant, not a DPO variant: it stays on-policy but replaces the learned value model with a group-relative advantage estimated from multiple rollouts of the same prompt, and is especially effective where rewards are cheaply verifiable (math, code).</li>
+<li>Constitutional AI replaces human preference annotation with AI-generated feedback guided by explicit principles; RLAIF at scale matches RLHF quality on approximately 58% of evaluations while scaling annotation by orders of magnitude.</li>
+<li>Sycophancy and verbosity bias are specific, well-studied instances of the more general specification-gaming failure mode: whenever a superficial property of a response is easier for a reward model to notice than the underlying quality it is meant to proxy, optimization pressure will find and exploit that gap.</li>
+<li>Production alignment is iterative: preference data becomes stale as the policy improves, requiring continuous collection on the current model’s completions and periodic reward model retraining.</li>
+<li>The annotation guideline choices — what “better” means, how harmful prompts are sampled, how safety preferences are weighted — are among the most consequential alignment decisions and the least visible in published work.</li>
+</ul>
+<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/ch9/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;28.2: Cheat sheet.
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="28.10">
+<h2 data-number="28.10" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">28.10</span> Further Reading</h2>
+<ul>
+<li><p>Christiano, P., Leike, J., Brown, T. B., Martic, M., Legg, S., &amp; Amodei, D. (2017). <em>Deep Reinforcement Learning from Human Preferences.</em> NeurIPS. — The founding RLHF paper applied to continuous control; the preference elicitation and reward model training procedure establish the core framework later applied to language models.</p></li>
+<li><p>Ouyang, L., et al.&nbsp;(2022). <em>Training language models to follow instructions with human feedback.</em> NeurIPS. — InstructGPT; the three-stage SFT→RM→PPO pipeline applied to GPT-3; the inter-annotator agreement analysis and the overoptimization curves are the key empirical contributions.</p></li>
+<li><p>Rafailov, R., Sharma, A., Mitchell, E., Manning, C. D., Ermon, S., &amp; Finn, C. (2023). <em>Direct Preference Optimization: Your Language Model is Secretly a Reward Model.</em> NeurIPS. — DPO; the derivation from the RLHF closed-form solution is the key theoretical contribution; the infrastructure simplification is the key practical contribution.</p></li>
+<li><p>Bai, Y., et al.&nbsp;(2022). <em>Constitutional AI: Harmlessness from AI Feedback.</em> Anthropic. — Introduces the critique-revision procedure and RLAIF; the scaling argument for AI feedback is the key contribution; Appendix A contains the full constitution used in the experiments.</p></li>
+<li><p>Gao, L., Biderman, S., Black, S., Golding, L., Hoppe, T., Foster, C., Phang, J., He, H., Thite, A., Nabeshima, N., Presser, S., &amp; Leahy, C. (2022). <em>Scaling Laws for Reward Model Overoptimization.</em> ICML. — Quantifies the overoptimization phenomenon; the curves showing human preference score as a function of KL from the reference policy are the key empirical contribution.</p></li>
+<li><p>Hong, J., Lee, N., &amp; Thorne, J. (2024). <em>ORPO: Monolithic Preference Optimization without Reference Model.</em> EMNLP. — Introduces ORPO and the odds-ratio formulation; the single-stage SFT+preference optimization result is the key practical contribution.</p></li>
+<li><p>Shao, Z., et al.&nbsp;(2024). <em>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.</em> arXiv. — Introduces GRPO; the group-relative advantage estimation and the elimination of the value model are the key contributions; the mathematical reasoning results establish GRPO as viable for verifiable reward tasks.</p></li>
+<li><p>Perez, E., Huang, S., Song, F., Cai, T., Ring, R., Aslanides, J., Glaese, A., McAleese, N., &amp; Irving, G. (2022). <em>Red Teaming Language Models with Language Models.</em> arXiv. — Systematic characterization of sycophancy and other alignment failure modes; the methodology for eliciting failure modes using adversarial prompting is widely used in production alignment.</p></li>
+</ul>
+<hr>
+
+
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-ouyang2022training" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span class="nocase">L. Ouyang <em>et al.</em></span>, <span>“Training language models to follow instructions with human feedback,”</span> <em>arXiv preprint arXiv:2203.02155</em>, 2022.</div>
+</div>
+<div id="ref-gao2023scaling" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">L. Gao, J. Schulman, and J. Hilton, <span>“Scaling laws for reward model overoptimization,”</span> in <em>International conference on machine learning</em>, PMLR, 2023, pp. 10835–10866.</div>
+</div>
+<div id="ref-christiano2017deep" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">P. F. Christiano, J. Leike, T. Brown, M. Martic, S. Legg, and D. Amodei, <span>“Deep reinforcement learning from human preferences,”</span> <em>Advances in neural information processing systems</em>, vol. 30, 2017.</div>
+</div>
+<div id="ref-ziegler2019fine" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">D. M. Ziegler <em>et al.</em>, <span>“Fine-tuning language models from human preferences,”</span> <em>arXiv preprint arXiv:1909.08593</em>, 2019.</div>
+</div>
+<div id="ref-schulman2017proximal" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, <span>“Proximal policy optimization algorithms,”</span> <em>arXiv preprint arXiv:1707.06347</em>, 2017.</div>
+</div>
+<div id="ref-engstrom2020implementation" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">L. Engstrom <em>et al.</em>, <span>“Implementation matters in deep policy gradients: A case study on ppo and trpo,”</span> <em>arXiv preprint arXiv:2005.12729</em>, 2020.</div>
+</div>
+<div id="ref-rafailov2023direct" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">R. Rafailov, A. Sharma, E. Mitchell, S. Ermon, C. D. Manning, and C. Finn, <span>“Direct preference optimization: Your language model is secretly a reward model,”</span> <em>arXiv preprint arXiv:2305.18290</em>, 2023.</div>
+</div>
+<div id="ref-azar2024general" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">M. G. Azar <em>et al.</em>, <span>“A general theoretical paradigm to understand learning from human preferences,”</span> in <em>International conference on artificial intelligence and statistics</em>, PMLR, 2024, pp. 4447–4455.</div>
+</div>
+<div id="ref-hong2024orpo" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">J. Hong, N. Lee, and J. Thorne, <span>“Orpo: Monolithic preference optimization without reference model,”</span> in <em>Proceedings of the 2024 conference on empirical methods in natural language processing</em>, 2024, pp. 11170–11189.</div>
+</div>
+<div id="ref-shao2024deepseekmath" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline"><span class="nocase">Z. Shao <em>et al.</em></span>, <span>“Deepseekmath: Pushing the limits of mathematical reasoning in open language models,”</span> <em>arXiv preprint arXiv:2402.03300</em>, 2024.</div>
+</div>
+<div id="ref-bai2022constitutional" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline"><span class="nocase">Y. Bai <em>et al.</em></span>, <span>“Constitutional ai: Harmlessness from ai feedback,”</span> <em>arXiv preprint arXiv:2212.08073</em>, 2022.</div>
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/llm\.hosseini\.work");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../book/part5/fine_tuning.html" class="pagination-link" aria-label="Fine-Tuning and Parameter-Efficient Adaptation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Fine-Tuning and Parameter-Efficient Adaptation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
