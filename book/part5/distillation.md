@@ -342,7 +342,7 @@ to off-policy distillation.
 
 ---
 
-## Reasoning Distillation
+## Reasoning Distillation {#sec-Reasoning-Distillation}
 
 The distillation of reasoning capability in particular chain-of-thought
 reasoning, deserves separate treatment because it involves transferring
