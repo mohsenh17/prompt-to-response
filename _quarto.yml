@@ -61,6 +61,7 @@ book:
         - book/part5/distributed_training.md
         - book/part5/distillation.md
         - book/part5/fine_tuning.md
+        - book/part5/alignment.md
 
     - part: "The Trial of the Answer"
       chapters: []
