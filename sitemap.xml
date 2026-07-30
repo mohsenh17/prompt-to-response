@@ -18,7 +18,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part2/Embeddings_and_meaning.html</loc>
-    <lastmod>2026-07-10T12:27:31.278Z</lastmod>
+    <lastmod>2026-07-30T13:59:53.665Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part3/transformer-architecture.html</loc>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/embedding_for_search.html</loc>
-    <lastmod>2026-07-10T12:27:31.283Z</lastmod>
+    <lastmod>2026-07-30T13:59:53.665Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part4/vector_databases.html</loc>
@@ -106,7 +106,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/distillation.html</loc>
-    <lastmod>2026-07-29T17:20:36.055Z</lastmod>
+    <lastmod>2026-07-29T18:34:32.022Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/fine_tuning.html</loc>
@@ -118,14 +118,18 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/reasoning.html</loc>
-    <lastmod>2026-07-29T17:54:42.807Z</lastmod>
+    <lastmod>2026-07-29T18:34:32.026Z</lastmod>
+  </url>
+  <url>
+    <loc>https://llm.hosseini.work/book/part5/embedding.html</loc>
+    <lastmod>2026-07-30T13:59:53.665Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-07-29T18:03:33.987Z</lastmod>
+    <lastmod>2026-07-30T14:01:17.778Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-07-29T18:03:41.187Z</lastmod>
+    <lastmod>2026-07-30T14:01:25.376Z</lastmod>
   </url>
 </urlset>
