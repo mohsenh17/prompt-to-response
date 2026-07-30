@@ -63,6 +63,7 @@ book:
         - book/part5/fine_tuning.md
         - book/part5/alignment.md
         - book/part5/reasoning.md
+        - book/part5/embedding.md
 
     - part: "The Trial of the Answer"
       chapters: []
