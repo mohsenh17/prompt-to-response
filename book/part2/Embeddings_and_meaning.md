@@ -1,4 +1,4 @@
-# Embeddings and Meaning Representation
+# Embeddings and Meaning Representation {#sec-Embeddings-and-Meaning}
 
 > **The canonical question for this chapter:**
 > *How does a model convert a token ID into something
