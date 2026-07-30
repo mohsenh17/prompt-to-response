@@ -1,4 +1,4 @@
-# Embeddings for Search
+# Embeddings for Search {#sec-Embeddings-for-Search}
 
 > **The canonical question for this chapter:**
 > *You have 500,000 chunks from your document corpus. How do you convert them
