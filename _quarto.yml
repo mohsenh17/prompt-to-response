@@ -66,7 +66,8 @@ book:
         - book/part5/embedding.md
 
     - part: "The Trial of the Answer"
-      chapters: []
+      chapters: 
+        - book/part6/human_eval.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    
