@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>20&nbsp; Data Collection and Curation – From Prompt to Response</title>
+<title>31&nbsp; Human Evaluation – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,7 +23,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -33,8 +53,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part5/synthetic_data.html" rel="next">
-<link href="../../book/part4/grounded_generation.html" rel="prev">
+<link href="../../book/part5/embedding.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -79,14 +98,43 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="31&nbsp; Human Evaluation – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch1/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
+<meta name="twitter:title" content="31&nbsp; Human Evaluation – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch1/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -261,7 +309,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -456,16 +504,16 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">The Forging of Intelligence</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span></a>
   </div>
 </li>
@@ -533,16 +581,16 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">The Trial of the Answer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/human_eval.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/human_eval.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></span></a>
   </div>
 </li>
@@ -562,17 +610,14 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-data-is-the-real-foundation" id="toc-why-data-is-the-real-foundation" class="nav-link active" data-scroll-target="#why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</a></li>
-  <li><a href="#what-scale-actually-means" id="toc-what-scale-actually-means" class="nav-link" data-scroll-target="#what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</a></li>
-  <li><a href="#the-primary-sources" id="toc-the-primary-sources" class="nav-link" data-scroll-target="#the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</a></li>
-  <li><a href="#the-data-pipeline" id="toc-the-data-pipeline" class="nav-link" data-scroll-target="#the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</a></li>
-  <li><a href="#deduplication-the-underrated-problem" id="toc-deduplication-the-underrated-problem" class="nav-link" data-scroll-target="#deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</a></li>
-  <li><a href="#quality-filtering-what-quality-means" id="toc-quality-filtering-what-quality-means" class="nav-link" data-scroll-target="#quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</a></li>
-  <li><a href="#domain-mixing-and-data-proportions" id="toc-domain-mixing-and-data-proportions" class="nav-link" data-scroll-target="#domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</a></li>
-  <li><a href="#the-data-contamination-problem" id="toc-the-data-contamination-problem" class="nav-link" data-scroll-target="#the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</a></li>
-  <li><a href="#the-web-as-a-cultural-artifact" id="toc-the-web-as-a-cultural-artifact" class="nav-link" data-scroll-target="#the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">20.11</span> Further reading</a></li>
+  <li><a href="#why-evaluation-is-hard" id="toc-why-evaluation-is-hard" class="nav-link active" data-scroll-target="#why-evaluation-is-hard"><span class="header-section-number">31.1</span> Why Evaluation Is Hard</a></li>
+  <li><a href="#what-human-evaluators-actually-assess" id="toc-what-human-evaluators-actually-assess" class="nav-link" data-scroll-target="#what-human-evaluators-actually-assess"><span class="header-section-number">31.2</span> What Human Evaluators Actually Assess</a></li>
+  <li><a href="#absolute-vs.-comparative-evaluation" id="toc-absolute-vs.-comparative-evaluation" class="nav-link" data-scroll-target="#absolute-vs.-comparative-evaluation"><span class="header-section-number">31.3</span> Absolute vs.&nbsp;Comparative Evaluation</a></li>
+  <li><a href="#the-chatbot-arena-methodology" id="toc-the-chatbot-arena-methodology" class="nav-link" data-scroll-target="#the-chatbot-arena-methodology"><span class="header-section-number">31.4</span> The Chatbot Arena Methodology</a></li>
+  <li><a href="#annotation-guidelines-and-annotator-quality" id="toc-annotation-guidelines-and-annotator-quality" class="nav-link" data-scroll-target="#annotation-guidelines-and-annotator-quality"><span class="header-section-number">31.5</span> Annotation Guidelines and Annotator Quality</a></li>
+  <li><a href="#human-evaluation-in-the-alignment-loop" id="toc-human-evaluation-in-the-alignment-loop" class="nav-link" data-scroll-target="#human-evaluation-in-the-alignment-loop"><span class="header-section-number">31.6</span> Human Evaluation in the Alignment Loop</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">31.7</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">31.8</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -580,9 +625,9 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></h1>
+<h1 class="title"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></h1>
 </div>
 
 
@@ -600,7 +645,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>Before a model can answer anything, it must read everything. How does the raw internet become training data and why are the choices made here the ones that propagate furthest and are corrected least easily?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How do you measure whether a language model is actually good and why does that measurement turn out to be one of the hardest problems in the field?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -616,234 +661,188 @@ ul.task-list li input[type="checkbox"] {
 <img src="figures/ch1/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;20.1: The journey through the Model Mind.
+Figure&nbsp;31.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>Part IV showed how retrieval gives the model access to external knowledge at inference time. Part V rewinds the clock entirely. The model had to learn to do all of that from somewhere. This chapter covers where: the construction of the training corpus that precedes everything else in Part V. Data collection is not a preprocessing step you get out of the way before the real work begins. It is the first architectural decision of the entire system.</p>
+<p>We are at the opening of Part VI. I structured the evaluation around human judgment first, before automated metrics, benchmarks, and perplexity, because humans define quality. Every automated metric is an approximation of human judgment. Understanding what human evaluation actually measures, where it succeeds, and where it fails is the prerequisite for understanding what the approximations in the following chapters are approximating.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-data-is-the-real-foundation" class="level2" data-number="20.1">
-<h2 data-number="20.1" class="anchored" data-anchor-id="why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</h2>
-<p>Every capability an LLM has (reasoning, coding, translation, summarization, answering questions about French geography and quantum mechanics) traces back to the data it was trained on. The model has no built-in knowledge of the world. It has patterns compressed from text. Those patterns are only as good as the text that produced them.</p>
-<p>This means data collection is where the model’s capabilities are fundamentally shaped. Architecture decisions matter (attention, depth, positional encoding) but modern LLMs share a largely converged architecture. What they know, what they get wrong, what biases they carry, and what blind spots they have are primarily determined by data, not architecture.</p>
-<p>Most papers spend one paragraph on data and thirty pages on model design. This is backwards. The architecture of a 2024 model is recognizable from a 2020 model. The data is where they diverge.</p>
+<section id="why-evaluation-is-hard" class="level2" data-number="31.1">
+<h2 data-number="31.1" class="anchored" data-anchor-id="why-evaluation-is-hard"><span class="header-section-number">31.1</span> Why Evaluation Is Hard</h2>
+<p>Building a language model is an engineering problem with clear success criteria at the training stage: minimize loss on the training objective, achieve target perplexity on the held-out set, pass the scaling law predictions. Evaluating a deployed language model is a different kind of problem. The question is not “does the model predict tokens accurately?” but “does the model produce outputs that are useful, correct, safe, and pleasant to interact with?” These properties do not reduce to a single scalar, and they are not measurable by comparing the model’s output to a reference string.</p>
+<p>Consider a concrete example; A user asks: “What should I do about the chest pain I’ve been having?” A high-quality response acknowledges the potential seriousness of the symptom, recommends seeking medical evaluation, provides some information about what a clinician might assess, and does so in a tone that is calm rather than alarming. A poor response either dismisses the symptom, provides a confident (and potentially dangerous) self-diagnosis, or refuses to engage at all. No automated metric (not perplexity, not BLEU, not BERTScore) can distinguish the good response from the poor ones without understanding the medical context, the appropriate communication norms, and the downstream consequences of different responses.</p>
+<p>Human evaluation can make this distinction. It is slow, expensive, and difficult to scale. It is also the ground truth that every other evaluation method attempts to approximate.</p>
 <hr>
 </section>
-<section id="what-scale-actually-means" class="level2" data-number="20.2">
-<h2 data-number="20.2" class="anchored" data-anchor-id="what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</h2>
-<p>Training corpora are large enough that intuitions built on normal datasets break down. Some grounding numbers:</p>
-<p>GPT-3 trained on roughly 300 billion tokens. LLaMA 2 used 2 trillion tokens. Frontier models from 2024 are estimated to have trained on 10–15 trillion tokens. A token is approximately 0.75 words in English, so 1 trillion tokens is roughly 750 billion words, about 5 million books.</p>
-<p>No human has read 5 million books. No team of humans has read 5 million books. The model has, in a statistical sense, absorbed patterns from all of them.</p>
-<p>This scale creates an immediate engineering constraint: you cannot curate 10 trillion tokens by hand. You cannot read a meaningful fraction of it. Every quality decision must be made programmatically, which means every quality decision is imperfect. The question is not how to achieve perfect curation but it is how to make systematic decisions that produce the best results across billions of documents without ever seeing most of them.</p>
-<hr>
-</section>
-<section id="the-primary-sources" class="level2" data-number="20.3">
-<h2 data-number="20.3" class="anchored" data-anchor-id="the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</h2>
-<p>Modern LLM training data comes from four broad categories. Real datasets blend all of them in deliberate proportions.</p>
-<section id="web-crawls" class="level3" data-number="20.3.1">
-<h3 data-number="20.3.1" class="anchored" data-anchor-id="web-crawls"><span class="header-section-number">20.3.1</span> Web crawls</h3>
-<p>The largest source by volume. Common Crawl has been running automated web snapshots since 2008, releasing monthly snapshots each containing petabytes of raw HTML from billions of pages. The appeal is obvious: the web is the largest corpus of human-written text ever assembled. The problem is equally obvious: most of it is garbage. Spam, SEO content, duplicate pages, auto-generated text, comment sections, scraped aggregator sites, and machine-translated content sit alongside high-quality journalism, technical documentation, and encyclopedic reference.</p>
-<p>Raw web crawl data is unusable without extensive filtering. The question is how to filter aggressively enough to remove noise without losing diversity.</p>
-</section>
-<section id="curated-text-corpora" class="level3" data-number="20.3.2">
-<h3 data-number="20.3.2" class="anchored" data-anchor-id="curated-text-corpora"><span class="header-section-number">20.3.2</span> Curated text corpora</h3>
-<p>Books, academic papers, and high-quality long-form writing. Books3, Project Gutenberg, and the Pile’s academic subsets (ArXiv papers, PubMed abstracts, Wikipedia) fall into this category. These sources are much smaller by volume than web crawls (Wikipedia in all languages is roughly 20 billion tokens, a rounding error at frontier scale) but they contribute disproportionately to factual grounding, structured reasoning, and citation quality. They are heavily oversampled relative to their share of the internet.</p>
-</section>
-<section id="code-repositories" class="level3" data-number="20.3.3">
-<h3 data-number="20.3.3" class="anchored" data-anchor-id="code-repositories"><span class="header-section-number">20.3.3</span> Code repositories</h3>
-<p>GitHub and other code hosts. This has become a major data category not only because it teaches models to write and understand code, but because code has structural properties that improve general reasoning: it is unambiguous, logical, hierarchical, and extensively annotated with natural language in comments and docstrings.</p>
-<p>Models trained on large code corpora show improved performance on non-coding tasks including mathematics and structured reasoning, even when evaluated on tasks that have nothing to do with code. The mechanism is still debated, but the empirical result is consistent across model families.</p>
-</section>
-<section id="instruction-and-dialogue-data" class="level3" data-number="20.3.4">
-<h3 data-number="20.3.4" class="anchored" data-anchor-id="instruction-and-dialogue-data"><span class="header-section-number">20.3.4</span> Instruction and dialogue data</h3>
-<p>Conversations, Q&amp;A pairs, and instruction-following examples. This category is distinct because it teaches the model the format and register of being helpful, how to respond to a question, how to follow a directive, how to structure an explanation. It is often synthetic (generated by another model) or manually curated (human-written examples). It is typically much smaller in volume than web data but has outsized influence on how the final model behaves at inference time.</p>
-<hr>
-</section>
-</section>
-<section id="the-data-pipeline" class="level2" data-number="20.4">
-<h2 data-number="20.4" class="anchored" data-anchor-id="the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</h2>
-<p>Raw collection is just the beginning. Every serious training pipeline includes a sequence of filtering, deduplication, and quality scoring steps. Here is a representative pipeline for web data:</p>
-<pre><code>Raw HTML from crawl
-      │
-      ▼
-Language identification
-(discard non-target languages or assign per-language weights)
-      │
-      ▼
-Text extraction
-(strip HTML tags, boilerplate, navigation menus, ads, footers)
-      │
-      ▼
-Length and format filtering
-(discard very short pages, pages with too many special characters,
- pages where text-to-total-content ratio is too low)
-      │
-      ▼
-Heuristic quality filtering
-(word count, punctuation ratio, stop word ratio,
- line length distribution, duplicate line fraction)
-      │
-      ▼
-Deduplication
-(exact match by hash, near-duplicate via MinHash or SimHash,
- substring deduplication for repeated passages)
-      │
-      ▼
-Classifier-based quality scoring
-(trained model predicts P(high quality); discard below threshold)
-      │
-      ▼
-Toxicity and safety filtering
-(remove documents matching harmful content classifiers)
-      │
-      ▼
-Domain weighting and mixing
-(upsample high-quality sources, set per-domain proportions)
-      │
-      ▼
-Final training corpus</code></pre>
-<p>Each step involves tradeoffs. Aggressive quality filtering produces a cleaner corpus but reduces volume, which may hurt diversity and underrepresented language coverage. Loose filtering preserves volume but degrades signal. There is no universally correct threshold, the right settings depend on the target model, the available compute budget, and empirical evaluation on smaller runs.</p>
-<hr>
-</section>
-<section id="deduplication-the-underrated-problem" class="level2" data-number="20.5">
-<h2 data-number="20.5" class="anchored" data-anchor-id="deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</h2>
-<p>Duplicate content in training data is a serious and underappreciated problem that affects both quality and benchmark integrity.</p>
-<p>At web scale, the same article gets republished hundreds of times across aggregator sites, blogs, and content farms. If a document appears 500 times in the training set and once in the test set, the model has not learned to generalize it has only learned to memorize. This inflates benchmark performance and degrades real-world capability.</p>
-<p>Worse, repeated exposure to the same document teaches the model that this content is important. A piece of misinformation that went viral and was copied ten thousand times gets disproportionate weight relative to a single careful correction.</p>
-<p>Deduplication happens at multiple granularities:</p>
-<p><strong>Exact deduplication</strong> removes documents with identical content. This is cheap and straightforward, hash the document, compare against a lookup table, discard matches.</p>
-<p><strong>Near-duplicate detection</strong> removes documents that are semantically identical but not textually identical. Two articles with 95% word overlap but different headlines should not both appear in training. MinHash and SimHash are standard approaches: they produce a fingerprint of the document’s n-gram distribution that allows fast approximate comparison across billions of documents.</p>
-<p><strong>Substring deduplication</strong> removes repeated passages within documents, not just repeated documents. A web page that contains the same boilerplate legal disclaimer 200 times should not contribute 200 unique training examples.</p>
-<p>Research from Google (Lee et al., 2022) demonstrated that aggressive deduplication consistently improves model quality even when it reduces total token count. Less data, cleaner signal, better model, a counterintuitive result that has held up across multiple model families.</p>
-<hr>
-</section>
-<section id="quality-filtering-what-quality-means" class="level2" data-number="20.6">
-<h2 data-number="20.6" class="anchored" data-anchor-id="quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</h2>
-<p>Quality filtering is philosophically tricky because “quality” is a value judgment and the judgment embedded in your filtering approach shapes what the model learns is normal.</p>
-<section id="heuristic-filtering" class="level3" data-number="20.6.1">
-<h3 data-number="20.6.1" class="anchored" data-anchor-id="heuristic-filtering"><span class="header-section-number">20.6.1</span> Heuristic filtering</h3>
-<p>The most common approach uses signals computed from the document itself:</p>
+<section id="what-human-evaluators-actually-assess" class="level2" data-number="31.2">
+<h2 data-number="31.2" class="anchored" data-anchor-id="what-human-evaluators-actually-assess"><span class="header-section-number">31.2</span> What Human Evaluators Actually Assess</h2>
+<p>Human evaluation is not a single measurement but a family of related measurements depending on what dimension of quality is being assessed. The dimensions that matter most for language models:</p>
+<section id="helpfulness" class="level3" data-number="31.2.1">
+<h3 data-number="31.2.1" class="anchored" data-anchor-id="helpfulness"><span class="header-section-number">31.2.1</span> Helpfulness</h3>
+<p>Does the response address the user’s actual need? Helpfulness is the primary quality dimension for instruction-following models and the hardest to measure automatically. A helpful response:</p>
 <ul>
-<li>Average word length (too short suggests gibberish; too long suggests technical jargon or non-natural language)</li>
-<li>Ratio of alphabetic characters to total characters (low ratio suggests spam or code fragments)</li>
-<li>Presence of stop words (a proxy for natural language vs.&nbsp;keyword lists)</li>
-<li>Distribution of line lengths (regular short lines suggest poetry or bullet content; extremely variable suggests scraped layout artifacts)</li>
-<li>Ratio of duplicate lines within a document (high ratio suggests boilerplate or repeated headers)</li>
-<li>Presence of known spam or adult content patterns</li>
+<li>Correctly identifies what the user is asking (including implicit intent behind the literal request)</li>
+<li>Provides complete information relevant to the need</li>
+<li>Structures the information in a way the user can act on</li>
+<li>Calibrates detail and length to the complexity of the request</li>
 </ul>
+<p>Unhelpfulness takes many forms: answering the wrong question, providing accurate but irrelevant information, giving an incomplete answer that requires follow-up, being so exhaustive as to obscure the key information, or refusing a legitimate request unnecessarily.</p>
+<p>Annotators rating helpfulness must exercise judgment about what the user actually needed which may differ from what they literally asked for. This requires background knowledge and contextual reasoning that is difficult to specify in annotation guidelines and that varies across annotators.</p>
 </section>
-<section id="classifier-based-filtering" class="level3" data-number="20.6.2">
-<h3 data-number="20.6.2" class="anchored" data-anchor-id="classifier-based-filtering"><span class="header-section-number">20.6.2</span> Classifier-based filtering</h3>
-<p>The more sophisticated approach trains a classifier on examples of high and low-quality text. You take a small set of documents you believe are high quality (Wikipedia articles, selected books, academic papers), a set you believe are low quality (scraped spam, auto-generated content), train a binary classifier, and use its score to filter the full corpus.</p>
-<p>This approach was used to produce C4 (Colossal Clean Crawled Corpus), where a fastText classifier trained on Wikipedia and Common Crawl data scored documents and filtered those below a threshold. The resulting corpus was significantly smaller than the raw crawl but dramatically higher quality.</p>
-<p><strong>The bias this introduces.</strong> The classifier inherits the biases of its positive examples. If high-quality training examples are predominantly English and from Western academic and journalistic traditions, the classifier will score content from other cultural, linguistic, and domain contexts lower, not because those documents are low quality, but because they are dissimilar from the examples the classifier was trained to recognize as high quality.</p>
-</section>
-<section id="perplexity-based-filtering" class="level3" data-number="20.6.3">
-<h3 data-number="20.6.3" class="anchored" data-anchor-id="perplexity-based-filtering"><span class="header-section-number">20.6.3</span> Perplexity-based filtering</h3>
-<p>A variant: use a smaller, already-trained language model to score each document’s perplexity. Very high perplexity (the model is very surprised by the text) suggests low-quality or anomalous content. Very low perplexity (the model already knows this text well) may suggest repeated or memorized content.</p>
-<p>The limitation: a small model trained on web text will score high-quality text in specialized domains (medical literature, legal documents, code documentation) as high perplexity simply because it is unfamiliar. Perplexity filtering can inadvertently remove exactly the specialized knowledge that makes the training data valuable.</p>
-<hr>
-</section>
-</section>
-<section id="domain-mixing-and-data-proportions" class="level2" data-number="20.7">
-<h2 data-number="20.7" class="anchored" data-anchor-id="domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</h2>
-<p>Collecting data is one problem and deciding how much of each source to include is another, the decision matters as much as collection quality.</p>
-<p>Frontier models deliberately oversample high-quality sources relative to their share of the raw internet. A representative mixing strategy:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Source</th>
-<th>Share of training tokens</th>
-<th>Share of raw internet</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Web crawl (filtered)</td>
-<td>~45%</td>
-<td>~99%</td>
-</tr>
-<tr class="even">
-<td>Books</td>
-<td>~20%</td>
-<td>&lt;0.1%</td>
-</tr>
-<tr class="odd">
-<td>Code</td>
-<td>~15%</td>
-<td>~1%</td>
-</tr>
-<tr class="even">
-<td>Academic papers</td>
-<td>~10%</td>
-<td>&lt;0.1%</td>
-</tr>
-<tr class="odd">
-<td>Wikipedia</td>
-<td>~5%</td>
-<td>&lt;0.01%</td>
-</tr>
-<tr class="even">
-<td>Instruction / dialogue</td>
-<td>~5%</td>
-<td>near zero</td>
-</tr>
-</tbody>
-</table>
-<p>These proportions are not derived from first principles. They are found through empirical ablations: train smaller models on different mixes, evaluate across benchmark suites, and iterate toward the mix that produces the best results. This is expensive and also one of the least documented aspects of frontier model development. Mixing ratios are among the most guarded details in model technical reports.</p>
-<section id="domain-mixing-and-capability" class="level3" data-number="20.7.1">
-<h3 data-number="20.7.1" class="anchored" data-anchor-id="domain-mixing-and-capability"><span class="header-section-number">20.7.1</span> Domain mixing and capability</h3>
-<p>Mixing decisions directly affect model capabilities. A model trained with higher code proportion shows better performance on code-related tasks, on mathematical reasoning, and (empirically, though mechanistically unclear) on structured reasoning tasks generally. A model with more multilingual data performs better across languages. A model with more instruction data is more naturally helpful without additional fine-tuning.</p>
-<p>Changing the mix at frontier scale (adjusting proportions for a 15 trillion token training run) is a multi-month commitment. Getting it right requires either expensive experiments at smaller scale (with uncertain extrapolation to full scale) or expensive mistakes at full scale.</p>
-<hr>
-</section>
-</section>
-<section id="the-data-contamination-problem" class="level2" data-number="20.8">
-<h2 data-number="20.8" class="anchored" data-anchor-id="the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</h2>
-<p>A fundamental requirement of valid evaluation is that the test set must not appear in the training data. If the model has seen the answers, the evaluation tells you nothing about generalization.</p>
-<p>At the scale of modern training corpora, this is genuinely difficult to guarantee. The internet contains solutions to many standard benchmarks: HumanEval coding problems appear on GitHub; MMLU questions appear in study guides and Quora discussions; GSM8K math problems appear on math tutoring sites; BIG-Bench tasks appear in academic papers that post-date the benchmark but pre-date many models.</p>
-<p>Contamination detection requires: 1. Collecting all known evaluation datasets 2. Running n-gram matching between evaluation examples and training documents 3. Removing or flagging contaminated training documents 4. Reporting contamination rates explicitly in publications</p>
-<p>Many papers do this imperfectly or not at all. When a model achieves dramatically higher scores than predecessors on a specific benchmark, contamination is one of the first alternative hypotheses to evaluate. The difficulty of ruling it out cleanly is one reason the field has moved toward harder-to-memorize benchmarks, live coding challenges, human preference evaluation, new tasks created after the training cutoff.</p>
-<hr>
-</section>
-<section id="the-web-as-a-cultural-artifact" class="level2" data-number="20.9">
-<h2 data-number="20.9" class="anchored" data-anchor-id="the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</h2>
-<p>One underappreciated aspect of using the web as training data is the fact that the web is not a neutral sample of human knowledge. It overrepresents certain voices, certain languages, certain time periods, and certain topics.</p>
-<p>English accounts for roughly half of web content despite being spoken by only 17% of the world’s population. Technical and academic content from the United States and Western Europe is disproportionately represented. Recent content is more represented than historical content. Content from wealthy countries with high internet penetration is more represented than content from countries with lower penetration.</p>
-<p>A model trained primarily on this data will reflect these asymmetries: it will know more about some cultures, regions, and perspectives than others. It will have stronger capabilities in some languages than others. This is not a bug in any simple sense (it is a direct consequence of training on the data that exists) but it has real downstream consequences for who the model serves well and who it serves poorly.</p>
-<p>These asymmetries can be partially corrected through deliberate data sourcing: specifically mining underrepresented language content, partnering with institutions that have access to non-web text corpora, and applying language-specific oversampling. They cannot be fully corrected because the underlying data simply does not exist in comparable volume for all languages and cultures.</p>
-<hr>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="20.10">
-<h2 data-number="20.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</h2>
+<section id="factual-accuracy" class="level3" data-number="31.2.2">
+<h3 data-number="31.2.2" class="anchored" data-anchor-id="factual-accuracy"><span class="header-section-number">31.2.2</span> Factual Accuracy</h3>
+<p>Does the response contain false statements? Accuracy is more tractable than helpfulness because it can often be verified against external sources, but it is still surprisingly difficult to assess at scale. Evaluating factual accuracy requires:</p>
 <ul>
-<li>LLM training requires trillions of tokens; no human-curated dataset exists at this scale, so web crawls are the primary source — but raw web data is low quality and requires extensive filtering before use</li>
-<li>Every serious training pipeline includes language identification, text extraction, heuristic quality filtering, deduplication, and classifier-based scoring; each step involves tradeoffs between quality and diversity</li>
-<li>Deduplication is as important as quality filtering — repeated content teaches memorization rather than generalization; aggressive deduplication consistently improves model quality even when it reduces token count</li>
-<li>Domain mixing is a deliberate design choice: high-quality sources (books, academic papers, Wikipedia) are heavily oversampled relative to their share of the raw internet; these proportions are found empirically, not derived from first principles</li>
-<li>Classifier-based quality filtering inherits the biases of its training examples; content that is dissimilar from Western academic and journalistic norms may be scored lower even when it is high quality on its own terms</li>
-<li>Data contamination with evaluation benchmarks is a real and underreported problem; detecting it requires explicit n-gram matching between training documents and all known evaluation datasets</li>
-<li>The web overrepresents certain languages, cultures, and perspectives; these asymmetries propagate directly into model capabilities and cannot be fully corrected after training</li>
+<li>Domain knowledge sufficient to recognize errors (a non-expert may not know that a plausible-sounding claim is false)</li>
+<li>Access to reliable verification sources</li>
+<li>Judgment about whether a claim is factually wrong versus merely imprecise, outdated, or contestable</li>
+</ul>
+<p>The hallucination problem (models generating confident statements that are false but plausible) makes accuracy evaluation particularly important and particularly difficult. A fluent, well-organized response that contains a subtle factual error is harder to catch than an obviously wrong response.</p>
+</section>
+<section id="harmlessness" class="level3" data-number="31.2.3">
+<h3 data-number="31.2.3" class="anchored" data-anchor-id="harmlessness"><span class="header-section-number">31.2.3</span> Harmlessness</h3>
+<p>Does the response avoid producing harmful content? Harmlessness assessment covers a spectrum from clearly harmful (dangerous instructions, discriminatory content) to borderline (content that may be harmful in some contexts but not others) to safe. Assessing harmlessness requires:</p>
+<ul>
+<li>Understanding the potential uses of the content, including misuse</li>
+<li>Applying consistent standards across demographic groups and topics (content that would be considered harmful if directed at one group should be evaluated equivalently if directed at another)</li>
+<li>Accounting for context (the same information may be appropriate in a professional context and inappropriate in a consumer context)</li>
+</ul>
+<p>Inter-annotator agreement on harmlessness tends to be lower than on other dimensions, because harmlessness judgments involve value questions that reasonable people disagree about.</p>
+</section>
+<section id="honesty-and-calibration" class="level3" data-number="31.2.4">
+<h3 data-number="31.2.4" class="anchored" data-anchor-id="honesty-and-calibration"><span class="header-section-number">31.2.4</span> Honesty and Calibration</h3>
+<p>Is the model appropriately uncertain? Does it acknowledge the limits of its knowledge? A well-calibrated model expresses confidence proportional to its actual accuracy it does not claim certainty about things it does not know, and it does not hedge excessively about things it knows well.</p>
+<p>Calibration is difficult to assess in individual responses because it requires comparing expressed confidence to actual accuracy across many responses. A model that says “I’m not certain, but I believe…” and is wrong 30% of the time is better calibrated than one that says “The answer is definitely…” and is wrong 10% of the time, because the first model is signaling uncertainty appropriately.</p>
+</section>
+<section id="format-and-style" class="level3" data-number="31.2.5">
+<h3 data-number="31.2.5" class="anchored" data-anchor-id="format-and-style"><span class="header-section-number">31.2.5</span> Format and Style</h3>
+<p>Is the response appropriately formatted? Does it match the tone of the conversation? Format quality covers: appropriate use of markdown when the interface renders it, appropriate response length for the complexity of the request, tone calibration (formal vs.&nbsp;casual), clarity and organization of complex information.</p>
+<p>Format quality is the most tractable dimension for automated evaluation because it is less dependent on domain knowledge, but it is also the least important quality dimension, a well-formatted bad answer is worse than a poorly formatted good one.</p>
+<hr>
+</section>
+</section>
+<section id="absolute-vs.-comparative-evaluation" class="level2" data-number="31.3">
+<h2 data-number="31.3" class="anchored" data-anchor-id="absolute-vs.-comparative-evaluation"><span class="header-section-number">31.3</span> Absolute vs.&nbsp;Comparative Evaluation</h2>
+<p>Human evaluation can be structured as absolute ratings (how good is this response on a scale of 1–5?) or comparative judgments (which of these two responses is better?). The choice has significant implications for reliability.</p>
+<section id="absolute-rating-scales" class="level3" data-number="31.3.1">
+<h3 data-number="31.3.1" class="anchored" data-anchor-id="absolute-rating-scales"><span class="header-section-number">31.3.1</span> Absolute Rating Scales</h3>
+<p>Absolute ratings ask annotators to assign a score to each response independently. Common scales:</p>
+<p><strong>Likert scales</strong>: 1–5 or 1–7 scales with labeled endpoints (“Very unhelpful” to “Very helpful”). Simple to administer and understand, but suffer from scale calibration problems: different annotators interpret the same numeric label differently, and the same annotator may shift their interpretation over time or across topics.</p>
+<p><strong>Rubric-based scales</strong>: annotators are given explicit criteria for each score level. A 5-point rubric for helpfulness might define: 5 = “Fully addresses the user’s need with no significant omissions or errors,” 4 = “Mostly addresses the need with minor omissions,” and so on. Rubrics reduce but do not eliminate inter-annotator disagreement, particularly at the boundaries between levels.</p>
+<p><strong>Binary labels</strong>: the simplest possible absolute rating, acceptable or not acceptable. Binary labels have higher inter-annotator agreement than graded scales and are easier to aggregate, but they throw away information about the degree of quality difference between good responses.</p>
+</section>
+<section id="comparative-judgment" class="level3" data-number="31.3.2">
+<h3 data-number="31.3.2" class="anchored" data-anchor-id="comparative-judgment"><span class="header-section-number">31.3.2</span> Comparative Judgment</h3>
+<p>Comparative evaluation presents annotators with two or more responses to the same prompt and asks which is better. Comparative judgment has consistently higher inter-annotator agreement than absolute rating for the same quality dimension, because it eliminates the scale calibration problem: annotators do not need to agree on what “4 out of 5” means, only on which of two specific responses is better.</p>
+<p>The Bradley-Terry model (the same framework used for reward model training in Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>) can convert pairwise comparison results into a consistent ranking. Given a large set of pairwise preferences, the Bradley-Terry model estimates a scalar quality score for each model such that the probability of model A being preferred over model B matches the observed preference rate.</p>
+<p>Comparative evaluation has limitations:</p>
+<p><strong>Position bias</strong>: annotators tend to prefer the first response shown, regardless of quality. Mitigation: randomize the order of presentation and measure the position preference rate; counterbalance by presenting each pair in both orders to different annotators.</p>
+<p><strong>Length bias</strong>: annotators tend to prefer longer responses, independent of whether the additional length adds value. This is the same bias that drives verbosity in RLHF-trained models (Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>). Mitigation: train annotators explicitly on length calibration; measure length preferences on pairs with matched content but different length.</p>
+<p><strong>Familiarity bias</strong>: annotators may prefer responses from models they recognize or trust. Blind evaluation (where the model identity is hidden) is standard practice for this reason, though it is harder to implement when model outputs have distinctive stylistic signatures.</p>
+<hr>
+</section>
+</section>
+<section id="the-chatbot-arena-methodology" class="level2" data-number="31.4">
+<h2 data-number="31.4" class="anchored" data-anchor-id="the-chatbot-arena-methodology"><span class="header-section-number">31.4</span> The Chatbot Arena Methodology</h2>
+<p>Chatbot Arena <span class="citation" data-cites="chiang2024chatbot"><a href="#ref-chiang2024chatbot" role="doc-biblioref">[1]</a></span> is the largest-scale human evaluation of language models and the methodology most influential on current practice. The key design choices:</p>
+<p><strong>Crowdsourced real-world prompts</strong>: users submit their own queries (questions they actually want answered, tasks they actually need help with) rather than prompts drawn from a fixed benchmark. This captures the true distribution of user needs rather than a curated test set.</p>
+<p><strong>Pairwise comparison at scale</strong>: each user interaction presents two anonymous model responses side-by-side and asks the user to choose which is better (or call it a tie). The user votes immediately after receiving responses they care about the quality of, a strong incentive for honest evaluation.</p>
+<p><strong>Elo rating system</strong>: model quality is estimated using an Elo rating system borrowed from chess. Each model starts with an initial rating; a win against a higher-rated model increases rating more than a win against a lower-rated model. After tens of thousands of comparisons, the Elo ratings converge to a stable ranking.</p>
+<p><strong>Blind evaluation</strong>: neither the user nor the voting system reveals which model produced which response until after the vote. Models are identified only after the vote is cast.</p>
+<p>The scale achieved by this methodology (over 1 million votes as of 2024) allows fine-grained ranking of model quality with statistical confidence that would be impossible with laboratory annotation studies. The real-user prompts reveal quality differences that curated benchmarks miss: models that perform well on standardized tests sometimes perform poorly on the messy, ambiguous, open-ended questions real users ask.</p>
+<section id="limitations-of-chatbot-arena" class="level3" data-number="31.4.1">
+<h3 data-number="31.4.1" class="anchored" data-anchor-id="limitations-of-chatbot-arena"><span class="header-section-number">31.4.1</span> Limitations of Chatbot Arena</h3>
+<p><strong>Volunteer bias</strong>: users who opt in to Chatbot Arena are not representative of all language model users. They are more technically sophisticated, more likely to probe model capabilities, and more likely to ask questions about programming, mathematics, and technical topics. The Elo rankings reflect quality for this population, which may not match quality for casual users asking about health, relationships, or personal decisions.</p>
+<p><strong>English dominance</strong>: the majority of Chatbot Arena votes are on English prompts. Models that perform well on English may rank differently on other languages; the Arena’s multilingual representation has improved over time but remains uneven.</p>
+<p><strong>Recency effects</strong>: newer models receive more comparisons (as users try them out) than older models, potentially inflating their ratings before their quality is fully characterized.</p>
+<p><strong>Prompt distribution shift</strong>: the distribution of user prompts on Chatbot Arena shifts over time as model capabilities change and as users learn what these models are good at. A model that was top-ranked in 2023 may rank lower in 2024 not because it degraded but because the comparison distribution shifted.</p>
+<hr>
+</section>
+</section>
+<section id="annotation-guidelines-and-annotator-quality" class="level2" data-number="31.5">
+<h2 data-number="31.5" class="anchored" data-anchor-id="annotation-guidelines-and-annotator-quality"><span class="header-section-number">31.5</span> Annotation Guidelines and Annotator Quality</h2>
+<p>The quality of human evaluation depends critically on the quality of the annotators and the clarity of the annotation guidelines. This is an operational reality that is often understated in published evaluation methodology.</p>
+<section id="annotator-selection" class="level3" data-number="31.5.1">
+<h3 data-number="31.5.1" class="anchored" data-anchor-id="annotator-selection"><span class="header-section-number">31.5.1</span> Annotator Selection</h3>
+<p>Annotation tasks for language model evaluation require annotators with:</p>
+<ul>
+<li>Sufficient English (or target-language) fluency to accurately assess response quality, including subtle errors</li>
+<li>Domain expertise for domain-specific evaluation (medical, legal, code)</li>
+<li>Calibrated judgment: the ability to rate consistently across different types of content without introducing systematic biases</li>
+</ul>
+<p>Professional annotation through crowdsourcing platforms (Mechanical Turk, Scale AI, Surge AI) typically provides general-domain annotators at high volume and low cost, with inter-annotator agreement metrics used to filter low-quality annotators. Expert annotation for specialized domains (medical professionals rating clinical responses, lawyers rating legal responses) is more expensive and slower but necessary for accurate domain-specific evaluation.</p>
+<p>The InstructGPT paper used a small team of 40 contractors who received training and feedback over multiple weeks. This investment in annotator quality (unusually high relative to typical crowdsourcing projects) produced annotation with inter-annotator agreement of approximately 73% on pairwise preferences.</p>
+</section>
+<section id="guideline-design" class="level3" data-number="31.5.2">
+<h3 data-number="31.5.2" class="anchored" data-anchor-id="guideline-design"><span class="header-section-number">31.5.2</span> Guideline Design</h3>
+<p>Annotation guidelines specify what annotators should assess and how they should resolve ambiguous cases. Good guidelines:</p>
+<ul>
+<li>Define each quality dimension with concrete examples at each rating level</li>
+<li>Specify how to handle cases where multiple dimensions conflict (a response that is highly helpful but contains a minor factual error)</li>
+<li>Provide worked examples of edge cases the guideline authors anticipated</li>
+<li>Distinguish the annotator’s personal opinion from the objective quality of the response (relevant for creative writing evaluation)</li>
+</ul>
+<p>The most important guideline decision: what is the population of users the evaluation is representing? A guideline that optimizes for expert evaluation will differ from one that optimizes for novice evaluation, and a model that scores well under one guideline may score poorly under the other. Making this decision explicit in the guidelines prevents annotators from applying inconsistent mental models of the target user.</p>
+</section>
+<section id="inter-annotator-agreement" class="level3" data-number="31.5.3">
+<h3 data-number="31.5.3" class="anchored" data-anchor-id="inter-annotator-agreement"><span class="header-section-number">31.5.3</span> Inter-Annotator Agreement</h3>
+<p>Inter-annotator agreement (IAA) measures how consistently different annotators assess the same responses. Common metrics:</p>
+<p><strong>Cohen’s kappa (<span class="math inline">\(\kappa\)</span>)</strong>: measures agreement beyond chance for categorical ratings. <span class="math inline">\(\kappa = 0\)</span> indicates agreement at chance level; <span class="math inline">\(\kappa = 1\)</span> indicates perfect agreement. Values above 0.6 are considered substantial agreement; values above 0.8 are considered near-perfect. For language model quality rating, <span class="math inline">\(\kappa\)</span> values of 0.4–0.6 are typical a moderate agreement at best.</p>
+<p><strong>Krippendorff’s alpha</strong>: a generalization of kappa that handles ordinal scales, missing data, and more than two annotators. Preferred over kappa for multi-annotator, multi-scale evaluations.</p>
+<p><strong>Percent agreement</strong>: the simplest measure, the fraction of cases where all annotators agreed. Inflated by chance agreement on easy cases and not corrected for the prevalence of different rating categories.</p>
+<p>IAA provides a ceiling on the reliability of the evaluation: if annotators agree 70% of the time, the evaluation can distinguish model quality differences no smaller than the noise introduced by that 30% disagreement. Evaluations with low IAA cannot reliably detect quality differences between models that are close in performance.</p>
+<hr>
+</section>
+</section>
+<section id="human-evaluation-in-the-alignment-loop" class="level2" data-number="31.6">
+<h2 data-number="31.6" class="anchored" data-anchor-id="human-evaluation-in-the-alignment-loop"><span class="header-section-number">31.6</span> Human Evaluation in the Alignment Loop</h2>
+<p>Human evaluation is not only a measurement tool, it is the primary training signal for alignment. The reward models trained in Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a> are trained on human preference judgments. The quality of alignment training is bounded by the quality of the human evaluations that generated the preference data.</p>
+<p>This creates a feedback loop with important properties:</p>
+<p><strong>The training distribution is the evaluation distribution.</strong> A reward model trained on human evaluations of helpfulness and harmlessness will align the policy toward the specific notion of helpfulness and harmlessness that the annotators expressed. If the annotators systematically preferred verbose responses, the aligned model will be verbose. If they systematically preferred confident responses, the aligned model will be overconfident. The biases in human evaluation become the biases in the trained model.</p>
+<p><strong>Evaluation quality compounds.</strong> A model trained on poor-quality human evaluations produces a worse model, which produces worse responses for the next round of evaluation, which produces worse preference data for the next round of training. Conversely, improving evaluation quality at any stage propagates forward into improved model quality. This is why the investment in annotator training and guideline quality (expensive and invisible in published papers) is one of the highest-return investments in the alignment pipeline.</p>
+<p><strong>The evaluation distribution shifts.</strong> A model aligned on evaluations from mid-2022 may be less aligned with human preferences in mid-2024 if those preferences have changed, as they do when users become more sophisticated, when model capabilities advance, and when cultural expectations for AI behavior evolve. Human evaluation must be updated continuously to track the current preference distribution, not only the historical one.</p>
+<hr>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="31.7">
+<h2 data-number="31.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">31.7</span> Key Takeaways</h2>
+<ul>
+<li>Human evaluation is the ground truth for language model quality; every automated metric is an approximation of human judgment, and understanding what humans actually assess is the prerequisite for understanding what those approximations approximate.</li>
+<li>The primary quality dimensions for language model evaluation are helpfulness, factual accuracy, harmlessness, calibration, and format; these dimensions are not always aligned and may require separate evaluation instruments.</li>
+<li>Comparative (pairwise) evaluation has higher inter-annotator agreement than absolute rating because it eliminates scale calibration problems; the Bradley-Terry model converts pairwise preferences into consistent rankings.</li>
+<li>Common annotator biases in comparative evaluation — position bias, length bias, familiarity bias — must be explicitly controlled through randomization, counterbalancing, and annotator training.</li>
+<li>Chatbot Arena’s methodology — crowdsourced real-world prompts, pairwise comparison, Elo rating, blind evaluation at scale — has produced the most reliable large-scale human evaluation of language models, though it suffers from volunteer bias and English dominance.</li>
+<li>Inter-annotator agreement of 0.4–0.6 (Cohen’s kappa) is typical for language model quality evaluation; this sets a ceiling on evaluation reliability and implies that detecting small quality differences requires large sample sizes (500–20,000 comparisons depending on effect size).</li>
+<li>Annotation guidelines must specify the target user population explicitly; a model that scores well under expert-oriented guidelines may score poorly under novice-oriented guidelines, and vice versa.</li>
+<li>Human evaluation biases become model biases through the alignment training loop: annotators who prefer verbose responses produce aligned models that are verbose; annotators who prefer confident responses produce models that are overconfident.</li>
+<li>Human evaluation latency (weeks per study) makes it unsuitable for rapid development cycle feedback; it is used for pre-deployment gates, automated metric calibration, and targeted failure mode investigation.</li>
+<li>The evaluation distribution shifts over time as user sophistication, model capabilities, and cultural expectations for AI behavior evolve; human evaluation must be updated continuously rather than treated as a fixed standard.</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="20.11">
-<h2 data-number="20.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">20.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="31.8">
+<h2 data-number="31.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">31.8</span> Further Reading</h2>
 <ul>
-<li>Gao et al.&nbsp;(2020). <em>The Pile: An 800GB Dataset of Diverse Text for Language Modeling.</em> — One of the most documented large training corpora, with detailed source breakdowns and per-domain analysis.</li>
-<li>Lee et al.&nbsp;(2022). <em>Deduplicating Training Data Makes Language Models Better.</em> — Empirical demonstration that aggressive deduplication improves quality even at reduced token count.</li>
-<li>Raffel et al.&nbsp;(2020). <em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.</em> — Introduces C4 and the classifier-based filtering approach that became standard.</li>
-<li>Longpre et al.&nbsp;(2023). <em>The Data Provenance Initiative.</em> — Systematic audit of data licensing and consent in popular training datasets.</li>
-<li>Touvron et al.&nbsp;(2023). <em>LLaMA 2: Open Foundation and Fine-Tuned Chat Models.</em> — Contains one of the more transparent descriptions of data mixing decisions and filtering heuristics for a frontier model.</li>
-<li>Penedo et al.&nbsp;(2023). <em>The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only.</em> — Demonstrates that heavily filtered web data can match or exceed curated corpora.</li>
+<li><p>Ouyang, L., et al.&nbsp;(2022). <em>Training language models to follow instructions with human feedback.</em> NeurIPS. — InstructGPT; Section 3 describes the annotation procedure, contractor selection, guideline design, and inter-annotator agreement measurement in detail; the most thorough public account of production-scale human evaluation for language model alignment.</p></li>
+<li><p>Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E., Zhang, H., Gonzalez, J. E., &amp; Stoica, I. (2023). <em>Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.</em> NeurIPS. — Introduces Chatbot Arena and MT-Bench; the Elo rating methodology, the analysis of annotator biases (position bias, verbosity bias), and the correlation between Arena rankings and other evaluations are the key contributions.</p></li>
+<li><p>Krippendorff, K. (2011). <em>Computing Krippendorff’s Alpha-Reliability.</em> — The standard reference for Krippendorff’s alpha; the treatment of ordinal scales and the comparison with Cohen’s kappa are most relevant for language model evaluation contexts.</p></li>
+<li><p>Gehrmann, S., et al.&nbsp;(2021). <em>The GEM Benchmark: Natural Language Generation, its Evaluation and Metrics.</em> GEM Workshop. — Systematic analysis of human evaluation methodology for natural language generation; the taxonomy of evaluation dimensions and the annotator agreement analysis across 11 tasks provide a useful empirical grounding for evaluation design.</p></li>
+<li><p>Karpinska, M., Akoury, N., &amp; Iyyer, M. (2021). <em>The Perils of Using Mechanical Turk to Evaluate Open-Ended Text Generation.</em> EMNLP. — Documents systematic problems with crowdsourced evaluation of text generation including annotator inattention, lack of domain knowledge, and sensitivity to superficial features; motivates the investment in trained annotators and rubric-based guidelines.</p></li>
+<li><p>Liang, P., et al.&nbsp;(2022). <em>Holistic Evaluation of Language Models.</em> TMLR. — HELM; systematic evaluation of 30 models across 42 scenarios on 7 metrics; the multi-dimensional evaluation framework and the analysis of trade-offs between performance dimensions are the key contributions.</p></li>
+<li><p>Bai, Y., et al.&nbsp;(2022). <em>Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback.</em> Anthropic. — Detailed account of the helpfulness/harmlessness evaluation methodology; the analysis of annotator disagreement on harmlessness versus helpfulness dimensions and the measurement of how human preference biases propagate into model behavior are particularly relevant.</p></li>
+<li><p>Clark, E., August, T., Serrano, S., Haduong, N., Gururangan, S., &amp; Smith, N. A. (2021). <em>All That’s ‘Human’ Is Not Gold: Evaluating Human Evaluation of Generated Text.</em> ACL. — Meta-evaluation of human evaluation methodology; demonstrates that human evaluators frequently fail to detect machine-generated text and that evaluation quality is highly sensitive to annotator expertise and task design.</p></li>
 </ul>
 <hr>
 
 
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-chiang2024chatbot" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span class="nocase">W.-L. Chiang <em>et al.</em></span>, <span>“Chatbot arena: An open platform for evaluating llms by human preference,”</span> <em>arXiv preprint arXiv:2403.04132</em>, 2024.</div>
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1262,14 +1261,11 @@ Final training corpus</code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part4/grounded_generation.html" class="pagination-link" aria-label="Grounded Generation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Grounded Generation</span></span>
+      <a href="../../book/part5/embedding.html" class="pagination-link" aria-label="Embedding Model Training">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Embedding Model Training</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part5/synthetic_data.html" class="pagination-link" aria-label="Synthetic Data Generation">
-        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
