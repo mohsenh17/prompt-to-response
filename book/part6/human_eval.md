@@ -1,4 +1,4 @@
-# Human Evaluation
+# Human Evaluation {#sec-human-eval}
 
 > **The canonical question for this chapter:**
 > *How do you measure whether a language model is actually good and why
