@@ -1,4 +1,4 @@
-# Training Objectives
+# Training Objectives {#sec-training-objective}
 
 > **The canonical question for this chapter:**
 > *What exactly is the model optimizing during training, and why does
