@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>21&nbsp; Synthetic Data Generation – From Prompt to Response</title>
+<title>32&nbsp; Benchmarks – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,42 +23,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-</style>
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -68,8 +53,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part5/training_tokenization.html" rel="next">
-<link href="../../book/part5/data_collection.html" rel="prev">
+<link href="../../book/part6/human_eval.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,14 +98,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="21&nbsp; Synthetic Data Generation – From Prompt to Response">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="32&nbsp; Benchmarks – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch2/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch2/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="21&nbsp; Synthetic Data Generation – From Prompt to Response">
+<meta name="twitter:title" content="32&nbsp; Benchmarks – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch2/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch2/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -296,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/synthetic_data.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/benchmarks.html"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -491,13 +504,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">The Forging of Intelligence</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
@@ -506,7 +519,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/synthetic_data.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part5/synthetic_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span></a>
   </div>
 </li>
@@ -568,13 +581,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">The Trial of the Answer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part6/human_eval.html" class="sidebar-item-text sidebar-link">
@@ -583,7 +596,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/benchmarks.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/benchmarks.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></span></a>
   </div>
 </li>
@@ -603,17 +616,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-synthetic-data-exists" id="toc-why-synthetic-data-exists" class="nav-link active" data-scroll-target="#why-synthetic-data-exists"><span class="header-section-number">21.1</span> Why synthetic data exists</a></li>
-  <li><a href="#self-instruct-the-foundational-approach" id="toc-self-instruct-the-foundational-approach" class="nav-link" data-scroll-target="#self-instruct-the-foundational-approach"><span class="header-section-number">21.2</span> Self-Instruct: the foundational approach</a></li>
-  <li><a href="#teacher-student-pipelines" id="toc-teacher-student-pipelines" class="nav-link" data-scroll-target="#teacher-student-pipelines"><span class="header-section-number">21.3</span> Teacher-student pipelines</a></li>
-  <li><a href="#rejection-sampling-for-verifiable-tasks" id="toc-rejection-sampling-for-verifiable-tasks" class="nav-link" data-scroll-target="#rejection-sampling-for-verifiable-tasks"><span class="header-section-number">21.4</span> Rejection sampling for verifiable tasks</a></li>
-  <li><a href="#generating-reasoning-traces" id="toc-generating-reasoning-traces" class="nav-link" data-scroll-target="#generating-reasoning-traces"><span class="header-section-number">21.5</span> Generating reasoning traces</a></li>
-  <li><a href="#constitutional-ai-and-rlaif" id="toc-constitutional-ai-and-rlaif" class="nav-link" data-scroll-target="#constitutional-ai-and-rlaif"><span class="header-section-number">21.6</span> Constitutional AI and RLAIF</a></li>
-  <li><a href="#synthetic-conversation-data" id="toc-synthetic-conversation-data" class="nav-link" data-scroll-target="#synthetic-conversation-data"><span class="header-section-number">21.7</span> Synthetic conversation data</a></li>
-  <li><a href="#data-contamination-and-quality-collapse" id="toc-data-contamination-and-quality-collapse" class="nav-link" data-scroll-target="#data-contamination-and-quality-collapse"><span class="header-section-number">21.8</span> Data contamination and quality collapse</a></li>
-  <li><a href="#what-synthetic-data-is-good-at-and-what-it-is-not" id="toc-what-synthetic-data-is-good-at-and-what-it-is-not" class="nav-link" data-scroll-target="#what-synthetic-data-is-good-at-and-what-it-is-not"><span class="header-section-number">21.9</span> What synthetic data is good at (and what it is not)</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">21.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">21.11</span> Further reading</a></li>
+  <li><a href="#what-a-benchmark-is" id="toc-what-a-benchmark-is" class="nav-link active" data-scroll-target="#what-a-benchmark-is"><span class="header-section-number">32.1</span> What a Benchmark Is</a></li>
+  <li><a href="#a-taxonomy-of-benchmarks" id="toc-a-taxonomy-of-benchmarks" class="nav-link" data-scroll-target="#a-taxonomy-of-benchmarks"><span class="header-section-number">32.2</span> A Taxonomy of Benchmarks</a></li>
+  <li><a href="#saturation-when-benchmarks-stop-discriminating" id="toc-saturation-when-benchmarks-stop-discriminating" class="nav-link" data-scroll-target="#saturation-when-benchmarks-stop-discriminating"><span class="header-section-number">32.3</span> Saturation: When Benchmarks Stop Discriminating</a></li>
+  <li><a href="#contamination-the-primary-validity-threat" id="toc-contamination-the-primary-validity-threat" class="nav-link" data-scroll-target="#contamination-the-primary-validity-threat"><span class="header-section-number">32.4</span> Contamination: The Primary Validity Threat</a></li>
+  <li><a href="#format-sensitivity-and-prompt-brittleness" id="toc-format-sensitivity-and-prompt-brittleness" class="nav-link" data-scroll-target="#format-sensitivity-and-prompt-brittleness"><span class="header-section-number">32.5</span> Format Sensitivity and Prompt Brittleness</a></li>
+  <li><a href="#the-leaderboard-problem" id="toc-the-leaderboard-problem" class="nav-link" data-scroll-target="#the-leaderboard-problem"><span class="header-section-number">32.6</span> The Leaderboard Problem</a></li>
+  <li><a href="#what-benchmarks-miss" id="toc-what-benchmarks-miss" class="nav-link" data-scroll-target="#what-benchmarks-miss"><span class="header-section-number">32.7</span> What Benchmarks Miss</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">32.8</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">32.9</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -621,9 +632,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/synthetic_data.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/benchmarks.html"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></h1>
+<h1 class="title"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></h1>
 </div>
 
 
@@ -641,7 +652,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>Real human-written data is finite, expensive to collect, and increasingly subject to legal constraints. How do you use models to generate training data for other models and how do you prevent the process from collapsing into noise?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>What do benchmark scores actually measure and why does a model that aces every standard benchmark sometimes fail badly in deployment?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -657,265 +668,289 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <img src="figures/ch2/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;21.1: The journey through the Model Mind.
+Figure&nbsp;32.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>Previous Chapter focused on the collection of real-world data. This chapter in the other hand explores a rapidly growing counterpart: data generated by models themselves. Synthetic data has become increasingly important for training advanced models, fine-tuning specialized systems, and developing instruction-following datasets that influence model behavior. Effectively using synthetic data requires understanding both its potential benefits and its limitations, including the ways it can introduce new challenges and failure modes.</p>
+<p><a href="human_eval.html" class="quarto-xref"><span>Chapter 31</span></a> established that human evaluation is the ground truth and that everything else is an approximation. This chapter covers the most widely used approximation: standardized benchmarks. They are fast, cheap, reproducible, and consistently gameable which is why understanding their failure modes is as important as knowing their names.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-synthetic-data-exists" class="level2" data-number="21.1">
-<h2 data-number="21.1" class="anchored" data-anchor-id="why-synthetic-data-exists"><span class="header-section-number">21.1</span> Why synthetic data exists</h2>
-<p>Training data has always been a bottleneck. Collecting high-quality human-written text at frontier scale is expensive, slow, and increasingly legally complicated. For specialized capabilities (complex mathematical reasoning, multi-step code synthesis, structured output generation) the amount of suitable human-written data is genuinely small relative to what models need.</p>
-<p>Synthetic data offers a way around this: use a capable model to generate training examples for itself or for a smaller model. The generator model provides signal that would otherwise require expensive human annotation or simply does not exist in sufficient volume in human-written text.</p>
-<p>Data augmentation has been used in computer vision for decades. What changed with large language models is the quality and breadth of the augmentation: a capable LLM can generate synthetic examples indistinguishable from human-written text across a wide range of domains and tasks.</p>
-<p>The result is a significant shift in how instruction-following, reasoning, and alignment training data is produced. Where pre-2020 fine-tuning datasets were predominantly human-annotated, many post-2023 datasets are predominantly synthetic.</p>
+<section id="what-a-benchmark-is" class="level2" data-number="32.1">
+<h2 data-number="32.1" class="anchored" data-anchor-id="what-a-benchmark-is"><span class="header-section-number">32.1</span> What a Benchmark Is</h2>
+<p>A benchmark is a fixed dataset of evaluation examples with associated scoring criteria that can be applied automatically, without human judgment, to produce a comparable score across models. The input is a prompt or a set of prompts; the output is a scalar or a small vector of scalars. Two models evaluated on the same benchmark produce scores that can be directly compared.</p>
+<p>This comparability is the benchmark’s primary virtue. Human evaluation produces reliable comparisons but is slow, expensive, and cannot easily be reproduced by independent parties. A benchmark can be run in hours on any model, by anyone, and the results are directly comparable to scores published by others running the same benchmark. This enables systematic tracking of progress across the field: the score on MMLU or HumanEval from a model released today can be compared to scores from models released two years ago, providing a longitudinal view of capability improvement.</p>
+<p>The benchmark’s primary vice follows from the same structure: because benchmarks are fixed and public, they can be optimized against. A model developer who knows the benchmark can collect training data that overlaps with it, fine-tune on examples that resemble it, or select model configurations that happen to perform well on its specific format. The result is a benchmark score that reflects the model’s performance on that particular fixed test set, not the model’s general capability at the skill the benchmark was designed to measure. This is Goodhart’s Law applied to evaluation: when a measure becomes a target, it ceases to be a good measure.</p>
 <hr>
 </section>
-<section id="self-instruct-the-foundational-approach" class="level2" data-number="21.2">
-<h2 data-number="21.2" class="anchored" data-anchor-id="self-instruct-the-foundational-approach"><span class="header-section-number">21.2</span> Self-Instruct: the foundational approach</h2>
-<p>Self-Instruct (Wang et al., 2022) established the basic pattern for synthetic instruction data generation. The insight: a model that can follow instructions can also generate new instruction-following examples.</p>
-<section id="the-pipeline" class="level3" data-number="21.2.1">
-<h3 data-number="21.2.1" class="anchored" data-anchor-id="the-pipeline"><span class="header-section-number">21.2.1</span> The pipeline</h3>
-<pre><code>1. Seed set: a small hand-written collection of instruction-response pairs
-   (175 examples in the original paper)
-
-2. For each generation step:
-   a. Sample a few examples from the seed/pool as demonstrations
-   b. Prompt the model to generate a new instruction unlike the demonstrated ones
-   c. Prompt the model to generate an input if the task requires one
-   d. Prompt the model to generate the corresponding output
-   e. Apply quality filters
-   f. Add passing examples to the pool; repeat
-
-3. Use the accumulated pool as fine-tuning data</code></pre>
-<p>The key quality filters are similarity filtering (discard if ROUGE-L overlap with any existing instruction exceeds 0.7), length filtering (discard very short instructions or responses), and keyword filtering (discard examples where the model refused or produced degenerate output).</p>
-<p>Self-Instruct was used to create the Alpaca dataset (52K examples) that enabled the first wave of open-source instruction-tuned models. Later work improved quality primarily by using stronger generator models: GPT-4 instead of GPT-3.</p>
-<hr>
+<section id="a-taxonomy-of-benchmarks" class="level2" data-number="32.2">
+<h2 data-number="32.2" class="anchored" data-anchor-id="a-taxonomy-of-benchmarks"><span class="header-section-number">32.2</span> A Taxonomy of Benchmarks</h2>
+<p>Language model benchmarks can be organized by what they measure and how they measure it.</p>
+<section id="knowledge-and-reasoning" class="level3" data-number="32.2.1">
+<h3 data-number="32.2.1" class="anchored" data-anchor-id="knowledge-and-reasoning"><span class="header-section-number">32.2.1</span> Knowledge and Reasoning</h3>
+<p><strong>MMLU (Massive Multitask Language Understanding <span class="citation" data-cites="hendrycks2020measuring"><a href="#ref-hendrycks2020measuring" role="doc-biblioref">[1]</a></span>)</strong>: 57 academic subjects spanning STEM, humanities, social sciences, law, and medicine. Each question is a four-way multiple choice problem drawn from standardized tests, textbooks, and academic courses. MMLU measures breadth of factual knowledge and the ability to reason within academic domains.</p>
+<p>MMLU scores: random baseline 25%, GPT-3.5 approximately 70%, GPT-4 approximately 86–87%, top models in 2024 above 89%. The benchmark was designed when 60% was considered strong; saturation above 90% has reduced its discriminative value for frontier models.</p>
+<p><strong>GPQA (Graduate-Level Google-Proof Q&amp;A <span class="citation" data-cites="rein2023gpqa"><a href="#ref-rein2023gpqa" role="doc-biblioref">[2]</a></span>)</strong>: 448 multiple-choice questions in biology, chemistry, and physics, written by domain experts to be answerable by experts but not by web search. The “Google-proof” design attempts to prevent the benchmark from being gamed by training on retrieved answers. Human expert performance is approximately 65%; frontier models in 2024 score 50–60%, below human expert level but above non-expert humans.</p>
+<p><strong>ARC (AI2 Reasoning Challenge <span class="citation" data-cites="clark2018think"><a href="#ref-clark2018think" role="doc-biblioref">[3]</a></span>)</strong>: science questions from U.S. elementary and middle school standardized tests. Split into ARC-Easy (grade-school difficulty) and ARC-Challenge (questions that retrieval systems fail at). ARC-Challenge was a meaningful discriminator in 2019–2021; most frontier models now exceed 90%.</p>
 </section>
+<section id="mathematical-reasoning" class="level3" data-number="32.2.2">
+<h3 data-number="32.2.2" class="anchored" data-anchor-id="mathematical-reasoning"><span class="header-section-number">32.2.2</span> Mathematical Reasoning</h3>
+<p><strong>MATH <span class="citation" data-cites="hendrycks2021measuring"><a href="#ref-hendrycks2021measuring" role="doc-biblioref">[4]</a></span></strong>: 12,500 competition mathematics problems from AMC, AIME, and similar competitions, at difficulty levels 1–5. Problems are open-ended (not multiple choice) and require producing the correct numerical or algebraic answer. Scoring: exact match on the final answer. GPT-4 without tools: approximately 42–52%; with chain-of-thought: 60–70%; o1-class models: above 90% on the full set.</p>
+<p><strong>GSM8K <span class="citation" data-cites="cobbe2021training"><a href="#ref-cobbe2021training" role="doc-biblioref">[5]</a></span></strong>: 8,500 grade-school arithmetic word problems requiring 2–8 reasoning steps. Much simpler than MATH; most frontier models exceed 90% with chain-of-thought. Remains useful for evaluating smaller models and for studying how reasoning improves with scale and training.</p>
+<p><strong>AIME (American Invitational Mathematics Examination)</strong>: actual competition problems from recent years, used informally as an evaluation for frontier reasoning models. Not a standardized benchmark with a canonical evaluation procedure, but widely cited because competition mathematics problems are designed to resist pattern matching and require genuine mathematical reasoning.</p>
 </section>
-<section id="teacher-student-pipelines" class="level2" data-number="21.3">
-<h2 data-number="21.3" class="anchored" data-anchor-id="teacher-student-pipelines"><span class="header-section-number">21.3</span> Teacher-student pipelines</h2>
-<p>A more principled approach: use a large, capable teacher model to generate training data for a smaller student model. The student learns from the teacher’s outputs rather than from human annotation.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_teacher_student_data(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    teacher_model,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    prompts: <span class="bu">list</span>[<span class="bu">str</span>],</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    system_prompt: <span class="bu">str</span> <span class="op">=</span> <span class="st">"You are a helpful assistant."</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    temperature: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.7</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]:</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    training_examples <span class="op">=</span> []</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> prompt <span class="kw">in</span> prompts:</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> teacher_model.complete_chat(</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            messages<span class="op">=</span>[</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: system_prompt},</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"role"</span>: <span class="st">"user"</span>,   <span class="st">"content"</span>: prompt},</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            temperature<span class="op">=</span>temperature,</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        training_examples.append({</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">"messages"</span>: [</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"role"</span>: <span class="st">"system"</span>,    <span class="st">"content"</span>: system_prompt},</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"role"</span>: <span class="st">"user"</span>,      <span class="st">"content"</span>: prompt},</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"role"</span>: <span class="st">"assistant"</span>, <span class="st">"content"</span>: response},</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> training_examples</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="the-phi-models-synthetic-data-at-scale" class="level3" data-number="21.3.1">
-<h3 data-number="21.3.1" class="anchored" data-anchor-id="the-phi-models-synthetic-data-at-scale"><span class="header-section-number">21.3.1</span> The Phi models: synthetic data at scale</h3>
-<p>Microsoft’s Phi model family demonstrated that synthetic data from a strong teacher can produce remarkably capable small models. Phi-1 (2023) was trained primarily on GPT-4-generated textbook-quality Python exercises Despite having 1.3B parameters, it achieved performance comparable to models five times larger on coding benchmarks.</p>
-<p>The finding: a small model trained on high-quality synthetic data can substantially outperform the same model trained on a much larger corpus of real but noisier data. Quality of training signal, controlled through synthetic generation, can substitute for volume. This challenged the prevailing assumption that more data is always better.</p>
+<section id="code-generation" class="level3" data-number="32.2.3">
+<h3 data-number="32.2.3" class="anchored" data-anchor-id="code-generation"><span class="header-section-number">32.2.3</span> Code Generation</h3>
+<p><strong>HumanEval <span class="citation" data-cites="chen2021evaluating"><a href="#ref-chen2021evaluating" role="doc-biblioref">[6]</a></span></strong>: 164 handwritten Python programming problems, each with a function signature, docstring, and test suite. Scored by pass@k: the probability that at least one of <span class="math inline">\(k\)</span> generated samples passes all unit tests. HumanEval measures basic coding ability for well-defined algorithmic tasks. Frontier models now exceed 90% pass@1, near saturation.</p>
+<p><strong>MBPP (Mostly Basic Python Programming, <span class="citation" data-cites="austin2021program"><a href="#ref-austin2021program" role="doc-biblioref">[7]</a></span>)</strong>: 374 crowd-sourced Python problems at a range of difficulty levels. Similar structure to HumanEval but with more diverse problem types including data manipulation, string processing, and simple algorithms.</p>
+<p><strong>SWE-bench <span class="citation" data-cites="jimenez2024swe"><a href="#ref-jimenez2024swe" role="doc-biblioref">[8]</a></span></strong>: real GitHub issues from popular Python open-source repositories. The model must produce a patch that resolves the issue, evaluated by running the repository’s test suite. SWE-bench measures agentic software engineering capability (reading existing code, understanding bug reports, producing correct patches) rather than isolated algorithmic problem solving. Much harder than HumanEval: the best models in mid-2024 resolve 10–20% of issues on the verified subset (SWE-bench Verified).</p>
+</section>
+<section id="language-understanding-and-nlu" class="level3" data-number="32.2.4">
+<h3 data-number="32.2.4" class="anchored" data-anchor-id="language-understanding-and-nlu"><span class="header-section-number">32.2.4</span> Language Understanding and NLU</h3>
+<p><strong>SuperGLUE <span class="citation" data-cites="wang2019superglue"><a href="#ref-wang2019superglue" role="doc-biblioref">[9]</a></span></strong>: a collection of language understanding tasks including question answering, natural language inference, coreference resolution, and word sense disambiguation. Designed as a harder successor to GLUE; frontier models exceed human baseline on most tasks. Largely obsolete as a discriminator for current models.</p>
+<p><strong>BIG-Bench <span class="citation" data-cites="srivastava2022beyond"><a href="#ref-srivastava2022beyond" role="doc-biblioref">[10]</a></span></strong>: 204 tasks covering an intentionally diverse range of capabilities including logic, arithmetic, common sense, translation, and novel task formats. BIG-Bench Hard selects the 23 tasks where models underperformed humans at the time of publication. Remains a useful evaluation for unusual capabilities not covered by narrower benchmarks.</p>
+</section>
+<section id="instruction-following" class="level3" data-number="32.2.5">
+<h3 data-number="32.2.5" class="anchored" data-anchor-id="instruction-following"><span class="header-section-number">32.2.5</span> Instruction Following</h3>
+<p><strong>MT-Bench <span class="citation" data-cites="zheng2023judging"><a href="#ref-zheng2023judging" role="doc-biblioref">[11]</a></span></strong>: 80 multi-turn questions across eight categories (writing, roleplay, reasoning, math, coding, extraction, STEM, humanities). Evaluated by GPT-4 as judge which Measures instruction following across diverse topics and conversation structures.</p>
+<p><strong>IFEval <span class="citation" data-cites="zhou2023instruction"><a href="#ref-zhou2023instruction" role="doc-biblioref">[12]</a></span></strong>: instruction following evaluation with verifiable constraints, prompts that require following explicit formatting instructions (use bullet points, respond in French, limit to 100 words). Scored automatically by checking whether the specified constraints are met, providing a cleaner signal than human or LLM judgment for the specific capability of following explicit formatting instructions.</p>
 <hr>
 </section>
 </section>
-<section id="rejection-sampling-for-verifiable-tasks" class="level2" data-number="21.4">
-<h2 data-number="21.4" class="anchored" data-anchor-id="rejection-sampling-for-verifiable-tasks"><span class="header-section-number">21.4</span> Rejection sampling for verifiable tasks</h2>
-<p>For tasks with verifiable answers (mathematics, code, structured output) rejection sampling is one of the most effective synthetic data techniques. Generate many candidate responses; keep only those that pass verification.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rejection_sample(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    problem: <span class="bu">str</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    generator_model,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    verifier_fn,        <span class="co"># returns True if the response is correct</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    n_candidates: <span class="bu">int</span> <span class="op">=</span> <span class="dv">16</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    temperature: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">str</span>]:</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    accepted <span class="op">=</span> []</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_candidates):</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> generator_model.complete(problem, temperature<span class="op">=</span>temperature)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> verifier_fn(problem, response):</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            accepted.append(response)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accepted</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>For mathematics, the verifier is an exact answer checker. For code, it is the test suite. For structured output (JSON, SQL), it is a schema validator. Without an automatic verifier, rejection sampling reduces to unverified generation with high compute cost and uncertain quality, the verifier is what makes the technique work.</p>
-<p>Rejection sampling also produces multiple correct reasoning paths for the same problem, which is valuable: models trained on diverse correct approaches generalize better than models trained on a single canonical solution.</p>
+<section id="saturation-when-benchmarks-stop-discriminating" class="level2" data-number="32.3">
+<h2 data-number="32.3" class="anchored" data-anchor-id="saturation-when-benchmarks-stop-discriminating"><span class="header-section-number">32.3</span> Saturation: When Benchmarks Stop Discriminating</h2>
+<p>A benchmark saturates when most evaluated models achieve scores close to the ceiling, eliminating its discriminative value. Saturation is a natural consequence of progress: a benchmark designed to be challenging in 2020 may be trivial for 2024 models.</p>
+<p>The saturation timeline for major benchmarks:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Benchmark</th>
+<th>Release</th>
+<th>Frontier model performance</th>
+<th>Saturation status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>HellaSwag</td>
+<td>2019</td>
+<td>&gt;95%</td>
+<td>Saturated</td>
+</tr>
+<tr class="even">
+<td>ARC-Challenge</td>
+<td>2018</td>
+<td>&gt;90%</td>
+<td>Saturated</td>
+</tr>
+<tr class="odd">
+<td>SuperGLUE</td>
+<td>2019</td>
+<td>&gt;90%</td>
+<td>Saturated</td>
+</tr>
+<tr class="even">
+<td>GSM8K</td>
+<td>2021</td>
+<td>&gt;95%</td>
+<td>Saturated</td>
+</tr>
+<tr class="odd">
+<td>HumanEval</td>
+<td>2021</td>
+<td>&gt;90%</td>
+<td>Saturated</td>
+</tr>
+<tr class="even">
+<td>MMLU</td>
+<td>2021</td>
+<td>~89%</td>
+<td>Approaching saturation</td>
+</tr>
+<tr class="odd">
+<td>MATH</td>
+<td>2021</td>
+<td>~90% (o1)</td>
+<td>Task-dependent</td>
+</tr>
+<tr class="even">
+<td>GPQA</td>
+<td>2023</td>
+<td>~60%</td>
+<td>Not saturated</td>
+</tr>
+<tr class="odd">
+<td>SWE-bench</td>
+<td>2024</td>
+<td>~20%</td>
+<td>Not saturated</td>
+</tr>
+</tbody>
+</table>
+<p>The pattern is consistent: a benchmark is published when frontier models score roughly 30–60%; models reach human performance within 1–3 years; the benchmark stops being informative for frontier model comparison shortly after. The half-life of a discriminative benchmark has shortened as model capabilities advance: benchmarks that were useful for 3–4 years in the 2019–2021 period have been useful for 1–2 years in the 2022–2024 period.</p>
+<p>The field’s response is to continuously develop harder benchmarks, which frontier models then approach the ceiling of, requiring still harder benchmarks. This is a healthy response to capability progress but makes longitudinal comparison across benchmark generations difficult: a score on GPQA cannot be directly compared to a score on MMLU because the difficulty distributions are entirely different.</p>
 <hr>
 </section>
-<section id="generating-reasoning-traces" class="level2" data-number="21.5">
-<h2 data-number="21.5" class="anchored" data-anchor-id="generating-reasoning-traces"><span class="header-section-number">21.5</span> Generating reasoning traces</h2>
-<p>Training reasoning models requires large volumes of step-by-step solutions. Human experts cannot produce these at scale. Synthetic generation combined with outcome verification is the practical solution.</p>
-<section id="process-reward-model-data" class="level3" data-number="21.5.1">
-<h3 data-number="21.5.1" class="anchored" data-anchor-id="process-reward-model-data"><span class="header-section-number">21.5.1</span> Process reward model data</h3>
-<p>Training process reward models requires step-level correctness annotations. Generating traces at scale and using outcome correctness as a weak per-trace label is the standard approach:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_reasoning_traces(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    problems: <span class="bu">list</span>[<span class="bu">str</span>],</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    generator_model,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    n_traces_per_problem: <span class="bu">int</span> <span class="op">=</span> <span class="dv">8</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    dataset <span class="op">=</span> []</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> problem <span class="kw">in</span> problems:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        traces <span class="op">=</span> []</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_traces_per_problem):</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            trace <span class="op">=</span> generator_model.complete(</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                <span class="ss">f"Solve step by step, showing all work:</span><span class="ch">\n</span><span class="sc">{</span>problem<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                temperature<span class="op">=</span><span class="fl">0.8</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            is_correct <span class="op">=</span> check_answer(</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                extract_final_answer(trace),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                get_ground_truth(problem),</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            traces.append({<span class="st">"trace"</span>: trace, <span class="st">"correct"</span>: is_correct})</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        dataset.append({<span class="st">"problem"</span>: problem, <span class="st">"traces"</span>: traces})</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The per-step supervision signal for PRM training still requires some human annotation of individual steps but identifying which complete traces are correct can be done automatically, reducing annotation cost by orders of magnitude.</p>
-<hr>
+<section id="contamination-the-primary-validity-threat" class="level2" data-number="32.4">
+<h2 data-number="32.4" class="anchored" data-anchor-id="contamination-the-primary-validity-threat"><span class="header-section-number">32.4</span> Contamination: The Primary Validity Threat</h2>
+<p>Benchmark contamination (the presence of benchmark test examples in a model’s training data) is the most serious threat to benchmark validity. A model that has seen the test examples during training can achieve a high score through memorization rather than the capability the benchmark is designed to measure.</p>
+<section id="how-contamination-occurs" class="level3" data-number="32.4.1">
+<h3 data-number="32.4.1" class="anchored" data-anchor-id="how-contamination-occurs"><span class="header-section-number">32.4.1</span> How Contamination Occurs</h3>
+<p>Web-scale training corpora contain enormous fractions of the publicly available internet, including benchmark datasets that were posted publicly. MMLU, HumanEval, GSM8K, and most other major benchmarks have been publicly available since their release and have likely appeared in the training corpora of models trained on large web crawls.</p>
+<p>Contamination can be unintentional (the benchmark was included in a web crawl without the model developer realizing it) or intentional (the model developer deliberately included benchmark-adjacent data to improve scores). The distinction matters ethically but not practically: the benchmark score is inflated either way.</p>
 </section>
+<section id="detecting-contamination" class="level3" data-number="32.4.2">
+<h3 data-number="32.4.2" class="anchored" data-anchor-id="detecting-contamination"><span class="header-section-number">32.4.2</span> Detecting Contamination</h3>
+<p>Several methods exist for detecting whether a model has seen specific benchmark examples during training:</p>
+<p><strong>N-gram overlap</strong>: check whether high-n-gram sequences from the benchmark appear in the training corpus. If the training corpus is available for inspection (which is often not), this is straightforward. If not, the model can be probed: ask the model to complete the latter half of a benchmark example; high completion accuracy suggests memorization.</p>
+<p><strong>Verbatim completion probing</strong>: present the model with the first few tokens of a benchmark question and measure whether it accurately completes the rest. Golchin and Surdeanu <span class="citation" data-cites="golchin2024time"><a href="#ref-golchin2024time" role="doc-biblioref">[13]</a></span> used this method to detect contamination across multiple benchmarks, finding significant evidence of contamination in several major models.</p>
+<p><strong>Performance vs.&nbsp;difficulty correlation</strong>: if a model performs uniformly well across easy and hard examples within a benchmark (rather than showing higher accuracy on easier examples), this is a signature of memorization, a model that has memorized answers does not exhibit the difficulty sensitivity that genuine comprehension would produce.</p>
+<p><strong>Held-out test sets</strong>: the most reliable contamination prevention is to maintain a private test set that is never released publicly. This is the approach used by ML competitions (Kaggle, SWE-bench Verified) but is difficult for academic benchmarks because the research community needs access to the test set to evaluate their own models.</p>
 </section>
-<section id="constitutional-ai-and-rlaif" class="level2" data-number="21.6">
-<h2 data-number="21.6" class="anchored" data-anchor-id="constitutional-ai-and-rlaif"><span class="header-section-number">21.6</span> Constitutional AI and RLAIF</h2>
-<p>Constitutional AI (Bai et al., 2022) uses a model to generate its own supervision signal for alignment, eliminating the need for human preference labels in many training steps.</p>
-<section id="sl-cai-supervised-learning-from-ai-feedback" class="level3" data-number="21.6.1">
-<h3 data-number="21.6.1" class="anchored" data-anchor-id="sl-cai-supervised-learning-from-ai-feedback"><span class="header-section-number">21.6.1</span> SL-CAI: supervised learning from AI feedback</h3>
-<p>Generate potentially problematic responses, then have the model revise them according to a set of principles (the “constitution”):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>CONSTITUTION <span class="op">=</span> [</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Rewrite to be more helpful while being harmless."</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Identify ways the response is harmful or unethical, then rewrite."</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Consider whether the response could be misused, and revise accordingly."</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> constitutional_revision(prompt: <span class="bu">str</span>, model, n_rounds: <span class="bu">int</span> <span class="op">=</span> <span class="dv">2</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    current <span class="op">=</span> model.complete(prompt)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_rounds):</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        principle <span class="op">=</span> random.choice(CONSTITUTION)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        current <span class="op">=</span> model.complete(</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"Human: </span><span class="sc">{</span>prompt<span class="sc">}</span><span class="ch">\n</span><span class="ss">Assistant: </span><span class="sc">{</span>current<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">"</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"Principle: </span><span class="sc">{</span>principle<span class="sc">}</span><span class="ch">\n</span><span class="ss">Revised response:"</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> current</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="rlaif-ai-preference-labels" class="level3" data-number="21.6.2">
-<h3 data-number="21.6.2" class="anchored" data-anchor-id="rlaif-ai-preference-labels"><span class="header-section-number">21.6.2</span> RLAIF: AI preference labels</h3>
-<p>Use the model to generate preference labels instead of human raters:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ai_preference_label(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    prompt: <span class="bu">str</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    response_a: <span class="bu">str</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    response_b: <span class="bu">str</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    principle: <span class="bu">str</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    judge_model,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    judgment <span class="op">=</span> judge_model.complete(</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Principle: </span><span class="sc">{</span>principle<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">"</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Response A: </span><span class="sc">{</span>response_a<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">"</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Response B: </span><span class="sc">{</span>response_b<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">"</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Which response better follows the principle? Answer A or B only:"</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    ).strip().upper()</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"A"</span> <span class="cf">if</span> judgment.startswith(<span class="st">"A"</span>) <span class="cf">else</span> <span class="st">"B"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>RLAIF produces preference datasets at a fraction of the cost of human annotation. The quality tradeoff: AI judges have their own biases they tend to prefer longer, more verbose responses and responses that match their own generation style. Calibration against human judgments is important before relying on RLAIF at scale.</p>
-<hr>
-</section>
-</section>
-<section id="synthetic-conversation-data" class="level2" data-number="21.7">
-<h2 data-number="21.7" class="anchored" data-anchor-id="synthetic-conversation-data"><span class="header-section-number">21.7</span> Synthetic conversation data</h2>
-<p>Multi-turn conversation data is expensive to collect from humans but important for deployed conversational assistants. Synthetic generation covers the gap.</p>
-<section id="persona-diverse-generation" class="level3" data-number="21.7.1">
-<h3 data-number="21.7.1" class="anchored" data-anchor-id="persona-diverse-generation"><span class="header-section-number">21.7.1</span> Persona-diverse generation</h3>
-<p>A single generator model produces conversations in a limited range of styles. Explicit persona specification diversifies the training distribution:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>USER_PERSONAS <span class="op">=</span> [</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a software engineer debugging production issues"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a student learning the topic for the first time"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"an expert seeking nuanced clarification"</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a non-native English speaker asking basic questions"</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a skeptical user who questions the assistant's claims"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a user in a hurry who wants concise answers"</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_diverse_conversations(</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    topics: <span class="bu">list</span>[<span class="bu">str</span>],</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    model,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    n_per_topic: <span class="bu">int</span> <span class="op">=</span> <span class="dv">6</span>,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">list</span>[<span class="bu">dict</span>]]:</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    all_conversations <span class="op">=</span> []</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> topic <span class="kw">in</span> topics:</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> persona <span class="kw">in</span> random.sample(USER_PERSONAS, n_per_topic):</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>            conversation <span class="op">=</span> simulate_conversation(topic, persona, model)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            all_conversations.append(conversation)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> all_conversations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Diversity in user persona, question style, and conversation length prevents the model from learning a narrow conversational pattern and produces better instruction-following across user types.</p>
+<section id="the-contamination-response" class="level3" data-number="32.4.3">
+<h3 data-number="32.4.3" class="anchored" data-anchor-id="the-contamination-response"><span class="header-section-number">32.4.3</span> The Contamination Response</h3>
+<p>When contamination is detected or suspected, the standard responses are:</p>
+<ol type="1">
+<li><p><strong>Reproduce evaluation with contamination-filtered test sets</strong>: remove examples that overlap with the training corpus and re-evaluate. The performance drop (if any) quantifies the contamination effect.</p></li>
+<li><p><strong>Report contamination alongside scores</strong>: some model technical reports include contamination analysis; the field increasingly expects this.</p></li>
+<li><p><strong>Create new evaluation versions</strong>: update the benchmark with new examples that are not in existing training corpora. GSM8K’s authors released GSM-Symbolic which generates novel variants of grade-school math problems that cannot have been memorized.</p></li>
+<li><p><strong>Use dynamic or private benchmarks</strong>: evaluation on private test sets or dynamically generated problems (Chatbot Arena’s real-user prompts are a natural example) is inherently contamination-resistant.</p></li>
+</ol>
 <hr>
 </section>
 </section>
-<section id="data-contamination-and-quality-collapse" class="level2" data-number="21.8">
-<h2 data-number="21.8" class="anchored" data-anchor-id="data-contamination-and-quality-collapse"><span class="header-section-number">21.8</span> Data contamination and quality collapse</h2>
-<p>Synthetic data introduces failure modes that real data collection does not.</p>
-<section id="model-collapse" class="level3" data-number="21.8.1">
-<h3 data-number="21.8.1" class="anchored" data-anchor-id="model-collapse"><span class="header-section-number">21.8.1</span> Model collapse</h3>
-<p>When synthetic data is used to train a model, and the outputs of that model are used as training data for the next version, iterative degradation can occur. Each generation amplifies the biases and errors of the previous one. The distribution of outputs narrows progressively, the model becomes less diverse and more prone to producing stereotyped, low-variance responses.</p>
-<p>This is called model collapse (Shumailov et al., 2023). It is a genuine risk for pipelines that rely heavily on self-generated data without injecting fresh human-written signal.</p>
+<section id="format-sensitivity-and-prompt-brittleness" class="level2" data-number="32.5">
+<h2 data-number="32.5" class="anchored" data-anchor-id="format-sensitivity-and-prompt-brittleness"><span class="header-section-number">32.5</span> Format Sensitivity and Prompt Brittleness</h2>
+<p>Benchmark scores are sensitive to how prompts are formatted. The same model, evaluated on the same benchmark with different prompt formats, can show performance differences of 5–15 percentage points which is large enough to change the apparent ranking between models.</p>
+<section id="few-shot-format-effects" class="level3" data-number="32.5.1">
+<h3 data-number="32.5.1" class="anchored" data-anchor-id="few-shot-format-effects"><span class="header-section-number">32.5.1</span> Few-Shot Format Effects</h3>
+<p>Most benchmarks are evaluated in a few-shot setting: 0–5 examples of correctly answered questions are prepended to the test question. The number of few-shot examples, their selection, and their format all affect performance:</p>
+<p><strong>Zero-shot vs.&nbsp;few-shot</strong>: adding 5-shot examples improves performance by 3–10 points on most knowledge benchmarks for models that were not specifically instruction-tuned. Instruction-tuned models sometimes perform better zero-shot than few-shot, because the few-shot examples interfere with the model’s learned instruction-following behavior.</p>
+<p><strong>Example selection</strong>: randomly selected few-shot examples produce different scores than examples selected for difficulty, diversity, or similarity to the test question. Benchmark reporting conventions specify a standard selection procedure, but not all evaluations follow the same convention.</p>
+<p><strong>Chain-of-thought prompting</strong>: adding “Let’s think step by step” or few-shot examples with reasoning chains substantially improves performance on reasoning benchmarks (5–30 points on MATH) and may reduce performance on simple recall benchmarks where the reasoning is counterproductive. Whether CoT is used must be specified in benchmark reporting.</p>
 </section>
-<section id="synthetic-data-contamination" class="level3" data-number="21.8.2">
-<h3 data-number="21.8.2" class="anchored" data-anchor-id="synthetic-data-contamination"><span class="header-section-number">21.8.2</span> Synthetic data contamination</h3>
-<p>Synthetic data generated from publicly available models may share biases or specific phrasings with those models’ training data. If the teacher model was trained on evaluation benchmark data, synthetic data generated by that teacher may leak evaluation signal into the student’s training, inflating benchmark performance without improving real capability.</p>
-<p>Contamination detection for synthetic data requires checking not just whether the synthetic examples match evaluation questions verbatim, but whether the synthetic examples produce responses that closely match evaluation answers.</p>
-</section>
-<section id="hallucinated-facts-in-synthetic-data" class="level3" data-number="21.8.3">
-<h3 data-number="21.8.3" class="anchored" data-anchor-id="hallucinated-facts-in-synthetic-data"><span class="header-section-number">21.8.3</span> Hallucinated facts in synthetic data</h3>
-<p>It is a known fact that generator models hallucinate. Synthetic training data therefore contains hallucinated facts and training on them teaches the student model to reproduce those hallucinations with confidence.</p>
-<p>For general instruction-following, this is manageable: the hallucinated facts are diluted by the volume of correct content. For specialized domain training (medical, legal, scientific), it is dangerous: the model learns domain-specific confident errors.</p>
+<section id="answer-format-sensitivity" class="level3" data-number="32.5.2">
+<h3 data-number="32.5.2" class="anchored" data-anchor-id="answer-format-sensitivity"><span class="header-section-number">32.5.2</span> Answer Format Sensitivity</h3>
+<p>Multiple-choice benchmarks can be answered by producing the letter (A, B, C, D) or by producing the full text of the correct answer. Models have different preferences for these formats and may perform differently depending on which is requested. Instruction-tuned models often perform better when asked to produce the full answer text rather than just the letter, because instruction tuning teaches verbose responses.</p>
+<p>Some evaluations use log-probability scoring rather than generation: the model is not asked to generate the answer but to assign probabilities to each candidate answer; the highest-probability candidate is selected. Log-probability scoring eliminates format sensitivity but introduces sensitivity to tokenization: candidates that tokenize into more tokens may receive systematically lower log-probabilities simply because the probability is distributed across more tokens (each multiplied, resulting in a lower joint probability).</p>
 <hr>
 </section>
 </section>
-<section id="what-synthetic-data-is-good-at-and-what-it-is-not" class="level2" data-number="21.9">
-<h2 data-number="21.9" class="anchored" data-anchor-id="what-synthetic-data-is-good-at-and-what-it-is-not"><span class="header-section-number">21.9</span> What synthetic data is good at (and what it is not)</h2>
-<section id="what-it-does-well" class="level3" data-number="21.9.1">
-<h3 data-number="21.9.1" class="anchored" data-anchor-id="what-it-does-well"><span class="header-section-number">21.9.1</span> What it does well</h3>
-<p><strong>Instruction diversity.</strong> Synthetic generation can produce instruction-following examples covering a wide range of formats, styles, and task types far more efficiently than human annotation.</p>
-<p><strong>Scaling reasoning data.</strong> For verifiable tasks, rejection sampling produces high-quality reasoning traces at scale that human experts could not produce in comparable volume.</p>
-<p><strong>Domain coverage.</strong> Specialized domains with little existing training data (low-resource languages, niche technical fields) can be bootstrapped with targeted synthetic generation.</p>
-<p><strong>Behavior shaping.</strong> Constitutional AI and RLAIF can produce alignment training data at a fraction of the cost of human preference annotation.</p>
+<section id="the-leaderboard-problem" class="level2" data-number="32.6">
+<h2 data-number="32.6" class="anchored" data-anchor-id="the-leaderboard-problem"><span class="header-section-number">32.6</span> The Leaderboard Problem</h2>
+<p>Benchmark leaderboards (public rankings of models by benchmark score) have become a primary mechanism for communicating model quality to practitioners and the public. They are also a mechanism that concentrates optimization pressure in ways that degrade benchmark validity.</p>
+<section id="competitive-pressure-and-gaming" class="level3" data-number="32.6.1">
+<h3 data-number="32.6.1" class="anchored" data-anchor-id="competitive-pressure-and-gaming"><span class="header-section-number">32.6.1</span> Competitive Pressure and Gaming</h3>
+<p>When benchmark scores become the primary signal of model quality, model developers have strong incentives to optimize specifically for high benchmark scores. Strategies that improve benchmark scores without improving general capability:</p>
+<p><strong>Benchmark-specific fine-tuning</strong>: fine-tune on data that resembles the benchmark, improving performance on that benchmark’s specific format without improving general capability.</p>
+<p><strong>Benchmark-specific prompt engineering</strong>: develop prompts specifically calibrated for each benchmark’s format, which may not generalize to other evaluation contexts.</p>
+<p><strong>Selective reporting</strong>: publish scores only on benchmarks where the model performs well; omit or de-emphasize benchmarks where it performs poorly. A model report that includes MMLU, GSM8K, and HumanEval scores but not GPQA or SWE-bench is not necessarily hiding anything, but the selection shapes the impression of overall capability.</p>
+<p><strong>Hyperparameter selection on test sets</strong>: tune decoding parameters (temperature, top-p, beam width) on the benchmark test set rather than a development set. This is a form of overfitting to the benchmark without training on it.</p>
 </section>
-<section id="what-it-does-poorly" class="level3" data-number="21.9.2">
-<h3 data-number="21.9.2" class="anchored" data-anchor-id="what-it-does-poorly"><span class="header-section-number">21.9.2</span> What it does poorly</h3>
-<p><strong>Novel knowledge.</strong> A model cannot generate facts it does not already know. Synthetic data recombines and reformats existing knowledge; it does not add new knowledge to the training distribution.</p>
-<p><strong>Detecting its own blind spots.</strong> The model generating synthetic data does not know what it does not know. It will generate confident synthetic data in the domain of its blind spots, teaching the student model the same blind spots with additional confidence.</p>
-<p><strong>Replacing human judgment for nuanced quality.</strong> Human evaluators catch subtleties in tone, cultural appropriateness, and pragmatic correctness that AI generators and judges frequently miss. For tasks where these nuances matter, synthetic data is a complement to human annotation, not a replacement.</p>
+<section id="benchmark-proliferation" class="level3" data-number="32.6.2">
+<h3 data-number="32.6.2" class="anchored" data-anchor-id="benchmark-proliferation"><span class="header-section-number">32.6.2</span> Benchmark Proliferation</h3>
+<p>The response to gaming (developing new, harder benchmarks) has produced an enormous number of benchmarks. A model technical report in 2024 may include scores on 20–50 different benchmarks. This proliferation creates its own problems:</p>
+<p>Readers cannot interpret 50 benchmark scores simultaneously. The effective communication of model capability requires either aggregation (combining scores into a single number) or selection (choosing a small number of representative benchmarks) both of which introduce their own distortions.</p>
 <hr>
 </section>
 </section>
-<section id="key-takeaways" class="level2" data-number="21.10">
-<h2 data-number="21.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">21.10</span> Key takeaways</h2>
+<section id="what-benchmarks-miss" class="level2" data-number="32.7">
+<h2 data-number="32.7" class="anchored" data-anchor-id="what-benchmarks-miss"><span class="header-section-number">32.7</span> What Benchmarks Miss</h2>
+<p>Even well-designed, uncontaminated benchmarks with careful evaluation protocols miss important dimensions of model quality that matter in deployment.</p>
+<section id="long-horizon-tasks" class="level3" data-number="32.7.1">
+<h3 data-number="32.7.1" class="anchored" data-anchor-id="long-horizon-tasks"><span class="header-section-number">32.7.1</span> Long-Horizon Tasks</h3>
+<p>Most benchmarks evaluate single-turn responses to short prompts. Real deployments involve multi-turn conversations, long-document processing, and tasks requiring sustained coherent effort over many steps. A model that scores well on MMLU’s multiple-choice questions may produce incoherent output when asked to write a 5,000-word technical report or maintain consistency across a 50-turn conversation.</p>
+<p>SWE-bench is a partial exception: resolving a GitHub issue requires reading a codebase, understanding the bug report, producing a patch, and having the patch pass tests is a multi-step task with real-world structure. Its difficulty (20% resolution rate at the frontier) partly reflects this structural difference from single-turn question answering.</p>
+</section>
+<section id="calibration" class="level3" data-number="32.7.2">
+<h3 data-number="32.7.2" class="anchored" data-anchor-id="calibration"><span class="header-section-number">32.7.2</span> Calibration</h3>
+<p>Benchmarks measure accuracy but not calibration. A model that is right 80% of the time and knows when it is wrong (expressing uncertainty on the 20% it gets wrong) is far more useful than a model that is right 80% of the time and is equally confident on all answers. Standard benchmark scoring does not distinguish these models.</p>
+</section>
+<section id="novel-task-formats" class="level3" data-number="32.7.3">
+<h3 data-number="32.7.3" class="anchored" data-anchor-id="novel-task-formats"><span class="header-section-number">32.7.3</span> Novel Task Formats</h3>
+<p>Benchmarks test performance on tasks in the format defined by the benchmark creators. Real users present tasks in idiosyncratic formats, with implicit context, ambiguous specifications, and novel combinations of requirements that no benchmark anticipated. A model’s generalization to novel task formats is not measured by any existing benchmark and requires the human evaluation.</p>
+</section>
+<section id="robustness" class="level3" data-number="32.7.4">
+<h3 data-number="32.7.4" class="anchored" data-anchor-id="robustness"><span class="header-section-number">32.7.4</span> Robustness</h3>
+<p>Benchmark scores reflect average performance on the test set. A model that achieves 85% accuracy by being correct on 85% of examples but completely wrong on 15% may be less useful than a model that achieves 80% accuracy by being approximately right on all examples. The distribution of errors including their severity, correlation with input features, or predictability matters enormously in deployment and is not captured by accuracy scores.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="32.8">
+<h2 data-number="32.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">32.8</span> Key Takeaways</h2>
 <ul>
-<li>Synthetic data generation uses capable models to produce training examples that would otherwise require expensive human annotation or simply do not exist in sufficient volume in human-written text</li>
-<li>Self-Instruct established the basic pattern: seed a small hand-written dataset, prompt the model to generate new instruction-response pairs, filter for quality and diversity, repeat</li>
-<li>Teacher-student pipelines use a large teacher model to generate training data for a smaller student; the Phi models demonstrated that high-quality synthetic data can substitute for much larger volumes of noisier real data</li>
-<li>Rejection sampling is the most effective technique for verifiable tasks: generate many candidates, keep those that pass an automatic verifier; the verifier is what makes it work</li>
-<li>Constitutional AI and RLAIF use the model as its own alignment teacher, generating preference labels and revisions at a fraction of human annotation cost, with known biases that require calibration</li>
-<li>Model collapse – iterative quality degradation when synthetic data is used to train the next-generation model – is a real risk; always mix with real human-written data and monitor diversity</li>
-<li>Synthetic data cannot add novel knowledge or detect its own blind spots; it recombines existing knowledge and will confidently reproduce the generator model’s errors in the training distribution of the student</li>
-<li>Always mix synthetic with real data; use the strongest available teacher; verify aggressively for high-stakes domains; document provenance</li>
+<li>Benchmarks are fixed evaluation datasets with automated scoring that enable fast, reproducible, comparable measurement; their primary vice is that fixed public benchmarks can be optimized against, making scores reflect benchmark-specific performance rather than general capability.</li>
+<li>The saturation timeline for major benchmarks has shortened: HellaSwag, ARC, GSM8K, and HumanEval are saturated for frontier models; MMLU is approaching saturation; GPQA and SWE-bench remain discriminative as of
+<ol start="2024" type="1">
+<li></li>
+</ol></li>
+<li>Benchmark contamination — test examples appearing in training data — is the most serious validity threat; detection methods include n-gram overlap analysis, verbatim completion probing, and performance-difficulty correlation analysis.</li>
+<li>Format sensitivity produces 5–15 point performance differences from prompt wording alone; few-shot count, chain-of-thought, and answer format must all be specified and held constant for valid comparison.</li>
+<li>Log-probability scoring eliminates generation format sensitivity but introduces tokenization sensitivity; neither scoring method is universally superior.</li>
+<li>Benchmark leaderboard competition concentrates optimization pressure on benchmark scores, producing benchmark-specific fine-tuning, selective reporting, and hyperparameter selection on test sets — all of which inflate scores without improving deployment capability.</li>
+<li>Benchmarks systematically miss long-horizon tasks, calibration, novel task format generalization, and error distribution — all of which matter in deployment and require human evaluation or specialized instruments.</li>
+<li>Responsible benchmark use requires: multiple benchmarks, full reporting of all benchmarks run, contamination analysis, protocol specification, and complementary human evaluation for release decisions.</li>
+<li>The correct interpretation of a benchmark score is “performance on this specific fixed test set under this specific evaluation protocol” — never “general capability at the skill the benchmark was designed to measure.”</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="21.11">
-<h2 data-number="21.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">21.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="32.9">
+<h2 data-number="32.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">32.9</span> Further Reading</h2>
 <ul>
-<li>Wang et al.&nbsp;(2022). <em>Self-Instruct: Aligning Language Models with Self-Generated Instructions.</em> – The foundational paper for synthetic instruction data generation.</li>
-<li>Gunasekar et al.&nbsp;(2023). <em>Textbooks Are All You Need.</em> – The Phi-1 paper; demonstrates that textbook-quality synthetic data can produce remarkably capable small models.</li>
-<li>Bai et al.&nbsp;(2022). <em>Constitutional AI: Harmlessness from AI Feedback.</em> – CAI and RLAIF; using a model as its own alignment teacher.</li>
-<li>Lightman et al.&nbsp;(2023). <em>Let’s Verify Step by Step.</em> – Process reward models trained on step-level human annotations; establishes why step-level supervision matters for reasoning.</li>
-<li>Shumailov et al.&nbsp;(2023). <em>The Curse of Recursion: Training on Generated Data Makes Models Forget.</em> – Model collapse from iterative synthetic training.</li>
-<li>Taori et al.&nbsp;(2023). <em>Alpaca: A Strong, Replicable Instruction-Following Model.</em> – Self-Instruct applied with GPT-3; the first widely-reproduced open instruction-tuned model.</li>
+<li><p>Hendrycks, D., Burns, C., Basart, S., Zou, A., Mazeika, M., Song, D., &amp; Steinhardt, J. (2021). <em>Measuring Massive Multitask Language Understanding.</em> ICLR. — Introduces MMLU; the 57-subject design rationale and the baseline analysis across model families establish the template for broad knowledge evaluation benchmarks.</p></li>
+<li><p>Srivastava, A., et al.&nbsp;(2022). <em>Beyond the Imitation Game: Quantifying and Extrapolating the Capabilities of Language Models.</em> TMLR. — BIG-Bench; the 204-task diversity, the emergent capability analysis, and the BIG-Bench Hard subset selection are the key contributions; the discussion of what tasks resist scaling is particularly valuable.</p></li>
+<li><p>Chen, M., et al.&nbsp;(2021). <em>Evaluating Large Language Models Trained on Code.</em> arXiv. — Introduces HumanEval and the pass@k metric; the functional correctness evaluation methodology and the analysis of temperature’s effect on pass@k are the key technical contributions.</p></li>
+<li><p>Jimenez, C. E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., &amp; Narasimhan, K. (2024). <em>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</em> ICLR. — Introduces SWE-bench; the real-world GitHub issue structure and the automated test suite evaluation are the key design contributions; the analysis of why existing models fail is the most informative section for practitioners.</p></li>
+<li><p>Golchin, S., &amp; Surdeanu, M. (2023). <em>Time Travel in LLMs: Tracing Data Contamination in Large Language Models.</em> ICLR. — Systematic contamination detection using completion probing; the methodology is the key contribution; the contamination rates reported across major models and benchmarks are sobering.</p></li>
+<li><p>Liang, P., et al.&nbsp;(2022). <em>Holistic Evaluation of Language Models.</em> TMLR. — HELM; the multi-scenario, multi-metric evaluation framework and the analysis of trade-offs between accuracy, calibration, and robustness are the key contributions; the selective reporting analysis documents how benchmark choice affects apparent rankings.</p></li>
+<li><p>Rein, D., et al.&nbsp;(2023). <em>GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark.</em> arXiv. — Introduces GPQA and the Google-proof design methodology; the expert versus non-expert performance gap and the analysis of what makes questions genuinely hard are the key contributions.</p></li>
+<li><p>Recht, B., Roelofs, R., Schmidt, L., &amp; Shankar, V. (2019). <em>Do ImageNet Classifiers Generalize to ImageNet?</em> ICML. — Though not an NLP paper, this is the clearest demonstration that held-out test sets degrade as proxies for general performance when the field optimizes against them; the methodology and conclusions transfer directly to language model benchmarking.</p></li>
 </ul>
 <hr>
 
 
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-hendrycks2020measuring" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">D. Hendrycks <em>et al.</em>, <span>“Measuring massive multitask language understanding,”</span> <em>arXiv preprint arXiv:2009.03300</em>, 2020.</div>
+</div>
+<div id="ref-rein2023gpqa" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">D. Rein <em>et al.</em>, <span>“Gpqa: A graduate-level google-proof q&amp;a benchmark,”</span> <em>arXiv preprint arXiv:2311.12022</em>, 2023.</div>
+</div>
+<div id="ref-clark2018think" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">P. Clark <em>et al.</em>, <span>“Think you have solved question answering? Try arc, the ai2 reasoning challenge,”</span> <em>arXiv preprint arXiv:1803.05457</em>, 2018.</div>
+</div>
+<div id="ref-hendrycks2021measuring" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">D. Hendrycks <em>et al.</em>, <span>“Measuring mathematical problem solving with the math dataset,”</span> <em>arXiv preprint arXiv:2103.03874</em>, 2021.</div>
+</div>
+<div id="ref-cobbe2021training" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline"><span class="nocase">K. Cobbe <em>et al.</em></span>, <span>“Training verifiers to solve math word problems,”</span> <em>arXiv preprint arXiv:2110.14168</em>, 2021.</div>
+</div>
+<div id="ref-chen2021evaluating" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline"><span class="nocase">M. Chen <em>et al.</em></span>, <span>“Evaluating large language models trained on code,”</span> <em>arXiv preprint arXiv:2107.03374</em>, 2021.</div>
+</div>
+<div id="ref-austin2021program" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline"><span class="nocase">J. Austin <em>et al.</em></span>, <span>“Program synthesis with large language models,”</span> <em>arXiv preprint arXiv:2108.07732</em>, 2021.</div>
+</div>
+<div id="ref-jimenez2024swe" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">C. E. Jimenez <em>et al.</em>, <span>“Swe-bench: Can language models resolve real-world github issues?”</span> in <em>International conference on learning representations</em>, 2024, pp. 54107–54157.</div>
+</div>
+<div id="ref-wang2019superglue" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">A. Wang <em>et al.</em>, <span>“Superglue: A stickier benchmark for general-purpose language understanding systems,”</span> <em>Advances in neural information processing systems</em>, vol. 32, 2019.</div>
+</div>
+<div id="ref-srivastava2022beyond" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline"><span class="nocase">A. Srivastava <em>et al.</em></span>, <span>“Beyond the imitation game: Quantifying and extrapolating the capabilities of language models,”</span> <em>arXiv preprint arXiv:2206.04615</em>, 2022.</div>
+</div>
+<div id="ref-zheng2023judging" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline"><span class="nocase">L. Zheng <em>et al.</em></span>, <span>“Judging llm-as-a-judge with mt-bench and chatbot arena,”</span> <em>Advances in neural information processing systems</em>, vol. 36, pp. 46595–46623, 2023.</div>
+</div>
+<div id="ref-zhou2023instruction" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[12] </div><div class="csl-right-inline">J. Zhou <em>et al.</em>, <span>“Instruction-following evaluation for large language models,”</span> <em>arXiv preprint arXiv:2311.07911</em>, 2023.</div>
+</div>
+<div id="ref-golchin2024time" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[13] </div><div class="csl-right-inline">S. Golchin and M. Surdeanu, <span>“Time travel in llms: Tracing data contamination in large language models,”</span> in <em>International conference on learning representations</em>, 2024, pp. 43008–43029.</div>
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1334,14 +1369,11 @@ Figure&nbsp;21.1: The journey through the Model Mind.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part5/data_collection.html" class="pagination-link" aria-label="Data Collection and Curation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span>
+      <a href="../../book/part6/human_eval.html" class="pagination-link" aria-label="Human Evaluation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part5/training_tokenization.html" class="pagination-link" aria-label="Tokenization During Training">
-        <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Tokenization During Training</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
