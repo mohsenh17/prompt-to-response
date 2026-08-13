@@ -721,7 +721,7 @@ The summary provides a navigational layer above the detailed content.
 - Liu et al. (2023). *Lost in the Middle: How Language Models Use Long
   Contexts.* — Establishes that chunk position within the context window
   affects how well LLMs use retrieved content; relevant for context assembly
-  decisions in chapter 24.
+  decisions.
 - LangChain Documentation. *Text Splitters.* — Comprehensive reference for
   RecursiveCharacterTextSplitter and other splitters with configuration
   examples.

@@ -184,7 +184,7 @@ calibration problem: annotators do not need to agree on what "4 out
 of 5" means, only on which of two specific responses is better.
 
 The Bradley-Terry model (the same framework used for reward model
-training in Chapter @sec-fine-tuning) can convert pairwise comparison results into
+training in @sec-fine-tuning) can convert pairwise comparison results into
 a consistent ranking. Given a large set of pairwise preferences, the
 Bradley-Terry model estimates a scalar quality score for each model
 such that the probability of model A being preferred over model B
@@ -199,7 +199,7 @@ each pair in both orders to different annotators.
 
 **Length bias**: annotators tend to prefer longer responses, independent
 of whether the additional length adds value. This is the same bias that
-drives verbosity in RLHF-trained models (Chapter @sec-fine-tuning). Mitigation:
+drives verbosity in RLHF-trained models (@sec-fine-tuning). Mitigation:
 train annotators explicitly on length calibration; measure length
 preferences on pairs with matched content but different length.
 
@@ -351,7 +351,7 @@ between models that are close in performance.
 ## Human Evaluation in the Alignment Loop
 
 Human evaluation is not only a measurement tool, it is the primary training
-signal for alignment. The reward models trained in Chapter @sec-fine-tuning are trained
+signal for alignment. The reward models trained in @sec-fine-tuning are trained
 on human preference judgments. The quality of alignment training is bounded
 by the quality of the human evaluations that generated the preference data.
 

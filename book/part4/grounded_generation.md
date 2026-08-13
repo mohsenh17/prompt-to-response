@@ -632,10 +632,6 @@ outdated or incomplete).
 - Grounded generation fails in three distinct ways — hallucination despite
   retrieval, context ignorance, and miscalibrated confidence — each requiring
   a different intervention; retrieval quality alone cannot fix any of them
-- The system prompt from chapter 24 needs two additions to address faithfulness:
-  explicit grounding requirements (parametric memory loses to retrieved context)
-  and explicit calibration language (distinguish "states," "implies," and "does
-  not address")
 - Chain-of-thought reasoning before answering reduces hallucination by forcing
   the model to cite source passages before generating claims; Step 1 conditions
   Step 2 through the autoregressive token dependency
@@ -648,7 +644,7 @@ outdated or incomplete).
   (`[Retrieve]`, `[IsSup]`) but requires fine-tuning and cannot be applied to
   frozen API-served models
 - FLARE uses logprob uncertainty to trigger mid-generation retrieval, bridging
-  single-round RAG and the fully agentic retrieval architectures in chapter 26
+  single-round RAG and the fully agentic retrieval architectures.
 - Post-generation faithfulness filtering with escalating grounding strength and
   a hard fallback prevents known-hallucinated responses from reaching users;
   every fallback is a retrieval quality signal
