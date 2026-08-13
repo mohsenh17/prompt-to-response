@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>33&nbsp; Perplexity – From Prompt to Response</title>
+<title>34&nbsp; Lexical Metrics – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -33,8 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part6/lexical_metrics.html" rel="next">
-<link href="../../book/part6/benchmarks.html" rel="prev">
+<link href="../../book/part6/perplexity.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -109,13 +108,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="33&nbsp; Perplexity – From Prompt to Response">
+<meta property="og:title" content="34&nbsp; Lexical Metrics – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch4/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="33&nbsp; Perplexity – From Prompt to Response">
+<meta name="twitter:title" content="34&nbsp; Lexical Metrics – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch4/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -290,7 +289,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/lexical_metrics.html"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -583,13 +582,13 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/lexical_metrics.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/lexical_metrics.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></span></a>
   </div>
 </li>
@@ -609,15 +608,14 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#from-loss-to-perplexity" id="toc-from-loss-to-perplexity" class="nav-link active" data-scroll-target="#from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</a></li>
-  <li><a href="#the-branching-factor-interpretation" id="toc-the-branching-factor-interpretation" class="nav-link" data-scroll-target="#the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</a></li>
-  <li><a href="#perplexity-as-a-model-quality-metric" id="toc-perplexity-as-a-model-quality-metric" class="nav-link" data-scroll-target="#perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</a></li>
-  <li><a href="#when-perplexity-fails-as-a-metric" id="toc-when-perplexity-fails-as-a-metric" class="nav-link" data-scroll-target="#when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</a></li>
-  <li><a href="#perplexity-and-downstream-task-performance" id="toc-perplexity-and-downstream-task-performance" class="nav-link" data-scroll-target="#perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</a></li>
-  <li><a href="#practical-uses-of-perplexity" id="toc-practical-uses-of-perplexity" class="nav-link" data-scroll-target="#practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</a></li>
-  <li><a href="#perplexity-in-production" id="toc-perplexity-in-production" class="nav-link" data-scroll-target="#perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">33.9</span> Further Reading</a></li>
+  <li><a href="#the-reference-based-evaluation-paradigm" id="toc-the-reference-based-evaluation-paradigm" class="nav-link active" data-scroll-target="#the-reference-based-evaluation-paradigm"><span class="header-section-number">34.1</span> The Reference-Based Evaluation Paradigm</a></li>
+  <li><a href="#bleu-bilingual-evaluation-understudy" id="toc-bleu-bilingual-evaluation-understudy" class="nav-link" data-scroll-target="#bleu-bilingual-evaluation-understudy"><span class="header-section-number">34.2</span> BLEU: Bilingual Evaluation Understudy</a></li>
+  <li><a href="#rouge-recall-oriented-understudy-for-gisting-evaluation" id="toc-rouge-recall-oriented-understudy-for-gisting-evaluation" class="nav-link" data-scroll-target="#rouge-recall-oriented-understudy-for-gisting-evaluation"><span class="header-section-number">34.3</span> ROUGE: Recall-Oriented Understudy for Gisting Evaluation</a></li>
+  <li><a href="#meteor-metric-for-evaluation-of-translation-with-explicit-ordering" id="toc-meteor-metric-for-evaluation-of-translation-with-explicit-ordering" class="nav-link" data-scroll-target="#meteor-metric-for-evaluation-of-translation-with-explicit-ordering"><span class="header-section-number">34.4</span> METEOR: Metric for Evaluation of Translation with Explicit ORdering</a></li>
+  <li><a href="#shared-failure-modes" id="toc-shared-failure-modes" class="nav-link" data-scroll-target="#shared-failure-modes"><span class="header-section-number">34.5</span> Shared Failure Modes</a></li>
+  <li><a href="#the-transition-to-semantic-metrics" id="toc-the-transition-to-semantic-metrics" class="nav-link" data-scroll-target="#the-transition-to-semantic-metrics"><span class="header-section-number">34.6</span> The Transition to Semantic Metrics</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">34.7</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">34.8</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -625,9 +623,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/lexical_metrics.html"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></h1>
+<h1 class="title"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></h1>
 </div>
 
 
@@ -645,7 +643,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>What does perplexity actually measure, when is it a useful proxy for model quality, and when does it mislead you completely?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>What do n-gram overlap metrics actually measure, why did they dominate NLP evaluation for two decades, and why are they now inadequate as the primary measure of language model output quality?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -658,179 +656,172 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch4/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;33.1: The journey through the Model Mind.
+Figure&nbsp;34.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>This chapter covers perplexity which is the oldest and most theoretically grounded language model metric, directly derived from the training objective itself. It is also the metric most frequently misused, misinterpreted, and miscompared across models.</p>
+<p>Perplexity measures how well a model predicts its training distribution. Lexical metrics (BLEU, ROUGE, and METEOR) measure something different: how much a generated output overlaps with a reference output. This chapter covers the n-gram overlap family, how each metric is computed, what it was designed to measure, where it works, and why it fails for the open-ended generation tasks that dominate current language model deployment.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="from-loss-to-perplexity" class="level2" data-number="33.1">
-<h2 data-number="33.1" class="anchored" data-anchor-id="from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</h2>
-<p>Perplexity is not a separate measurement from training loss. It is a transformation of the same quantity (cross-entropy loss) into a more interpretable unit. Understanding perplexity begins with understanding what the training loss measures and why the exponential transformation is applied.</p>
-<p>Recall from <a href="../part5/training_objectives.html" class="quarto-xref"><span>Chapter 23</span></a> that the causal language modeling loss for a sequence of <span class="math inline">\(T\)</span> tokens is the mean negative log-probability of each token given its preceding context:</p>
+<section id="the-reference-based-evaluation-paradigm" class="level2" data-number="34.1">
+<h2 data-number="34.1" class="anchored" data-anchor-id="the-reference-based-evaluation-paradigm"><span class="header-section-number">34.1</span> The Reference-Based Evaluation Paradigm</h2>
+<p>Perplexity requires no reference, it is a property of the model alone, measuring how well it predicts any text. BLEU, ROUGE, and METEOR belong to a different paradigm: reference-based evaluation. They require a gold standard (a human-written reference output) and measure how closely the model’s generated output matches it.</p>
+<p>Reference-based evaluation was the natural approach for NLP tasks with constrained output spaces. Machine translation has a correct target: a good English translation of a German sentence. Summarization has a reference: a human-written summary of the same document. When the reference captures what a good output looks like, measuring similarity to the reference is a reasonable proxy for output quality.</p>
+<p>The limitation surfaces immediately: most tasks have many correct outputs, not one. A German sentence can be correctly translated into English in multiple ways that differ in word choice, sentence structure, and toneand all of them are good and yet different from each other. A document can be summarized in many valid ways. A question can be answered correctly with different phrasings. When the output space is large and diverse, a reference-based metric that rewards similarity to a single reference penalizes good outputs that differ from the reference in arbitrary ways.</p>
+<p>This limitation was understood from the beginning. BLEU was proposed with multiple reference translations, averaging similarity across several human-written references to partially address the single-reference problem. But multiple references are expensive to collect, and even with four or five references, the space of acceptable outputs is far larger than the references cover.</p>
+<p>For open-ended generation (the dominant mode of language model use) there is often no meaningful reference at all. A user asks a language model to explain quantum entanglement. What is the reference? Any of hundreds of valid explanations, at various levels of detail, with various analogies, in various tones. Reference-based evaluation is structurally ill-suited to this regime.</p>
+<hr>
+</section>
+<section id="bleu-bilingual-evaluation-understudy" class="level2" data-number="34.2">
+<h2 data-number="34.2" class="anchored" data-anchor-id="bleu-bilingual-evaluation-understudy"><span class="header-section-number">34.2</span> BLEU: Bilingual Evaluation Understudy</h2>
+<p>BLEU (Bilingual Evaluation Understudy) was developed at IBM to automatically evaluate machine translation output. It became the standard MT evaluation metric for nearly two decades and remains one of the most widely cited metrics in NLP despite well-documented limitations.</p>
+<section id="the-computation" class="level3" data-number="34.2.1">
+<h3 data-number="34.2.1" class="anchored" data-anchor-id="the-computation"><span class="header-section-number">34.2.1</span> The Computation</h3>
+<p>BLEU computes modified n-gram precision: the fraction of n-grams in the hypothesis (generated output) that appear in any of the reference translations, clipped by the count of that n-gram across all references.</p>
+<p>For unigrams: count the number of words in the hypothesis that appear in the references, with each reference word counting at most once per hypothesis word. For bigrams: count consecutive word pairs. For trigrams and 4-grams similarly.</p>
+<p>The modified precision for n-grams:</p>
 <p><span class="math display">\[
-\mathcal{L} = -\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})
+p_n = \frac{\sum_{C \in \text{hypothesis}} \sum_{n\text{-gram} \in C} \text{Count}_{\text{clip}}(n\text{-gram})}
+{\sum_{C \in \text{hypothesis}} \sum_{n\text{-gram} \in C} \text{Count}(n\text{-gram})}
 \]</span></p>
-<p>This quantity is measured in bits when the logarithm is base 2, and in nats when the logarithm is the natural logarithm. It represents the average number of bits (or nats) of surprise the model experiences per token: the lower the loss, the more accurately the model predicts the next token, the less surprised it is by the actual sequence.</p>
-<p>Perplexity is the exponentiation of this average loss:</p>
+<p>where <span class="math inline">\(\text{Count}_{\text{clip}}\)</span> caps the count of each n-gram at its maximum count in any single reference.</p>
+<p>BLEU then combines n-gram precisions across n = 1, 2, 3, 4 using a geometric mean, and applies a brevity penalty to prevent the metric from being gamed by extremely short hypotheses (which would have high precision simply by avoiding any words not in the reference):</p>
 <p><span class="math display">\[
-\text{PPL} = 2^{\mathcal{L}} = 2^{-\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})}
+\text{BLEU} = \text{BP} \cdot \exp\left(\sum_{n=1}^{4} w_n \log p_n\right)
 \]</span></p>
-<p>or equivalently in natural logarithm form:</p>
+<p>where <span class="math inline">\(w_n = 1/4\)</span> (equal weights for 1-gram through 4-gram precision) and the brevity penalty is:</p>
 <p><span class="math display">\[
-\text{PPL} = \exp\left(-\frac{1}{T} \sum_{t=1}^{T} \log P_\theta(x_t \mid x_1, \ldots, x_{t-1})\right)
+\text{BP} = \begin{cases} 1 &amp; \text{if } c &gt; r \\ e^{1 - r/c} &amp; \text{if } c \leq r \end{cases}
 \]</span></p>
-<p>The two formulations are equivalent up to the choice of logarithm base, but they produce different numerical values. A loss of 2.0 nats corresponds to perplexity <span class="math inline">\(e^{2.0} \approx 7.39\)</span>; a loss of 2.0 bits corresponds to perplexity <span class="math inline">\(2^{2.0} = 4.0\)</span>. Published perplexity values must specify which base is used, though the natural logarithm is more common in modern work.</p>
-<hr>
+<p>with <span class="math inline">\(c\)</span> the length of the hypothesis and <span class="math inline">\(r\)</span> the length of the closest reference. A hypothesis shorter than the reference is penalized; a hypothesis longer than the reference is not.</p>
 </section>
-<section id="the-branching-factor-interpretation" class="level2" data-number="33.2">
-<h2 data-number="33.2" class="anchored" data-anchor-id="the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</h2>
-<p>The appeal of the perplexity transformation is the branching factor interpretation: perplexity approximates the effective vocabulary size the model is choosing from at each step. A perplexity of 10 means the model is, on average, as uncertain as if it were choosing uniformly among 10 equally likely options.</p>
-<p>More precisely: if a model assigns equal probability <span class="math inline">\(1/K\)</span> to each of <span class="math inline">\(K\)</span> candidates at every position and zero probability to all others, its perplexity is exactly <span class="math inline">\(K\)</span>. Real models do not assign equal probabilities, but the perplexity captures the effective branching factor of the probability distribution:</p>
-<p><span class="math display">\[
-\text{PPL} = \exp(H) = \exp\left(-\sum_x P(x) \log P(x)\right)
-\]</span></p>
-<p>where <span class="math inline">\(H\)</span> is the entropy of the distribution. High entropy (many plausible continuations, uncertainty spread across many tokens) produces high perplexity. Low entropy (one or a few plausible continuations, most probability mass on one token) produces low perplexity.</p>
-<p>A concrete example. Consider the prompt “The sky is”. The word “blue” is highly probable; “clear”, “dark”, “grey”, “overcast” are moderately probable; tens of thousands of other tokens have negligible probability. If the model assigns probability 0.7 to “blue” and distributes the remaining 0.3 across a handful of alternatives, the effective branching factor at this position is low, perhaps 2 or 3. Now consider the prompt “She opened the”. Thousands of nouns are plausible completions: “door”, “window”, “letter”, “box”, “file”, “book” all have substantial probability, and the distribution is relatively flat. The effective branching factor at this position is high, perhaps 30 or 40. Averaged across a diverse corpus, a well-trained LLM achieves perplexity in the range of 5-15 on typical English text, meaning it is, on average, choosing from an effective vocabulary of 5-15 equally likely options.</p>
-<hr>
+<section id="a-worked-example" class="level3" data-number="34.2.2">
+<h3 data-number="34.2.2" class="anchored" data-anchor-id="a-worked-example"><span class="header-section-number">34.2.2</span> A Worked Example</h3>
+<p>Reference: “The cat sat on the mat.” Hypothesis A: “The cat sat on the mat.” Hypothesis B: “The cat is on the mat.” Hypothesis C: “A feline rested upon the rug.”</p>
+<p>Unigram precision: - A: 6/6 = 1.0 (all words match) - B: 5/6 = 0.83 (“is” does not appear in reference) - C: 1/6 = 0.17 (“the” matches and the rest don’t)</p>
+<p>Bigram precision for C: none of the bigrams in C appear in the reference (“A feline”, “feline rested”, “rested upon”, “upon the”, “the rug”) — 0/5 = 0.</p>
+<p>Hypothesis C would receive a very low BLEU score despite being a semantically valid paraphrase. This is the n-gram overlap metric’s fundamental problem with synonymy: it rewards lexical similarity, not semantic equivalence.</p>
 </section>
-<section id="perplexity-as-a-model-quality-metric" class="level2" data-number="33.3">
-<h2 data-number="33.3" class="anchored" data-anchor-id="perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</h2>
-<p>Perplexity is a direct measure of how well a model has learned the statistical structure of its evaluation corpus. Lower perplexity means the model’s probability distributions are better calibrated to the actual distribution of the text, the model is less surprised by what it reads, because it has learned to assign higher probability to likely continuations.</p>
-<p>This makes perplexity a clean proxy for one specific dimension of model quality: distributional accuracy over the evaluation domain. In domains where this dimension is the primary concern like language modeling research, comparing model architectures, or measuring the effect of training data changes on the same architecture, perplexity is informative and reliable.</p>
-<section id="perplexity-tracks-architecture-and-training-improvements" class="level3" data-number="33.3.1">
-<h3 data-number="33.3.1" class="anchored" data-anchor-id="perplexity-tracks-architecture-and-training-improvements"><span class="header-section-number">33.3.1</span> Perplexity Tracks Architecture and Training Improvements</h3>
-<p>Within a fixed model family and evaluation corpus, perplexity reliably reflects architectural and training improvements. Switching from post-LN to pre-LN normalization, from fixed positional embeddings to RoPE, from vanilla attention to GQA, or from a standard FFN to SwiGLU; all of these produce measurable perplexity reductions that predict improved downstream performance. The correlation between perplexity reduction and downstream task improvement within a model family is strong enough that perplexity is used as the primary signal for ablation studies during model development.</p>
-</section>
-<section id="perplexity-and-scaling-laws" class="level3" data-number="33.3.2">
-<h3 data-number="33.3.2" class="anchored" data-anchor-id="perplexity-and-scaling-laws"><span class="header-section-number">33.3.2</span> Perplexity and Scaling Laws</h3>
-<p>Since perplexity is a monotone transformation of loss, all scaling law relationships hold equivalently in perplexity space. The Chinchilla parametric loss model:</p>
-<p><span class="math display">\[
-L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
-\]</span></p>
-<p>predicts perplexity as <span class="math inline">\(\text{PPL}(N, D) = e^{L(N, D)}\)</span>. The irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats corresponds to a perplexity floor of <span class="math inline">\(e^{1.69} \approx 5.4\)</span>, the perplexity a perfect model would achieve on the Chinchilla evaluation corpus, representing the inherent unpredictability of natural language.</p>
-<p>The relationship between scaling and perplexity is nonlinear due to the exponential transformation: a constant reduction in loss produces a proportionally larger reduction in perplexity at low perplexity values than at high ones. Moving from loss 3.0 to 2.5 reduces perplexity from <span class="math inline">\(e^3 = 20.1\)</span> to <span class="math inline">\(e^{2.5} = 12.2\)</span>, a reduction of 7.9. Moving from loss 2.0 to 1.5 reduces perplexity from <span class="math inline">\(e^2 = 7.4\)</span> to <span class="math inline">\(e^{1.5} = 4.5\)</span>, a reduction of only 2.9, despite the same 0.5 nat loss reduction. This nonlinearity is why perplexity improvements at the frontier are harder to achieve and harder to interpret than the raw numbers suggest.</p>
-<hr>
-</section>
-</section>
-<section id="when-perplexity-fails-as-a-metric" class="level2" data-number="33.4">
-<h2 data-number="33.4" class="anchored" data-anchor-id="when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</h2>
-<p>Perplexity’s theoretical cleanliness is undercut by three practical failure modes that make it unreliable for the comparisons most commonly attempted in practice.</p>
-<section id="failure-1-tokenizer-dependence" class="level3" data-number="33.4.1">
-<h3 data-number="33.4.1" class="anchored" data-anchor-id="failure-1-tokenizer-dependence"><span class="header-section-number">33.4.1</span> Failure 1: Tokenizer Dependence</h3>
-<p>Perplexity is not comparable across models with different tokenizers. This is the most important limitation and the most frequently violated assumption in published comparisons.</p>
-<p>To see why, consider two models evaluating the same English text. Model A uses a 32,000-token vocabulary (LLaMA 2 style) and the text tokenizes into 1,000 tokens. Model B uses a 100,000-token vocabulary (GPT-4 style) and the same text tokenizes into 750 tokens, fewer tokens because the larger vocabulary has single-token representations for more common words and subwords.</p>
-<p>Model A’s perplexity is computed over 1,000 prediction steps. Model B’s perplexity is computed over 750 prediction steps. Model B’s individual prediction steps are harder on average (predicting a whole word at once is harder than predicting a subword) but it has fewer of them. The resulting perplexity numbers are not on the same scale and cannot be directly compared.</p>
-<p>The correct unit for cross-tokenizer comparison is bits per byte (BPB) or bits per character (BPC): the average number of bits the model uses to encode each byte or character of the evaluation text, regardless of how the text was tokenized. Converting to BPB:</p>
-<p><span class="math display">\[
-\text{BPB} = \frac{\mathcal{L}_{\text{bits}} \cdot T_{\text{tokens}}}{B_{\text{bytes}}}
-\]</span></p>
-<p>where <span class="math inline">\(\mathcal{L}_{\text{bits}}\)</span> is loss in bits per token, <span class="math inline">\(T_{\text{tokens}}\)</span> is the number of tokens in the evaluation text, and <span class="math inline">\(B_{\text{bytes}}\)</span> is the number of bytes in the evaluation text. BPB normalizes out the tokenizer compression ratio, making comparison valid across model families.</p>
-<p>A well-trained modern language model achieves approximately 0.9-1.1 BPB on standard English text. The range across architectures and training scales is narrow, BPB is a more compressed metric than perplexity and shows less variance across model families than raw perplexity numbers suggest.</p>
-</section>
-<section id="failure-2-domain-mismatch" class="level3" data-number="33.4.2">
-<h3 data-number="33.4.2" class="anchored" data-anchor-id="failure-2-domain-mismatch"><span class="header-section-number">33.4.2</span> Failure 2: Domain Mismatch</h3>
-<p>Perplexity is a property of the model evaluated on a specific corpus. A model trained primarily on web text will have low perplexity on web text and high perplexity on clinical notes, legal contracts, or 19th-century literature, not because the model is incapable of processing these domains, but because it has not learned their specific statistical regularities. Comparing the perplexity of a general web-trained model to the perplexity of a domain-specific model on a domain-specific test set confounds model quality with domain specialization.</p>
-<p>This failure mode is common in practice. A model finetuned on medical text achieves lower perplexity on medical test sets than a general model of equal or greater general capability. The perplexity comparison suggests the fine-tuned model is better; the actual comparison is domain-adapted model versus general model on a domain-specific test, which tells you about domain adaptation, not overall quality.</p>
-<p>The mitigation: perplexity comparisons are valid only when both models are evaluated on the same corpus and that corpus matches the domain of intended use. A general capability comparison requires a diverse evaluation corpus covering multiple domains; a domain-specific comparison requires a corpus from that domain.</p>
-</section>
-<section id="failure-3-length-and-context-effects" class="level3" data-number="33.4.3">
-<h3 data-number="33.4.3" class="anchored" data-anchor-id="failure-3-length-and-context-effects"><span class="header-section-number">33.4.3</span> Failure 3: Length and Context Effects</h3>
-<p>Perplexity is sensitive to the context length at which it is measured. A model evaluated with 2,048 tokens of context achieves lower perplexity than the same model evaluated with 512 tokens of context, because more context provides more information for predicting each subsequent token. Perplexity measured with different context lengths is not comparable.</p>
-<p>This matters for comparing models with different context window sizes. A model with a 128,000-token context window may achieve lower perplexity on long documents than a model with a 4,096-token context window, not because of any intrinsic quality difference, but because it can condition on more preceding context. Controlling for context length is necessary for valid perplexity comparison.</p>
-<p>The stride evaluation procedure addresses this by evaluating perplexity with a sliding window: evaluate each position with exactly <span class="math inline">\(c\)</span> tokens of preceding context (not the full preceding sequence), keeping the context length constant. This eliminates the context length effect but introduces edge effects at the beginning of documents where less than <span class="math inline">\(c\)</span> tokens are available.</p>
-<hr>
-</section>
-</section>
-<section id="perplexity-and-downstream-task-performance" class="level2" data-number="33.5">
-<h2 data-number="33.5" class="anchored" data-anchor-id="perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</h2>
-<p>A persistent question in language model evaluation: does lower perplexity predict better downstream task performance? The answer is nuanced and depends heavily on the comparison being made.</p>
-<section id="within-a-model-family" class="level3" data-number="33.5.1">
-<h3 data-number="33.5.1" class="anchored" data-anchor-id="within-a-model-family"><span class="header-section-number">33.5.1</span> Within a Model Family</h3>
-<p>Within a model family like same architecture, same tokenizer, same training data distribution, varying only in scale or training duration, perplexity is a reliable predictor of downstream task performance. Models with lower perplexity on the pretraining distribution consistently score higher on knowledge benchmarks, reasoning tasks, and instruction following. This is the basis for using perplexity as the primary metric in ablation studies and scaling law measurements.</p>
-</section>
-<section id="across-model-families" class="level3" data-number="33.5.2">
-<h3 data-number="33.5.2" class="anchored" data-anchor-id="across-model-families"><span class="header-section-number">33.5.2</span> Across Model Families</h3>
-<p>Across model families, the correlation between perplexity and downstream task performance is weaker and sometimes inverted. A model fine-tuned on instruction data achieves higher perplexity on raw web text (because the distribution shift from raw text to instruction data is reflected in higher loss on the original distribution) while performing substantially better on instruction-following benchmarks. The fine-tuned model is better at the thing you want it to do and worse on the metric you might use to evaluate it.</p>
-<p>Similarly, models trained with different objectives (CLM versus MLM, or a model with additional auxiliary losses) may have different perplexity values while achieving similar downstream performance. The relationship between perplexity and task performance is mediated by the training objective: perplexity measures how well the model has learned the training objective’s distribution, not directly how well it performs any downstream task.</p>
-</section>
-<section id="the-calibration-connection" class="level3" data-number="33.5.3">
-<h3 data-number="33.5.3" class="anchored" data-anchor-id="the-calibration-connection"><span class="header-section-number">33.5.3</span> The Calibration Connection</h3>
-<p>Low perplexity is associated with good calibration in a specific sense: a well-calibrated model should be more uncertain (higher entropy, higher local perplexity) on hard examples and less uncertain (lower entropy, lower local perplexity) on easy examples. A model that achieves low average perplexity by being uniformly wrong on hard examples while being correct on easy ones is better calibrated than one that achieves the same average by being randomly wrong across the whole distribution.</p>
-<p>Perplexity does not directly measure calibration in the ECE sense (whether expressed probability matches empirical accuracy). A model can have low perplexity while being systematically miscalibrated, expressing 90% confidence on questions it answers correctly only 60% of the time. Calibration requires comparing predicted probabilities to observed accuracy, which perplexity alone cannot do.</p>
-<hr>
-</section>
-</section>
-<section id="practical-uses-of-perplexity" class="level2" data-number="33.6">
-<h2 data-number="33.6" class="anchored" data-anchor-id="practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</h2>
-<p>Despite its limitations for cross-model comparison, perplexity is genuinely useful in several practical contexts.</p>
-<section id="development-time-ablation-studies" class="level3" data-number="33.6.1">
-<h3 data-number="33.6.1" class="anchored" data-anchor-id="development-time-ablation-studies"><span class="header-section-number">33.6.1</span> Development-Time Ablation Studies</h3>
-<p>During model development, perplexity on a held-out validation set is the primary signal for comparing architectural variants, training hyperparameters, and data mixture choices. Within a single development run (same architecture, same tokenizer, same data pipeline) perplexity comparisons are valid and fast. A 1% perplexity reduction from a normalization change is informative even if it does not translate directly to a benchmark improvement, because within-family perplexity reliably predicts downstream performance.</p>
-</section>
-<section id="detecting-training-instability" class="level3" data-number="33.6.2">
-<h3 data-number="33.6.2" class="anchored" data-anchor-id="detecting-training-instability"><span class="header-section-number">33.6.2</span> Detecting Training Instability</h3>
-<p>Training loss curves (equivalently, perplexity curves) are the primary instrument for detecting training instability. Loss spikes (sudden increases in training loss followed by partial recovery) indicate numerical instability, data pipeline errors, or gradient explosion. A loss that fails to decrease over many steps indicates learning rate problems, data issues, or architectural errors. Monitoring perplexity continuously during training and setting automated alerts on anomalous loss behavior is standard practice in large-scale training runs.</p>
-</section>
-<section id="evaluating-domain-adaptation" class="level3" data-number="33.6.3">
-<h3 data-number="33.6.3" class="anchored" data-anchor-id="evaluating-domain-adaptation"><span class="header-section-number">33.6.3</span> Evaluating Domain Adaptation</h3>
-<p>Domain-specific perplexity measures how well a model has internalized a target domain’s statistical structure. After continued pretraining on medical text, evaluating perplexity on a held-out medical corpus tracks whether domain adaptation is proceeding correctly. This is a valid within-distribution comparison: the same corpus, the same tokenizer, model parameters changing.</p>
-</section>
-<section id="text-quality-filtering" class="level3" data-number="33.6.4">
-<h3 data-number="33.6.4" class="anchored" data-anchor-id="text-quality-filtering"><span class="header-section-number">33.6.4</span> Text Quality Filtering</h3>
-<p>Perplexity from a reference language model can be used as a text quality filter for training data. Low-perplexity text is text the reference model finds predictable and well-structured, typical of fluent, coherent writing. High-perplexity text may indicate: garbled OCR output, code or markup mixed with prose, non-English text evaluated by an English model, or genuinely unusual content. Filtering out high-perplexity text removes document types that may degrade training quality.</p>
-<hr>
-</section>
-</section>
-<section id="perplexity-in-production" class="level2" data-number="33.7">
-<h2 data-number="33.7" class="anchored" data-anchor-id="perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</h2>
-<p>Beyond development and evaluation, perplexity surfaces in production systems in two ways:</p>
-<section id="detecting-distribution-shift" class="level3" data-number="33.7.1">
-<h3 data-number="33.7.1" class="anchored" data-anchor-id="detecting-distribution-shift"><span class="header-section-number">33.7.1</span> Detecting Distribution Shift</h3>
-<p>If the model’s perplexity on incoming user queries increases over time, this is a signal that the query distribution has shifted away from the training distribution. Production monitoring of average query perplexity, computed efficiently using the model’s own log-probability outputs, which are already calculated during inference, provides an early warning system for distribution shift without requiring human evaluation.</p>
-</section>
-<section id="logprobs-for-downstream-applications" class="level3" data-number="33.7.2">
-<h3 data-number="33.7.2" class="anchored" data-anchor-id="logprobs-for-downstream-applications"><span class="header-section-number">33.7.2</span> Logprobs for Downstream Applications</h3>
-<p>The log-probabilities that underlie perplexity are exposed through model APIs and enable several production applications:</p>
-<p><strong>Ranking candidates</strong>: given multiple candidate completions, rank them by the model’s log-probability to select the most likely according to the model’s learned distribution. Used in constrained generation, reranking pipelines, and structured output generation.</p>
-<p><strong>Anomaly detection</strong>: flag inputs that receive unusually high perplexity (the model finds them very surprising), which may indicate adversarial inputs, distribution-shifted queries, or content that the model cannot handle reliably.</p>
-<p><strong>Confidence estimation</strong>: the entropy of the model’s token-level distribution at the final position provides a rough confidence estimate for the response, high entropy suggests the model is uncertain, low entropy suggests confidence. This is an imperfect calibration signal but a zero-cost one.</p>
-<hr>
-</section>
-</section>
-<section id="key-takeaways" class="level2" data-number="33.8">
-<h2 data-number="33.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</h2>
+<section id="what-bleu-measures-and-does-not-measure" class="level3" data-number="34.2.3">
+<h3 data-number="34.2.3" class="anchored" data-anchor-id="what-bleu-measures-and-does-not-measure"><span class="header-section-number">34.2.3</span> What BLEU Measures and Does Not Measure</h3>
+<p>BLEU measures <strong>lexical overlap</strong> between hypothesis and reference. It does not measure:</p>
 <ul>
-<li>Perplexity is the exponentiation of cross-entropy loss: <span class="math inline">\(\text{PPL} =
-e^{\mathcal{L}}\)</span>; it is the same information as loss, transformed into a branching-factor interpretation where PPL represents the effective number of equally likely choices the model faces at each step.</li>
-<li>A perfect model’s perplexity floor is approximately <span class="math inline">\(e^{1.69} \approx
-5.4\)</span> on the Chinchilla evaluation corpus, representing the irreducible entropy of natural language.</li>
-<li>Perplexity is not comparable across models with different tokenizers; a model with a larger vocabulary tokenizes the same text into fewer tokens with harder predictions per token, producing incomparable numbers; bits per byte (BPB) is the correct cross-tokenizer comparison unit.</li>
-<li>Well-trained modern language models achieve approximately 0.9–1.1 BPB on standard English text, a much narrower range than raw perplexity numbers suggest.</li>
-<li>Domain mismatch invalidates perplexity comparisons: a domain-adapted model achieves lower perplexity on domain text than a general model of equal or greater general capability, because perplexity measures fit to the evaluation distribution, not general quality.</li>
-<li>Context length affects perplexity: models evaluated with more preceding context achieve lower perplexity; comparisons are only valid when context length is held constant.</li>
-<li>Within a model family, perplexity reliably predicts downstream task performance and is the primary signal for ablation studies; across model families (different tokenizers, objectives, or fine-tuning), the correlation weakens and can invert.</li>
-<li>Perplexity-based text filtering — discarding high-perplexity documents from web crawls — was used in CCNet, LLaMA, and other training pipelines to improve training data quality.</li>
-<li>Production uses of perplexity: detecting distribution shift in query traffic, ranking candidate completions, anomaly detection on unusual inputs, and zero-cost confidence estimation via token distribution entropy.</li>
-<li>The correct interpretation of a published perplexity number is “cross-entropy loss exponentiated, measured on this specific corpus with this specific tokenizer at this specific context length” — not “how good the model is” in any general sense.</li>
+<li><strong>Semantic equivalence</strong>: synonyms and paraphrases are penalized</li>
+<li><strong>Grammatical correctness</strong>: an ungrammatical hypothesis that copies many reference n-grams may score higher than a grammatical hypothesis that paraphrases</li>
+<li><strong>Factual accuracy</strong>: a hypothesis that copies reference words while asserting the wrong facts scores similarly to one asserting correct facts</li>
+<li><strong>Fluency</strong>: a hypothesis with correct words in scrambled order receives some n-gram credit at the unigram level</li>
+</ul>
+<p>The correlation between BLEU scores and human judgments was the original motivation for the metric. For machine translation evaluated with multiple references at the corpus level (not sentence level), BLEU showed reasonable correlation with human rankings of translation systems in 2002. This correlation has been repeatedly challenged as models improved, translation outputs diversified, and the task distribution shifted beyond the narrow news translation domain where BLEU was calibrated.</p>
+</section>
+<section id="bleus-sensitivity-to-corpus-vs.-sentence-level" class="level3" data-number="34.2.4">
+<h3 data-number="34.2.4" class="anchored" data-anchor-id="bleus-sensitivity-to-corpus-vs.-sentence-level"><span class="header-section-number">34.2.4</span> BLEU’s Sensitivity to Corpus vs.&nbsp;Sentence Level</h3>
+<p>BLEU was designed for corpus-level evaluation: compute the metric over a large test set of sentences and compare systems at the aggregate level. At the sentence level, BLEU is unreliable, a single sentence’s n-gram overlap is too noisy to be informative. A hypothesis that differs from the reference in a single word may receive a very different BLEU score from one that differs in a paraphrase of the entire sentence, even if human judges rate them equivalently.</p>
+<hr>
+</section>
+</section>
+<section id="rouge-recall-oriented-understudy-for-gisting-evaluation" class="level2" data-number="34.3">
+<h2 data-number="34.3" class="anchored" data-anchor-id="rouge-recall-oriented-understudy-for-gisting-evaluation"><span class="header-section-number">34.3</span> ROUGE: Recall-Oriented Understudy for Gisting Evaluation</h2>
+<p>ROUGE was developed for evaluating automatic summarization. Where BLEU measures precision (how much of the hypothesis appears in the reference), ROUGE emphasizes recall (how much of the reference appears in the hypothesis), reflecting the summarization task’s concern with coverage, did the summary include the important information from the source document?</p>
+<section id="rouge-variants" class="level3" data-number="34.3.1">
+<h3 data-number="34.3.1" class="anchored" data-anchor-id="rouge-variants"><span class="header-section-number">34.3.1</span> ROUGE Variants</h3>
+<p><strong>ROUGE-N</strong>: n-gram recall between hypothesis and reference:</p>
+<p><span class="math display">\[
+\text{ROUGE-N} = \frac{\sum_{S \in \text{references}} \sum_{n\text{-gram} \in S} \text{Count}_{\text{match}}(n\text{-gram})}
+{\sum_{S \in \text{references}} \sum_{n\text{-gram} \in S} \text{Count}(n\text{-gram})}
+\]</span></p>
+<p>ROUGE-1 (unigram recall) and ROUGE-2 (bigram recall) are the most commonly reported. ROUGE-1 is sensitive to shared vocabulary; ROUGE-2 is sensitive to shared phrase structure.</p>
+<p><strong>ROUGE-L</strong>: Longest Common Subsequence (LCS) between hypothesis and reference, normalized by the length of the reference. LCS-based recall captures sentence-level word order similarity more sensitively than n-gram recall, because the longest common subsequence must appear in order (though not necessarily contiguously). ROUGE-L is more robust to paraphrase than ROUGE-N but still penalizes synonymy.</p>
+<hr>
+</section>
+</section>
+<section id="meteor-metric-for-evaluation-of-translation-with-explicit-ordering" class="level2" data-number="34.4">
+<h2 data-number="34.4" class="anchored" data-anchor-id="meteor-metric-for-evaluation-of-translation-with-explicit-ordering"><span class="header-section-number">34.4</span> METEOR: Metric for Evaluation of Translation with Explicit ORdering</h2>
+<p>METEOR was designed to address BLEU’s two most obvious limitations: its lack of recall and its inability to match synonyms. METEOR incorporates both precision and recall and extends the matching to include stemming and synonymy through WordNet.</p>
+<section id="the-computation-1" class="level3" data-number="34.4.1">
+<h3 data-number="34.4.1" class="anchored" data-anchor-id="the-computation-1"><span class="header-section-number">34.4.1</span> The Computation</h3>
+<p>METEOR alignment proceeds in stages:</p>
+<ol type="1">
+<li><strong>Exact match</strong>: find words in hypothesis and reference that match exactly.</li>
+<li><strong>Stem match</strong>: find words that share the same stem (e.g., “running” matches “run”).</li>
+<li><strong>Synonym match</strong>: find words that are synonyms in WordNet (e.g., “automobile” matches “car”).</li>
+</ol>
+<p>These matches are found greedily, prioritizing exact matches over stem matches over synonym matches. The matched words define an alignment between hypothesis and reference.</p>
+<p>From the alignment, precision <span class="math inline">\(P\)</span> and recall <span class="math inline">\(R\)</span> are computed over the matched words. An F-mean is computed with recall weighted more heavily than precision (typical weight: precision weight = 1, recall weight = 9, giving recall 9× more weight):</p>
+<p><span class="math display">\[
+F_{\text{mean}} = \frac{10PR}{R + 9P}
+\]</span></p>
+<p>A chunk penalty is applied to penalize fragmented alignments, hypotheses where the matched words are spread across many non-contiguous chunks rather than appearing in a coherent sequence:</p>
+<p><span class="math display">\[
+\text{METEOR} = F_{\text{mean}} \cdot \left(1 - \frac{\text{chunks}}{\text{matched words}}\right)^3
+\]</span></p>
+<p>where “chunks” is the number of contiguous matched sequences and “matched words” is the total count of matched words. A hypothesis that matches the reference in one continuous block receives no penalty; one that matches in many small fragments is penalized substantially.</p>
+</section>
+<section id="what-meteor-improves-over-bleu" class="level3" data-number="34.4.2">
+<h3 data-number="34.4.2" class="anchored" data-anchor-id="what-meteor-improves-over-bleu"><span class="header-section-number">34.4.2</span> What METEOR Improves Over BLEU</h3>
+<p>METEOR’s synonym and stemming matching partially addresses the paraphrase problem: “automobile” matching “car” is better than BLEU’s zero credit for the same synonym. The recall weighting addresses BLEU’s pure-precision focus. The chunk penalty addresses BLEU’s insensitivity to word order beyond n-gram boundaries.</p>
+<p>Empirically, METEOR shows better correlation with human judgments than BLEU for machine translation, particularly at the sentence level where BLEU is most unreliable.</p>
+<p>METEOR’s limitations: the synonym coverage depends on WordNet, which is English-centric, limited to certain word classes, and static (it does not cover domain-specific terminology). METEOR has seen less adoption than BLEU and ROUGE partly because WordNet availability varies across languages and partly because the additional complexity did not translate into dramatically better human correlation in downstream practice.</p>
+<hr>
+</section>
+</section>
+<section id="shared-failure-modes" class="level2" data-number="34.5">
+<h2 data-number="34.5" class="anchored" data-anchor-id="shared-failure-modes"><span class="header-section-number">34.5</span> Shared Failure Modes</h2>
+<p>All three metrics share the same fundamental limitations that make them inadequate as the primary evaluation instrument for modern language models.</p>
+<section id="the-synonymy-problem" class="level3" data-number="34.5.1">
+<h3 data-number="34.5.1" class="anchored" data-anchor-id="the-synonymy-problem"><span class="header-section-number">34.5.1</span> The Synonymy Problem</h3>
+<p>None of the three metrics handle synonymy satisfactorily. BLEU and ROUGE ignores it entirely. METEOR captures it only within WordNet’s coverage, which is limited and English-specific. A hypothesis that uses different but equally valid vocabulary than the reference receives a lower score than one that copies the reference’s phrasing, a systematic bias against natural language diversity.</p>
+<p>This limitation was tolerable when machine translation produced outputs with limited vocabulary variety. It is intolerable for general language model evaluation where the hypothesis space is the full vocabulary in all combinations.</p>
+</section>
+<section id="the-single-valid-output-assumption" class="level3" data-number="34.5.2">
+<h3 data-number="34.5.2" class="anchored" data-anchor-id="the-single-valid-output-assumption"><span class="header-section-number">34.5.2</span> The Single Valid Output Assumption</h3>
+<p>All three metrics assume that the references capture the space of acceptable outputs. For tasks with genuinely diverse acceptable outputs (open-ended question answering, instruction following, creative writing, explanation) this assumption fails. A model that generates a high-quality response will receive a low score if that response differs from the reference in arbitrary ways.</p>
+<p>The multiple-reference mitigation (computing metrics against several human- written references and taking the maximum or average) partially addresses this but requires expensive collection of multiple references and still undercovers the space of acceptable outputs.</p>
+</section>
+<section id="insensitivity-to-factual-accuracy" class="level3" data-number="34.5.3">
+<h3 data-number="34.5.3" class="anchored" data-anchor-id="insensitivity-to-factual-accuracy"><span class="header-section-number">34.5.3</span> Insensitivity to Factual Accuracy</h3>
+<p>N-gram overlap metrics are blind to factual content. A hypothesis that copies the reference’s sentence structure while substituting incorrect facts for correct ones may receive nearly as high a score as the correct reference. A fluent, well-organized, confidently stated wrong answer receives a higher BLEU score than a correct answer expressed in different vocabulary.</p>
+<p>This limitation is particularly dangerous for evaluating knowledge-intensive generation: summaries, question answering, factual explanations. A model that produces fluent but factually incorrect summaries will not be identified as problematic by ROUGE evaluation.</p>
+<hr>
+</section>
+</section>
+<section id="the-transition-to-semantic-metrics" class="level2" data-number="34.6">
+<h2 data-number="34.6" class="anchored" data-anchor-id="the-transition-to-semantic-metrics"><span class="header-section-number">34.6</span> The Transition to Semantic Metrics</h2>
+<p>The inadequacy of n-gram overlap metrics for modern language model evaluation motivated the development of semantic metrics that compare meaning rather than lexical form. BERTScore, BLEURT, and their successors use pretrained language model embeddings to compare hypothesis and reference in a continuous semantic space, capturing synonym and paraphrase relationships that n-gram metrics miss.</p>
+<p>The transition from lexical to semantic metrics tracks the capability improvement of the models being evaluated. When machine translation outputs were close paraphrases of the reference (limited vocabulary, constrained sentence structure), BLEU was a reasonable proxy. As translation models improved and outputs became more diverse and fluent, the gap between BLEU and human judgment widened. The same dynamic applies to summarization: ROUGE was reasonable when abstractive models produced extractive-like outputs; it became less appropriate as models produced genuinely abstractive paraphrases.</p>
+<p>For current language model evaluation (open-ended instruction following, conversational responses, complex reasoning) neither n-gram metrics nor embedding-based semantic metrics are adequate as primary evaluation instruments. The limitations of all reference-based metrics in the open-ended generation regime motivate the LLM-as-judge approach and, ultimately, the primacy of human evaluation.</p>
+<hr>
+</section>
+<section id="key-takeaways" class="level2" data-number="34.7">
+<h2 data-number="34.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">34.7</span> Key Takeaways</h2>
+<ul>
+<li>BLEU measures modified n-gram precision (how much of the hypothesis appears in references) with a brevity penalty; it was designed for corpus-level machine translation evaluation with multiple references and is unreliable at the sentence level.</li>
+<li>ROUGE measures n-gram recall (how much of the reference appears in the hypothesis), with ROUGE-1, ROUGE-2, and ROUGE-L as standard variants; it was designed for summarization evaluation and favors extractive over abstractive approaches.</li>
+<li>METEOR extends BLEU with recall weighting, stemming, and WordNet synonymy matching, and adds a chunk penalty for fragmented alignments; it shows slightly better human correlation than BLEU but has seen less adoption due to WordNet’s English-centricity and limited domain coverage.</li>
+<li>All three metrics share fundamental limitations: they penalize synonymy and paraphrase, assume the references cover the space of acceptable outputs, are insensitive to factual accuracy, and are noisy at the sentence level.</li>
+<li>A hypothesis using different but equally valid vocabulary than the reference receives a lower BLEU/ROUGE score than one that copies the reference’s phrasing — a systematic bias against natural language diversity that becomes catastrophic for open-ended generation evaluation.</li>
+<li>The brevity penalty in BLEU prevents gaming by short hypotheses but does not prevent gaming by verbose hypotheses that copy many reference n-grams; there is no penalty for excessive length.</li>
+<li>N-gram metrics remain appropriate for corpus-level MT evaluation with multiple references, within-system regression testing, extractive summarization, and comparability with prior work.</li>
+<li>The correlation between BLEU and human judgments degrades as model outputs become more fluent and diverse; the metric was calibrated on 2002-era machine translation systems and the gap to human judgment has widened consistently as models improved.</li>
+<li>Factual incorrectness is invisible to n-gram overlap metrics: a fluent, confidently stated wrong answer receives nearly as high a score as a correct answer using different vocabulary — the primary motivation for hallucination metrics.</li>
+<li>The transition from lexical to semantic metrics (BERTScore, BLEURT) and from reference-based to reference-free metrics (LLM-as-judge) reflects the growing inadequacy of n-gram overlap for evaluating the open-ended generation tasks that define current language model deployment.</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="33.9">
-<h2 data-number="33.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">33.9</span> Further Reading</h2>
+<section id="further-reading" class="level2" data-number="34.8">
+<h2 data-number="34.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">34.8</span> Further Reading</h2>
 <ul>
-<li><p>Wenzek, G., Lachaux, M.-A., Conneau, A., Chaudhary, V., Guzmán, F., Joulin, A., &amp; Grave, E. (2020). <em>CCNet: Extracting High Quality Monolingual Datasets from Web Crawl Data.</em> LREC. — Introduces perplexity-based filtering for web crawl data; the filtering pipeline and the quality analysis before and after filtering are the key contributions; used as the basis for LLaMA training data preparation.</p></li>
-<li><p>Hoffmann, J., et al.&nbsp;(2022). <em>Training Compute-Optimal Large Language Models.</em> NeurIPS. — Chinchilla; the parametric loss model <span class="math inline">\(L(N,D) = E + A/N^\alpha + B/D^\beta\)</span> and the irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats are introduced here; the BPB analysis in the appendix is the clearest published treatment of cross-tokenizer perplexity normalization.</p></li>
-<li><p>Press, O., Smith, N. A., &amp; Lewis, M. (2022). <em>Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation.</em> ICLR. — The stride evaluation procedure for measuring perplexity at fixed context length is described and used here; the analysis of how context length affects perplexity is the most precise published treatment of the length confound.</p></li>
-<li><p>Guo, C., Pleiss, G., Sun, Y., &amp; Weinberger, K. Q. (2017). <em>On Calibration of Modern Neural Networks.</em> ICML. — Introduces Expected Calibration Error (ECE) and documents the miscalibration of modern deep networks; though focused on classification, the methodology applies directly to language model probability calibration and motivates the distinction between low perplexity and good calibration.</p></li>
-<li><p>Holtzman, A., Buys, J., Du, L., Forbes, M., &amp; Choi, Y. (2020). <em>The Curious Case of Neural Text Degeneration.</em> ICLR. — Analyzes the relationship between token-level probability distributions and generation quality; the connection between entropy of the distribution (perplexity at a position) and the quality of sampled text motivates the local perplexity interpretation.</p></li>
-<li><p>Mielke, S. J., Szlam, A., Dinan, E., &amp; Boureau, Y.-L. (2022). <em>Reducing Conversational Agents’ Overconfidence Through Epistemic Nudging.</em> TACL. — Examines the relationship between model confidence (expressed probabilities) and accuracy in conversational settings; the overconfidence analysis and mitigation strategies connect perplexity-adjacent calibration to practical deployment concerns.</p></li>
+<li><p>Papineni, K., Roukos, S., Ward, T., &amp; Zhu, W.-J. (2002). <em>BLEU: a Method for Automatic Evaluation of Machine Translation.</em> ACL. — The founding paper; the modified n-gram precision formulation and the brevity penalty are introduced here; the corpus-level correlation results with human judgments established BLEU as the MT evaluation standard for two decades.</p></li>
+<li><p>Lin, C.-Y. (2004). <em>ROUGE: A Package for Automatic Evaluation of Summaries.</em> ACL Workshop. — Introduces ROUGE-N, ROUGE-L, ROUGE-W, and ROUGE-S; the correlation analysis with human judgments on DUC summarization tasks is the key empirical contribution; the package implementation made ROUGE the de facto summarization evaluation standard.</p></li>
+<li><p>Banerjee, S., &amp; Lavie, A. (2005). <em>METEOR: An Automatic Metric for MT Evaluation with Improved Correlation with Human Judgments.</em> ACL Workshop. — Introduces METEOR with stem and synonym matching; the human correlation improvements over BLEU at the sentence level are the key contribution.</p></li>
+<li><p>Callison-Burch, C., Osborne, M., &amp; Koehn, P. (2006). <em>Re-evaluating the Role of BLEU in Machine Translation Research.</em> EACL. — The most influential critique of BLEU; demonstrates that BLEU does not correlate with human judgments in several important evaluation scenarios and that systems ranked differently by BLEU and humans exist in practice.</p></li>
+<li><p>Reiter, E. (2018). <em>A Structured Review of the Validity of BLEU.</em> Computational Linguistics. — Systematic review of 135 papers that used BLEU; documents the frequency of misuse (sentence-level evaluation, single reference, cross-system comparison without protocol matching) and the correlation with human judgments across studies.</p></li>
+<li><p>Mathur, N., Baldwin, T., &amp; Cohn, T. (2020). <em>Tangled up in BLEU: Reevaluating the Evaluation of Automatic Machine Translation Evaluation Metrics.</em> ACL. — Meta-evaluation of MT metrics including BLEU, ROUGE, and METEOR; demonstrates that all three correlate poorly with direct assessment human judgments on modern MT systems; motivates the transition to embedding-based metrics.</p></li>
+<li><p>Deutsch, D., Dou, F., &amp; Roth, D. (2022). <em>Examining the Premises and Implications of Reference-Based MT Evaluation.</em> NAACL. — Formal analysis of when reference-based evaluation is valid; the single-valid-output assumption is examined precisely and its violation quantified across translation tasks.</p></li>
 </ul>
 <hr>
 
@@ -1253,14 +1244,11 @@ e^{\mathcal{L}}\)</span>; it is the same information as loss, transformed into a
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part6/benchmarks.html" class="pagination-link" aria-label="Benchmarks">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></span>
+      <a href="../../book/part6/perplexity.html" class="pagination-link" aria-label="Perplexity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part6/lexical_metrics.html" class="pagination-link" aria-label="Lexical Metrics">
-        <span class="nav-page-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

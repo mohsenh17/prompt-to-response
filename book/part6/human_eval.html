@@ -607,6 +607,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part6/lexical_metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -750,10 +756,10 @@ Figure&nbsp;31.1: The journey through the Model Mind.
 <section id="comparative-judgment" class="level3" data-number="31.3.2">
 <h3 data-number="31.3.2" class="anchored" data-anchor-id="comparative-judgment"><span class="header-section-number">31.3.2</span> Comparative Judgment</h3>
 <p>Comparative evaluation presents annotators with two or more responses to the same prompt and asks which is better. Comparative judgment has consistently higher inter-annotator agreement than absolute rating for the same quality dimension, because it eliminates the scale calibration problem: annotators do not need to agree on what “4 out of 5” means, only on which of two specific responses is better.</p>
-<p>The Bradley-Terry model (the same framework used for reward model training in Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>) can convert pairwise comparison results into a consistent ranking. Given a large set of pairwise preferences, the Bradley-Terry model estimates a scalar quality score for each model such that the probability of model A being preferred over model B matches the observed preference rate.</p>
+<p>The Bradley-Terry model (the same framework used for reward model training in <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>) can convert pairwise comparison results into a consistent ranking. Given a large set of pairwise preferences, the Bradley-Terry model estimates a scalar quality score for each model such that the probability of model A being preferred over model B matches the observed preference rate.</p>
 <p>Comparative evaluation has limitations:</p>
 <p><strong>Position bias</strong>: annotators tend to prefer the first response shown, regardless of quality. Mitigation: randomize the order of presentation and measure the position preference rate; counterbalance by presenting each pair in both orders to different annotators.</p>
-<p><strong>Length bias</strong>: annotators tend to prefer longer responses, independent of whether the additional length adds value. This is the same bias that drives verbosity in RLHF-trained models (Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>). Mitigation: train annotators explicitly on length calibration; measure length preferences on pairs with matched content but different length.</p>
+<p><strong>Length bias</strong>: annotators tend to prefer longer responses, independent of whether the additional length adds value. This is the same bias that drives verbosity in RLHF-trained models (<a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a>). Mitigation: train annotators explicitly on length calibration; measure length preferences on pairs with matched content but different length.</p>
 <p><strong>Familiarity bias</strong>: annotators may prefer responses from models they recognize or trust. Blind evaluation (where the model identity is hidden) is standard practice for this reason, though it is harder to implement when model outputs have distinctive stylistic signatures.</p>
 <hr>
 </section>
@@ -812,7 +818,7 @@ Figure&nbsp;31.1: The journey through the Model Mind.
 </section>
 <section id="human-evaluation-in-the-alignment-loop" class="level2" data-number="31.6">
 <h2 data-number="31.6" class="anchored" data-anchor-id="human-evaluation-in-the-alignment-loop"><span class="header-section-number">31.6</span> Human Evaluation in the Alignment Loop</h2>
-<p>Human evaluation is not only a measurement tool, it is the primary training signal for alignment. The reward models trained in Chapter <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a> are trained on human preference judgments. The quality of alignment training is bounded by the quality of the human evaluations that generated the preference data.</p>
+<p>Human evaluation is not only a measurement tool, it is the primary training signal for alignment. The reward models trained in <a href="../part5/fine_tuning.html" class="quarto-xref"><span>Chapter 27</span></a> are trained on human preference judgments. The quality of alignment training is bounded by the quality of the human evaluations that generated the preference data.</p>
 <p>This creates a feedback loop with important properties:</p>
 <p><strong>The training distribution is the evaluation distribution.</strong> A reward model trained on human evaluations of helpfulness and harmlessness will align the policy toward the specific notion of helpfulness and harmlessness that the annotators expressed. If the annotators systematically preferred verbose responses, the aligned model will be verbose. If they systematically preferred confident responses, the aligned model will be overconfident. The biases in human evaluation become the biases in the trained model.</p>
 <p><strong>Evaluation quality compounds.</strong> A model trained on poor-quality human evaluations produces a worse model, which produces worse responses for the next round of evaluation, which produces worse preference data for the next round of training. Conversely, improving evaluation quality at any stage propagates forward into improved model quality. This is why the investment in annotator training and guideline quality (expensive and invisible in published papers) is one of the highest-return investments in the alignment pipeline.</p>

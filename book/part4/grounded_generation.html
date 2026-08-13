@@ -593,6 +593,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part6/lexical_metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -1092,12 +1098,11 @@ If the documentation does not contain sufficient information to answer:
 <h2 data-number="19.13" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">19.13</span> Key takeaways</h2>
 <ul>
 <li>Grounded generation fails in three distinct ways — hallucination despite retrieval, context ignorance, and miscalibrated confidence — each requiring a different intervention; retrieval quality alone cannot fix any of them</li>
-<li>The system prompt from chapter 24 needs two additions to address faithfulness: explicit grounding requirements (parametric memory loses to retrieved context) and explicit calibration language (distinguish “states,” “implies,” and “does not address”)</li>
 <li>Chain-of-thought reasoning before answering reduces hallucination by forcing the model to cite source passages before generating claims; Step 1 conditions Step 2 through the autoregressive token dependency</li>
 <li>Token logprobs identify low-confidence spans during generation — where the model is most likely departing from retrieved context into parametric memory</li>
 <li>Claim extraction and verification provides the most diagnostically precise faithfulness signal: <code>NOT_ADDRESSED</code> verdicts are hallucinations, <code>CONTRADICTED</code> verdicts are the most serious failures</li>
 <li>Self-RAG embeds faithfulness signals into generation through special tokens (<code>[Retrieve]</code>, <code>[IsSup]</code>) but requires fine-tuning and cannot be applied to frozen API-served models</li>
-<li>FLARE uses logprob uncertainty to trigger mid-generation retrieval, bridging single-round RAG and the fully agentic retrieval architectures in chapter 26</li>
+<li>FLARE uses logprob uncertainty to trigger mid-generation retrieval, bridging single-round RAG and the fully agentic retrieval architectures.</li>
 <li>Post-generation faithfulness filtering with escalating grounding strength and a hard fallback prevents known-hallucinated responses from reaching users; every fallback is a retrieval quality signal</li>
 <li>Log the full context and response for every production query; without it, retrieval failures and generation failures are indistinguishable, and both look the same to the user</li>
 </ul>
