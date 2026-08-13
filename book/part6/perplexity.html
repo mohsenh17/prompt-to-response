@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>20&nbsp; Data Collection and Curation – From Prompt to Response</title>
+<title>33&nbsp; Perplexity – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -33,8 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part5/synthetic_data.html" rel="next">
-<link href="../../book/part4/grounded_generation.html" rel="prev">
+<link href="../../book/part6/benchmarks.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -79,14 +78,43 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="33&nbsp; Perplexity – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="20&nbsp; Data Collection and Curation – From Prompt to Response">
+<meta name="twitter:title" content="33&nbsp; Perplexity – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part5/figures/ch1/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -261,7 +289,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -456,16 +484,16 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">The Forging of Intelligence</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part5/data_collection.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></span></a>
   </div>
 </li>
@@ -533,13 +561,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">The Trial of the Answer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part6/human_eval.html" class="sidebar-item-text sidebar-link">
@@ -554,7 +582,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span></a>
   </div>
 </li>
@@ -574,17 +602,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#why-data-is-the-real-foundation" id="toc-why-data-is-the-real-foundation" class="nav-link active" data-scroll-target="#why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</a></li>
-  <li><a href="#what-scale-actually-means" id="toc-what-scale-actually-means" class="nav-link" data-scroll-target="#what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</a></li>
-  <li><a href="#the-primary-sources" id="toc-the-primary-sources" class="nav-link" data-scroll-target="#the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</a></li>
-  <li><a href="#the-data-pipeline" id="toc-the-data-pipeline" class="nav-link" data-scroll-target="#the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</a></li>
-  <li><a href="#deduplication-the-underrated-problem" id="toc-deduplication-the-underrated-problem" class="nav-link" data-scroll-target="#deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</a></li>
-  <li><a href="#quality-filtering-what-quality-means" id="toc-quality-filtering-what-quality-means" class="nav-link" data-scroll-target="#quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</a></li>
-  <li><a href="#domain-mixing-and-data-proportions" id="toc-domain-mixing-and-data-proportions" class="nav-link" data-scroll-target="#domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</a></li>
-  <li><a href="#the-data-contamination-problem" id="toc-the-data-contamination-problem" class="nav-link" data-scroll-target="#the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</a></li>
-  <li><a href="#the-web-as-a-cultural-artifact" id="toc-the-web-as-a-cultural-artifact" class="nav-link" data-scroll-target="#the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">20.11</span> Further reading</a></li>
+  <li><a href="#from-loss-to-perplexity" id="toc-from-loss-to-perplexity" class="nav-link active" data-scroll-target="#from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</a></li>
+  <li><a href="#the-branching-factor-interpretation" id="toc-the-branching-factor-interpretation" class="nav-link" data-scroll-target="#the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</a></li>
+  <li><a href="#perplexity-as-a-model-quality-metric" id="toc-perplexity-as-a-model-quality-metric" class="nav-link" data-scroll-target="#perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</a></li>
+  <li><a href="#when-perplexity-fails-as-a-metric" id="toc-when-perplexity-fails-as-a-metric" class="nav-link" data-scroll-target="#when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</a></li>
+  <li><a href="#perplexity-and-downstream-task-performance" id="toc-perplexity-and-downstream-task-performance" class="nav-link" data-scroll-target="#perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</a></li>
+  <li><a href="#practical-uses-of-perplexity" id="toc-practical-uses-of-perplexity" class="nav-link" data-scroll-target="#practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</a></li>
+  <li><a href="#perplexity-in-production" id="toc-perplexity-in-production" class="nav-link" data-scroll-target="#perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">33.9</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -592,9 +618,9 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html">The Forging of Intelligence</a></li><li class="breadcrumb-item"><a href="../../book/part5/data_collection.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Collection and Curation</span></h1>
+<h1 class="title"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></h1>
 </div>
 
 
@@ -612,7 +638,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>Before a model can answer anything, it must read everything. How does the raw internet become training data and why are the choices made here the ones that propagate furthest and are corrected least easily?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>What does perplexity actually measure, when is it a useful proxy for model quality, and when does it mislead you completely?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -625,233 +651,179 @@ ul.task-list li input[type="checkbox"] {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch1/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch3/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;20.1: The journey through the Model Mind.
+Figure&nbsp;33.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>Part IV showed how retrieval gives the model access to external knowledge at inference time. Part V rewinds the clock entirely. The model had to learn to do all of that from somewhere. This chapter covers where: the construction of the training corpus that precedes everything else in Part V. Data collection is not a preprocessing step you get out of the way before the real work begins. It is the first architectural decision of the entire system.</p>
+<p>This chapter covers perplexity which is the oldest and most theoretically grounded language model metric, directly derived from the training objective itself. It is also the metric most frequently misused, misinterpreted, and miscompared across models.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="why-data-is-the-real-foundation" class="level2" data-number="20.1">
-<h2 data-number="20.1" class="anchored" data-anchor-id="why-data-is-the-real-foundation"><span class="header-section-number">20.1</span> Why data is the real foundation</h2>
-<p>Every capability an LLM has (reasoning, coding, translation, summarization, answering questions about French geography and quantum mechanics) traces back to the data it was trained on. The model has no built-in knowledge of the world. It has patterns compressed from text. Those patterns are only as good as the text that produced them.</p>
-<p>This means data collection is where the model’s capabilities are fundamentally shaped. Architecture decisions matter (attention, depth, positional encoding) but modern LLMs share a largely converged architecture. What they know, what they get wrong, what biases they carry, and what blind spots they have are primarily determined by data, not architecture.</p>
-<p>Most papers spend one paragraph on data and thirty pages on model design. This is backwards. The architecture of a 2024 model is recognizable from a 2020 model. The data is where they diverge.</p>
+<section id="from-loss-to-perplexity" class="level2" data-number="33.1">
+<h2 data-number="33.1" class="anchored" data-anchor-id="from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</h2>
+<p>Perplexity is not a separate measurement from training loss. It is a transformation of the same quantity (cross-entropy loss) into a more interpretable unit. Understanding perplexity begins with understanding what the training loss measures and why the exponential transformation is applied.</p>
+<p>Recall from <a href="../part5/training_objectives.html" class="quarto-xref"><span>Chapter 23</span></a> that the causal language modeling loss for a sequence of <span class="math inline">\(T\)</span> tokens is the mean negative log-probability of each token given its preceding context:</p>
+<p><span class="math display">\[
+\mathcal{L} = -\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})
+\]</span></p>
+<p>This quantity is measured in bits when the logarithm is base 2, and in nats when the logarithm is the natural logarithm. It represents the average number of bits (or nats) of surprise the model experiences per token: the lower the loss, the more accurately the model predicts the next token, the less surprised it is by the actual sequence.</p>
+<p>Perplexity is the exponentiation of this average loss:</p>
+<p><span class="math display">\[
+\text{PPL} = 2^{\mathcal{L}} = 2^{-\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})}
+\]</span></p>
+<p>or equivalently in natural logarithm form:</p>
+<p><span class="math display">\[
+\text{PPL} = \exp\left(-\frac{1}{T} \sum_{t=1}^{T} \log P_\theta(x_t \mid x_1, \ldots, x_{t-1})\right)
+\]</span></p>
+<p>The two formulations are equivalent up to the choice of logarithm base, but they produce different numerical values. A loss of 2.0 nats corresponds to perplexity <span class="math inline">\(e^{2.0} \approx 7.39\)</span>; a loss of 2.0 bits corresponds to perplexity <span class="math inline">\(2^{2.0} = 4.0\)</span>. Published perplexity values must specify which base is used, though the natural logarithm is more common in modern work.</p>
 <hr>
 </section>
-<section id="what-scale-actually-means" class="level2" data-number="20.2">
-<h2 data-number="20.2" class="anchored" data-anchor-id="what-scale-actually-means"><span class="header-section-number">20.2</span> What scale actually means</h2>
-<p>Training corpora are large enough that intuitions built on normal datasets break down. Some grounding numbers:</p>
-<p>GPT-3 trained on roughly 300 billion tokens. LLaMA 2 used 2 trillion tokens. Frontier models from 2024 are estimated to have trained on 10–15 trillion tokens. A token is approximately 0.75 words in English, so 1 trillion tokens is roughly 750 billion words, about 5 million books.</p>
-<p>No human has read 5 million books. No team of humans has read 5 million books. The model has, in a statistical sense, absorbed patterns from all of them.</p>
-<p>This scale creates an immediate engineering constraint: you cannot curate 10 trillion tokens by hand. You cannot read a meaningful fraction of it. Every quality decision must be made programmatically, which means every quality decision is imperfect. The question is not how to achieve perfect curation but it is how to make systematic decisions that produce the best results across billions of documents without ever seeing most of them.</p>
+<section id="the-branching-factor-interpretation" class="level2" data-number="33.2">
+<h2 data-number="33.2" class="anchored" data-anchor-id="the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</h2>
+<p>The appeal of the perplexity transformation is the branching factor interpretation: perplexity approximates the effective vocabulary size the model is choosing from at each step. A perplexity of 10 means the model is, on average, as uncertain as if it were choosing uniformly among 10 equally likely options.</p>
+<p>More precisely: if a model assigns equal probability <span class="math inline">\(1/K\)</span> to each of <span class="math inline">\(K\)</span> candidates at every position and zero probability to all others, its perplexity is exactly <span class="math inline">\(K\)</span>. Real models do not assign equal probabilities, but the perplexity captures the effective branching factor of the probability distribution:</p>
+<p><span class="math display">\[
+\text{PPL} = \exp(H) = \exp\left(-\sum_x P(x) \log P(x)\right)
+\]</span></p>
+<p>where <span class="math inline">\(H\)</span> is the entropy of the distribution. High entropy (many plausible continuations, uncertainty spread across many tokens) produces high perplexity. Low entropy (one or a few plausible continuations, most probability mass on one token) produces low perplexity.</p>
+<p>A concrete example. Consider the prompt “The sky is”. The word “blue” is highly probable; “clear”, “dark”, “grey”, “overcast” are moderately probable; tens of thousands of other tokens have negligible probability. If the model assigns probability 0.7 to “blue” and distributes the remaining 0.3 across a handful of alternatives, the effective branching factor at this position is low, perhaps 2 or 3. Now consider the prompt “She opened the”. Thousands of nouns are plausible completions: “door”, “window”, “letter”, “box”, “file”, “book” all have substantial probability, and the distribution is relatively flat. The effective branching factor at this position is high, perhaps 30 or 40. Averaged across a diverse corpus, a well-trained LLM achieves perplexity in the range of 5-15 on typical English text, meaning it is, on average, choosing from an effective vocabulary of 5-15 equally likely options.</p>
 <hr>
 </section>
-<section id="the-primary-sources" class="level2" data-number="20.3">
-<h2 data-number="20.3" class="anchored" data-anchor-id="the-primary-sources"><span class="header-section-number">20.3</span> The primary sources</h2>
-<p>Modern LLM training data comes from four broad categories. Real datasets blend all of them in deliberate proportions.</p>
-<section id="web-crawls" class="level3" data-number="20.3.1">
-<h3 data-number="20.3.1" class="anchored" data-anchor-id="web-crawls"><span class="header-section-number">20.3.1</span> Web crawls</h3>
-<p>The largest source by volume. Common Crawl has been running automated web snapshots since 2008, releasing monthly snapshots each containing petabytes of raw HTML from billions of pages. The appeal is obvious: the web is the largest corpus of human-written text ever assembled. The problem is equally obvious: most of it is garbage. Spam, SEO content, duplicate pages, auto-generated text, comment sections, scraped aggregator sites, and machine-translated content sit alongside high-quality journalism, technical documentation, and encyclopedic reference.</p>
-<p>Raw web crawl data is unusable without extensive filtering. The question is how to filter aggressively enough to remove noise without losing diversity.</p>
+<section id="perplexity-as-a-model-quality-metric" class="level2" data-number="33.3">
+<h2 data-number="33.3" class="anchored" data-anchor-id="perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</h2>
+<p>Perplexity is a direct measure of how well a model has learned the statistical structure of its evaluation corpus. Lower perplexity means the model’s probability distributions are better calibrated to the actual distribution of the text, the model is less surprised by what it reads, because it has learned to assign higher probability to likely continuations.</p>
+<p>This makes perplexity a clean proxy for one specific dimension of model quality: distributional accuracy over the evaluation domain. In domains where this dimension is the primary concern like language modeling research, comparing model architectures, or measuring the effect of training data changes on the same architecture, perplexity is informative and reliable.</p>
+<section id="perplexity-tracks-architecture-and-training-improvements" class="level3" data-number="33.3.1">
+<h3 data-number="33.3.1" class="anchored" data-anchor-id="perplexity-tracks-architecture-and-training-improvements"><span class="header-section-number">33.3.1</span> Perplexity Tracks Architecture and Training Improvements</h3>
+<p>Within a fixed model family and evaluation corpus, perplexity reliably reflects architectural and training improvements. Switching from post-LN to pre-LN normalization, from fixed positional embeddings to RoPE, from vanilla attention to GQA, or from a standard FFN to SwiGLU; all of these produce measurable perplexity reductions that predict improved downstream performance. The correlation between perplexity reduction and downstream task improvement within a model family is strong enough that perplexity is used as the primary signal for ablation studies during model development.</p>
 </section>
-<section id="curated-text-corpora" class="level3" data-number="20.3.2">
-<h3 data-number="20.3.2" class="anchored" data-anchor-id="curated-text-corpora"><span class="header-section-number">20.3.2</span> Curated text corpora</h3>
-<p>Books, academic papers, and high-quality long-form writing. Books3, Project Gutenberg, and the Pile’s academic subsets (ArXiv papers, PubMed abstracts, Wikipedia) fall into this category. These sources are much smaller by volume than web crawls (Wikipedia in all languages is roughly 20 billion tokens, a rounding error at frontier scale) but they contribute disproportionately to factual grounding, structured reasoning, and citation quality. They are heavily oversampled relative to their share of the internet.</p>
-</section>
-<section id="code-repositories" class="level3" data-number="20.3.3">
-<h3 data-number="20.3.3" class="anchored" data-anchor-id="code-repositories"><span class="header-section-number">20.3.3</span> Code repositories</h3>
-<p>GitHub and other code hosts. This has become a major data category not only because it teaches models to write and understand code, but because code has structural properties that improve general reasoning: it is unambiguous, logical, hierarchical, and extensively annotated with natural language in comments and docstrings.</p>
-<p>Models trained on large code corpora show improved performance on non-coding tasks including mathematics and structured reasoning, even when evaluated on tasks that have nothing to do with code. The mechanism is still debated, but the empirical result is consistent across model families.</p>
-</section>
-<section id="instruction-and-dialogue-data" class="level3" data-number="20.3.4">
-<h3 data-number="20.3.4" class="anchored" data-anchor-id="instruction-and-dialogue-data"><span class="header-section-number">20.3.4</span> Instruction and dialogue data</h3>
-<p>Conversations, Q&amp;A pairs, and instruction-following examples. This category is distinct because it teaches the model the format and register of being helpful, how to respond to a question, how to follow a directive, how to structure an explanation. It is often synthetic (generated by another model) or manually curated (human-written examples). It is typically much smaller in volume than web data but has outsized influence on how the final model behaves at inference time.</p>
+<section id="perplexity-and-scaling-laws" class="level3" data-number="33.3.2">
+<h3 data-number="33.3.2" class="anchored" data-anchor-id="perplexity-and-scaling-laws"><span class="header-section-number">33.3.2</span> Perplexity and Scaling Laws</h3>
+<p>Since perplexity is a monotone transformation of loss, all scaling law relationships hold equivalently in perplexity space. The Chinchilla parametric loss model:</p>
+<p><span class="math display">\[
+L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
+\]</span></p>
+<p>predicts perplexity as <span class="math inline">\(\text{PPL}(N, D) = e^{L(N, D)}\)</span>. The irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats corresponds to a perplexity floor of <span class="math inline">\(e^{1.69} \approx 5.4\)</span>, the perplexity a perfect model would achieve on the Chinchilla evaluation corpus, representing the inherent unpredictability of natural language.</p>
+<p>The relationship between scaling and perplexity is nonlinear due to the exponential transformation: a constant reduction in loss produces a proportionally larger reduction in perplexity at low perplexity values than at high ones. Moving from loss 3.0 to 2.5 reduces perplexity from <span class="math inline">\(e^3 = 20.1\)</span> to <span class="math inline">\(e^{2.5} = 12.2\)</span>, a reduction of 7.9. Moving from loss 2.0 to 1.5 reduces perplexity from <span class="math inline">\(e^2 = 7.4\)</span> to <span class="math inline">\(e^{1.5} = 4.5\)</span>, a reduction of only 2.9, despite the same 0.5 nat loss reduction. This nonlinearity is why perplexity improvements at the frontier are harder to achieve and harder to interpret than the raw numbers suggest.</p>
 <hr>
 </section>
 </section>
-<section id="the-data-pipeline" class="level2" data-number="20.4">
-<h2 data-number="20.4" class="anchored" data-anchor-id="the-data-pipeline"><span class="header-section-number">20.4</span> The data pipeline</h2>
-<p>Raw collection is just the beginning. Every serious training pipeline includes a sequence of filtering, deduplication, and quality scoring steps. Here is a representative pipeline for web data:</p>
-<pre><code>Raw HTML from crawl
-      │
-      ▼
-Language identification
-(discard non-target languages or assign per-language weights)
-      │
-      ▼
-Text extraction
-(strip HTML tags, boilerplate, navigation menus, ads, footers)
-      │
-      ▼
-Length and format filtering
-(discard very short pages, pages with too many special characters,
- pages where text-to-total-content ratio is too low)
-      │
-      ▼
-Heuristic quality filtering
-(word count, punctuation ratio, stop word ratio,
- line length distribution, duplicate line fraction)
-      │
-      ▼
-Deduplication
-(exact match by hash, near-duplicate via MinHash or SimHash,
- substring deduplication for repeated passages)
-      │
-      ▼
-Classifier-based quality scoring
-(trained model predicts P(high quality); discard below threshold)
-      │
-      ▼
-Toxicity and safety filtering
-(remove documents matching harmful content classifiers)
-      │
-      ▼
-Domain weighting and mixing
-(upsample high-quality sources, set per-domain proportions)
-      │
-      ▼
-Final training corpus</code></pre>
-<p>Each step involves tradeoffs. Aggressive quality filtering produces a cleaner corpus but reduces volume, which may hurt diversity and underrepresented language coverage. Loose filtering preserves volume but degrades signal. There is no universally correct threshold, the right settings depend on the target model, the available compute budget, and empirical evaluation on smaller runs.</p>
+<section id="when-perplexity-fails-as-a-metric" class="level2" data-number="33.4">
+<h2 data-number="33.4" class="anchored" data-anchor-id="when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</h2>
+<p>Perplexity’s theoretical cleanliness is undercut by three practical failure modes that make it unreliable for the comparisons most commonly attempted in practice.</p>
+<section id="failure-1-tokenizer-dependence" class="level3" data-number="33.4.1">
+<h3 data-number="33.4.1" class="anchored" data-anchor-id="failure-1-tokenizer-dependence"><span class="header-section-number">33.4.1</span> Failure 1: Tokenizer Dependence</h3>
+<p>Perplexity is not comparable across models with different tokenizers. This is the most important limitation and the most frequently violated assumption in published comparisons.</p>
+<p>To see why, consider two models evaluating the same English text. Model A uses a 32,000-token vocabulary (LLaMA 2 style) and the text tokenizes into 1,000 tokens. Model B uses a 100,000-token vocabulary (GPT-4 style) and the same text tokenizes into 750 tokens, fewer tokens because the larger vocabulary has single-token representations for more common words and subwords.</p>
+<p>Model A’s perplexity is computed over 1,000 prediction steps. Model B’s perplexity is computed over 750 prediction steps. Model B’s individual prediction steps are harder on average (predicting a whole word at once is harder than predicting a subword) but it has fewer of them. The resulting perplexity numbers are not on the same scale and cannot be directly compared.</p>
+<p>The correct unit for cross-tokenizer comparison is bits per byte (BPB) or bits per character (BPC): the average number of bits the model uses to encode each byte or character of the evaluation text, regardless of how the text was tokenized. Converting to BPB:</p>
+<p><span class="math display">\[
+\text{BPB} = \frac{\mathcal{L}_{\text{bits}} \cdot T_{\text{tokens}}}{B_{\text{bytes}}}
+\]</span></p>
+<p>where <span class="math inline">\(\mathcal{L}_{\text{bits}}\)</span> is loss in bits per token, <span class="math inline">\(T_{\text{tokens}}\)</span> is the number of tokens in the evaluation text, and <span class="math inline">\(B_{\text{bytes}}\)</span> is the number of bytes in the evaluation text. BPB normalizes out the tokenizer compression ratio, making comparison valid across model families.</p>
+<p>A well-trained modern language model achieves approximately 0.9-1.1 BPB on standard English text. The range across architectures and training scales is narrow, BPB is a more compressed metric than perplexity and shows less variance across model families than raw perplexity numbers suggest.</p>
+</section>
+<section id="failure-2-domain-mismatch" class="level3" data-number="33.4.2">
+<h3 data-number="33.4.2" class="anchored" data-anchor-id="failure-2-domain-mismatch"><span class="header-section-number">33.4.2</span> Failure 2: Domain Mismatch</h3>
+<p>Perplexity is a property of the model evaluated on a specific corpus. A model trained primarily on web text will have low perplexity on web text and high perplexity on clinical notes, legal contracts, or 19th-century literature, not because the model is incapable of processing these domains, but because it has not learned their specific statistical regularities. Comparing the perplexity of a general web-trained model to the perplexity of a domain-specific model on a domain-specific test set confounds model quality with domain specialization.</p>
+<p>This failure mode is common in practice. A model finetuned on medical text achieves lower perplexity on medical test sets than a general model of equal or greater general capability. The perplexity comparison suggests the fine-tuned model is better; the actual comparison is domain-adapted model versus general model on a domain-specific test, which tells you about domain adaptation, not overall quality.</p>
+<p>The mitigation: perplexity comparisons are valid only when both models are evaluated on the same corpus and that corpus matches the domain of intended use. A general capability comparison requires a diverse evaluation corpus covering multiple domains; a domain-specific comparison requires a corpus from that domain.</p>
+</section>
+<section id="failure-3-length-and-context-effects" class="level3" data-number="33.4.3">
+<h3 data-number="33.4.3" class="anchored" data-anchor-id="failure-3-length-and-context-effects"><span class="header-section-number">33.4.3</span> Failure 3: Length and Context Effects</h3>
+<p>Perplexity is sensitive to the context length at which it is measured. A model evaluated with 2,048 tokens of context achieves lower perplexity than the same model evaluated with 512 tokens of context, because more context provides more information for predicting each subsequent token. Perplexity measured with different context lengths is not comparable.</p>
+<p>This matters for comparing models with different context window sizes. A model with a 128,000-token context window may achieve lower perplexity on long documents than a model with a 4,096-token context window, not because of any intrinsic quality difference, but because it can condition on more preceding context. Controlling for context length is necessary for valid perplexity comparison.</p>
+<p>The stride evaluation procedure addresses this by evaluating perplexity with a sliding window: evaluate each position with exactly <span class="math inline">\(c\)</span> tokens of preceding context (not the full preceding sequence), keeping the context length constant. This eliminates the context length effect but introduces edge effects at the beginning of documents where less than <span class="math inline">\(c\)</span> tokens are available.</p>
 <hr>
 </section>
-<section id="deduplication-the-underrated-problem" class="level2" data-number="20.5">
-<h2 data-number="20.5" class="anchored" data-anchor-id="deduplication-the-underrated-problem"><span class="header-section-number">20.5</span> Deduplication: the underrated problem</h2>
-<p>Duplicate content in training data is a serious and underappreciated problem that affects both quality and benchmark integrity.</p>
-<p>At web scale, the same article gets republished hundreds of times across aggregator sites, blogs, and content farms. If a document appears 500 times in the training set and once in the test set, the model has not learned to generalize it has only learned to memorize. This inflates benchmark performance and degrades real-world capability.</p>
-<p>Worse, repeated exposure to the same document teaches the model that this content is important. A piece of misinformation that went viral and was copied ten thousand times gets disproportionate weight relative to a single careful correction.</p>
-<p>Deduplication happens at multiple granularities:</p>
-<p><strong>Exact deduplication</strong> removes documents with identical content. This is cheap and straightforward, hash the document, compare against a lookup table, discard matches.</p>
-<p><strong>Near-duplicate detection</strong> removes documents that are semantically identical but not textually identical. Two articles with 95% word overlap but different headlines should not both appear in training. MinHash and SimHash are standard approaches: they produce a fingerprint of the document’s n-gram distribution that allows fast approximate comparison across billions of documents.</p>
-<p><strong>Substring deduplication</strong> removes repeated passages within documents, not just repeated documents. A web page that contains the same boilerplate legal disclaimer 200 times should not contribute 200 unique training examples.</p>
-<p>Research from Google (Lee et al., 2022) demonstrated that aggressive deduplication consistently improves model quality even when it reduces total token count. Less data, cleaner signal, better model, a counterintuitive result that has held up across multiple model families.</p>
+</section>
+<section id="perplexity-and-downstream-task-performance" class="level2" data-number="33.5">
+<h2 data-number="33.5" class="anchored" data-anchor-id="perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</h2>
+<p>A persistent question in language model evaluation: does lower perplexity predict better downstream task performance? The answer is nuanced and depends heavily on the comparison being made.</p>
+<section id="within-a-model-family" class="level3" data-number="33.5.1">
+<h3 data-number="33.5.1" class="anchored" data-anchor-id="within-a-model-family"><span class="header-section-number">33.5.1</span> Within a Model Family</h3>
+<p>Within a model family like same architecture, same tokenizer, same training data distribution, varying only in scale or training duration, perplexity is a reliable predictor of downstream task performance. Models with lower perplexity on the pretraining distribution consistently score higher on knowledge benchmarks, reasoning tasks, and instruction following. This is the basis for using perplexity as the primary metric in ablation studies and scaling law measurements.</p>
+</section>
+<section id="across-model-families" class="level3" data-number="33.5.2">
+<h3 data-number="33.5.2" class="anchored" data-anchor-id="across-model-families"><span class="header-section-number">33.5.2</span> Across Model Families</h3>
+<p>Across model families, the correlation between perplexity and downstream task performance is weaker and sometimes inverted. A model fine-tuned on instruction data achieves higher perplexity on raw web text (because the distribution shift from raw text to instruction data is reflected in higher loss on the original distribution) while performing substantially better on instruction-following benchmarks. The fine-tuned model is better at the thing you want it to do and worse on the metric you might use to evaluate it.</p>
+<p>Similarly, models trained with different objectives (CLM versus MLM, or a model with additional auxiliary losses) may have different perplexity values while achieving similar downstream performance. The relationship between perplexity and task performance is mediated by the training objective: perplexity measures how well the model has learned the training objective’s distribution, not directly how well it performs any downstream task.</p>
+</section>
+<section id="the-calibration-connection" class="level3" data-number="33.5.3">
+<h3 data-number="33.5.3" class="anchored" data-anchor-id="the-calibration-connection"><span class="header-section-number">33.5.3</span> The Calibration Connection</h3>
+<p>Low perplexity is associated with good calibration in a specific sense: a well-calibrated model should be more uncertain (higher entropy, higher local perplexity) on hard examples and less uncertain (lower entropy, lower local perplexity) on easy examples. A model that achieves low average perplexity by being uniformly wrong on hard examples while being correct on easy ones is better calibrated than one that achieves the same average by being randomly wrong across the whole distribution.</p>
+<p>Perplexity does not directly measure calibration in the ECE sense (whether expressed probability matches empirical accuracy). A model can have low perplexity while being systematically miscalibrated, expressing 90% confidence on questions it answers correctly only 60% of the time. Calibration requires comparing predicted probabilities to observed accuracy, which perplexity alone cannot do.</p>
 <hr>
 </section>
-<section id="quality-filtering-what-quality-means" class="level2" data-number="20.6">
-<h2 data-number="20.6" class="anchored" data-anchor-id="quality-filtering-what-quality-means"><span class="header-section-number">20.6</span> Quality filtering: what “quality” means</h2>
-<p>Quality filtering is philosophically tricky because “quality” is a value judgment and the judgment embedded in your filtering approach shapes what the model learns is normal.</p>
-<section id="heuristic-filtering" class="level3" data-number="20.6.1">
-<h3 data-number="20.6.1" class="anchored" data-anchor-id="heuristic-filtering"><span class="header-section-number">20.6.1</span> Heuristic filtering</h3>
-<p>The most common approach uses signals computed from the document itself:</p>
+</section>
+<section id="practical-uses-of-perplexity" class="level2" data-number="33.6">
+<h2 data-number="33.6" class="anchored" data-anchor-id="practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</h2>
+<p>Despite its limitations for cross-model comparison, perplexity is genuinely useful in several practical contexts.</p>
+<section id="development-time-ablation-studies" class="level3" data-number="33.6.1">
+<h3 data-number="33.6.1" class="anchored" data-anchor-id="development-time-ablation-studies"><span class="header-section-number">33.6.1</span> Development-Time Ablation Studies</h3>
+<p>During model development, perplexity on a held-out validation set is the primary signal for comparing architectural variants, training hyperparameters, and data mixture choices. Within a single development run (same architecture, same tokenizer, same data pipeline) perplexity comparisons are valid and fast. A 1% perplexity reduction from a normalization change is informative even if it does not translate directly to a benchmark improvement, because within-family perplexity reliably predicts downstream performance.</p>
+</section>
+<section id="detecting-training-instability" class="level3" data-number="33.6.2">
+<h3 data-number="33.6.2" class="anchored" data-anchor-id="detecting-training-instability"><span class="header-section-number">33.6.2</span> Detecting Training Instability</h3>
+<p>Training loss curves (equivalently, perplexity curves) are the primary instrument for detecting training instability. Loss spikes (sudden increases in training loss followed by partial recovery) indicate numerical instability, data pipeline errors, or gradient explosion. A loss that fails to decrease over many steps indicates learning rate problems, data issues, or architectural errors. Monitoring perplexity continuously during training and setting automated alerts on anomalous loss behavior is standard practice in large-scale training runs.</p>
+</section>
+<section id="evaluating-domain-adaptation" class="level3" data-number="33.6.3">
+<h3 data-number="33.6.3" class="anchored" data-anchor-id="evaluating-domain-adaptation"><span class="header-section-number">33.6.3</span> Evaluating Domain Adaptation</h3>
+<p>Domain-specific perplexity measures how well a model has internalized a target domain’s statistical structure. After continued pretraining on medical text, evaluating perplexity on a held-out medical corpus tracks whether domain adaptation is proceeding correctly. This is a valid within-distribution comparison: the same corpus, the same tokenizer, model parameters changing.</p>
+</section>
+<section id="text-quality-filtering" class="level3" data-number="33.6.4">
+<h3 data-number="33.6.4" class="anchored" data-anchor-id="text-quality-filtering"><span class="header-section-number">33.6.4</span> Text Quality Filtering</h3>
+<p>Perplexity from a reference language model can be used as a text quality filter for training data. Low-perplexity text is text the reference model finds predictable and well-structured, typical of fluent, coherent writing. High-perplexity text may indicate: garbled OCR output, code or markup mixed with prose, non-English text evaluated by an English model, or genuinely unusual content. Filtering out high-perplexity text removes document types that may degrade training quality.</p>
+<hr>
+</section>
+</section>
+<section id="perplexity-in-production" class="level2" data-number="33.7">
+<h2 data-number="33.7" class="anchored" data-anchor-id="perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</h2>
+<p>Beyond development and evaluation, perplexity surfaces in production systems in two ways:</p>
+<section id="detecting-distribution-shift" class="level3" data-number="33.7.1">
+<h3 data-number="33.7.1" class="anchored" data-anchor-id="detecting-distribution-shift"><span class="header-section-number">33.7.1</span> Detecting Distribution Shift</h3>
+<p>If the model’s perplexity on incoming user queries increases over time, this is a signal that the query distribution has shifted away from the training distribution. Production monitoring of average query perplexity, computed efficiently using the model’s own log-probability outputs, which are already calculated during inference, provides an early warning system for distribution shift without requiring human evaluation.</p>
+</section>
+<section id="logprobs-for-downstream-applications" class="level3" data-number="33.7.2">
+<h3 data-number="33.7.2" class="anchored" data-anchor-id="logprobs-for-downstream-applications"><span class="header-section-number">33.7.2</span> Logprobs for Downstream Applications</h3>
+<p>The log-probabilities that underlie perplexity are exposed through model APIs and enable several production applications:</p>
+<p><strong>Ranking candidates</strong>: given multiple candidate completions, rank them by the model’s log-probability to select the most likely according to the model’s learned distribution. Used in constrained generation, reranking pipelines, and structured output generation.</p>
+<p><strong>Anomaly detection</strong>: flag inputs that receive unusually high perplexity (the model finds them very surprising), which may indicate adversarial inputs, distribution-shifted queries, or content that the model cannot handle reliably.</p>
+<p><strong>Confidence estimation</strong>: the entropy of the model’s token-level distribution at the final position provides a rough confidence estimate for the response, high entropy suggests the model is uncertain, low entropy suggests confidence. This is an imperfect calibration signal but a zero-cost one.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="33.8">
+<h2 data-number="33.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</h2>
 <ul>
-<li>Average word length (too short suggests gibberish; too long suggests technical jargon or non-natural language)</li>
-<li>Ratio of alphabetic characters to total characters (low ratio suggests spam or code fragments)</li>
-<li>Presence of stop words (a proxy for natural language vs.&nbsp;keyword lists)</li>
-<li>Distribution of line lengths (regular short lines suggest poetry or bullet content; extremely variable suggests scraped layout artifacts)</li>
-<li>Ratio of duplicate lines within a document (high ratio suggests boilerplate or repeated headers)</li>
-<li>Presence of known spam or adult content patterns</li>
-</ul>
-</section>
-<section id="classifier-based-filtering" class="level3" data-number="20.6.2">
-<h3 data-number="20.6.2" class="anchored" data-anchor-id="classifier-based-filtering"><span class="header-section-number">20.6.2</span> Classifier-based filtering</h3>
-<p>The more sophisticated approach trains a classifier on examples of high and low-quality text. You take a small set of documents you believe are high quality (Wikipedia articles, selected books, academic papers), a set you believe are low quality (scraped spam, auto-generated content), train a binary classifier, and use its score to filter the full corpus.</p>
-<p>This approach was used to produce C4 (Colossal Clean Crawled Corpus), where a fastText classifier trained on Wikipedia and Common Crawl data scored documents and filtered those below a threshold. The resulting corpus was significantly smaller than the raw crawl but dramatically higher quality.</p>
-<p><strong>The bias this introduces.</strong> The classifier inherits the biases of its positive examples. If high-quality training examples are predominantly English and from Western academic and journalistic traditions, the classifier will score content from other cultural, linguistic, and domain contexts lower, not because those documents are low quality, but because they are dissimilar from the examples the classifier was trained to recognize as high quality.</p>
-</section>
-<section id="perplexity-based-filtering" class="level3" data-number="20.6.3">
-<h3 data-number="20.6.3" class="anchored" data-anchor-id="perplexity-based-filtering"><span class="header-section-number">20.6.3</span> Perplexity-based filtering</h3>
-<p>A variant: use a smaller, already-trained language model to score each document’s perplexity. Very high perplexity (the model is very surprised by the text) suggests low-quality or anomalous content. Very low perplexity (the model already knows this text well) may suggest repeated or memorized content.</p>
-<p>The limitation: a small model trained on web text will score high-quality text in specialized domains (medical literature, legal documents, code documentation) as high perplexity simply because it is unfamiliar. Perplexity filtering can inadvertently remove exactly the specialized knowledge that makes the training data valuable.</p>
-<hr>
-</section>
-</section>
-<section id="domain-mixing-and-data-proportions" class="level2" data-number="20.7">
-<h2 data-number="20.7" class="anchored" data-anchor-id="domain-mixing-and-data-proportions"><span class="header-section-number">20.7</span> Domain mixing and data proportions</h2>
-<p>Collecting data is one problem and deciding how much of each source to include is another, the decision matters as much as collection quality.</p>
-<p>Frontier models deliberately oversample high-quality sources relative to their share of the raw internet. A representative mixing strategy:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Source</th>
-<th>Share of training tokens</th>
-<th>Share of raw internet</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Web crawl (filtered)</td>
-<td>~45%</td>
-<td>~99%</td>
-</tr>
-<tr class="even">
-<td>Books</td>
-<td>~20%</td>
-<td>&lt;0.1%</td>
-</tr>
-<tr class="odd">
-<td>Code</td>
-<td>~15%</td>
-<td>~1%</td>
-</tr>
-<tr class="even">
-<td>Academic papers</td>
-<td>~10%</td>
-<td>&lt;0.1%</td>
-</tr>
-<tr class="odd">
-<td>Wikipedia</td>
-<td>~5%</td>
-<td>&lt;0.01%</td>
-</tr>
-<tr class="even">
-<td>Instruction / dialogue</td>
-<td>~5%</td>
-<td>near zero</td>
-</tr>
-</tbody>
-</table>
-<p>These proportions are not derived from first principles. They are found through empirical ablations: train smaller models on different mixes, evaluate across benchmark suites, and iterate toward the mix that produces the best results. This is expensive and also one of the least documented aspects of frontier model development. Mixing ratios are among the most guarded details in model technical reports.</p>
-<section id="domain-mixing-and-capability" class="level3" data-number="20.7.1">
-<h3 data-number="20.7.1" class="anchored" data-anchor-id="domain-mixing-and-capability"><span class="header-section-number">20.7.1</span> Domain mixing and capability</h3>
-<p>Mixing decisions directly affect model capabilities. A model trained with higher code proportion shows better performance on code-related tasks, on mathematical reasoning, and (empirically, though mechanistically unclear) on structured reasoning tasks generally. A model with more multilingual data performs better across languages. A model with more instruction data is more naturally helpful without additional fine-tuning.</p>
-<p>Changing the mix at frontier scale (adjusting proportions for a 15 trillion token training run) is a multi-month commitment. Getting it right requires either expensive experiments at smaller scale (with uncertain extrapolation to full scale) or expensive mistakes at full scale.</p>
-<hr>
-</section>
-</section>
-<section id="the-data-contamination-problem" class="level2" data-number="20.8">
-<h2 data-number="20.8" class="anchored" data-anchor-id="the-data-contamination-problem"><span class="header-section-number">20.8</span> The data contamination problem</h2>
-<p>A fundamental requirement of valid evaluation is that the test set must not appear in the training data. If the model has seen the answers, the evaluation tells you nothing about generalization.</p>
-<p>At the scale of modern training corpora, this is genuinely difficult to guarantee. The internet contains solutions to many standard benchmarks: HumanEval coding problems appear on GitHub; MMLU questions appear in study guides and Quora discussions; GSM8K math problems appear on math tutoring sites; BIG-Bench tasks appear in academic papers that post-date the benchmark but pre-date many models.</p>
-<p>Contamination detection requires: 1. Collecting all known evaluation datasets 2. Running n-gram matching between evaluation examples and training documents 3. Removing or flagging contaminated training documents 4. Reporting contamination rates explicitly in publications</p>
-<p>Many papers do this imperfectly or not at all. When a model achieves dramatically higher scores than predecessors on a specific benchmark, contamination is one of the first alternative hypotheses to evaluate. The difficulty of ruling it out cleanly is one reason the field has moved toward harder-to-memorize benchmarks, live coding challenges, human preference evaluation, new tasks created after the training cutoff.</p>
-<hr>
-</section>
-<section id="the-web-as-a-cultural-artifact" class="level2" data-number="20.9">
-<h2 data-number="20.9" class="anchored" data-anchor-id="the-web-as-a-cultural-artifact"><span class="header-section-number">20.9</span> The web as a cultural artifact</h2>
-<p>One underappreciated aspect of using the web as training data is the fact that the web is not a neutral sample of human knowledge. It overrepresents certain voices, certain languages, certain time periods, and certain topics.</p>
-<p>English accounts for roughly half of web content despite being spoken by only 17% of the world’s population. Technical and academic content from the United States and Western Europe is disproportionately represented. Recent content is more represented than historical content. Content from wealthy countries with high internet penetration is more represented than content from countries with lower penetration.</p>
-<p>A model trained primarily on this data will reflect these asymmetries: it will know more about some cultures, regions, and perspectives than others. It will have stronger capabilities in some languages than others. This is not a bug in any simple sense (it is a direct consequence of training on the data that exists) but it has real downstream consequences for who the model serves well and who it serves poorly.</p>
-<p>These asymmetries can be partially corrected through deliberate data sourcing: specifically mining underrepresented language content, partnering with institutions that have access to non-web text corpora, and applying language-specific oversampling. They cannot be fully corrected because the underlying data simply does not exist in comparable volume for all languages and cultures.</p>
-<hr>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="20.10">
-<h2 data-number="20.10" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">20.10</span> Key takeaways</h2>
-<ul>
-<li>LLM training requires trillions of tokens; no human-curated dataset exists at this scale, so web crawls are the primary source — but raw web data is low quality and requires extensive filtering before use</li>
-<li>Every serious training pipeline includes language identification, text extraction, heuristic quality filtering, deduplication, and classifier-based scoring; each step involves tradeoffs between quality and diversity</li>
-<li>Deduplication is as important as quality filtering — repeated content teaches memorization rather than generalization; aggressive deduplication consistently improves model quality even when it reduces token count</li>
-<li>Domain mixing is a deliberate design choice: high-quality sources (books, academic papers, Wikipedia) are heavily oversampled relative to their share of the raw internet; these proportions are found empirically, not derived from first principles</li>
-<li>Classifier-based quality filtering inherits the biases of its training examples; content that is dissimilar from Western academic and journalistic norms may be scored lower even when it is high quality on its own terms</li>
-<li>Data contamination with evaluation benchmarks is a real and underreported problem; detecting it requires explicit n-gram matching between training documents and all known evaluation datasets</li>
-<li>The web overrepresents certain languages, cultures, and perspectives; these asymmetries propagate directly into model capabilities and cannot be fully corrected after training</li>
+<li>Perplexity is the exponentiation of cross-entropy loss: <span class="math inline">\(\text{PPL} =
+e^{\mathcal{L}}\)</span>; it is the same information as loss, transformed into a branching-factor interpretation where PPL represents the effective number of equally likely choices the model faces at each step.</li>
+<li>A perfect model’s perplexity floor is approximately <span class="math inline">\(e^{1.69} \approx
+5.4\)</span> on the Chinchilla evaluation corpus, representing the irreducible entropy of natural language.</li>
+<li>Perplexity is not comparable across models with different tokenizers; a model with a larger vocabulary tokenizes the same text into fewer tokens with harder predictions per token, producing incomparable numbers; bits per byte (BPB) is the correct cross-tokenizer comparison unit.</li>
+<li>Well-trained modern language models achieve approximately 0.9–1.1 BPB on standard English text, a much narrower range than raw perplexity numbers suggest.</li>
+<li>Domain mismatch invalidates perplexity comparisons: a domain-adapted model achieves lower perplexity on domain text than a general model of equal or greater general capability, because perplexity measures fit to the evaluation distribution, not general quality.</li>
+<li>Context length affects perplexity: models evaluated with more preceding context achieve lower perplexity; comparisons are only valid when context length is held constant.</li>
+<li>Within a model family, perplexity reliably predicts downstream task performance and is the primary signal for ablation studies; across model families (different tokenizers, objectives, or fine-tuning), the correlation weakens and can invert.</li>
+<li>Perplexity-based text filtering — discarding high-perplexity documents from web crawls — was used in CCNet, LLaMA, and other training pipelines to improve training data quality.</li>
+<li>Production uses of perplexity: detecting distribution shift in query traffic, ranking candidate completions, anomaly detection on unusual inputs, and zero-cost confidence estimation via token distribution entropy.</li>
+<li>The correct interpretation of a published perplexity number is “cross-entropy loss exponentiated, measured on this specific corpus with this specific tokenizer at this specific context length” — not “how good the model is” in any general sense.</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="20.11">
-<h2 data-number="20.11" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">20.11</span> Further reading</h2>
+<section id="further-reading" class="level2" data-number="33.9">
+<h2 data-number="33.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">33.9</span> Further Reading</h2>
 <ul>
-<li>Gao et al.&nbsp;(2020). <em>The Pile: An 800GB Dataset of Diverse Text for Language Modeling.</em> — One of the most documented large training corpora, with detailed source breakdowns and per-domain analysis.</li>
-<li>Lee et al.&nbsp;(2022). <em>Deduplicating Training Data Makes Language Models Better.</em> — Empirical demonstration that aggressive deduplication improves quality even at reduced token count.</li>
-<li>Raffel et al.&nbsp;(2020). <em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.</em> — Introduces C4 and the classifier-based filtering approach that became standard.</li>
-<li>Longpre et al.&nbsp;(2023). <em>The Data Provenance Initiative.</em> — Systematic audit of data licensing and consent in popular training datasets.</li>
-<li>Touvron et al.&nbsp;(2023). <em>LLaMA 2: Open Foundation and Fine-Tuned Chat Models.</em> — Contains one of the more transparent descriptions of data mixing decisions and filtering heuristics for a frontier model.</li>
-<li>Penedo et al.&nbsp;(2023). <em>The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only.</em> — Demonstrates that heavily filtered web data can match or exceed curated corpora.</li>
+<li><p>Wenzek, G., Lachaux, M.-A., Conneau, A., Chaudhary, V., Guzmán, F., Joulin, A., &amp; Grave, E. (2020). <em>CCNet: Extracting High Quality Monolingual Datasets from Web Crawl Data.</em> LREC. — Introduces perplexity-based filtering for web crawl data; the filtering pipeline and the quality analysis before and after filtering are the key contributions; used as the basis for LLaMA training data preparation.</p></li>
+<li><p>Hoffmann, J., et al.&nbsp;(2022). <em>Training Compute-Optimal Large Language Models.</em> NeurIPS. — Chinchilla; the parametric loss model <span class="math inline">\(L(N,D) = E + A/N^\alpha + B/D^\beta\)</span> and the irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats are introduced here; the BPB analysis in the appendix is the clearest published treatment of cross-tokenizer perplexity normalization.</p></li>
+<li><p>Press, O., Smith, N. A., &amp; Lewis, M. (2022). <em>Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation.</em> ICLR. — The stride evaluation procedure for measuring perplexity at fixed context length is described and used here; the analysis of how context length affects perplexity is the most precise published treatment of the length confound.</p></li>
+<li><p>Guo, C., Pleiss, G., Sun, Y., &amp; Weinberger, K. Q. (2017). <em>On Calibration of Modern Neural Networks.</em> ICML. — Introduces Expected Calibration Error (ECE) and documents the miscalibration of modern deep networks; though focused on classification, the methodology applies directly to language model probability calibration and motivates the distinction between low perplexity and good calibration.</p></li>
+<li><p>Holtzman, A., Buys, J., Du, L., Forbes, M., &amp; Choi, Y. (2020). <em>The Curious Case of Neural Text Degeneration.</em> ICLR. — Analyzes the relationship between token-level probability distributions and generation quality; the connection between entropy of the distribution (perplexity at a position) and the quality of sampled text motivates the local perplexity interpretation.</p></li>
+<li><p>Mielke, S. J., Szlam, A., Dinan, E., &amp; Boureau, Y.-L. (2022). <em>Reducing Conversational Agents’ Overconfidence Through Epistemic Nudging.</em> TACL. — Examines the relationship between model confidence (expressed probabilities) and accuracy in conversational settings; the overconfidence analysis and mitigation strategies connect perplexity-adjacent calibration to practical deployment concerns.</p></li>
 </ul>
 <hr>
 
@@ -1274,14 +1246,11 @@ Final training corpus</code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part4/grounded_generation.html" class="pagination-link" aria-label="Grounded Generation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Grounded Generation</span></span>
+      <a href="../../book/part6/benchmarks.html" class="pagination-link" aria-label="Benchmarks">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part5/synthetic_data.html" class="pagination-link" aria-label="Synthetic Data Generation">
-        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Synthetic Data Generation</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
