@@ -464,7 +464,7 @@ class HybridRetriever:
         fused = reciprocal_rank_fusion([dense_results, sparse_results], k=60)
         candidates = fused[:100]  # top-100 for re-ranking
 
-        # Step 5: Re-rank (chapter 23)
+        # Step 5: Re-rank 
         # reranked = reranker.rerank(retrieval_query, candidates, top_k)
 
         # Step 6: Return top results

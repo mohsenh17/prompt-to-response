@@ -70,6 +70,7 @@ book:
         - book/part6/human_eval.md
         - book/part6/benchmarks.md
         - book/part6/perplexity.md
+        - book/part6/lexical_metrics.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    

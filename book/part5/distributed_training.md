@@ -12,7 +12,7 @@
 
 ![The journey through the Model Mind.](figures/ch6/journey.svg){#fig-progress width="80%"}
 
-We are in Part IV. Chapter 31 covered the single-machine training loop: the
+We are in Part IV. Chapter @sec-training-loop covered the single-machine training loop: the
 forward pass, loss computation, backward pass, and optimizer step as they
 execute on one device. This chapter asks what happens when the model, the data,
 or both are too large for one device to hold which is the case for every

@@ -1,4 +1,4 @@
-# The Training Loop
+# The Training Loop {#sec-training-loop}
 
 > **The canonical question for this chapter:**
 > *Given a transformer architecture and a corpus of text, how does the model
@@ -590,11 +590,11 @@ for exactly this reason.
   compute allocation.
 - Rajbhandari et al. (2020). *ZeRO: Memory Optimizations Toward Training
   Trillion Parameter Models.* — DeepSpeed ZeRO; the standard approach to
-  optimizer state sharding covered in chapter 32.
+  optimizer state sharding.
 - Chen et al. (2016). *Training Deep Nets with Sublinear Memory Cost.* —
   Activation checkpointing.
 - Karpathy, A. (2022). *nanoGPT.* — A clean, minimal GPT training
   implementation in ~300 lines of PyTorch; the best way to understand the
-  training loop concretely before the distributed complexity of chapter 32.
+  training loop concretely before the distributed complexity.
 
 ---
