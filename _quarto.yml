@@ -69,6 +69,7 @@ book:
       chapters: 
         - book/part6/human_eval.md
         - book/part6/benchmarks.md
+        - book/part6/perplexity.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    
