@@ -68,6 +68,7 @@ book:
     - part: "The Trial of the Answer"
       chapters: 
         - book/part6/human_eval.md
+        - book/part6/benchmarks.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    
