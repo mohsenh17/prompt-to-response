@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>33&nbsp; Perplexity – From Prompt to Response</title>
+<title>36&nbsp; Hallucination Metrics – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,7 +23,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -33,8 +53,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part6/lexical_metrics.html" rel="next">
-<link href="../../book/part6/benchmarks.html" rel="prev">
+<link href="../../book/part6/semantic_metrics.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -109,13 +128,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="33&nbsp; Perplexity – From Prompt to Response">
+<meta property="og:title" content="36&nbsp; Hallucination Metrics – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch6/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="33&nbsp; Perplexity – From Prompt to Response">
+<meta name="twitter:title" content="36&nbsp; Hallucination Metrics – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch3/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch6/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -290,7 +309,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/hallucination_metrics.html"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Hallucination Metrics</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -583,7 +602,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part6/perplexity.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span></a>
   </div>
 </li>
@@ -601,7 +620,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/hallucination_metrics.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/hallucination_metrics.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Hallucination Metrics</span></span></a>
   </div>
 </li>
@@ -621,15 +640,14 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#from-loss-to-perplexity" id="toc-from-loss-to-perplexity" class="nav-link active" data-scroll-target="#from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</a></li>
-  <li><a href="#the-branching-factor-interpretation" id="toc-the-branching-factor-interpretation" class="nav-link" data-scroll-target="#the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</a></li>
-  <li><a href="#perplexity-as-a-model-quality-metric" id="toc-perplexity-as-a-model-quality-metric" class="nav-link" data-scroll-target="#perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</a></li>
-  <li><a href="#when-perplexity-fails-as-a-metric" id="toc-when-perplexity-fails-as-a-metric" class="nav-link" data-scroll-target="#when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</a></li>
-  <li><a href="#perplexity-and-downstream-task-performance" id="toc-perplexity-and-downstream-task-performance" class="nav-link" data-scroll-target="#perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</a></li>
-  <li><a href="#practical-uses-of-perplexity" id="toc-practical-uses-of-perplexity" class="nav-link" data-scroll-target="#practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</a></li>
-  <li><a href="#perplexity-in-production" id="toc-perplexity-in-production" class="nav-link" data-scroll-target="#perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">33.9</span> Further Reading</a></li>
+  <li><a href="#defining-hallucination" id="toc-defining-hallucination" class="nav-link active" data-scroll-target="#defining-hallucination"><span class="header-section-number">36.1</span> Defining Hallucination</a></li>
+  <li><a href="#why-standard-metrics-miss-hallucination" id="toc-why-standard-metrics-miss-hallucination" class="nav-link" data-scroll-target="#why-standard-metrics-miss-hallucination"><span class="header-section-number">36.2</span> Why Standard Metrics Miss Hallucination</a></li>
+  <li><a href="#faithfulness-vs.-factuality" id="toc-faithfulness-vs.-factuality" class="nav-link" data-scroll-target="#faithfulness-vs.-factuality"><span class="header-section-number">36.3</span> Faithfulness vs.&nbsp;Factuality</a></li>
+  <li><a href="#natural-language-inference-as-hallucination-detection" id="toc-natural-language-inference-as-hallucination-detection" class="nav-link" data-scroll-target="#natural-language-inference-as-hallucination-detection"><span class="header-section-number">36.4</span> Natural Language Inference as Hallucination Detection</a></li>
+  <li><a href="#question-answering-based-hallucination-detection" id="toc-question-answering-based-hallucination-detection" class="nav-link" data-scroll-target="#question-answering-based-hallucination-detection"><span class="header-section-number">36.5</span> Question-Answering Based Hallucination Detection</a></li>
+  <li><a href="#factscoring-decomposed-factuality-evaluation" id="toc-factscoring-decomposed-factuality-evaluation" class="nav-link" data-scroll-target="#factscoring-decomposed-factuality-evaluation"><span class="header-section-number">36.6</span> FActScoring: Decomposed Factuality Evaluation</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">36.7</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">36.8</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -637,9 +655,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/perplexity.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/hallucination_metrics.html"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Hallucination Metrics</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></h1>
+<h1 class="title"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Hallucination Metrics</span></h1>
 </div>
 
 
@@ -657,7 +675,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>What does perplexity actually measure, when is it a useful proxy for model quality, and when does it mislead you completely?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How do you automatically detect when a language model has generated something that is confidently stated but factually wrong and why is this a harder measurement problem than it first appears?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -670,183 +688,155 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch6/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;33.1: The journey through the Model Mind.
+Figure&nbsp;36.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>This chapter covers perplexity which is the oldest and most theoretically grounded language model metric, directly derived from the training objective itself. It is also the metric most frequently misused, misinterpreted, and miscompared across models.</p>
+<p>The previous two chapters covered metrics that measure output quality by comparing it to a reference n-gram overlap and embedding similarity. Both fail on the same dimension: factual accuracy. A fluent, well-organized response that confidently states false information scores well on BLEU and reasonably on BERTScore. This chapter covers metrics designed specifically to detect that failure mode.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="from-loss-to-perplexity" class="level2" data-number="33.1">
-<h2 data-number="33.1" class="anchored" data-anchor-id="from-loss-to-perplexity"><span class="header-section-number">33.1</span> From Loss to Perplexity</h2>
-<p>Perplexity is not a separate measurement from training loss. It is a transformation of the same quantity (cross-entropy loss) into a more interpretable unit. Understanding perplexity begins with understanding what the training loss measures and why the exponential transformation is applied.</p>
-<p>Recall from <a href="../part5/training_objectives.html" class="quarto-xref"><span>Chapter 23</span></a> that the causal language modeling loss for a sequence of <span class="math inline">\(T\)</span> tokens is the mean negative log-probability of each token given its preceding context:</p>
-<p><span class="math display">\[
-\mathcal{L} = -\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})
-\]</span></p>
-<p>This quantity is measured in bits when the logarithm is base 2, and in nats when the logarithm is the natural logarithm. It represents the average number of bits (or nats) of surprise the model experiences per token: the lower the loss, the more accurately the model predicts the next token, the less surprised it is by the actual sequence.</p>
-<p>Perplexity is the exponentiation of this average loss:</p>
-<p><span class="math display">\[
-\text{PPL} = 2^{\mathcal{L}} = 2^{-\frac{1}{T} \sum_{t=1}^{T} \log_2 P_\theta(x_t \mid x_1, \ldots, x_{t-1})}
-\]</span></p>
-<p>or equivalently in natural logarithm form:</p>
-<p><span class="math display">\[
-\text{PPL} = \exp\left(-\frac{1}{T} \sum_{t=1}^{T} \log P_\theta(x_t \mid x_1, \ldots, x_{t-1})\right)
-\]</span></p>
-<p>The two formulations are equivalent up to the choice of logarithm base, but they produce different numerical values. A loss of 2.0 nats corresponds to perplexity <span class="math inline">\(e^{2.0} \approx 7.39\)</span>; a loss of 2.0 bits corresponds to perplexity <span class="math inline">\(2^{2.0} = 4.0\)</span>. Published perplexity values must specify which base is used, though the natural logarithm is more common in modern work.</p>
+<section id="defining-hallucination" class="level2" data-number="36.1">
+<h2 data-number="36.1" class="anchored" data-anchor-id="defining-hallucination"><span class="header-section-number">36.1</span> Defining Hallucination</h2>
+<p>The word “hallucination” entered NLP evaluation vocabulary to describe a specific failure mode of language models: generating confident, fluent, grammatically correct statements that are factually wrong or unsupported by the available evidence. The term is borrowed from clinical psychology, where hallucinations are perceptions without external stimuli, things that feel real but are not. In language models, the analogy holds: the model produces outputs that feel correct, coherent, authoritative, and plausible but are detached from reality.</p>
+<p>Hallucination takes several distinct forms that require different detection approaches:</p>
+<p><strong>Intrinsic hallucination</strong>: the generated text contradicts, distorts, or misrepresents information contained in the input. In summarization, if the source states that a drug reduced mortality but did not affect disease progression, and the summary claims that the drug improved progression, the summary contains an intrinsic hallucination. Because the source provides the reference, detection can focus on whether the generated claims are consistent with the input.</p>
+<p><strong>Extrinsic hallucination</strong>: the generated text introduces claims that are not supported or entailed by the input. These claims may be true or false according to external knowledge. In summarization, adding a detail such as a specific treatment cost, date, or event that is absent from the source is an extrinsic hallucination. Determining whether such claims are actually true generally requires external evidence or knowledge beyond the input.</p>
+<p><strong>Entity hallucination</strong>: the model generates an incorrect, nonexistent, or unsupported entity or entity attribute. Examples include inventing a person’s name, citing a nonexistent paper, assigning an event to the wrong date, or referring to a place that does not exist. Entity hallucinations are particularly consequential in applications where users rely on precise names, identifiers, dates, or citations.</p>
+<p><strong>Factual inconsistency</strong>: the model generates a claim that conflicts with established facts or reliable external knowledge. For example, a model might correctly identify a person but incorrectly state their occupation, affiliation, or historical role. Unlike intrinsic hallucination, which concerns inconsistency with the input, factual inconsistency is evaluated against facts about the world.</p>
+<p><strong>Reasoning errors</strong>: the model reaches an incorrect conclusion because one or more inference steps are invalid, even when the underlying facts or premises may be correct. For example, a model may correctly identify that A is greater than B and B is greater than C but incorrectly conclude that C is greater than A. Detecting reasoning errors requires evaluating the validity of each reasoning step, not just the conclusion.</p>
+<p>The appropriate metric depends on which hallucination type is of concern. No single metric detects all types reliably.</p>
 <hr>
 </section>
-<section id="the-branching-factor-interpretation" class="level2" data-number="33.2">
-<h2 data-number="33.2" class="anchored" data-anchor-id="the-branching-factor-interpretation"><span class="header-section-number">33.2</span> The Branching Factor Interpretation</h2>
-<p>The appeal of the perplexity transformation is the branching factor interpretation: perplexity approximates the effective vocabulary size the model is choosing from at each step. A perplexity of 10 means the model is, on average, as uncertain as if it were choosing uniformly among 10 equally likely options.</p>
-<p>More precisely: if a model assigns equal probability <span class="math inline">\(1/K\)</span> to each of <span class="math inline">\(K\)</span> candidates at every position and zero probability to all others, its perplexity is exactly <span class="math inline">\(K\)</span>. Real models do not assign equal probabilities, but the perplexity captures the effective branching factor of the probability distribution:</p>
-<p><span class="math display">\[
-\text{PPL} = \exp(H) = \exp\left(-\sum_x P(x) \log P(x)\right)
-\]</span></p>
-<p>where <span class="math inline">\(H\)</span> is the entropy of the distribution. High entropy (many plausible continuations, uncertainty spread across many tokens) produces high perplexity. Low entropy (one or a few plausible continuations, most probability mass on one token) produces low perplexity.</p>
-<p>A concrete example. Consider the prompt “The sky is”. The word “blue” is highly probable; “clear”, “dark”, “grey”, “overcast” are moderately probable; tens of thousands of other tokens have negligible probability. If the model assigns probability 0.7 to “blue” and distributes the remaining 0.3 across a handful of alternatives, the effective branching factor at this position is low, perhaps 2 or 3. Now consider the prompt “She opened the”. Thousands of nouns are plausible completions: “door”, “window”, “letter”, “box”, “file”, “book” all have substantial probability, and the distribution is relatively flat. The effective branching factor at this position is high, perhaps 30 or 40. Averaged across a diverse corpus, a well-trained LLM achieves perplexity in the range of 5-15 on typical English text, meaning it is, on average, choosing from an effective vocabulary of 5-15 equally likely options.</p>
+<section id="why-standard-metrics-miss-hallucination" class="level2" data-number="36.2">
+<h2 data-number="36.2" class="anchored" data-anchor-id="why-standard-metrics-miss-hallucination"><span class="header-section-number">36.2</span> Why Standard Metrics Miss Hallucination</h2>
+<p>The failure of BLEU and BERTScore to detect hallucinations is not accidental it is a direct consequence of what these metrics measure.</p>
+<p>BLEU measures lexical overlap. A hallucination that shares vocabulary with the reference (“The experiment was conducted in 1984 in London” vs.&nbsp;reference “The experiment was conducted in 1984 in Paris”) scores well on BLEU because most n-grams match. The factually critical word (“London” vs.&nbsp;“Paris”) is a single token that differs; the rest of the n-gram structure is identical.</p>
+<p>BERTScore measures semantic similarity in embedding space. The embeddings of “London” and “Paris” are semantically close both are European capitals, both appear in similar contexts in training data. The embedding distance between a hallucinated city name and the correct one may be smaller than the embedding distance between two semantically distinct words, making BERTScore insensitive to exactly the factual distinctions that matter most.</p>
+<p>Perplexity is insensitive by design: a hallucinated fact stated fluently may be assigned higher probability than the correct fact stated awkwardly, because the model has learned to assign probability based on surface plausibility rather than factual accuracy.</p>
 <hr>
 </section>
-<section id="perplexity-as-a-model-quality-metric" class="level2" data-number="33.3">
-<h2 data-number="33.3" class="anchored" data-anchor-id="perplexity-as-a-model-quality-metric"><span class="header-section-number">33.3</span> Perplexity as a Model Quality Metric</h2>
-<p>Perplexity is a direct measure of how well a model has learned the statistical structure of its evaluation corpus. Lower perplexity means the model’s probability distributions are better calibrated to the actual distribution of the text, the model is less surprised by what it reads, because it has learned to assign higher probability to likely continuations.</p>
-<p>This makes perplexity a clean proxy for one specific dimension of model quality: distributional accuracy over the evaluation domain. In domains where this dimension is the primary concern like language modeling research, comparing model architectures, or measuring the effect of training data changes on the same architecture, perplexity is informative and reliable.</p>
-<section id="perplexity-tracks-architecture-and-training-improvements" class="level3" data-number="33.3.1">
-<h3 data-number="33.3.1" class="anchored" data-anchor-id="perplexity-tracks-architecture-and-training-improvements"><span class="header-section-number">33.3.1</span> Perplexity Tracks Architecture and Training Improvements</h3>
-<p>Within a fixed model family and evaluation corpus, perplexity reliably reflects architectural and training improvements. Switching from post-LN to pre-LN normalization, from fixed positional embeddings to RoPE, from vanilla attention to GQA, or from a standard FFN to SwiGLU; all of these produce measurable perplexity reductions that predict improved downstream performance. The correlation between perplexity reduction and downstream task improvement within a model family is strong enough that perplexity is used as the primary signal for ablation studies during model development.</p>
-</section>
-<section id="perplexity-and-scaling-laws" class="level3" data-number="33.3.2">
-<h3 data-number="33.3.2" class="anchored" data-anchor-id="perplexity-and-scaling-laws"><span class="header-section-number">33.3.2</span> Perplexity and Scaling Laws</h3>
-<p>Since perplexity is a monotone transformation of loss, all scaling law relationships hold equivalently in perplexity space. The Chinchilla parametric loss model:</p>
-<p><span class="math display">\[
-L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
-\]</span></p>
-<p>predicts perplexity as <span class="math inline">\(\text{PPL}(N, D) = e^{L(N, D)}\)</span>. The irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats corresponds to a perplexity floor of <span class="math inline">\(e^{1.69} \approx 5.4\)</span>, the perplexity a perfect model would achieve on the Chinchilla evaluation corpus, representing the inherent unpredictability of natural language.</p>
-<p>The relationship between scaling and perplexity is nonlinear due to the exponential transformation: a constant reduction in loss produces a proportionally larger reduction in perplexity at low perplexity values than at high ones. Moving from loss 3.0 to 2.5 reduces perplexity from <span class="math inline">\(e^3 = 20.1\)</span> to <span class="math inline">\(e^{2.5} = 12.2\)</span>, a reduction of 7.9. Moving from loss 2.0 to 1.5 reduces perplexity from <span class="math inline">\(e^2 = 7.4\)</span> to <span class="math inline">\(e^{1.5} = 4.5\)</span>, a reduction of only 2.9, despite the same 0.5 nat loss reduction. This nonlinearity is why perplexity improvements at the frontier are harder to achieve and harder to interpret than the raw numbers suggest.</p>
+<section id="faithfulness-vs.-factuality" class="level2" data-number="36.3">
+<h2 data-number="36.3" class="anchored" data-anchor-id="faithfulness-vs.-factuality"><span class="header-section-number">36.3</span> Faithfulness vs.&nbsp;Factuality</h2>
+<p>A critical distinction separates two different hallucination evaluation problems:</p>
+<p><strong>Faithfulness</strong>: does the output stay faithful to the provided source material? A summarization system that introduces information not in the source document has a faithfulness problem, independent of whether that information is true according to external knowledge. Faithfulness is evaluable without external knowledge and the source document provides the reference.</p>
+<p><strong>Factuality</strong>: does the output accurately reflect world knowledge? A question-answering system that generates a plausible but incorrect answer has a factuality problem. Factuality evaluation requires external knowledge or verification against a knowledge source.</p>
+<p>Most automatic hallucination metrics evaluate faithfulness rather than factuality, because faithfulness is tractable: the source document is available as a reference. Factuality evaluation at scale is significantly harder because it requires either: a comprehensive knowledge base covering the claims the model might make, or another model that can verify claims which introduces its own accuracy and coverage limitations.</p>
 <hr>
 </section>
-</section>
-<section id="when-perplexity-fails-as-a-metric" class="level2" data-number="33.4">
-<h2 data-number="33.4" class="anchored" data-anchor-id="when-perplexity-fails-as-a-metric"><span class="header-section-number">33.4</span> When Perplexity Fails as a Metric</h2>
-<p>Perplexity’s theoretical cleanliness is undercut by three practical failure modes that make it unreliable for the comparisons most commonly attempted in practice.</p>
-<section id="failure-1-tokenizer-dependence" class="level3" data-number="33.4.1">
-<h3 data-number="33.4.1" class="anchored" data-anchor-id="failure-1-tokenizer-dependence"><span class="header-section-number">33.4.1</span> Failure 1: Tokenizer Dependence</h3>
-<p>Perplexity is not comparable across models with different tokenizers. This is the most important limitation and the most frequently violated assumption in published comparisons.</p>
-<p>To see why, consider two models evaluating the same English text. Model A uses a 32,000-token vocabulary (LLaMA 2 style) and the text tokenizes into 1,000 tokens. Model B uses a 100,000-token vocabulary (GPT-4 style) and the same text tokenizes into 750 tokens, fewer tokens because the larger vocabulary has single-token representations for more common words and subwords.</p>
-<p>Model A’s perplexity is computed over 1,000 prediction steps. Model B’s perplexity is computed over 750 prediction steps. Model B’s individual prediction steps are harder on average (predicting a whole word at once is harder than predicting a subword) but it has fewer of them. The resulting perplexity numbers are not on the same scale and cannot be directly compared.</p>
-<p>The correct unit for cross-tokenizer comparison is bits per byte (BPB) or bits per character (BPC): the average number of bits the model uses to encode each byte or character of the evaluation text, regardless of how the text was tokenized. Converting to BPB:</p>
-<p><span class="math display">\[
-\text{BPB} = \frac{\mathcal{L}_{\text{bits}} \cdot T_{\text{tokens}}}{B_{\text{bytes}}}
-\]</span></p>
-<p>where <span class="math inline">\(\mathcal{L}_{\text{bits}}\)</span> is loss in bits per token, <span class="math inline">\(T_{\text{tokens}}\)</span> is the number of tokens in the evaluation text, and <span class="math inline">\(B_{\text{bytes}}\)</span> is the number of bytes in the evaluation text. BPB normalizes out the tokenizer compression ratio, making comparison valid across model families.</p>
-<p>A well-trained modern language model achieves approximately 0.9-1.1 BPB on standard English text. The range across architectures and training scales is narrow, BPB is a more compressed metric than perplexity and shows less variance across model families than raw perplexity numbers suggest.</p>
-</section>
-<section id="failure-2-domain-mismatch" class="level3" data-number="33.4.2">
-<h3 data-number="33.4.2" class="anchored" data-anchor-id="failure-2-domain-mismatch"><span class="header-section-number">33.4.2</span> Failure 2: Domain Mismatch</h3>
-<p>Perplexity is a property of the model evaluated on a specific corpus. A model trained primarily on web text will have low perplexity on web text and high perplexity on clinical notes, legal contracts, or 19th-century literature, not because the model is incapable of processing these domains, but because it has not learned their specific statistical regularities. Comparing the perplexity of a general web-trained model to the perplexity of a domain-specific model on a domain-specific test set confounds model quality with domain specialization.</p>
-<p>This failure mode is common in practice. A model finetuned on medical text achieves lower perplexity on medical test sets than a general model of equal or greater general capability. The perplexity comparison suggests the fine-tuned model is better; the actual comparison is domain-adapted model versus general model on a domain-specific test, which tells you about domain adaptation, not overall quality.</p>
-<p>The mitigation: perplexity comparisons are valid only when both models are evaluated on the same corpus and that corpus matches the domain of intended use. A general capability comparison requires a diverse evaluation corpus covering multiple domains; a domain-specific comparison requires a corpus from that domain.</p>
-</section>
-<section id="failure-3-length-and-context-effects" class="level3" data-number="33.4.3">
-<h3 data-number="33.4.3" class="anchored" data-anchor-id="failure-3-length-and-context-effects"><span class="header-section-number">33.4.3</span> Failure 3: Length and Context Effects</h3>
-<p>Perplexity is sensitive to the context length at which it is measured. A model evaluated with 2,048 tokens of context achieves lower perplexity than the same model evaluated with 512 tokens of context, because more context provides more information for predicting each subsequent token. Perplexity measured with different context lengths is not comparable.</p>
-<p>This matters for comparing models with different context window sizes. A model with a 128,000-token context window may achieve lower perplexity on long documents than a model with a 4,096-token context window, not because of any intrinsic quality difference, but because it can condition on more preceding context. Controlling for context length is necessary for valid perplexity comparison.</p>
-<p>The stride evaluation procedure addresses this by evaluating perplexity with a sliding window: evaluate each position with exactly <span class="math inline">\(c\)</span> tokens of preceding context (not the full preceding sequence), keeping the context length constant. This eliminates the context length effect but introduces edge effects at the beginning of documents where less than <span class="math inline">\(c\)</span> tokens are available.</p>
-<hr>
-</section>
-</section>
-<section id="perplexity-and-downstream-task-performance" class="level2" data-number="33.5">
-<h2 data-number="33.5" class="anchored" data-anchor-id="perplexity-and-downstream-task-performance"><span class="header-section-number">33.5</span> Perplexity and Downstream Task Performance</h2>
-<p>A persistent question in language model evaluation: does lower perplexity predict better downstream task performance? The answer is nuanced and depends heavily on the comparison being made.</p>
-<section id="within-a-model-family" class="level3" data-number="33.5.1">
-<h3 data-number="33.5.1" class="anchored" data-anchor-id="within-a-model-family"><span class="header-section-number">33.5.1</span> Within a Model Family</h3>
-<p>Within a model family like same architecture, same tokenizer, same training data distribution, varying only in scale or training duration, perplexity is a reliable predictor of downstream task performance. Models with lower perplexity on the pretraining distribution consistently score higher on knowledge benchmarks, reasoning tasks, and instruction following. This is the basis for using perplexity as the primary metric in ablation studies and scaling law measurements.</p>
-</section>
-<section id="across-model-families" class="level3" data-number="33.5.2">
-<h3 data-number="33.5.2" class="anchored" data-anchor-id="across-model-families"><span class="header-section-number">33.5.2</span> Across Model Families</h3>
-<p>Across model families, the correlation between perplexity and downstream task performance is weaker and sometimes inverted. A model fine-tuned on instruction data achieves higher perplexity on raw web text (because the distribution shift from raw text to instruction data is reflected in higher loss on the original distribution) while performing substantially better on instruction-following benchmarks. The fine-tuned model is better at the thing you want it to do and worse on the metric you might use to evaluate it.</p>
-<p>Similarly, models trained with different objectives (CLM versus MLM, or a model with additional auxiliary losses) may have different perplexity values while achieving similar downstream performance. The relationship between perplexity and task performance is mediated by the training objective: perplexity measures how well the model has learned the training objective’s distribution, not directly how well it performs any downstream task.</p>
-</section>
-<section id="the-calibration-connection" class="level3" data-number="33.5.3">
-<h3 data-number="33.5.3" class="anchored" data-anchor-id="the-calibration-connection"><span class="header-section-number">33.5.3</span> The Calibration Connection</h3>
-<p>Low perplexity is associated with good calibration in a specific sense: a well-calibrated model should be more uncertain (higher entropy, higher local perplexity) on hard examples and less uncertain (lower entropy, lower local perplexity) on easy examples. A model that achieves low average perplexity by being uniformly wrong on hard examples while being correct on easy ones is better calibrated than one that achieves the same average by being randomly wrong across the whole distribution.</p>
-<p>Perplexity does not directly measure calibration in the ECE sense (whether expressed probability matches empirical accuracy). A model can have low perplexity while being systematically miscalibrated, expressing 90% confidence on questions it answers correctly only 60% of the time. Calibration requires comparing predicted probabilities to observed accuracy, which perplexity alone cannot do.</p>
-<hr>
-</section>
-</section>
-<section id="practical-uses-of-perplexity" class="level2" data-number="33.6">
-<h2 data-number="33.6" class="anchored" data-anchor-id="practical-uses-of-perplexity"><span class="header-section-number">33.6</span> Practical Uses of Perplexity</h2>
-<p>Despite its limitations for cross-model comparison, perplexity is genuinely useful in several practical contexts.</p>
-<section id="development-time-ablation-studies" class="level3" data-number="33.6.1">
-<h3 data-number="33.6.1" class="anchored" data-anchor-id="development-time-ablation-studies"><span class="header-section-number">33.6.1</span> Development-Time Ablation Studies</h3>
-<p>During model development, perplexity on a held-out validation set is the primary signal for comparing architectural variants, training hyperparameters, and data mixture choices. Within a single development run (same architecture, same tokenizer, same data pipeline) perplexity comparisons are valid and fast. A 1% perplexity reduction from a normalization change is informative even if it does not translate directly to a benchmark improvement, because within-family perplexity reliably predicts downstream performance.</p>
-</section>
-<section id="detecting-training-instability" class="level3" data-number="33.6.2">
-<h3 data-number="33.6.2" class="anchored" data-anchor-id="detecting-training-instability"><span class="header-section-number">33.6.2</span> Detecting Training Instability</h3>
-<p>Training loss curves (equivalently, perplexity curves) are the primary instrument for detecting training instability. Loss spikes (sudden increases in training loss followed by partial recovery) indicate numerical instability, data pipeline errors, or gradient explosion. A loss that fails to decrease over many steps indicates learning rate problems, data issues, or architectural errors. Monitoring perplexity continuously during training and setting automated alerts on anomalous loss behavior is standard practice in large-scale training runs.</p>
-</section>
-<section id="evaluating-domain-adaptation" class="level3" data-number="33.6.3">
-<h3 data-number="33.6.3" class="anchored" data-anchor-id="evaluating-domain-adaptation"><span class="header-section-number">33.6.3</span> Evaluating Domain Adaptation</h3>
-<p>Domain-specific perplexity measures how well a model has internalized a target domain’s statistical structure. After continued pretraining on medical text, evaluating perplexity on a held-out medical corpus tracks whether domain adaptation is proceeding correctly. This is a valid within-distribution comparison: the same corpus, the same tokenizer, model parameters changing.</p>
-</section>
-<section id="text-quality-filtering" class="level3" data-number="33.6.4">
-<h3 data-number="33.6.4" class="anchored" data-anchor-id="text-quality-filtering"><span class="header-section-number">33.6.4</span> Text Quality Filtering</h3>
-<p>Perplexity from a reference language model can be used as a text quality filter for training data. Low-perplexity text is text the reference model finds predictable and well-structured, typical of fluent, coherent writing. High-perplexity text may indicate: garbled OCR output, code or markup mixed with prose, non-English text evaluated by an English model, or genuinely unusual content. Filtering out high-perplexity text removes document types that may degrade training quality.</p>
-<hr>
-</section>
-</section>
-<section id="perplexity-in-production" class="level2" data-number="33.7">
-<h2 data-number="33.7" class="anchored" data-anchor-id="perplexity-in-production"><span class="header-section-number">33.7</span> Perplexity in Production</h2>
-<p>Beyond development and evaluation, perplexity surfaces in production systems in two ways:</p>
-<section id="detecting-distribution-shift" class="level3" data-number="33.7.1">
-<h3 data-number="33.7.1" class="anchored" data-anchor-id="detecting-distribution-shift"><span class="header-section-number">33.7.1</span> Detecting Distribution Shift</h3>
-<p>If the model’s perplexity on incoming user queries increases over time, this is a signal that the query distribution has shifted away from the training distribution. Production monitoring of average query perplexity, computed efficiently using the model’s own log-probability outputs, which are already calculated during inference, provides an early warning system for distribution shift without requiring human evaluation.</p>
-</section>
-<section id="logprobs-for-downstream-applications" class="level3" data-number="33.7.2">
-<h3 data-number="33.7.2" class="anchored" data-anchor-id="logprobs-for-downstream-applications"><span class="header-section-number">33.7.2</span> Logprobs for Downstream Applications</h3>
-<p>The log-probabilities that underlie perplexity are exposed through model APIs and enable several production applications:</p>
-<p><strong>Ranking candidates</strong>: given multiple candidate completions, rank them by the model’s log-probability to select the most likely according to the model’s learned distribution. Used in constrained generation, reranking pipelines, and structured output generation.</p>
-<p><strong>Anomaly detection</strong>: flag inputs that receive unusually high perplexity (the model finds them very surprising), which may indicate adversarial inputs, distribution-shifted queries, or content that the model cannot handle reliably.</p>
-<p><strong>Confidence estimation</strong>: the entropy of the model’s token-level distribution at the final position provides a rough confidence estimate for the response, high entropy suggests the model is uncertain, low entropy suggests confidence. This is an imperfect calibration signal but a zero-cost one.</p>
-<hr>
-</section>
-</section>
-<section id="key-takeaways" class="level2" data-number="33.8">
-<h2 data-number="33.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">33.8</span> Key Takeaways</h2>
+<section id="natural-language-inference-as-hallucination-detection" class="level2" data-number="36.4">
+<h2 data-number="36.4" class="anchored" data-anchor-id="natural-language-inference-as-hallucination-detection"><span class="header-section-number">36.4</span> Natural Language Inference as Hallucination Detection</h2>
+<p>The earliest systematic approach to faithfulness evaluation repurposed Natural Language Inference (NLI) models. NLI is the task of determining whether a hypothesis is entailed by a premise, contradicted by it, or neutral with respect to it. Given a source document (premise) and a generated sentence (hypothesis), an NLI model can classify whether the generated sentence is:</p>
 <ul>
-<li>Perplexity is the exponentiation of cross-entropy loss: <span class="math inline">\(\text{PPL} =
-e^{\mathcal{L}}\)</span>; it is the same information as loss, transformed into a branching-factor interpretation where PPL represents the effective number of equally likely choices the model faces at each step.</li>
-<li>A perfect model’s perplexity floor is approximately <span class="math inline">\(e^{1.69} \approx
-5.4\)</span> on the Chinchilla evaluation corpus, representing the irreducible entropy of natural language.</li>
-<li>Perplexity is not comparable across models with different tokenizers; a model with a larger vocabulary tokenizes the same text into fewer tokens with harder predictions per token, producing incomparable numbers; bits per byte (BPB) is the correct cross-tokenizer comparison unit.</li>
-<li>Well-trained modern language models achieve approximately 0.9–1.1 BPB on standard English text, a much narrower range than raw perplexity numbers suggest.</li>
-<li>Domain mismatch invalidates perplexity comparisons: a domain-adapted model achieves lower perplexity on domain text than a general model of equal or greater general capability, because perplexity measures fit to the evaluation distribution, not general quality.</li>
-<li>Context length affects perplexity: models evaluated with more preceding context achieve lower perplexity; comparisons are only valid when context length is held constant.</li>
-<li>Within a model family, perplexity reliably predicts downstream task performance and is the primary signal for ablation studies; across model families (different tokenizers, objectives, or fine-tuning), the correlation weakens and can invert.</li>
-<li>Perplexity-based text filtering — discarding high-perplexity documents from web crawls — was used in CCNet, LLaMA, and other training pipelines to improve training data quality.</li>
-<li>Production uses of perplexity: detecting distribution shift in query traffic, ranking candidate completions, anomaly detection on unusual inputs, and zero-cost confidence estimation via token distribution entropy.</li>
-<li>The correct interpretation of a published perplexity number is “cross-entropy loss exponentiated, measured on this specific corpus with this specific tokenizer at this specific context length” — not “how good the model is” in any general sense.</li>
+<li><strong>Entailed</strong>: the source supports the generated claim</li>
+<li><strong>Contradicted</strong>: the source contradicts the generated claim</li>
+<li><strong>Neutral</strong>: the source neither supports nor contradicts the claim (the claim introduces information not in the source)</li>
+</ul>
+<p>Entailed sentences are faithful; contradicted sentences are intrinsic hallucinations; neutral sentences are extrinsic hallucinations.</p>
+<section id="factcc-and-related-models" class="level3" data-number="36.4.1">
+<h3 data-number="36.4.1" class="anchored" data-anchor-id="factcc-and-related-models"><span class="header-section-number">36.4.1</span> FactCC and Related Models</h3>
+<p>FactCC <span class="citation" data-cites="kryscinski2020evaluating"><a href="#ref-kryscinski2020evaluating" role="doc-biblioref">[1]</a></span> is a BERT-based NLI model fine-tuned specifically to detect factual consistency between a source document and a generated summary. Rather than using standard NLI training data (which is drawn from human-written premises and hypotheses), FactCC was trained on synthetically generated (document, summary) pairs with controlled factual errors: entity swaps, number changes, pronoun changes, negation insertion.</p>
+<p>The training procedure: take a human-written summary, apply a controlled transformation (substitute the correct person’s name with another person’s name from the document), and label the transformed pair as factually inconsistent. The original pair is labeled consistent. Fine-tuning on these synthetic examples teaches FactCC to detect specific types of factual errors without requiring large-scale human annotation of hallucinations.</p>
+<p>FactCC achieves approximately 75–80% accuracy at detecting factual inconsistency in CNN/DailyMail summaries, compared to human annotator accuracy of approximately 85–90% on the same task. The 10–15% gap reflects FactCC’s limitation: it detects the types of errors it was trained on (entity swaps, number errors) better than novel error types.</p>
+<hr>
+</section>
+</section>
+<section id="question-answering-based-hallucination-detection" class="level2" data-number="36.5">
+<h2 data-number="36.5" class="anchored" data-anchor-id="question-answering-based-hallucination-detection"><span class="header-section-number">36.5</span> Question-Answering Based Hallucination Detection</h2>
+<p>A separate family of faithfulness metrics uses question generation and answering to evaluate consistency. The core idea: if a generated summary is faithful to the source document, questions about the summary should be answerable from the source document, with matching answers.</p>
+<section id="qags-question-answering-and-generation-for-summarization" class="level3" data-number="36.5.1">
+<h3 data-number="36.5.1" class="anchored" data-anchor-id="qags-question-answering-and-generation-for-summarization"><span class="header-section-number">36.5.1</span> QAGS: Question Answering and Generation for Summarization</h3>
+<p>QAGS <span class="citation" data-cites="wang2020asking"><a href="#ref-wang2020asking" role="doc-biblioref">[2]</a></span> operates as follows:</p>
+<ol type="1">
+<li><p><strong>Generate questions</strong> from the hypothesis (generated summary). A question generation model takes each sentence of the summary and generates factual questions about it: “Who conducted the experiment?”, “When did the event occur?”, “What was discovered?”</p></li>
+<li><p><strong>Answer questions</strong> from two sources: the hypothesis itself and the source document. A question answering model answers each question twice, once using the summary and once using the source document.</p></li>
+<li><p><strong>Compare answers</strong>. If the answer from the summary matches the answer from the source document, that claim in the summary is faithful. If they differ, the summary has introduced information not supported by the source.</p></li>
+<li><p><strong>Aggregate</strong>. The QAGS score is the fraction of questions where the summary and source answers match, measuring overall faithfulness.</p></li>
+</ol>
+<p>QAGS achieves higher correlation with human faithfulness judgments than NLI-based methods on summarization tasks. Its advantage: it is more robust to the specific error types present in the generated text, because the questions are generated from the specific content being evaluated rather than relying on a classifier trained on pre-specified error types.</p>
+<p>Its limitations: question generation quality affects reliability (poorly formed questions produce unreliable answers), and answering questions from long source documents is itself an imperfect process prone to errors.</p>
+<hr>
+</section>
+</section>
+<section id="factscoring-decomposed-factuality-evaluation" class="level2" data-number="36.6">
+<h2 data-number="36.6" class="anchored" data-anchor-id="factscoring-decomposed-factuality-evaluation"><span class="header-section-number">36.6</span> FActScoring: Decomposed Factuality Evaluation</h2>
+<p>FactScore <span class="citation" data-cites="min2023factscore"><a href="#ref-min2023factscore" role="doc-biblioref">[3]</a></span> addresses the problem of evaluating factuality in long-form text generation, focusing not just on faithfulness to a source but also on accuracy with respect to world knowledge. It is the most widely adopted metric for evaluating factual accuracy in knowledge-intensive generation tasks.</p>
+<section id="the-decomposition-approach" class="level3" data-number="36.6.1">
+<h3 data-number="36.6.1" class="anchored" data-anchor-id="the-decomposition-approach"><span class="header-section-number">36.6.1</span> The Decomposition Approach</h3>
+<p>FActScore’s key insight: rather than evaluating an entire generated response for factual accuracy, decompose it into individual atomic facts and verify each separately. This decomposition:</p>
+<ol type="1">
+<li>Produces more granular, actionable feedback (which specific claims are wrong, not just an overall score)</li>
+<li>Allows verification of each claim independently using a dedicated retrieval and verification system</li>
+<li>Scales gracefully to long documents where holistic evaluation is difficult</li>
+</ol>
+<p><strong>Step 1: Atomic fact extraction.</strong> A language model decomposes the generated text into a list of atomic facts which are minimal, self-contained claims that can each be independently verified. For the sentence “Marie Curie, who was born in Warsaw in 1867, won two Nobel Prizes in different scientific fields”, the atomic facts might be:</p>
+<ul>
+<li>Marie Curie was born in Warsaw</li>
+<li>Marie Curie was born in 1867</li>
+<li>Marie Curie won two Nobel Prizes</li>
+<li>Marie Curie’s Nobel Prizes were in different scientific fields</li>
+</ul>
+<p><strong>Step 2: Fact verification.</strong> Each atomic fact is verified against a knowledge source (typically Wikipedia) using a combination of retrieval and NLI:</p>
+<ul>
+<li>Retrieve the most relevant Wikipedia passages for the claim</li>
+<li>Use an NLI model to classify each claim as supported, refuted, or not enough information given the retrieved passages</li>
+</ul>
+<p><strong>Step 3: FActScore computation.</strong> The FActScore is the fraction of atomic facts that are supported by the knowledge source:</p>
+<p><span class="math display">\[
+\text{FActScore} = \frac{\text{\# supported facts}}{\text{\# total atomic facts}}
+\]</span></p>
+</section>
+<section id="factscore-limitations" class="level3" data-number="36.6.2">
+<h3 data-number="36.6.2" class="anchored" data-anchor-id="factscore-limitations"><span class="header-section-number">36.6.2</span> FActScore Limitations</h3>
+<p><strong>Atomic fact extraction quality</strong>: the decomposition step depends on a language model to identify atomic facts, which itself introduces errors. Claims that are difficult to decompose, implicit claims, or claims with complex dependencies may be extracted incorrectly or missed.</p>
+<p><strong>Knowledge source coverage</strong>: FActScore uses Wikipedia as its verification source. Claims about topics not well-covered in Wikipedia (recent events, specialized domains, non-English subjects) receive “not enough information” rather than being correctly verified. The metric scores these as unsupported, which may overestimate hallucination rates for legitimate claims that Wikipedia does not cover.</p>
+<p><strong>Verification model accuracy</strong>: the NLI model used for verification makes its own errors. Claims that are true but stated in ways that differ from Wikipedia’s phrasing may receive incorrect “not supported” labels; claims that happen to match Wikipedia’s phrasing superficially may receive incorrect “supported” labels despite factual differences.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="36.7">
+<h2 data-number="36.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">36.7</span> Key Takeaways</h2>
+<ul>
+<li>Hallucination takes several distinct forms — intrinsic (contradicts input), extrinsic (introduces unsupported information), entity (wrong named entities), and reasoning errors — each requiring different detection approaches.</li>
+<li>BLEU and BERTScore fail to detect hallucinations because they measure lexical or semantic overlap, not factual accuracy; a single wrong entity in an otherwise correct response may barely affect these scores.</li>
+<li>Faithfulness evaluation (does the output follow from the source?) is tractable using NLI or QA-based methods; factuality evaluation (is the output true according to world knowledge?) is harder and requires a knowledge source.</li>
+<li>NLI-based metrics (FactCC) achieve approximately 75–80% accuracy at detecting factual inconsistency in summarization; their limitation is sensitivity to the specific error types present in their training data.</li>
+<li>QA-based metrics (QAGS, QAFactEval) generate questions from the hypothesis and compare answers from hypothesis and source, achieving higher correlation with human judgments (Pearson ~0.45–0.55) than NLI methods on summarization.</li>
+<li>Retrieval-augmented generation reduces hallucination substantially: FActScore of ~80% for retrieval-augmented systems versus ~58–73% for non-retrieval systems, directly motivating the RAG architecture.</li>
+<li>Expressed model confidence is a weak hallucination signal; calibration is insufficient for reliable detection, with the best confidence elicitation strategies achieving AUC-ROC of 0.70–0.75 at distinguishing correct from hallucinated claims.</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="33.9">
-<h2 data-number="33.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">33.9</span> Further Reading</h2>
+<section id="further-reading" class="level2" data-number="36.8">
+<h2 data-number="36.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">36.8</span> Further Reading</h2>
 <ul>
-<li><p>Wenzek, G., Lachaux, M.-A., Conneau, A., Chaudhary, V., Guzmán, F., Joulin, A., &amp; Grave, E. (2020). <em>CCNet: Extracting High Quality Monolingual Datasets from Web Crawl Data.</em> LREC. — Introduces perplexity-based filtering for web crawl data; the filtering pipeline and the quality analysis before and after filtering are the key contributions; used as the basis for LLaMA training data preparation.</p></li>
-<li><p>Hoffmann, J., et al.&nbsp;(2022). <em>Training Compute-Optimal Large Language Models.</em> NeurIPS. — Chinchilla; the parametric loss model <span class="math inline">\(L(N,D) = E + A/N^\alpha + B/D^\beta\)</span> and the irreducible entropy <span class="math inline">\(E \approx 1.69\)</span> nats are introduced here; the BPB analysis in the appendix is the clearest published treatment of cross-tokenizer perplexity normalization.</p></li>
-<li><p>Press, O., Smith, N. A., &amp; Lewis, M. (2022). <em>Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation.</em> ICLR. — The stride evaluation procedure for measuring perplexity at fixed context length is described and used here; the analysis of how context length affects perplexity is the most precise published treatment of the length confound.</p></li>
-<li><p>Guo, C., Pleiss, G., Sun, Y., &amp; Weinberger, K. Q. (2017). <em>On Calibration of Modern Neural Networks.</em> ICML. — Introduces Expected Calibration Error (ECE) and documents the miscalibration of modern deep networks; though focused on classification, the methodology applies directly to language model probability calibration and motivates the distinction between low perplexity and good calibration.</p></li>
-<li><p>Holtzman, A., Buys, J., Du, L., Forbes, M., &amp; Choi, Y. (2020). <em>The Curious Case of Neural Text Degeneration.</em> ICLR. — Analyzes the relationship between token-level probability distributions and generation quality; the connection between entropy of the distribution (perplexity at a position) and the quality of sampled text motivates the local perplexity interpretation.</p></li>
-<li><p>Mielke, S. J., Szlam, A., Dinan, E., &amp; Boureau, Y.-L. (2022). <em>Reducing Conversational Agents’ Overconfidence Through Epistemic Nudging.</em> TACL. — Examines the relationship between model confidence (expressed probabilities) and accuracy in conversational settings; the overconfidence analysis and mitigation strategies connect perplexity-adjacent calibration to practical deployment concerns.</p></li>
+<li><p>Kryscinski, W., McCann, B., Xiong, C., &amp; Socher, R. (2020). <em>Evaluating the Factual Consistency of Abstractive Text Summarization.</em> EMNLP. — Introduces FactCC and the synthetic training data generation procedure; the controlled perturbation approach to creating training examples is the key methodological contribution; the analysis of which error types FactCC detects best reveals its scope and limitations.</p></li>
+<li><p>Wang, A., Cho, K., &amp; Lewis, M. (2020). <em>Asking and Answering Questions to Evaluate the Factual Consistency of Summaries.</em> ACL. — Introduces QAGS; the question generation and dual-source answering procedure is the key contribution; the human correlation analysis establishes QAGS as more reliable than NLI-based methods on summarization.</p></li>
+<li><p>Fabbri, A. R., Wu, C.-S., Liu, W., &amp; Xiong, C. (2022). <em>QAFactEval: Improved QA-Based Factual Consistency Evaluation for Summarization.</em> NAACL. — Improves QAGS with stronger component models and learned aggregation; the human correlation comparison across methods on multiple summarization benchmarks is the key empirical contribution.</p></li>
+<li><p>Min, S., Krishna, K., Lyu, X., Lewis, M., Yih, W., Koh, P. W., Iyyer, M., Zettlemoyer, L., &amp; Hajishirzi, H. (2023). <em>FActScoring: Fine-Grained Atomic Evaluation of Factual Precision in Long Form Text Generation.</em> EMNLP. — Introduces FActScore and the atomic fact decomposition pipeline; the biography generation evaluation and the comparison across model families are the key empirical contributions; the Wikipedia retrieval verification pipeline is described precisely enough to reproduce.</p></li>
+<li><p>Goyal, T., &amp; Durrett, G. (2020). <em>Evaluating Factuality in Generation with Dependency-Level Entailment.</em> EMNLP Findings. — Introduces DAE and dependency-arc-level faithfulness evaluation; the fine-grained localization of hallucinated content is the key contribution relative to document-level NLI approaches.</p></li>
+<li><p>Kadavath, S., et al.&nbsp;(2022). <em>Language Models (Mostly) Know What They Know.</em> arXiv. — Studies self-knowledge calibration in language models; the finding that models show some but insufficient self-knowledge to reliably identify their own hallucinations motivates external verification approaches; the calibration curves are the key empirical contribution.</p></li>
+<li><p>Es, S., James, J., Espinosa-Anke, L., &amp; Schockaert, S. (2023). <em>RAGAS: Automated Evaluation of Retrieval Augmented Generation.</em> arXiv. — Introduces RAGAS and the faithfulness, answer relevance, context precision, and context recall metrics for RAG evaluation; the decomposition of RAG quality into retrieval and generation components is the key contribution for practitioners building RAG systems.</p></li>
+<li><p>Xiong, M., Hu, Z., Lu, X., Li, Y., Fu, J., He, J., &amp; Hooi, B. (2024). <em>Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs.</em> ICLR. — Systematic evaluation of confidence elicitation strategies; the AUC-ROC analysis across strategies and model families is the key empirical contribution; the finding that no strategy reliably identifies hallucinations is the key practical conclusion.</p></li>
 </ul>
 <hr>
 
 
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-kryscinski2020evaluating" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">W. Kryściński, B. McCann, C. Xiong, and R. Socher, <span>“Evaluating the factual consistency of abstractive text summarization,”</span> in <em>Proceedings of the 2020 conference on empirical methods in natural language processing (EMNLP)</em>, 2020, pp. 9332–9346.</div>
+</div>
+<div id="ref-wang2020asking" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">A. Wang, K. Cho, and M. Lewis, <span>“Asking and answering questions to evaluate the factual consistency of summaries,”</span> in <em>Proceedings of the 58th annual meeting of the association for computational linguistics</em>, 2020, pp. 5008–5020.</div>
+</div>
+<div id="ref-min2023factscore" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">S. Min <em>et al.</em>, <span>“FActScore: Fine-grained atomic evaluation of factual precision in long form text generation,”</span> in <em>Proceedings of the 2023 conference on empirical methods in natural language processing</em>, 2023, pp. 12076–12100.</div>
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1265,14 +1255,11 @@ e^{\mathcal{L}}\)</span>; it is the same information as loss, transformed into a
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part6/benchmarks.html" class="pagination-link" aria-label="Benchmarks">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></span>
+      <a href="../../book/part6/semantic_metrics.html" class="pagination-link" aria-label="Semantic Metrics">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Semantic Metrics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part6/lexical_metrics.html" class="pagination-link" aria-label="Lexical Metrics">
-        <span class="nav-page-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Lexical Metrics</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
