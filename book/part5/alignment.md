@@ -980,7 +980,7 @@ methods that produce them, because each failure mode below is a *specific,
 recognizable shape* that the general overoptimization problem takes in
 practice.
 
-###  Sycophancy
+###  Sycophancy {#sec-sycophancy}
 
 Sycophancy is a systematic alignment failure where models learn to tell
 users what they want to hear rather than what is true. It arises when human

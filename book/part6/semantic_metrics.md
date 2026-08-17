@@ -270,7 +270,7 @@ improvement on factual error detection through its fine-tuning on human ratings,
 since human evaluators do penalize factual errors, but its sensitivity is not 
 high enough to use as a dedicated factual accuracy metric.
 
-### Reference Dependence
+### Reference Dependence {#sec-reference-dependence}
 
 Both metrics remain reference-based. A hypothesis that is better than the
 reference (more complete, more accurate, better organized) will receive
