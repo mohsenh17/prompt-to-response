@@ -631,6 +631,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part6/LLM_judge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -836,8 +842,8 @@ P_{\text{BERT}}^{\text{idf}} = \frac{\sum_{\hat{y}_i \in \hat{y}} \text{idf}(\ha
 <p>BERTScore and BLEURT improve over BLEU on paraphrase detection but are still not reliable detectors of factual errors. The embedding of “The Eiffel Tower is in London” is semantically similar to “The Eiffel Tower is in Paris” both discuss the Eiffel Tower and a European capital, and the factual distinction (London vs.&nbsp;Paris) may not be strongly represented in the cosine similarity between their embeddings.</p>
 <p>BERTScore is better than BLEU at detecting adequacy errors (missing information) but not substantially better at detecting factual errors. BLEURT shows some improvement on factual error detection through its fine-tuning on human ratings, since human evaluators do penalize factual errors, but its sensitivity is not high enough to use as a dedicated factual accuracy metric.</p>
 </section>
-<section id="reference-dependence" class="level3" data-number="35.4.3">
-<h3 data-number="35.4.3" class="anchored" data-anchor-id="reference-dependence"><span class="header-section-number">35.4.3</span> Reference Dependence</h3>
+<section id="sec-reference-dependence" class="level3" data-number="35.4.3">
+<h3 data-number="35.4.3" class="anchored" data-anchor-id="sec-reference-dependence"><span class="header-section-number">35.4.3</span> Reference Dependence</h3>
 <p>Both metrics remain reference-based. A hypothesis that is better than the reference (more complete, more accurate, better organized) will receive a lower score than the reference itself. This is a fundamental limitation of reference-based evaluation: the metric can only evaluate quality relative to the reference, not absolute quality.</p>
 <p>For tasks where the reference is a human-written gold standard that represents the ceiling of quality, this is acceptable. For tasks where models now routinely exceed human performance (some code generation tasks, some translation pairs) the reference ceiling becomes a binding constraint that makes the metric misleading.</p>
 </section>

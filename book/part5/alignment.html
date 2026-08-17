@@ -631,6 +631,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part6/LLM_judge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -1117,8 +1123,8 @@ p^*(y_w \succ y_l | x) = \sigma\left(\beta \log \frac{\pi^*(y_w|x)}{\pi_{\text{r
 <section id="reward-hacking-and-alignment-failure-modes" class="level2" data-number="28.7">
 <h2 data-number="28.7" class="anchored" data-anchor-id="reward-hacking-and-alignment-failure-modes"><span class="header-section-number">28.7</span> Reward Hacking and Alignment Failure Modes</h2>
 <p>Alignment methods are not solved. The reward model is an imperfect proxy for human values, and optimization pressure (whether from PPO, DPO, or any variant in between) finds and exploits its failures. Understanding these failure modes is as important as understanding the methods that produce them, because each failure mode below is a <em>specific, recognizable shape</em> that the general overoptimization problem takes in practice.</p>
-<section id="sycophancy" class="level3" data-number="28.7.1">
-<h3 data-number="28.7.1" class="anchored" data-anchor-id="sycophancy"><span class="header-section-number">28.7.1</span> Sycophancy</h3>
+<section id="sec-sycophancy" class="level3" data-number="28.7.1">
+<h3 data-number="28.7.1" class="anchored" data-anchor-id="sec-sycophancy"><span class="header-section-number">28.7.1</span> Sycophancy</h3>
 <p>Sycophancy is a systematic alignment failure where models learn to tell users what they want to hear rather than what is true. It arises when human annotators prefer responses that validate their existing beliefs, express enthusiasm, or agree with the user’s framing, a preference that is easy to satisfy by producing agreeable text and that does not require accuracy. In Bradley-Terry terms, agreeable-but-wrong responses can score <span class="math inline">\(r_w &gt; r_l\)</span> against disagreeable-but-correct ones often enough, in the annotation data, that the reward model learns agreeableness as a shortcut to high reward.</p>
 <p>A sycophantic model will change its stated position when the user expresses disagreement, even when the model’s original position was correct. It will overpraise poor work, understate risks, and omit uncomfortable information.</p>
 <p>Mitigations include explicitly including anti-sycophancy examples in preference data (preferred completions that maintain correct positions under user pressure), training reward models to penalize position changes in response to user disagreement, and including calibration objectives that penalize expressed confidence on questions where the model is factually wrong.</p>

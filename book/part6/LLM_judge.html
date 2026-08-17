@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; APIs and Model Serving – From Prompt to Response</title>
+<title>38&nbsp; LLM-as-a-Judge – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -22,41 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 /* CSS for citations */
 div.csl-bib-body { }
@@ -88,8 +53,7 @@ div.csl-indent {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part2/Tokenization.html" rel="next">
-<link href="../../book/part1/chapter1/introduction.html" rel="prev">
+<link href="../../book/part6/rag_evaluation.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -164,13 +128,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="2&nbsp; APIs and Model Serving – From Prompt to Response">
+<meta property="og:title" content="38&nbsp; LLM-as-a-Judge – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part2/figures/ch3/journey_part2_ch3.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch8/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="2&nbsp; APIs and Model Serving – From Prompt to Response">
+<meta name="twitter:title" content="38&nbsp; LLM-as-a-Judge – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part2/figures/ch3/journey_part2_ch3.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch8/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -345,7 +309,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/LLM_judge.html"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -399,16 +363,16 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">The Runes Beneath Language</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part2/APIs_and_serving.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></span></a>
   </div>
 </li>
@@ -617,13 +581,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">The Trial of the Answer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part6/human_eval.html" class="sidebar-item-text sidebar-link">
@@ -668,7 +632,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/LLM_judge.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/LLM_judge.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></span></a>
   </div>
 </li>
@@ -688,15 +652,13 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-gap-between-training-and-deployment" id="toc-the-gap-between-training-and-deployment" class="nav-link active" data-scroll-target="#the-gap-between-training-and-deployment"><span class="header-section-number">2.1</span> The gap between training and deployment</a></li>
-  <li><a href="#the-anatomy-of-an-llm-api" id="toc-the-anatomy-of-an-llm-api" class="nav-link" data-scroll-target="#the-anatomy-of-an-llm-api"><span class="header-section-number">2.2</span> The anatomy of an LLM API</a></li>
-  <li><a href="#from-checkpoint-to-serving-the-loading-pipeline" id="toc-from-checkpoint-to-serving-the-loading-pipeline" class="nav-link" data-scroll-target="#from-checkpoint-to-serving-the-loading-pipeline"><span class="header-section-number">2.3</span> From checkpoint to serving: the loading pipeline</a></li>
-  <li><a href="#the-serving-architecture" id="toc-the-serving-architecture" class="nav-link" data-scroll-target="#the-serving-architecture"><span class="header-section-number">2.4</span> The serving architecture</a></li>
-  <li><a href="#batching-the-key-to-serving-efficiently" id="toc-batching-the-key-to-serving-efficiently" class="nav-link" data-scroll-target="#batching-the-key-to-serving-efficiently"><span class="header-section-number">2.5</span> Batching: the key to serving efficiently</a></li>
-  <li><a href="#kv-cache-management" id="toc-kv-cache-management" class="nav-link" data-scroll-target="#kv-cache-management"><span class="header-section-number">2.6</span> KV cache management</a></li>
-  <li><a href="#latency-and-throughput-tradeoffs" id="toc-latency-and-throughput-tradeoffs" class="nav-link" data-scroll-target="#latency-and-throughput-tradeoffs"><span class="header-section-number">2.7</span> Latency and throughput tradeoffs</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">2.8</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">2.9</span> Further reading</a></li>
+  <li><a href="#the-evaluation-gap-that-llm-as-a-judge-fills" id="toc-the-evaluation-gap-that-llm-as-a-judge-fills" class="nav-link active" data-scroll-target="#the-evaluation-gap-that-llm-as-a-judge-fills"><span class="header-section-number">38.1</span> The Evaluation Gap That LLM-as-a-Judge Fills</a></li>
+  <li><a href="#architectures-for-llm-as-a-judge" id="toc-architectures-for-llm-as-a-judge" class="nav-link" data-scroll-target="#architectures-for-llm-as-a-judge"><span class="header-section-number">38.2</span> Architectures for LLM-as-a-Judge</a></li>
+  <li><a href="#systematic-biases-in-llm-judges" id="toc-systematic-biases-in-llm-judges" class="nav-link" data-scroll-target="#systematic-biases-in-llm-judges"><span class="header-section-number">38.3</span> Systematic Biases in LLM Judges</a></li>
+  <li><a href="#specialized-judge-models" id="toc-specialized-judge-models" class="nav-link" data-scroll-target="#specialized-judge-models"><span class="header-section-number">38.4</span> Specialized Judge Models</a></li>
+  <li><a href="#when-llm-as-a-judge-agrees-and-disagrees-with-humans" id="toc-when-llm-as-a-judge-agrees-and-disagrees-with-humans" class="nav-link" data-scroll-target="#when-llm-as-a-judge-agrees-and-disagrees-with-humans"><span class="header-section-number">38.5</span> When LLM-as-a-Judge Agrees and Disagrees with Humans</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">38.6</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">38.7</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -704,9 +666,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html">The Runes Beneath Language</a></li><li class="breadcrumb-item"><a href="../../book/part2/APIs_and_serving.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/LLM_judge.html"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">APIs and Model Serving</span></h1>
+<h1 class="title"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">LLM-as-a-Judge</span></h1>
 </div>
 
 
@@ -724,254 +686,225 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>A trained model is a file on a disk. How does it become something millions of people can query simultaneously, with low latency, high reliability, and predictable cost?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>When you use a language model to evaluate another language model, what are you actually measuring and what systemic biases make that measurement unreliable in ways that are hard to detect?</em></p>
 </blockquote>
+<hr>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where are we?</strong></p>
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/journey_part2_ch3.svg" class="img-fluid figure-img" style="width:100.0%">
+<img src="figures/ch8/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: The journey through the Model Mind.
+Figure&nbsp;38.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>The prompt has been written and structured. Now it needs to travel somewhere. This chapter covers everything between the user pressing Enter and the model receiving the request: the wire format, the serving infrastructure, and the engineering decisions that make large-scale LLM deployment economical.</p>
+<p>Every previous chapter in this part has covered a measurement instrument with specific strengths and failure modes. LLM-as-a-judge is the most powerful automated evaluation method available and the one that most closely mimics human judgment at scale. It is also the one whose failure modes are most subtle, most consequential, and least visible without deliberate testing.</p>
+</div>
+</div>
+</div>
 <hr>
-<section id="the-gap-between-training-and-deployment" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="the-gap-between-training-and-deployment"><span class="header-section-number">2.1</span> The gap between training and deployment</h2>
-<p>Training produces a checkpoint: a collection of weight tensors saved to disk. At this point, the model can do nothing on its own. It has no interface. It cannot receive requests. It does not know what a user is.</p>
-<p>Turning that checkpoint into a production service requires solving a completely different set of engineering problems from those that were involved in training. During training, we try to optimize for producing as many tokens as possible per second. On the other hand, during serving, the optimization focuses on latency, concurrency, reliability, and cost, which means we want to respond to requests quickly, serve many users simultaneously, remain available under failure, and do all of this economically.</p>
-<p>These requirements require a different approach. The same GPU cluster that runs training efficiently is not automatically an efficient serving infrastructure. Serving is its own engineering discipline, with its own abstractions, its own failure modes, and its own optimization techniques.</p>
-<p>This chapter covers the full stack from trained checkpoint to the API endpoint a user or application calls.</p>
-<hr>
-</section>
-<section id="the-anatomy-of-an-llm-api" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="the-anatomy-of-an-llm-api"><span class="header-section-number">2.2</span> The anatomy of an LLM API</h2>
-<p>The standard interface for production LLM services is an HTTP API, almost universally following the conventions established by OpenAI’s API.</p>
-<section id="the-chat-completions-endpoint" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="the-chat-completions-endpoint"><span class="header-section-number">2.2.1</span> The chat completions endpoint</h3>
-<p>The primary endpoint for most production use:</p>
-<pre><code>POST /v1/chat/completions</code></pre>
-<p>Request body:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-4o"</span><span class="fu">,</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"messages"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"role"</span><span class="fu">:</span> <span class="st">"system"</span><span class="fu">,</span> <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"You are a helpful assistant."</span><span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">"role"</span><span class="fu">:</span> <span class="st">"user"</span><span class="fu">,</span> <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"What is the capital of France?"</span><span class="fu">}</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"max_tokens"</span><span class="fu">:</span> <span class="dv">100</span><span class="fu">,</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"temperature"</span><span class="fu">:</span> <span class="fl">0.7</span><span class="fu">,</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"stream"</span><span class="fu">:</span> <span class="kw">false</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Response:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"chatcmpl-abc123"</span><span class="fu">,</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"object"</span><span class="fu">:</span> <span class="st">"chat.completion"</span><span class="fu">,</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"created"</span><span class="fu">:</span> <span class="dv">1699000000</span><span class="fu">,</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-4o"</span><span class="fu">,</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"choices"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"index"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"message"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"role"</span><span class="fu">:</span> <span class="st">"assistant"</span><span class="fu">,</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"The capital of France is Paris."</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"finish_reason"</span><span class="fu">:</span> <span class="st">"stop"</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"usage"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prompt_tokens"</span><span class="fu">:</span> <span class="dv">26</span><span class="fu">,</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"completion_tokens"</span><span class="fu">:</span> <span class="dv">9</span><span class="fu">,</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"total_tokens"</span><span class="fu">:</span> <span class="dv">35</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Several design decisions in this interface iluminates the realities of LLM serving:</p>
-<p><strong>Messages array instead of a single string.</strong> Conversations have a clear structure consisting of a system prompt, user turns, and assistant turns. The API explicitly defines the structure, instead of relying on concatenated strings and expecting the model to interpret the formatting correctly.</p>
-<p><strong>Token counts in the response.</strong> Because LLM cost and latency are proportional to token count, the API reports exactly how many tokens were consumed allowing costs to be monitored and controlled programmatically.</p>
-<p><strong><code>finish_reason</code>.</strong> Why did the model stop generating? <code>stop</code> means it produced an end-of-sequence token. <code>length</code> means it reached the <code>max_tokens</code>. <code>content_filter</code> means the response was filtered. These signals help to determine whether the response is complete</p>
-<p><strong><code>stream</code> parameter.</strong> Whether to stream tokens as they are generated or return the complete response when done. Streaming is architecturally significant and covered in detail in chapter “REFF”.</p>
-</section>
-<section id="the-completions-endpoint-legacy" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="the-completions-endpoint-legacy"><span class="header-section-number">2.2.2</span> The completions endpoint (legacy)</h3>
-<p>An older interface that takes the raw string prompt rather than the structured messages array:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"gpt-3.5-turbo-instruct"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"prompt"</span><span class="fu">:</span> <span class="st">"The capital of France is"</span><span class="fu">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"max_tokens"</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This endpoint represents an earlier era of LLM deployment, when models were not chat tuned and the interface was closer to a text continuation service. It is still useful for non-chat use cases but has been superseded by chat completions for most applications.</p>
-</section>
-<section id="key-parameters" class="level3" data-number="2.2.3">
-<h3 data-number="2.2.3" class="anchored" data-anchor-id="key-parameters"><span class="header-section-number">2.2.3</span> Key parameters</h3>
-<p><strong><code>temperature</code></strong> controls the randomness of sampling. At temperature 0, the model always selects the most likely next token (greedy decoding). At temperature 1, it samples from a full distribution. Above 1, the distribution flattens, producing more random and unstable outputs. Temperature interacts with the decoding strategy covered in chapter “REFF”.</p>
-<p><strong><code>top_p</code> (nucleus sampling)</strong> this is an alternative to temperature for controlling randomness. The model samples from the smallest set of tokens in which the cumulative probability exceeds <code>top_p</code>. Setting <code>top_p = 0.9</code> restricts sampling to tokens that together account for 90% of the probability mass that means the long tail of unlikely tokens is ignored.</p>
-<p><strong><code>max_tokens</code></strong> sets the maximum number of tokens to generate. It functions as a cost and latency cap. If the model reaches this limit before producing a stop token, <code>finish_reason</code> is <code>length</code> and the response may be end mid-sentence.</p>
-<p><strong>Stop sequences</strong> are one or more strings that cause halt in generation immediately if the model produces them. They are useful for structured generation where you know the output should end at a specific delimiter.</p>
-<p><strong><code>frequency_penalty</code> and <code>presence_penalty</code></strong> discourage repetition. <code>frequency_penalty</code> applies a penalty proportional to how many time a token has already appeared. <code>presence_penalty</code> applies a flat penalty to any token that has appeared at all. Both help the model to prevent from getting stuck in repetitive loops.</p>
-<p><strong><code>n</code></strong> specifies how many independent completions to generate for a single prompt. Useful for best-of-n sampling where you generate multiple responses and select the best one.</p>
-<p><strong><code>logprobs</code></strong> returns the log probabilities of the selected tokens and also the top-k most likely tokens at each position. It is used for calibration, analysis, and classification tasks where you care more about the model’s confidence, not just its output.</p>
+<section id="the-evaluation-gap-that-llm-as-a-judge-fills" class="level2" data-number="38.1">
+<h2 data-number="38.1" class="anchored" data-anchor-id="the-evaluation-gap-that-llm-as-a-judge-fills"><span class="header-section-number">38.1</span> The Evaluation Gap That LLM-as-a-Judge Fills</h2>
+<p>Human evaluation is the ground truth but is slow, expensive, and does not scale to continuous development cycles. Automated metrics (perplexity, BLEU, ROUGE, BERTScore) are fast but fail on the dimensions that matter most for modern language model outputs: open-ended instruction following, multi-turn coherence, nuanced helpfulness, style appropriateness.</p>
+<p>The gap between what humans can assess and what automated metrics can measure has widened as model capabilities improved. In 2019, a model that produced grammatically correct text was doing well and BLEU could detect that. In 2025, frontier models produce fluent, grammatically correct, topically relevant, well-structured text routinely, and the quality differences between models lie in subtler dimensions: accuracy of nuanced factual claims, appropriate epistemic hedging, quality of reasoning chains, helpfulness of explanations for a specific audience level. None of these dimensions are accessible to n-gram or embedding metrics.</p>
+<p>LLM-as-a-Judge fills this gap by using a capable language model to evaluate generated outputs on exactly the dimensions that human evaluators care about. The judge reads the prompt and the response (or multiple responses) and produces a quality score or a preference judgment, with the same contextual understanding and background knowledge that a human evaluator would apply.Although powerful, it is also inherently circular in ways that require careful management</p>
 <hr>
 </section>
+<section id="architectures-for-llm-as-a-judge" class="level2" data-number="38.2">
+<h2 data-number="38.2" class="anchored" data-anchor-id="architectures-for-llm-as-a-judge"><span class="header-section-number">38.2</span> Architectures for LLM-as-a-Judge</h2>
+<p>LLM-as-a-Judge is not a single method but a family of prompting architectures for eliciting quality judgments from a language model.</p>
+<section id="pointwise-scoring" class="level3" data-number="38.2.1">
+<h3 data-number="38.2.1" class="anchored" data-anchor-id="pointwise-scoring"><span class="header-section-number">38.2.1</span> Pointwise Scoring</h3>
+<p>The simplest architecture: present the judge with a prompt and a single response, and ask it to rate the response on a specified scale.</p>
+<pre><code>[System]
+You are an expert evaluator of AI assistant responses. Rate the
+following response on a scale of 1-10 for helpfulness, where:
+1 = completely unhelpful or harmful
+5 = partially helpful, significant room for improvement
+10 = maximally helpful, addresses the user's need completely
+
+Provide your rating as a single integer followed by a one-sentence
+justification.
+
+[User]
+Query: {query}
+Response: {response}
+
+Rating:</code></pre>
+<p>Pointwise scoring is simple to implement and produces an absolute quality score rather than a relative ranking. Its limitation: without a reference point, the judge’s rating scale is uncalibrated. Different judges interpret “7 out of 10” differently; the same judge may shift its calibration across evaluation sessions; and the distribution of scores across a test set may not reflect the distribution of actual quality differences.</p>
 </section>
-<section id="from-checkpoint-to-serving-the-loading-pipeline" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="from-checkpoint-to-serving-the-loading-pipeline"><span class="header-section-number">2.3</span> From checkpoint to serving: the loading pipeline</h2>
-<p>Before a model can serve requests, it must be loaded. For a model with hundreds of billions of parameters, this is a nontrivial task.</p>
-<section id="checkpoint-format-and-sharding" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="checkpoint-format-and-sharding"><span class="header-section-number">2.3.1</span> Checkpoint format and sharding</h3>
-<p>Training checkpoints are often sharded due to the fact that the full model does not fit in the memory of a single storage node or loading process. A 70B parameter model in BF16 requires approximately 140 GB of storage and Loading it into a GPU memory requires careful orchestration.</p>
-<p>Common checkpoint formats:</p>
+<section id="pairwise-comparison" class="level3" data-number="38.2.2">
+<h3 data-number="38.2.2" class="anchored" data-anchor-id="pairwise-comparison"><span class="header-section-number">38.2.2</span> Pairwise Comparison</h3>
+<p>The judge is presented with two responses to the same prompt and asked which is better, mirroring the pairwise human evaluation methodology.</p>
+<pre><code>[System]
+You are an expert evaluator of AI assistant responses. Given a user
+query and two responses (A and B), determine which response is better.
+Consider helpfulness, accuracy, and clarity.
+
+Output only one of: "A", "B", or "Tie"
+
+[User]
+Query: {query}
+Response A: {response_a}
+Response B: {response_b}
+
+Which response is better?</code></pre>
+<p>Pairwise comparison is more reliable than pointwise scoring for the same reason it is more reliable in human evaluation: it eliminates scale calibration and asks a simpler, more anchored question. The judge is not asked to construct an absolute quality scale, it is asked to choose between two specific options.</p>
+<p>Pairwise comparison is used in MT-Bench, AlpacaEval, and most production model evaluation pipelines. Its limitation: <span class="math inline">\(O(N^2)\)</span> comparisons are required to fully rank <span class="math inline">\(N\)</span> models, which becomes expensive at scale. The Elo rating system (used in Chatbot Arena) and the Bradley-Terry model convert pairwise comparisons to rankings with far fewer than <span class="math inline">\(N^2\)</span> comparisons, at the cost of some statistical uncertainty.</p>
+</section>
+<section id="reference-guided-scoring" class="level3" data-number="38.2.3">
+<h3 data-number="38.2.3" class="anchored" data-anchor-id="reference-guided-scoring"><span class="header-section-number">38.2.3</span> Reference-Guided Scoring</h3>
+<p>A hybrid: the judge is provided with a reference answer and asked to evaluate the response relative to it.</p>
+<pre><code>[System]
+You are an expert evaluator. Given a query, a reference answer, and
+a model response, score the model response from 1–10 based on how
+well it captures the key information in the reference answer, with
+full credit for accurate paraphrase and partial credit for partial
+coverage.
+
+[User]
+Query: {query}
+Reference: {reference}
+Response: {response}
+
+Score:</code></pre>
+<p>Reference-guided scoring combines the contextual understanding of LLM-as-a-Judge with the anchoring of a reference answer, reducing the calibration problem. Its limitation: the reference ceiling effect from <a href="semantic_metrics.html#sec-reference-dependence" class="quarto-xref"><span>Section 35.4.3</span></a> applies, a response better than the reference cannot receive full credit, and the judge must navigate the awkward situation of a response that deviates from the reference while being factually superior to it.</p>
+</section>
+<section id="chain-of-thought-evaluation" class="level3" data-number="38.2.4">
+<h3 data-number="38.2.4" class="anchored" data-anchor-id="chain-of-thought-evaluation"><span class="header-section-number">38.2.4</span> Chain-of-Thought Evaluation</h3>
+<p>Rather than asking the judge for a score directly, instruct it to reason through the evaluation before producing a score:</p>
+<pre><code>[System]
+Evaluate the following response step by step. First identify what
+the query is asking. Then assess whether the response addresses each
+component of the query. Note any factual errors, missing information,
+or unnecessary content. Finally, provide an overall score from 1–10.
+
+[User]
+Query: {query}
+Response: {response}</code></pre>
+<p>Chain-of-thought evaluation improves score reliability by forcing the judge to articulate its reasoning before committing to a score, similar to how chain-of-thought prompting improves reasoning accuracy in other tasks. The reasoning trace also provides a diagnostic: if the judge’s stated reasoning is inconsistent with its score, that is a signal of judge unreliability on that example.</p>
+<hr>
+</section>
+</section>
+<section id="systematic-biases-in-llm-judges" class="level2" data-number="38.3">
+<h2 data-number="38.3" class="anchored" data-anchor-id="systematic-biases-in-llm-judges"><span class="header-section-number">38.3</span> Systematic Biases in LLM Judges</h2>
+<p>The power of LLM-as-a-Judge comes with systematic biases that are well- documented and must be explicitly mitigated. These biases are not random noise, they are consistent, directional distortions that can change the apparent ranking between models.</p>
+<section id="position-bias" class="level3" data-number="38.3.1">
+<h3 data-number="38.3.1" class="anchored" data-anchor-id="position-bias"><span class="header-section-number">38.3.1</span> Position Bias</h3>
+<p>When presented with two responses in a pairwise comparison, LLM judges exhibit a preference for the first response, independent of its quality. This mirrors the position bias observed in human evaluation but is often stronger and more consistent.</p>
+<p><strong>Mitigation</strong>: present each pair in both orders (A then B, and B then A) and use the judge’s decision only when both orderings agree. Conflicting judgments (preferred A when A was first, preferred B when B was first) are treated as ties. This halves the number of usable judgments but eliminates position bias.</p>
+</section>
+<section id="verbosity-bias" class="level3" data-number="38.3.2">
+<h3 data-number="38.3.2" class="anchored" data-anchor-id="verbosity-bias"><span class="header-section-number">38.3.2</span> Verbosity Bias</h3>
+<p>LLM judges consistently prefer longer responses, independent of whether the additional length adds value. A response that is twice as long as an equally good response typically receives higher scores, because length is a surface cue that the judge associates with thoroughness.</p>
+<p><strong>Mitigation</strong>: length-controlled evaluation adjusts win rates to account for the length difference between responses. Alternatively, explicitly instruct the judge to penalize unnecessary length, or truncate responses to equal lengths before comparison.</p>
+</section>
+<section id="self-enhancement-bias" class="level3" data-number="38.3.3">
+<h3 data-number="38.3.3" class="anchored" data-anchor-id="self-enhancement-bias"><span class="header-section-number">38.3.3</span> Self-Enhancement Bias</h3>
+<p>LLM judges from the same model family as the evaluated model tend to prefer that model’s responses. A GPT-4 judge evaluating GPT-4 versus Claude responses exhibits a systematic preference for GPT-4 responses beyond what human judges would assign. The same pattern holds for Claude-as-judge: Claude prefers Claude-generated responses.</p>
+<p>This bias arises because models are trained on their own outputs and on data that reflects their own generation style and value system. When the judge evaluates a response, it assigns higher scores to responses that resemble how it would generate the same content, stylistic familiarity masquerades as quality.</p>
+<p><strong>Mitigation</strong>: use a judge from a different model family than the model being evaluated. Cross-family evaluation reduces self-enhancement bias to near-zero. When only one judge is available, report the judge’s family prominently so readers can account for potential bias. Using multiple judges from different families and averaging or taking the majority is the most robust approach.</p>
+</section>
+<section id="sycophancy-toward-confident-responses" class="level3" data-number="38.3.4">
+<h3 data-number="38.3.4" class="anchored" data-anchor-id="sycophancy-toward-confident-responses"><span class="header-section-number">38.3.4</span> Sycophancy Toward Confident Responses</h3>
+<p>LLM judges, like the aligned models described in <a href="../part5/alignment.html#sec-sycophancy" class="quarto-xref"><span>Section 28.7.1</span></a>, exhibit sycophancy: they give higher scores to responses that express high confidence, even when the confident response is wrong and a hedged but correct response would be more appropriate.</p>
+<p>A response that says “The answer is definitively X” receives higher scores from LLM judges than a response that says “I believe the answer is X, though there is some uncertainty about this”, even when both responses are equally accurate and the hedging in the second is appropriate given genuine uncertainty. The judge conflates expressed confidence with answer quality.</p>
+<p><strong>Mitigation</strong>: include explicit calibration instructions in the judge prompt (“Prefer appropriately hedged responses over overconfident ones when genuine uncertainty exists”) and include examples of appropriately calibrated responses in few-shot demonstrations.</p>
+</section>
+<section id="inconsistency-across-similar-queries" class="level3" data-number="38.3.5">
+<h3 data-number="38.3.5" class="anchored" data-anchor-id="inconsistency-across-similar-queries"><span class="header-section-number">38.3.5</span> Inconsistency Across Similar Queries</h3>
+<p>LLM judges show inconsistency that human judges do not: the same judge presented with the same pair of responses on different occasions may produce different judgments. This inconsistency is not random noise but is correlated with query complexity: simple, objective queries produce more consistent judgments than subjective, nuanced ones. For complex evaluation tasks, this inconsistency bounds the reliability of any single pairwise judgment and requires multiple evaluations per pair to obtain stable estimates.</p>
+<p><strong>Mitigation</strong>: run multiple evaluations per pair and report the majority judgment with confidence intervals. For queries where agreement across multiple evaluations is low, flag these for human review rather than relying on the automated judgment.</p>
+<hr>
+</section>
+</section>
+<section id="specialized-judge-models" class="level2" data-number="38.4">
+<h2 data-number="38.4" class="anchored" data-anchor-id="specialized-judge-models"><span class="header-section-number">38.4</span> Specialized Judge Models</h2>
+<p>Rather than using general-purpose models like GPT-5 as judges, several purpose-built judge models have been developed that are fine-tuned specifically for evaluation tasks.</p>
+<section id="pandalm" class="level3" data-number="38.4.1">
+<h3 data-number="38.4.1" class="anchored" data-anchor-id="pandalm"><span class="header-section-number">38.4.1</span> PandaLM</h3>
+<p>PandaLM <span class="citation" data-cites="wang2024pandalm"><a href="#ref-wang2024pandalm" role="doc-biblioref">[1]</a></span> is a 7B-parameter LLaMA-based model fine-tuned on a large synthetic dataset of pairwise comparisons with GPT-3.5-generated judgments. It achieves comparable pairwise judgment quality to GPT-3.5 at substantially lower cost, enabling cheaper high-throughput evaluation. PandaLM’s limitation: it is trained to replicate GPT-3.5’s judgments, not human judgments directly, inheriting GPT-3.5’s biases.</p>
+</section>
+<section id="prometheus" class="level3" data-number="38.4.2">
+<h3 data-number="38.4.2" class="anchored" data-anchor-id="prometheus"><span class="header-section-number">38.4.2</span> Prometheus</h3>
+<p>Prometheus <span class="citation" data-cites="kim2024prometheus"><a href="#ref-kim2024prometheus" role="doc-biblioref">[2]</a></span> is a fine-tuned Llama 2 model trained on feedback data from GPT-4 with explicit scoring rubrics. Unlike general judge models, Prometheus accepts a custom rubric for each evaluation, the judge can be told to assess creativity, factual accuracy, code correctness, or any other specified dimension. This makes Prometheus adaptable to domain-specific evaluation needs without retraining.</p>
+<hr>
+</section>
+</section>
+<section id="when-llm-as-a-judge-agrees-and-disagrees-with-humans" class="level2" data-number="38.5">
+<h2 data-number="38.5" class="anchored" data-anchor-id="when-llm-as-a-judge-agrees-and-disagrees-with-humans"><span class="header-section-number">38.5</span> When LLM-as-a-Judge Agrees and Disagrees with Humans</h2>
+<p>The key empirical question for LLM-as-a-Judge is: how well do its judgments correlate with human judgments? The answer is nuanced and task-dependent.</p>
+<section id="high-agreement-domains" class="level3" data-number="38.5.1">
+<h3 data-number="38.5.1" class="anchored" data-anchor-id="high-agreement-domains"><span class="header-section-number">38.5.1</span> High Agreement Domains</h3>
+<p>LLM judges agree well with humans (Pearson correlation 0.8–0.9) on:</p>
 <ul>
-<li><strong>PyTorch <code>.pt</code> / <code>.bin</code></strong>: the standard PyTorch format which can be slow to load due to pickle deserialization</li>
-<li><strong>SafeTensors</strong>: a faster and safer alternative which can be loaded significantly faster via memory-mapped files</li>
-<li><strong>GGUF</strong>: a format used by llama.cpp, optimized for inference on consumer hardware and it is able to quantize weights natively</li>
+<li><strong>Factual question answering</strong>: both humans and LLM judges can verify factual claims and agree on which responses are more accurate</li>
+<li><strong>Code correctness</strong>: both can assess whether code solves the stated problem</li>
+<li><strong>Instruction following</strong>: whether explicit formatting and content constraints were followed is largely objective</li>
+<li><strong>Clear quality differences</strong>: when one response is substantially better than another, both humans and LLM judges agree</li>
 </ul>
 </section>
-<section id="quantization-for-serving" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="quantization-for-serving"><span class="header-section-number">2.3.2</span> Quantization for serving</h3>
-<p>Training typically utilizes BF16 weights (2 bytes per parameter). For serving, quantization reduces this further:</p>
-<p><strong>INT8 quantization</strong> stores weights as 8-bit integers (1 byte per parameter). This achieves a 2× memory reduction which causes a small quality loss that is mostly negligible for generation tasks.</p>
-<p><strong>INT4 quantization</strong> uses 4-bit integers (0.5 bytes per parameter) for a 4× memory reduction. Causes more quality loss and needs careful calibration. Enables running 70B models on consumer GPUs that could not otherwise fit them.</p>
-<p><strong>GPTQ</strong> is a post-training quantization technique that calibrates 4-bit quantization using a small dataset, minimizing quality loss from reduced precision.</p>
-<p><strong>AWQ (Activation-aware Weight Quantization)</strong> quantizes weights while accounting for the distribution of activations, producing better results than naive quantization at the same bit width.</p>
-<p>The tradeoff is consistent: the quantization reduces memory requirements while increase throughput, at the cost of some output quality. For production serving where cost matters, INT8 is nearly universal. INT4 is used when memory is severely constrained or when we want to serve on consumer hardware.</p>
-</section>
-<section id="tensor-parallelism-for-large-models" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="tensor-parallelism-for-large-models"><span class="header-section-number">2.3.3</span> Tensor parallelism for large models</h3>
-<p>A 405B parameter model in BF16 requires approximately 810 GB of GPU memory that is far beyond a single GPU’s capacity. In these scenarios, loading requires distributing the model across multiple GPUs using tensor parallelism (splitting individual weight matrices across GPUs) or pipeline parallelism (assigning different layers to different GPUs).</p>
-<p>The same parallelism strategies used in training apply to serving, but with different constraints: training prioritizes throughput (large batches, high utilization), while serving prioritizes latency (fast first-token generation, smaller batches).</p>
-<hr>
-</section>
-</section>
-<section id="the-serving-architecture" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="the-serving-architecture"><span class="header-section-number">2.4</span> The serving architecture</h2>
-<section id="the-inference-server" class="level3" data-number="2.4.1">
-<h3 data-number="2.4.1" class="anchored" data-anchor-id="the-inference-server"><span class="header-section-number">2.4.1</span> The inference server</h3>
-<p>The core component: a process that holds the model weights in GPU memory and handles requests. The major implementations:</p>
-<p><strong>vLLM</strong> is the dominant open-source inference server. It introduces PagedAttention (covered in detail in chapter “REFF”) for efficient KV cache management, and supports tensor parallelism, continuous batching, and most major model architectures.</p>
-<p><strong>TensorRT-LLM (NVIDIA)</strong> is NVIDIA’s inference optimization library. It applies kernel fusion, INT8/FP8 quantization, and hardware-specific optimizations. Typically the fastest option on NVIDIA hardware but requires compilation for specific model shapes which is a trade between flexibility and performance.</p>
-<p><strong>llama.cpp</strong> is a pure C++ implementation of LLaMA-family models, optimized for CPU and consumer GPU inference. Not competitive with vLLM for high-throughput serving, but it is unmatched for accessibility and local deployment.</p>
-</section>
-<section id="the-api-gateway" class="level3" data-number="2.4.2">
-<h3 data-number="2.4.2" class="anchored" data-anchor-id="the-api-gateway"><span class="header-section-number">2.4.2</span> The API gateway</h3>
-<p>In front of the inference server sits the API layer:</p>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/api_gateway.svg" class="img-fluid figure-img" style="width:50.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: The API gateway.
-</figcaption>
-</figure>
-</div>
-<p>The API gateway is not a performance bottleneck what it does is to process the metadata. It is critical for security (authentication prevents unauthorized access), cost control (rate limiting prevents abuse), reliability (routing distributes traffic and handles failures), and observability (logging every request enables debugging and billing).</p>
-<hr>
-</section>
-</section>
-<section id="batching-the-key-to-serving-efficiently" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="batching-the-key-to-serving-efficiently"><span class="header-section-number">2.5</span> Batching: the key to serving efficiently</h2>
-<p>A single inference server instance can handle many requests simultaneously. How it batches those requests together affects throughput and GPU utilization.</p>
-<section id="naive-static-batching" class="level3" data-number="2.5.1">
-<h3 data-number="2.5.1" class="anchored" data-anchor-id="naive-static-batching"><span class="header-section-number">2.5.1</span> Naive static batching</h3>
-<p>The simplest approach is to wait until you have <code>batch_size</code> requests, process them together, return all results.</p>
-<p>The problem is that LLM generation is variable length. On request might generate 10 tokens while the other might generate 500. In a static batch, all requests must wait for the longest one to finish. GPU utilization drops as shorter requests complete and their slots sit idle, waiting.</p>
-</section>
-<section id="continuous-batching" class="level3" data-number="2.5.2">
-<h3 data-number="2.5.2" class="anchored" data-anchor-id="continuous-batching"><span class="header-section-number">2.5.2</span> Continuous batching</h3>
-<p>The key innovation for efficient LLM serving, introduced by <span class="citation" data-cites="yu2022orca"><a href="#ref-yu2022orca" role="doc-biblioref">[1]</a></span> and popularized by vLLM.</p>
-<p>Instead of batching at the request level, continuous batching operates at the iteration level meaning it happens at every token generation step. After each token is generated:</p>
-<ol type="1">
-<li>Check which sequences in the current batch have finished</li>
-<li>Remove finished sequences from the batch</li>
-<li>Add new incoming requests to fill the freed slots</li>
-<li>Run the next generation step on the updated batch</li>
-</ol>
-<pre><code>Step 1: [A₁, B₁, C₁]         ← three requests, first token
-Step 2: [A₂, B₂, C₂]
-Step 3: [A₃, B₃, C_stop]     ← C finishes after 3 tokens
-Step 3: [A₃, B₃, D₁]         ← D immediately fills C's slot
-Step 4: [A₄, B₄, D₂]
-Step 5: [A_stop, B₅, D₃]     ← A finishes
-Step 5: [E₁, B₅, D₃]         ← E fills A's slot</code></pre>
-<p>The GPU is always processing a full batch. None of the slots sit idle waiting for the longest sequence to finish. On real workloads, this approach can improve throughput by 2 to 3 times compared to a naive static batching. Continuous batching requires careful KV cache management which explains why PagedAttention exists.</p>
-</section>
-<section id="prefill-and-decode-phases" class="level3" data-number="2.5.3">
-<h3 data-number="2.5.3" class="anchored" data-anchor-id="prefill-and-decode-phases"><span class="header-section-number">2.5.3</span> Prefill and decode phases</h3>
-<p>LLM generation has two distinct phases with different compute profiles:</p>
-<p><strong>Prefill</strong>: processing the input prompt. All prompt tokens are processed in parallel. This phase is compute bound and the bottleneck is GPU arithmetic throughput.</p>
-<p><strong>Decode</strong>: generating output tokens one at a time. Each step processes one single new token, attending to all previous tokens via the KV cache. This phase is memory-bandwidth-bound and the bottleneck is reading the model weights and KV cache from GPU memory.</p>
-<p>Because prefill and decode have different bottlenecks, mixing them in the same batch is not optimal. <strong>Chunked prefill</strong> and <strong>disaggregated serving</strong> are emerging techniques that separate prefill and decode across different hardware or batch slots to maximize utilization of each phase independently.</p>
-<hr>
-</section>
-</section>
-<section id="kv-cache-management" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="kv-cache-management"><span class="header-section-number">2.6</span> KV cache management</h2>
-<p>The KV cache stores the key and value tensors computed for each previous token, avoiding recomputation on every generation step. It is the central memory management challenge in serving, and will be explained in chapter “REFF”.</p>
-<p>A brief introduction here, because it directly constrains serving architecture:</p>
-<p>For a model with <code>L</code> layers, <code>h</code> KV heads, <code>d_k</code> key/value dimension, and a sequence of length <code>n</code>:</p>
-<pre><code>KV cache size = 2 × L × h × d_k × n × bytes_per_element</code></pre>
-<p>For LLaMA 2 70B (L=80, h=8 GQA heads, d_k=128) in BF16:</p>
-<pre><code>Per token: 2 × 80 × 8 × 128 × 2 = 327,680 bytes ≈ 320 KB
-4,096 tokens: 320 KB × 4,096 ≈ 1.3 GB
-32,768 tokens: 320 KB × 32,768 ≈ 10.5 GB</code></pre>
-<p>At high concurrency with long contexts, KV cache competes directly with model weights for GPU memory.</p>
-<section id="pagedattention" class="level3" data-number="2.6.1">
-<h3 data-number="2.6.1" class="anchored" data-anchor-id="pagedattention"><span class="header-section-number">2.6.1</span> PagedAttention</h3>
-<p>The key innovation in vLLM, inspired by virtual memory paging in operating systems.</p>
-<p>Traditional KV cache reserves a contiguous memory block for each sequence, sized to accommodate the maximum possible length. This causes internal fragmentation (reserved memory that goes unused when sequences are shorter than expected) and external fragmentation (free memory that cannot be used because it is not contiguous).</p>
-<p>PagedAttention allocates KV cache in fixed-size pages of tokens, with a page table mapping logical sequence positions to physical memory locations. Memory is allocated and freed one page at a time as sequences grow and complete:</p>
-<pre><code>Sequence A: [Page 3, Page 7, Page 12]     ← pages need not be contiguous
-Sequence B: [Page 1, Page 9]
-Sequence C: [Page 2, Page 4, Page 5, Page 11]
-Free pages: [Page 6, Page 8, Page 10, ...]</code></pre>
-<p>This will eliminates fragmentation and enables an almost perfect memory utilization. It also enables prefix sharing which means if two requests share a common system prompt, the KV cache for that prefix can be shared across both sequences without duplication.</p>
-<hr>
-</section>
-</section>
-<section id="latency-and-throughput-tradeoffs" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="latency-and-throughput-tradeoffs"><span class="header-section-number">2.7</span> Latency and throughput tradeoffs</h2>
-<p>Serving performance is characterized by two metrics that pull against each other:</p>
-<p><strong>Time to first token (TTFT)</strong> is how long the user waits before seeing any output. This is determined primarily by prefill time and since longer prompts take longer to prefill it is the metric users perceive most directly.</p>
-<p><strong>Time between tokens (TBT)</strong> is how fast tokens arrive after the first one. This is determined by decode speed. For a 70B model on a single A100, 20 to 60 tokens per second is typically expected.</p>
-<p><strong>Throughput</strong> is total tokens processed per second across all concurrent requests. Maximized by large batch sizes, which directly conflict with low TTFT.</p>
-<p>Production systems manage this tradeoff through maximum batch size limits (cap batch size to maintain acceptable latency), priority queuing (prioritize interactive requests over batch workloads), and SLA-based scheduling (different latency targets for different user tiers).</p>
-<hr>
-</section>
-<section id="key-takeaways" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">2.8</span> Key takeaways</h2>
+<section id="low-agreement-domains" class="level3" data-number="38.5.2">
+<h3 data-number="38.5.2" class="anchored" data-anchor-id="low-agreement-domains"><span class="header-section-number">38.5.2</span> Low Agreement Domains</h3>
+<p>LLM judges agree poorly with humans (Pearson correlation 0.4–0.6) on:</p>
 <ul>
-<li>A trained model checkpoint becomes a production service through a pipeline involving quantization, multi-GPU loading, an inference server, and an API gateway, since training and serving are distinct engineering disciplines</li>
-<li>The chat completions API format, including the messages array, key parameters, and token usage reporting, reflects the practical realities of LLM serving rather than arbitrary design choices</li>
-<li>Continuous batching operates at the token level rather than the request level, keeping GPUs fully utilized despite variable-length generation and serving as the main efficiency improvement for high-throughput systems</li>
-<li>KV cache memory is the central serving constraint because it grows with sequence length and batch size and competes directly with model weights for GPU memory, while PagedAttention manages it using virtual memory paging</li>
-<li>Prefill is compute bound and decode is memory bandwidth bound, so they have fundamentally different performance profiles and can be optimized independently</li>
-<li>TTFT and throughput trade off against each other, and the appropriate balance depends on whether the system serves interactive applications or batch workloads</li>
+<li><strong>Creative writing quality</strong>: aesthetic judgments are highly subjective and LLM judges exhibit stronger preferences for specific styles than humans show consensus on</li>
+<li><strong>Cultural and contextual appropriateness</strong>: responses appropriate for one cultural context may be inappropriate for another; LLM judges apply a single cultural lens</li>
+<li><strong>Nuanced safety assessments</strong>: borderline cases where a response is potentially harmful in some contexts but not others produce high inter-human disagreement and high LLM-human disagreement</li>
+<li><strong>Long-form coherence</strong>: evaluating whether a 10,000-word essay is coherent requires reading comprehension that strains the judge’s effective attention, particularly when the judge itself has a limited context window</li>
 </ul>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3/cheat_sheet.svg" class="img-fluid figure-img" style="width:100.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: Cheat sheet.
-</figcaption>
-</figure>
-</div>
+</section>
+<section id="the-human-in-the-loop-necessity" class="level3" data-number="38.5.3">
+<h3 data-number="38.5.3" class="anchored" data-anchor-id="the-human-in-the-loop-necessity"><span class="header-section-number">38.5.3</span> The Human-in-the-Loop Necessity</h3>
+<p>These low-agreement domains are not marginal, they include some of the most important quality dimensions for consumer-facing language model products. LLM-as-a-Judge should not be used as the sole evaluation method for creative, culturally sensitive, or safety-critical outputs. Human evaluation remains necessary for these dimensions, with LLM-as-a-Judge handling the high-agreement dimensions at scale.</p>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">2.9</span> Further reading</h2>
+</section>
+<section id="key-takeaways" class="level2" data-number="38.6">
+<h2 data-number="38.6" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">38.6</span> Key Takeaways</h2>
 <ul>
-<li>Yu et al.&nbsp;(2022). <em>Orca: A Distributed Serving System for Transformer-Based Generative Models.</em>: Introduces continuous batching.</li>
-<li>Kwon et al.&nbsp;(2023). <em>Efficient Memory Management for Large Language Model Serving with PagedAttention.</em>: The vLLM paper; foundational for modern serving.</li>
+<li>LLM-as-a-Judge fills the gap between slow human evaluation and inadequate automated metrics by using a capable model to assess the dimensions of quality that n-gram and embedding metrics cannot reach: helpfulness, reasoning quality, nuanced accuracy, multi-turn coherence.</li>
+<li>Three evaluation architectures exist: pointwise scoring (absolute quality rating), pairwise comparison (which of two responses is better), and reference-guided scoring (how well does the response match a reference); pairwise comparison is most reliable for the same reasons it is more reliable in human evaluation.</li>
+<li>Position bias inflates the first response’s win rate by approximately 7 percentage points; mitigation requires presenting each pair in both orders and discarding inconsistent judgments.</li>
+<li>Verbosity bias inflates longer responses by 10–15 percentage points in raw win rates; length-controlled win rates (LC AlpacaEval) remove most of this bias and substantially improve correlation with human Chatbot Arena rankings.</li>
+<li>Self-enhancement bias inflates the same-family model’s win rate by 5–15 percentage points; mitigation requires using a judge from a different model family than the evaluated model.</li>
+<li>GPT-4 agrees with human expert evaluators approximately 81% of the time on MT-Bench; GPT-3.5 agrees approximately 66%; agreement is highest on factual and instruction-following tasks and lowest on creative and safety-sensitive tasks.</li>
+<li>LLM judges are inconsistent at a rate of approximately 15–20% — reversing their preference when the same pair is presented twice; multiple evaluations per pair with majority voting reduces this noise.</li>
+<li>MT-Bench uses 80 multi-turn questions evaluated by GPT-4 with chain- of-thought reasoning; AlpacaEval 2.0 uses 805 instruction-following prompts with length-controlled win rates against a GPT-3.5-class reference.</li>
+<li>Purpose-built judge models (Prometheus, Atla Selene) reduce bias and cost relative to GPT-4-as-judge; they are increasingly the practical choice for high-volume continuous evaluation.</li>
+<li>LLM-as-a-Judge should complement, not replace, human evaluation for creative, culturally sensitive, and safety-critical outputs where LLM-human agreement falls below approximately 75%.</li>
+</ul>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="38.7">
+<h2 data-number="38.7" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">38.7</span> Further Reading</h2>
+<ul>
+<li><p>Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z., Li, Z., Li, D., Xing, E., Zhang, H., Gonzalez, J. E., &amp; Stoica, I. (2023). <em>Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.</em> NeurIPS. — The foundational LLM-as-a-Judge paper; introduces MT-Bench, documents position bias and verbosity bias, and measures GPT-4 agreement with human evaluators; the chain-of-thought evaluation improvement is the key methodological contribution.</p></li>
+<li><p>Dubois, Y., Galambosi, B., Liang, P., &amp; Hashimoto, T. B. (2024). <em>Length-Controlled AlpacaEval: A Simple Way to Debias Automatic Evaluators.</em> arXiv. — Introduces LC win rates and documents the severity of verbosity bias in AlpacaEval; the regression analysis of length’s effect on win rate and the correlation improvement with Chatbot Arena are the key contributions.</p></li>
+<li><p>Panickssery, A., Bowman, S. R., &amp; Feng, S. (2024). <em>LLM Evaluators Recognize and Favor Their Own Generations.</em> arXiv. — Systematic measurement of self-enhancement bias across model families; the cross-family comparison methodology and the finding that same-family judges inflate win rates by 5–15 points are the key contributions.</p></li>
+<li><p>Kim, S., Shin, S., Cho, S., Lee, J., Kim, Y., Oh, B., Kim, S., &amp; Park, J. (2023). <em>Prometheus: Inducing Fine-grained Evaluation Capability in Language Models.</em> ICLR. — Introduces Prometheus and the rubric-conditioned evaluation approach; the comparison to GPT-4 as judge on various rubrics demonstrates that specialized judge models can approach GPT-4 quality at lower cost.</p></li>
+<li><p>Wang, Y., Yu, Z., Zeng, Z., Yang, L., Wang, C., Chen, H., Jiang, C., Wang, R., Xie, J., Xie, Q., Liu, Z., Liu, J., &amp; Lin, Y. (2023). <em>PandaLM: An Automatic Evaluation Benchmark for Assessing and Comparing Large Language Models.</em> arXiv. — Introduces PandaLM and the synthetic judgment training approach; the cost comparison to GPT-4 evaluation and the agreement analysis are the key practical contributions.</p></li>
+<li><p>Zeng, Z., et al.&nbsp;(2023). <em>Evaluating Large Language Models at Evaluating Instruction Following.</em> arXiv. — Systematic analysis of LLM judge inconsistency; the 15–20% inconsistency rate finding and the correlation with query complexity are the key contributions; the methodology for measuring inconsistency via repeated evaluation is directly applicable.</p></li>
+<li><p>Shen, T., Jin, R., Huang, Y., Liu, C., Dong, W., Guo, Z., Wu, X., Liu, Y., &amp; Xiong, D. (2023). <em>Large Language Model Alignment: A Survey.</em> arXiv. — Broader context for LLM-as-a-Judge within the alignment pipeline; the RLAIF section connects LLM evaluation to the training signal discussion in Chapter 36.</p></li>
+<li><p>Ye, S., Kulshreshtha, S., Gao, S., Arous, I., &amp; Faltings, B. (2024). <em>Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge.</em> arXiv. — Comprehensive bias audit of LLM judges across position, verbosity, style, and self-enhancement dimensions; the mitigation effectiveness analysis for each bias is the key practical contribution.</p></li>
 </ul>
 <hr>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
-<div id="ref-yu2022orca" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">G.-I. Yu, J. S. Jeong, G.-W. Kim, S. Kim, and B.-G. Chun, <span>“Orca: A distributed serving system for <span class="math inline">\(\{\)</span>transformer-based<span class="math inline">\(\}\)</span> generative models,”</span> in <em>16th USENIX symposium on operating systems design and implementation (OSDI 22)</em>, 2022, pp. 521–538.</div>
+<div id="ref-wang2024pandalm" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span class="nocase">Y. Wang <em>et al.</em></span>, <span>“Pandalm: An automatic evaluation benchmark for llm instruction tuning optimization,”</span> in <em>International conference on learning representations</em>, 2024, pp. 43573–43593.</div>
+</div>
+<div id="ref-kim2024prometheus" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span class="nocase">S. Kim <em>et al.</em></span>, <span>“Prometheus: Inducing fine-grained evaluation capability in language models,”</span> in <em>International conference on learning representations</em>, 2024, pp. 29927–29962.</div>
 </div>
 </div>
 </section>
@@ -1392,14 +1325,11 @@ Figure&nbsp;2.3: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part1/chapter1/introduction.html" class="pagination-link" aria-label="the intro">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">the intro</span></span>
+      <a href="../../book/part6/rag_evaluation.html" class="pagination-link" aria-label="RAG Evaluation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part2/Tokenization.html" class="pagination-link" aria-label="Tokenization during inference">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Tokenization during inference</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
