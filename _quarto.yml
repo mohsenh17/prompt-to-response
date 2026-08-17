@@ -73,6 +73,7 @@ book:
         - book/part6/lexical_metrics.md
         - book/part6/semantic_metrics.md
         - book/part6/hallucination_metrics.md
+        - book/part6/rag_evaluation.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    
