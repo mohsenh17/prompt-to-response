@@ -74,6 +74,7 @@ book:
         - book/part6/semantic_metrics.md
         - book/part6/hallucination_metrics.md
         - book/part6/rag_evaluation.md
+        - book/part6/LLM_judge.md
 
     - part: "The Keepers of the Waking Engine"
       chapters: []    
