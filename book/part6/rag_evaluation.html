@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>32&nbsp; Benchmarks – From Prompt to Response</title>
+<title>37&nbsp; RAG Evaluation – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -53,8 +53,7 @@ div.csl-indent {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part6/perplexity.html" rel="next">
-<link href="../../book/part6/human_eval.html" rel="prev">
+<link href="../../book/part6/hallucination_metrics.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -129,13 +128,13 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="32&nbsp; Benchmarks – From Prompt to Response">
+<meta property="og:title" content="37&nbsp; RAG Evaluation – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch2/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part6/figures/ch7/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="32&nbsp; Benchmarks – From Prompt to Response">
+<meta name="twitter:title" content="37&nbsp; RAG Evaluation – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch2/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part6/figures/ch7/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -310,7 +309,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/benchmarks.html"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/rag_evaluation.html"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -597,7 +596,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/benchmarks.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part6/benchmarks.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></span></a>
   </div>
 </li>
@@ -627,7 +626,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part6/rag_evaluation.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part6/rag_evaluation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></span></a>
   </div>
 </li>
@@ -647,15 +646,15 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#what-a-benchmark-is" id="toc-what-a-benchmark-is" class="nav-link active" data-scroll-target="#what-a-benchmark-is"><span class="header-section-number">32.1</span> What a Benchmark Is</a></li>
-  <li><a href="#a-taxonomy-of-benchmarks" id="toc-a-taxonomy-of-benchmarks" class="nav-link" data-scroll-target="#a-taxonomy-of-benchmarks"><span class="header-section-number">32.2</span> A Taxonomy of Benchmarks</a></li>
-  <li><a href="#saturation-when-benchmarks-stop-discriminating" id="toc-saturation-when-benchmarks-stop-discriminating" class="nav-link" data-scroll-target="#saturation-when-benchmarks-stop-discriminating"><span class="header-section-number">32.3</span> Saturation: When Benchmarks Stop Discriminating</a></li>
-  <li><a href="#contamination-the-primary-validity-threat" id="toc-contamination-the-primary-validity-threat" class="nav-link" data-scroll-target="#contamination-the-primary-validity-threat"><span class="header-section-number">32.4</span> Contamination: The Primary Validity Threat</a></li>
-  <li><a href="#format-sensitivity-and-prompt-brittleness" id="toc-format-sensitivity-and-prompt-brittleness" class="nav-link" data-scroll-target="#format-sensitivity-and-prompt-brittleness"><span class="header-section-number">32.5</span> Format Sensitivity and Prompt Brittleness</a></li>
-  <li><a href="#the-leaderboard-problem" id="toc-the-leaderboard-problem" class="nav-link" data-scroll-target="#the-leaderboard-problem"><span class="header-section-number">32.6</span> The Leaderboard Problem</a></li>
-  <li><a href="#what-benchmarks-miss" id="toc-what-benchmarks-miss" class="nav-link" data-scroll-target="#what-benchmarks-miss"><span class="header-section-number">32.7</span> What Benchmarks Miss</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">32.8</span> Key Takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">32.9</span> Further Reading</a></li>
+  <li><a href="#the-rag-evaluation-problem" id="toc-the-rag-evaluation-problem" class="nav-link active" data-scroll-target="#the-rag-evaluation-problem"><span class="header-section-number">37.1</span> The RAG Evaluation Problem</a></li>
+  <li><a href="#retrieval-evaluation" id="toc-retrieval-evaluation" class="nav-link" data-scroll-target="#retrieval-evaluation"><span class="header-section-number">37.2</span> Retrieval Evaluation</a></li>
+  <li><a href="#generation-evaluation-given-retrieved-context" id="toc-generation-evaluation-given-retrieved-context" class="nav-link" data-scroll-target="#generation-evaluation-given-retrieved-context"><span class="header-section-number">37.3</span> Generation Evaluation Given Retrieved Context</a></li>
+  <li><a href="#end-to-end-answer-quality" id="toc-end-to-end-answer-quality" class="nav-link" data-scroll-target="#end-to-end-answer-quality"><span class="header-section-number">37.4</span> End-to-End Answer Quality</a></li>
+  <li><a href="#ragas-a-comprehensive-rag-evaluation-framework" id="toc-ragas-a-comprehensive-rag-evaluation-framework" class="nav-link" data-scroll-target="#ragas-a-comprehensive-rag-evaluation-framework"><span class="header-section-number">37.5</span> RAGAS: A Comprehensive RAG Evaluation Framework</a></li>
+  <li><a href="#multi-hop-and-agentic-rag-evaluation" id="toc-multi-hop-and-agentic-rag-evaluation" class="nav-link" data-scroll-target="#multi-hop-and-agentic-rag-evaluation"><span class="header-section-number">37.6</span> Multi-Hop and Agentic RAG Evaluation</a></li>
+  <li><a href="#constructing-rag-evaluation-datasets" id="toc-constructing-rag-evaluation-datasets" class="nav-link" data-scroll-target="#constructing-rag-evaluation-datasets"><span class="header-section-number">37.7</span> Constructing RAG Evaluation Datasets</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">37.8</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">37.9</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -663,9 +662,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/benchmarks.html"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part6/human_eval.html">The Trial of the Answer</a></li><li class="breadcrumb-item"><a href="../../book/part6/rag_evaluation.html"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Benchmarks</span></h1>
+<h1 class="title"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">RAG Evaluation</span></h1>
 </div>
 
 
@@ -683,7 +682,7 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>What do benchmark scores actually measure and why does a model that aces every standard benchmark sometimes fail badly in deployment?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>How do you evaluate a retrieval-augmented generation system and why does evaluating the whole pipeline tell you less than evaluating each component separately?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -696,290 +695,226 @@ window.Quarto = {
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch2/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch7/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;32.1: The journey through the Model Mind.
+Figure&nbsp;37.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p><a href="human_eval.html" class="quarto-xref"><span>Chapter 31</span></a> established that human evaluation is the ground truth and that everything else is an approximation. This chapter covers the most widely used approximation: standardized benchmarks. They are fast, cheap, reproducible, and consistently gameable which is why understanding their failure modes is as important as knowing their names.</p>
+<p>RAG systems require evaluating two distinct failure modes: context faithfulness and retrieval faithfulness. This chapter covers RAG evaluation in full, including the retrieval component, the generation component, and the end-to-end system, as well as the diagnostic value of measuring each separately rather than only the final output.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="what-a-benchmark-is" class="level2" data-number="32.1">
-<h2 data-number="32.1" class="anchored" data-anchor-id="what-a-benchmark-is"><span class="header-section-number">32.1</span> What a Benchmark Is</h2>
-<p>A benchmark is a fixed dataset of evaluation examples with associated scoring criteria that can be applied automatically, without human judgment, to produce a comparable score across models. The input is a prompt or a set of prompts; the output is a scalar or a small vector of scalars. Two models evaluated on the same benchmark produce scores that can be directly compared.</p>
-<p>This comparability is the benchmark’s primary virtue. Human evaluation produces reliable comparisons but is slow, expensive, and cannot easily be reproduced by independent parties. A benchmark can be run in hours on any model, by anyone, and the results are directly comparable to scores published by others running the same benchmark. This enables systematic tracking of progress across the field: the score on MMLU or HumanEval from a model released today can be compared to scores from models released two years ago, providing a longitudinal view of capability improvement.</p>
-<p>The benchmark’s primary vice follows from the same structure: because benchmarks are fixed and public, they can be optimized against. A model developer who knows the benchmark can collect training data that overlaps with it, fine-tune on examples that resemble it, or select model configurations that happen to perform well on its specific format. The result is a benchmark score that reflects the model’s performance on that particular fixed test set, not the model’s general capability at the skill the benchmark was designed to measure. This is Goodhart’s Law applied to evaluation: when a measure becomes a target, it ceases to be a good measure.</p>
+<section id="the-rag-evaluation-problem" class="level2" data-number="37.1">
+<h2 data-number="37.1" class="anchored" data-anchor-id="the-rag-evaluation-problem"><span class="header-section-number">37.1</span> The RAG Evaluation Problem</h2>
+<p>A RAG system consists of at least two components: a retrieval system that finds relevant documents given a query, and a generation system that produces a response given the query and the retrieved documents. End-to-end evaluation measures the quality of the final response which is what users care about but it conflates the quality of retrieval with the quality of generation. A bad final answer could result from bad retrieval (the right documents were not found), bad generation (the right documents were found but the model ignored or misrepresented them), or both.</p>
+<p>This conflation makes end-to-end evaluation alone a poor diagnostic tool. If final answer quality is low, you do not know whether to improve retrieval or generation. If final answer quality is high, you do not know whether retrieval is the bottleneck preventing further improvement or whether both components are near their ceiling. Component-level evaluation provides the attribution that end-to-end evaluation cannot.</p>
+<p>The evaluation challenge is compounded by the absence of standard benchmarks designed specifically for RAG. Most existing QA benchmarks (Natural Questions, TriviaQA, HotpotQA) were designed for non-retrieval QA systems and must be adapted for RAG evaluation. The adaptation involves deciding what constitutes the knowledge base (which documents the retrieval system can access), what counts as a correct retrieval, and how to evaluate the generated answer given that it was produced from retrieved context.</p>
 <hr>
 </section>
-<section id="a-taxonomy-of-benchmarks" class="level2" data-number="32.2">
-<h2 data-number="32.2" class="anchored" data-anchor-id="a-taxonomy-of-benchmarks"><span class="header-section-number">32.2</span> A Taxonomy of Benchmarks</h2>
-<p>Language model benchmarks can be organized by what they measure and how they measure it.</p>
-<section id="knowledge-and-reasoning" class="level3" data-number="32.2.1">
-<h3 data-number="32.2.1" class="anchored" data-anchor-id="knowledge-and-reasoning"><span class="header-section-number">32.2.1</span> Knowledge and Reasoning</h3>
-<p><strong>MMLU (Massive Multitask Language Understanding <span class="citation" data-cites="hendrycks2020measuring"><a href="#ref-hendrycks2020measuring" role="doc-biblioref">[1]</a></span>)</strong>: 57 academic subjects spanning STEM, humanities, social sciences, law, and medicine. Each question is a four-way multiple choice problem drawn from standardized tests, textbooks, and academic courses. MMLU measures breadth of factual knowledge and the ability to reason within academic domains.</p>
-<p>MMLU scores: random baseline 25%, GPT-3.5 approximately 70%, GPT-4 approximately 86–87%, top models in 2024 above 89%. The benchmark was designed when 60% was considered strong; saturation above 90% has reduced its discriminative value for frontier models.</p>
-<p><strong>GPQA (Graduate-Level Google-Proof Q&amp;A <span class="citation" data-cites="rein2023gpqa"><a href="#ref-rein2023gpqa" role="doc-biblioref">[2]</a></span>)</strong>: 448 multiple-choice questions in biology, chemistry, and physics, written by domain experts to be answerable by experts but not by web search. The “Google-proof” design attempts to prevent the benchmark from being gamed by training on retrieved answers. Human expert performance is approximately 65%; frontier models in 2024 score 50–60%, below human expert level but above non-expert humans.</p>
-<p><strong>ARC (AI2 Reasoning Challenge <span class="citation" data-cites="clark2018think"><a href="#ref-clark2018think" role="doc-biblioref">[3]</a></span>)</strong>: science questions from U.S. elementary and middle school standardized tests. Split into ARC-Easy (grade-school difficulty) and ARC-Challenge (questions that retrieval systems fail at). ARC-Challenge was a meaningful discriminator in 2019–2021; most frontier models now exceed 90%.</p>
+<section id="retrieval-evaluation" class="level2" data-number="37.2">
+<h2 data-number="37.2" class="anchored" data-anchor-id="retrieval-evaluation"><span class="header-section-number">37.2</span> Retrieval Evaluation</h2>
+<p>Retrieval evaluation measures whether the system finds documents that are relevant to the query and would support a correct answer. The standard retrieval metrics borrow from information retrieval (IR) research and require relevance judgments, labels indicating which documents in the corpus are relevant to each query.</p>
+<section id="precision-and-recall-at-k" class="level3" data-number="37.2.1">
+<h3 data-number="37.2.1" class="anchored" data-anchor-id="precision-and-recall-at-k"><span class="header-section-number">37.2.1</span> Precision and Recall at k</h3>
+<p>The most fundamental retrieval metrics are precision and recall computed over the top-<span class="math inline">\(k\)</span> retrieved documents:</p>
+<p><strong>Precision@k</strong>: the fraction of the top-<span class="math inline">\(k\)</span> retrieved documents that are relevant:</p>
+<p><span class="math display">\[
+\text{Precision}@k = \frac{|\{d \in \text{top-}k\} \cap \text{relevant}|}{k}
+\]</span></p>
+<p><strong>Recall@k</strong>: the fraction of all relevant documents in the corpus that appear in the top-<span class="math inline">\(k\)</span> results:</p>
+<p><span class="math display">\[
+\text{Recall}@k = \frac{|\{d \in \text{top-}k\} \cap \text{relevant}|}{|\text{relevant}|}
+\]</span></p>
+<p>For RAG evaluation, <span class="math inline">\(k\)</span> is typically set to the number of documents the RAG system retrieves per query (commonly 3–10). Precision@k measures how clean the retrieved context is or the fraction of retrieved documents that are actually useful. Recall@k measures coverage or whether the relevant documents were found at all.</p>
+<p>The tension between precision and recall is fundamental: retrieving more documents increases recall (more chances to include the relevant one) but decreases precision (more irrelevant documents in the context). The optimal <span class="math inline">\(k\)</span> for a RAG system is the value that maximizes final answer quality, which depends on the generator’s ability to select relevant information from a noisy context.</p>
 </section>
-<section id="mathematical-reasoning" class="level3" data-number="32.2.2">
-<h3 data-number="32.2.2" class="anchored" data-anchor-id="mathematical-reasoning"><span class="header-section-number">32.2.2</span> Mathematical Reasoning</h3>
-<p><strong>MATH <span class="citation" data-cites="hendrycks2021measuring"><a href="#ref-hendrycks2021measuring" role="doc-biblioref">[4]</a></span></strong>: 12,500 competition mathematics problems from AMC, AIME, and similar competitions, at difficulty levels 1–5. Problems are open-ended (not multiple choice) and require producing the correct numerical or algebraic answer. Scoring: exact match on the final answer. GPT-4 without tools: approximately 42–52%; with chain-of-thought: 60–70%; o1-class models: above 90% on the full set.</p>
-<p><strong>GSM8K <span class="citation" data-cites="cobbe2021training"><a href="#ref-cobbe2021training" role="doc-biblioref">[5]</a></span></strong>: 8,500 grade-school arithmetic word problems requiring 2–8 reasoning steps. Much simpler than MATH; most frontier models exceed 90% with chain-of-thought. Remains useful for evaluating smaller models and for studying how reasoning improves with scale and training.</p>
-<p><strong>AIME (American Invitational Mathematics Examination)</strong>: actual competition problems from recent years, used informally as an evaluation for frontier reasoning models. Not a standardized benchmark with a canonical evaluation procedure, but widely cited because competition mathematics problems are designed to resist pattern matching and require genuine mathematical reasoning.</p>
+<section id="mean-average-precision-map" class="level3" data-number="37.2.2">
+<h3 data-number="37.2.2" class="anchored" data-anchor-id="mean-average-precision-map"><span class="header-section-number">37.2.2</span> Mean Average Precision (MAP)</h3>
+<p>MAP summarizes retrieval quality across all queries by computing, for each query, the average precision at each rank position where a relevant document is retrieved:</p>
+<p><span class="math display">\[
+\text{AP} = \frac{1}{|\text{relevant}|} \sum_{k=1}^{K} \text{Precision}@k \cdot \mathbb{1}[\text{rank-}k \text{ doc is relevant}]
+\]</span></p>
+<p><span class="math display">\[
+\text{MAP} = \frac{1}{|Q|} \sum_{q \in Q} \text{AP}(q)
+\]</span></p>
+<p>MAP rewards retrieval systems that rank relevant documents highly, placing the most relevant documents at rank 1 and 2 rather than rank 8 and 9. For RAG, ranking matters: the generator’s attention tends to focus on documents presented earlier in the context (the lost-in-the-middle effect), so placing the most relevant document first improves generation quality even if all documents are technically retrieved.</p>
 </section>
-<section id="code-generation" class="level3" data-number="32.2.3">
-<h3 data-number="32.2.3" class="anchored" data-anchor-id="code-generation"><span class="header-section-number">32.2.3</span> Code Generation</h3>
-<p><strong>HumanEval <span class="citation" data-cites="chen2021evaluating"><a href="#ref-chen2021evaluating" role="doc-biblioref">[6]</a></span></strong>: 164 handwritten Python programming problems, each with a function signature, docstring, and test suite. Scored by pass@k: the probability that at least one of <span class="math inline">\(k\)</span> generated samples passes all unit tests. HumanEval measures basic coding ability for well-defined algorithmic tasks. Frontier models now exceed 90% pass@1, near saturation.</p>
-<p><strong>MBPP (Mostly Basic Python Programming, <span class="citation" data-cites="austin2021program"><a href="#ref-austin2021program" role="doc-biblioref">[7]</a></span>)</strong>: 374 crowd-sourced Python problems at a range of difficulty levels. Similar structure to HumanEval but with more diverse problem types including data manipulation, string processing, and simple algorithms.</p>
-<p><strong>SWE-bench <span class="citation" data-cites="jimenez2024swe"><a href="#ref-jimenez2024swe" role="doc-biblioref">[8]</a></span></strong>: real GitHub issues from popular Python open-source repositories. The model must produce a patch that resolves the issue, evaluated by running the repository’s test suite. SWE-bench measures agentic software engineering capability (reading existing code, understanding bug reports, producing correct patches) rather than isolated algorithmic problem solving. Much harder than HumanEval: the best models in mid-2024 resolve 10–20% of issues on the verified subset (SWE-bench Verified).</p>
+<section id="ndcg-normalized-discounted-cumulative-gain" class="level3" data-number="37.2.3">
+<h3 data-number="37.2.3" class="anchored" data-anchor-id="ndcg-normalized-discounted-cumulative-gain"><span class="header-section-number">37.2.3</span> NDCG: Normalized Discounted Cumulative Gain</h3>
+<p>NDCG extends MAP to graded relevance, situations where documents are not simply relevant or not, but have different degrees of relevance. For RAG evaluation with multiple relevant documents of varying quality, NDCG is more informative than MAP:</p>
+<p><span class="math display">\[
+\text{DCG}@k = \sum_{i=1}^{k} \frac{2^{r_i} - 1}{\log_2(i+1)}
+\]</span></p>
+<p><span class="math display">\[
+\text{NDCG}@k = \frac{\text{DCG}@k}{\text{IDCG}@k}
+\]</span></p>
+<p>where <span class="math inline">\(r_i\)</span> is the relevance grade of the document at rank <span class="math inline">\(i\)</span> (e.g., 0 = not relevant, 1 = partially relevant, 2 = highly relevant) and IDCG is the ideal DCG achieved by the perfect ranking. The logarithmic discount in the denominator penalizes relevant documents appearing at lower ranks, and the normalization makes scores comparable across queries with different numbers of relevant documents.</p>
 </section>
-<section id="language-understanding-and-nlu" class="level3" data-number="32.2.4">
-<h3 data-number="32.2.4" class="anchored" data-anchor-id="language-understanding-and-nlu"><span class="header-section-number">32.2.4</span> Language Understanding and NLU</h3>
-<p><strong>SuperGLUE <span class="citation" data-cites="wang2019superglue"><a href="#ref-wang2019superglue" role="doc-biblioref">[9]</a></span></strong>: a collection of language understanding tasks including question answering, natural language inference, coreference resolution, and word sense disambiguation. Designed as a harder successor to GLUE; frontier models exceed human baseline on most tasks. Largely obsolete as a discriminator for current models.</p>
-<p><strong>BIG-Bench <span class="citation" data-cites="srivastava2022beyond"><a href="#ref-srivastava2022beyond" role="doc-biblioref">[10]</a></span></strong>: 204 tasks covering an intentionally diverse range of capabilities including logic, arithmetic, common sense, translation, and novel task formats. BIG-Bench Hard selects the 23 tasks where models underperformed humans at the time of publication. Remains a useful evaluation for unusual capabilities not covered by narrower benchmarks.</p>
+<section id="mrr-mean-reciprocal-rank" class="level3" data-number="37.2.4">
+<h3 data-number="37.2.4" class="anchored" data-anchor-id="mrr-mean-reciprocal-rank"><span class="header-section-number">37.2.4</span> MRR: Mean Reciprocal Rank</h3>
+<p>For queries with a single most-relevant document (the document containing the answer), MRR measures how highly that document is ranked:</p>
+<p><span class="math display">\[
+\text{MRR} = \frac{1}{|Q|} \sum_{q \in Q} \frac{1}{\text{rank of first relevant doc for } q}
+\]</span></p>
+<p>MRR is simple, fast to compute, and appropriate when success means finding at least one relevant document. It is less informative when multiple relevant documents must all be retrieved for a correct answer.</p>
 </section>
-<section id="instruction-following" class="level3" data-number="32.2.5">
-<h3 data-number="32.2.5" class="anchored" data-anchor-id="instruction-following"><span class="header-section-number">32.2.5</span> Instruction Following</h3>
-<p><strong>MT-Bench <span class="citation" data-cites="zheng2023judging"><a href="#ref-zheng2023judging" role="doc-biblioref">[11]</a></span></strong>: 80 multi-turn questions across eight categories (writing, roleplay, reasoning, math, coding, extraction, STEM, humanities). Evaluated by GPT-4 as judge which Measures instruction following across diverse topics and conversation structures.</p>
-<p><strong>IFEval <span class="citation" data-cites="zhou2023instruction"><a href="#ref-zhou2023instruction" role="doc-biblioref">[12]</a></span></strong>: instruction following evaluation with verifiable constraints, prompts that require following explicit formatting instructions (use bullet points, respond in French, limit to 100 words). Scored automatically by checking whether the specified constraints are met, providing a cleaner signal than human or LLM judgment for the specific capability of following explicit formatting instructions.</p>
+<section id="obtaining-relevance-judgments" class="level3" data-number="37.2.5">
+<h3 data-number="37.2.5" class="anchored" data-anchor-id="obtaining-relevance-judgments"><span class="header-section-number">37.2.5</span> Obtaining Relevance Judgments</h3>
+<p>All retrieval metrics require relevance judgments, ground truth labels indicating which documents are relevant to each query. These are expensive to obtain and are the primary bottleneck in building retrieval evaluation datasets. Approaches:</p>
+<p><strong>Manual annotation</strong>: human annotators read each (query, document) pair and label relevance. Gold standard but expensive; typically covers only a small subset of the retrieval corpus.</p>
+<p><strong>Pooling</strong>: retrieve the top-<span class="math inline">\(k\)</span> documents from multiple retrieval systems, pool all retrieved documents, and have humans annotate the pool. Any document not retrieved by any system is assumed non-relevant (a simplifying approximation that can introduce bias against systems that retrieve documents outside the pool).</p>
+<p><strong>Answer-derived relevance</strong>: for QA tasks, a document is labeled relevant if it contains the answer string. Cheap to compute but imperfect: a document may contain the answer string without being useful for answering the question, and a document may be genuinely relevant without containing the exact answer string.</p>
+<p><strong>LLM-generated relevance</strong>: use a language model to assess whether a document is relevant to a query. Scalable but inherits LLM evaluation biases; correlation with human judgments varies by task domain.</p>
 <hr>
 </section>
 </section>
-<section id="saturation-when-benchmarks-stop-discriminating" class="level2" data-number="32.3">
-<h2 data-number="32.3" class="anchored" data-anchor-id="saturation-when-benchmarks-stop-discriminating"><span class="header-section-number">32.3</span> Saturation: When Benchmarks Stop Discriminating</h2>
-<p>A benchmark saturates when most evaluated models achieve scores close to the ceiling, eliminating its discriminative value. Saturation is a natural consequence of progress: a benchmark designed to be challenging in 2020 may be trivial for 2024 models.</p>
-<p>The saturation timeline for major benchmarks:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Benchmark</th>
-<th>Release</th>
-<th>Frontier model performance</th>
-<th>Saturation status</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>HellaSwag</td>
-<td>2019</td>
-<td>&gt;95%</td>
-<td>Saturated</td>
-</tr>
-<tr class="even">
-<td>ARC-Challenge</td>
-<td>2018</td>
-<td>&gt;90%</td>
-<td>Saturated</td>
-</tr>
-<tr class="odd">
-<td>SuperGLUE</td>
-<td>2019</td>
-<td>&gt;90%</td>
-<td>Saturated</td>
-</tr>
-<tr class="even">
-<td>GSM8K</td>
-<td>2021</td>
-<td>&gt;95%</td>
-<td>Saturated</td>
-</tr>
-<tr class="odd">
-<td>HumanEval</td>
-<td>2021</td>
-<td>&gt;90%</td>
-<td>Saturated</td>
-</tr>
-<tr class="even">
-<td>MMLU</td>
-<td>2021</td>
-<td>~89%</td>
-<td>Approaching saturation</td>
-</tr>
-<tr class="odd">
-<td>MATH</td>
-<td>2021</td>
-<td>~90% (o1)</td>
-<td>Task-dependent</td>
-</tr>
-<tr class="even">
-<td>GPQA</td>
-<td>2023</td>
-<td>~60%</td>
-<td>Not saturated</td>
-</tr>
-<tr class="odd">
-<td>SWE-bench</td>
-<td>2024</td>
-<td>~20%</td>
-<td>Not saturated</td>
-</tr>
-</tbody>
-</table>
-<p>The pattern is consistent: a benchmark is published when frontier models score roughly 30–60%; models reach human performance within 1–3 years; the benchmark stops being informative for frontier model comparison shortly after. The half-life of a discriminative benchmark has shortened as model capabilities advance: benchmarks that were useful for 3–4 years in the 2019–2021 period have been useful for 1–2 years in the 2022–2024 period.</p>
-<p>The field’s response is to continuously develop harder benchmarks, which frontier models then approach the ceiling of, requiring still harder benchmarks. This is a healthy response to capability progress but makes longitudinal comparison across benchmark generations difficult: a score on GPQA cannot be directly compared to a score on MMLU because the difficulty distributions are entirely different.</p>
-<hr>
-</section>
-<section id="contamination-the-primary-validity-threat" class="level2" data-number="32.4">
-<h2 data-number="32.4" class="anchored" data-anchor-id="contamination-the-primary-validity-threat"><span class="header-section-number">32.4</span> Contamination: The Primary Validity Threat</h2>
-<p>Benchmark contamination (the presence of benchmark test examples in a model’s training data) is the most serious threat to benchmark validity. A model that has seen the test examples during training can achieve a high score through memorization rather than the capability the benchmark is designed to measure.</p>
-<section id="how-contamination-occurs" class="level3" data-number="32.4.1">
-<h3 data-number="32.4.1" class="anchored" data-anchor-id="how-contamination-occurs"><span class="header-section-number">32.4.1</span> How Contamination Occurs</h3>
-<p>Web-scale training corpora contain enormous fractions of the publicly available internet, including benchmark datasets that were posted publicly. MMLU, HumanEval, GSM8K, and most other major benchmarks have been publicly available since their release and have likely appeared in the training corpora of models trained on large web crawls.</p>
-<p>Contamination can be unintentional (the benchmark was included in a web crawl without the model developer realizing it) or intentional (the model developer deliberately included benchmark-adjacent data to improve scores). The distinction matters ethically but not practically: the benchmark score is inflated either way.</p>
-</section>
-<section id="detecting-contamination" class="level3" data-number="32.4.2">
-<h3 data-number="32.4.2" class="anchored" data-anchor-id="detecting-contamination"><span class="header-section-number">32.4.2</span> Detecting Contamination</h3>
-<p>Several methods exist for detecting whether a model has seen specific benchmark examples during training:</p>
-<p><strong>N-gram overlap</strong>: check whether high-n-gram sequences from the benchmark appear in the training corpus. If the training corpus is available for inspection (which is often not), this is straightforward. If not, the model can be probed: ask the model to complete the latter half of a benchmark example; high completion accuracy suggests memorization.</p>
-<p><strong>Verbatim completion probing</strong>: present the model with the first few tokens of a benchmark question and measure whether it accurately completes the rest. Golchin and Surdeanu <span class="citation" data-cites="golchin2024time"><a href="#ref-golchin2024time" role="doc-biblioref">[13]</a></span> used this method to detect contamination across multiple benchmarks, finding significant evidence of contamination in several major models.</p>
-<p><strong>Performance vs.&nbsp;difficulty correlation</strong>: if a model performs uniformly well across easy and hard examples within a benchmark (rather than showing higher accuracy on easier examples), this is a signature of memorization, a model that has memorized answers does not exhibit the difficulty sensitivity that genuine comprehension would produce.</p>
-<p><strong>Held-out test sets</strong>: the most reliable contamination prevention is to maintain a private test set that is never released publicly. This is the approach used by ML competitions (Kaggle, SWE-bench Verified) but is difficult for academic benchmarks because the research community needs access to the test set to evaluate their own models.</p>
-</section>
-<section id="the-contamination-response" class="level3" data-number="32.4.3">
-<h3 data-number="32.4.3" class="anchored" data-anchor-id="the-contamination-response"><span class="header-section-number">32.4.3</span> The Contamination Response</h3>
-<p>When contamination is detected or suspected, the standard responses are:</p>
+<section id="generation-evaluation-given-retrieved-context" class="level2" data-number="37.3">
+<h2 data-number="37.3" class="anchored" data-anchor-id="generation-evaluation-given-retrieved-context"><span class="header-section-number">37.3</span> Generation Evaluation Given Retrieved Context</h2>
+<p>Given that certain documents have been retrieved, generation evaluation measures whether the model correctly uses those documents to produce a good answer. This evaluation can be conducted in two modes:</p>
+<p><strong>With ground-truth retrieved documents</strong>: provide the evaluation system with the actually relevant documents (not the ones the retrieval system found) and evaluate generation quality in isolation. This isolates the generator’s ability from the retriever’s quality.</p>
+<p><strong>With retrieved documents</strong>: provide the documents the retrieval system actually found, which may include irrelevant or partially relevant documents. This evaluates the generator’s robustness to retrieval noise, its ability to identify and use relevant information from a mixed context.</p>
+<p>The difference between these two modes reveals whether performance gaps are attributable to retrieval or generation: if performance with ground-truth documents is high but performance with retrieved documents is low, the retrieval system is the bottleneck. If performance is low in both modes, the generator is the problem.</p>
+<section id="context-faithfulness" class="level3" data-number="37.3.1">
+<h3 data-number="37.3.1" class="anchored" data-anchor-id="context-faithfulness"><span class="header-section-number">37.3.1</span> Context Faithfulness</h3>
+<p>Context faithfulness measures whether the generated response is supported by the retrieved documents, using the NLI and QA-based methodsIn the RAG context, faithfulness has a specific operational meaning: a faithful response cites only information from the retrieved context, without introducing information from the model’s parametric memory that is not supported by the retrieved documents.</p>
+<p>Operationally, context faithfulness is evaluated by checking each claim in the generated response against the retrieved documents (not against Wikipedia or other external sources). A claim is faithful if it is entailed by at least one retrieved document; unfaithful if it contradicts or is not supported by any retrieved document.</p>
+<p>RAGAS faithfulness <span class="citation" data-cites="es2024ragas"><a href="#ref-es2024ragas" role="doc-biblioref">[1]</a></span> implements this as:</p>
 <ol type="1">
-<li><p><strong>Reproduce evaluation with contamination-filtered test sets</strong>: remove examples that overlap with the training corpus and re-evaluate. The performance drop (if any) quantifies the contamination effect.</p></li>
-<li><p><strong>Report contamination alongside scores</strong>: some model technical reports include contamination analysis; the field increasingly expects this.</p></li>
-<li><p><strong>Create new evaluation versions</strong>: update the benchmark with new examples that are not in existing training corpora. GSM8K’s authors released GSM-Symbolic which generates novel variants of grade-school math problems that cannot have been memorized.</p></li>
-<li><p><strong>Use dynamic or private benchmarks</strong>: evaluation on private test sets or dynamically generated problems (Chatbot Arena’s real-user prompts are a natural example) is inherently contamination-resistant.</p></li>
+<li>Extract atomic claims from the generated response using an LLM</li>
+<li>For each atomic claim, check whether it is entailed by the retrieved context using an NLI model or LLM judge</li>
+<li>Compute faithfulness as the fraction of claims that are entailed</li>
 </ol>
+<p>A well-functioning RAG system should achieve faithfulness scores above 0.8; scores below 0.6 indicate the generator is substantially hallucinating beyond the retrieved context.</p>
+</section>
+<section id="answer-relevance" class="level3" data-number="37.3.2">
+<h3 data-number="37.3.2" class="anchored" data-anchor-id="answer-relevance"><span class="header-section-number">37.3.2</span> Answer Relevance</h3>
+<p>Answer relevance measures whether the generated response actually addresses the query which is a necessary condition for quality but not sufficient. A response that faithfully reproduces the retrieved context but does not answer the question is not useful; a response that answers the question but ignores the context may be accurate but unfaithful.</p>
+<p>RAGAS answer relevance computes this by reversing the generation direction: given the generated response, prompt an LLM to generate several questions that the response would answer, then measure the semantic similarity between the generated questions and the original query. A highly relevant response should produce questions similar to the original query; an off-topic response should produce questions dissimilar to it.</p>
+<p><span class="math display">\[
+\text{Answer Relevance} = \frac{1}{n} \sum_{i=1}^{n} \text{cos\_sim}(q_i, q)
+\]</span></p>
+<p>where <span class="math inline">\(q_i\)</span> are LLM-generated questions from the response and <span class="math inline">\(q\)</span> is the original query. This metric is clever but sensitive to the LLM’s question generation quality and to the semantic similarity model’s representation of the query space.</p>
 <hr>
 </section>
 </section>
-<section id="format-sensitivity-and-prompt-brittleness" class="level2" data-number="32.5">
-<h2 data-number="32.5" class="anchored" data-anchor-id="format-sensitivity-and-prompt-brittleness"><span class="header-section-number">32.5</span> Format Sensitivity and Prompt Brittleness</h2>
-<p>Benchmark scores are sensitive to how prompts are formatted. The same model, evaluated on the same benchmark with different prompt formats, can show performance differences of 5–15 percentage points which is large enough to change the apparent ranking between models.</p>
-<section id="few-shot-format-effects" class="level3" data-number="32.5.1">
-<h3 data-number="32.5.1" class="anchored" data-anchor-id="few-shot-format-effects"><span class="header-section-number">32.5.1</span> Few-Shot Format Effects</h3>
-<p>Most benchmarks are evaluated in a few-shot setting: 0–5 examples of correctly answered questions are prepended to the test question. The number of few-shot examples, their selection, and their format all affect performance:</p>
-<p><strong>Zero-shot vs.&nbsp;few-shot</strong>: adding 5-shot examples improves performance by 3–10 points on most knowledge benchmarks for models that were not specifically instruction-tuned. Instruction-tuned models sometimes perform better zero-shot than few-shot, because the few-shot examples interfere with the model’s learned instruction-following behavior.</p>
-<p><strong>Example selection</strong>: randomly selected few-shot examples produce different scores than examples selected for difficulty, diversity, or similarity to the test question. Benchmark reporting conventions specify a standard selection procedure, but not all evaluations follow the same convention.</p>
-<p><strong>Chain-of-thought prompting</strong>: adding “Let’s think step by step” or few-shot examples with reasoning chains substantially improves performance on reasoning benchmarks (5–30 points on MATH) and may reduce performance on simple recall benchmarks where the reasoning is counterproductive. Whether CoT is used must be specified in benchmark reporting.</p>
+<section id="end-to-end-answer-quality" class="level2" data-number="37.4">
+<h2 data-number="37.4" class="anchored" data-anchor-id="end-to-end-answer-quality"><span class="header-section-number">37.4</span> End-to-End Answer Quality</h2>
+<p>End-to-end evaluation measures final answer quality, the dimension users care about most directly. For QA tasks with short, verifiable answers, standard QA metrics apply. For open-ended generation, LLM-as-judge evaluation provides the most reliable automated signal.</p>
+<section id="exact-match-and-f1-for-extractive-qa" class="level3" data-number="37.4.1">
+<h3 data-number="37.4.1" class="anchored" data-anchor-id="exact-match-and-f1-for-extractive-qa"><span class="header-section-number">37.4.1</span> Exact Match and F1 for Extractive QA</h3>
+<p>For questions with short factual answers (entity names, numbers, dates), exact match and token-level F1 provide clean signals:</p>
+<p><strong>Exact match (EM)</strong>: 1 if the predicted answer exactly matches the gold answer after normalization (lowercase, strip punctuation, remove articles), 0 otherwise. Simple and unambiguous for well-defined QA tasks.</p>
+<p><strong>Token F1</strong>: the F1 score between the tokens in the predicted answer and the tokens in the gold answer. Gives partial credit for responses that contain the correct answer alongside additional words.</p>
+<p>For Natural Questions and TriviaQA, state-of-the-art RAG systems achieve EM of 55–65% and F1 of 65–75%, compared to non-retrieval models at EM 40–50% and F1 50–60%. The 15-point improvement from retrieval on these benchmarks is the clearest demonstration of RAG’s core value.</p>
 </section>
-<section id="answer-format-sensitivity" class="level3" data-number="32.5.2">
-<h3 data-number="32.5.2" class="anchored" data-anchor-id="answer-format-sensitivity"><span class="header-section-number">32.5.2</span> Answer Format Sensitivity</h3>
-<p>Multiple-choice benchmarks can be answered by producing the letter (A, B, C, D) or by producing the full text of the correct answer. Models have different preferences for these formats and may perform differently depending on which is requested. Instruction-tuned models often perform better when asked to produce the full answer text rather than just the letter, because instruction tuning teaches verbose responses.</p>
-<p>Some evaluations use log-probability scoring rather than generation: the model is not asked to generate the answer but to assign probabilities to each candidate answer; the highest-probability candidate is selected. Log-probability scoring eliminates format sensitivity but introduces sensitivity to tokenization: candidates that tokenize into more tokens may receive systematically lower log-probabilities simply because the probability is distributed across more tokens (each multiplied, resulting in a lower joint probability).</p>
+<section id="rouge-and-bertscore-for-long-form-answers" class="level3" data-number="37.4.2">
+<h3 data-number="37.4.2" class="anchored" data-anchor-id="rouge-and-bertscore-for-long-form-answers"><span class="header-section-number">37.4.2</span> ROUGE and BERTScore for Long-Form Answers</h3>
+<p>For questions requiring multi-sentence answers (ELI5, ASQA, QAMPARI), short answer metrics are insufficient. ROUGE-L and BERTScore are commonly used, with the same limitations described in Chapters previous chapters: they measure similarity to reference answers, not factual accuracy, and are sensitive to paraphrase choices.</p>
+</section>
+<section id="citation-accuracy" class="level3" data-number="37.4.3">
+<h3 data-number="37.4.3" class="anchored" data-anchor-id="citation-accuracy"><span class="header-section-number">37.4.3</span> Citation Accuracy</h3>
+<p>A key evaluation requirement for RAG systems is <strong>citation accuracy</strong>: whether citations in a generated response accurately support the claims they are attached to. For example, if a RAG system generates, “The experiment was conducted in Paris [1],” citation [1] should provide evidence that directly supports this claim.</p>
+<p>Two useful metrics are <strong>citation precision</strong> and <strong>citation recall</strong>. Citation precision measures the proportion of generated citations that actually support their associated claims, while citation recall measures the proportion of claims that warrant citations that are accompanied by an appropriate citation.</p>
 <hr>
 </section>
 </section>
-<section id="the-leaderboard-problem" class="level2" data-number="32.6">
-<h2 data-number="32.6" class="anchored" data-anchor-id="the-leaderboard-problem"><span class="header-section-number">32.6</span> The Leaderboard Problem</h2>
-<p>Benchmark leaderboards (public rankings of models by benchmark score) have become a primary mechanism for communicating model quality to practitioners and the public. They are also a mechanism that concentrates optimization pressure in ways that degrade benchmark validity.</p>
-<section id="competitive-pressure-and-gaming" class="level3" data-number="32.6.1">
-<h3 data-number="32.6.1" class="anchored" data-anchor-id="competitive-pressure-and-gaming"><span class="header-section-number">32.6.1</span> Competitive Pressure and Gaming</h3>
-<p>When benchmark scores become the primary signal of model quality, model developers have strong incentives to optimize specifically for high benchmark scores. Strategies that improve benchmark scores without improving general capability:</p>
-<p><strong>Benchmark-specific fine-tuning</strong>: fine-tune on data that resembles the benchmark, improving performance on that benchmark’s specific format without improving general capability.</p>
-<p><strong>Benchmark-specific prompt engineering</strong>: develop prompts specifically calibrated for each benchmark’s format, which may not generalize to other evaluation contexts.</p>
-<p><strong>Selective reporting</strong>: publish scores only on benchmarks where the model performs well; omit or de-emphasize benchmarks where it performs poorly. A model report that includes MMLU, GSM8K, and HumanEval scores but not GPQA or SWE-bench is not necessarily hiding anything, but the selection shapes the impression of overall capability.</p>
-<p><strong>Hyperparameter selection on test sets</strong>: tune decoding parameters (temperature, top-p, beam width) on the benchmark test set rather than a development set. This is a form of overfitting to the benchmark without training on it.</p>
-</section>
-<section id="benchmark-proliferation" class="level3" data-number="32.6.2">
-<h3 data-number="32.6.2" class="anchored" data-anchor-id="benchmark-proliferation"><span class="header-section-number">32.6.2</span> Benchmark Proliferation</h3>
-<p>The response to gaming (developing new, harder benchmarks) has produced an enormous number of benchmarks. A model technical report in 2024 may include scores on 20–50 different benchmarks. This proliferation creates its own problems:</p>
-<p>Readers cannot interpret 50 benchmark scores simultaneously. The effective communication of model capability requires either aggregation (combining scores into a single number) or selection (choosing a small number of representative benchmarks) both of which introduce their own distortions.</p>
+<section id="ragas-a-comprehensive-rag-evaluation-framework" class="level2" data-number="37.5">
+<h2 data-number="37.5" class="anchored" data-anchor-id="ragas-a-comprehensive-rag-evaluation-framework"><span class="header-section-number">37.5</span> RAGAS: A Comprehensive RAG Evaluation Framework</h2>
+<p>RAGAS provides a unified framework for RAG evaluation that measures four components without requiring human-labeled ground truth for the retrieval judgments:</p>
+<p><strong>Faithfulness</strong>: does the response follow from the retrieved context? (Computed as described above: atomic fact extraction + NLI verification against retrieved documents.)</p>
+<p><strong>Answer relevance</strong>: does the response address the query? (Computed as described above: reverse question generation + semantic similarity.)</p>
+<p><strong>Context precision</strong>: are the retrieved documents actually relevant to the query and useful for answering it?</p>
+<p><span class="math display">\[
+\text{Context Precision}@k = \frac{\sum_{k=1}^{K} \text{Precision}@k \cdot \mathbb{1}[\text{rank-}k \text{ doc is relevant}]}{\text{total relevant docs retrieved}}
+\]</span></p>
+<p>Evaluated by prompting an LLM to judge whether each retrieved document is relevant to the query, avoiding the need for human relevance judgments.</p>
+<p><strong>Context recall</strong>: does the retrieved context contain all the information needed to answer the query? Evaluated by checking whether each sentence in the ground-truth answer can be attributed to at least one retrieved document.</p>
+<p><span class="math display">\[
+\text{Context Recall} = \frac{\text{\# ground-truth sentences attributable to context}}{\text{\# total ground-truth sentences}}
+\]</span></p>
+<p>The four RAGAS metrics together diagnose the failure mode: low faithfulness indicates a generation problem; low answer relevance indicates the response is off-topic; low context precision indicates irrelevant documents are being retrieved; low context recall indicates relevant documents are being missed.</p>
+<section id="ragas-limitations" class="level3" data-number="37.5.1">
+<h3 data-number="37.5.1" class="anchored" data-anchor-id="ragas-limitations"><span class="header-section-number">37.5.1</span> RAGAS Limitations</h3>
+<p>RAGAS uses LLMs internally to evaluate each metric for atomic fact extraction, relevance judgments, and attribution checking. This introduces LLM evaluation biases, cost, and latency into the evaluation pipeline. The context precision judgment in particular is sensitive to the LLM judge’s understanding of what constitutes relevance for a given query.</p>
+<p>RAGAS also requires a ground-truth answer for context recall evaluation, limiting its use to tasks where reference answers exist. For purely open-ended generation with no reference answer, context recall is undefined and RAGAS reverts to measuring faithfulness and answer relevance only.</p>
 <hr>
 </section>
 </section>
-<section id="what-benchmarks-miss" class="level2" data-number="32.7">
-<h2 data-number="32.7" class="anchored" data-anchor-id="what-benchmarks-miss"><span class="header-section-number">32.7</span> What Benchmarks Miss</h2>
-<p>Even well-designed, uncontaminated benchmarks with careful evaluation protocols miss important dimensions of model quality that matter in deployment.</p>
-<section id="long-horizon-tasks" class="level3" data-number="32.7.1">
-<h3 data-number="32.7.1" class="anchored" data-anchor-id="long-horizon-tasks"><span class="header-section-number">32.7.1</span> Long-Horizon Tasks</h3>
-<p>Most benchmarks evaluate single-turn responses to short prompts. Real deployments involve multi-turn conversations, long-document processing, and tasks requiring sustained coherent effort over many steps. A model that scores well on MMLU’s multiple-choice questions may produce incoherent output when asked to write a 5,000-word technical report or maintain consistency across a 50-turn conversation.</p>
-<p>SWE-bench is a partial exception: resolving a GitHub issue requires reading a codebase, understanding the bug report, producing a patch, and having the patch pass tests is a multi-step task with real-world structure. Its difficulty (20% resolution rate at the frontier) partly reflects this structural difference from single-turn question answering.</p>
+<section id="multi-hop-and-agentic-rag-evaluation" class="level2" data-number="37.6">
+<h2 data-number="37.6" class="anchored" data-anchor-id="multi-hop-and-agentic-rag-evaluation"><span class="header-section-number">37.6</span> Multi-Hop and Agentic RAG Evaluation</h2>
+<p>Standard RAG evaluation typically assumes a single retrieval step: documents are retrieved and then used to generate a response. In contrast, multi-step RAG systems perform multiple retrieval operations, with each step informed by the results of previous steps. Evaluating such systems therefore requires assessing retrieval quality at each stage, rather than focusing solely on the final answer.</p>
+<section id="hotpotqa-and-multi-hop-evaluation" class="level3" data-number="37.6.1">
+<h3 data-number="37.6.1" class="anchored" data-anchor-id="hotpotqa-and-multi-hop-evaluation"><span class="header-section-number">37.6.1</span> HotpotQA and Multi-Hop Evaluation</h3>
+<p>HotpotQA <span class="citation" data-cites="yang2018hotpotqa"><a href="#ref-yang2018hotpotqa" role="doc-biblioref">[2]</a></span> requires reasoning over two Wikipedia passages to answer a question. Evaluation includes both answer accuracy (EM and F1 on the final answer) and supporting facts accuracy (EM and F1 on the set of sentences the system identifies as supporting evidence). The supporting facts metric evaluates whether the system identified the right reasoning chain, not just whether the final answer is correct, a system that arrives at the correct answer through incorrect intermediate steps is less reliable than one that correctly traces the reasoning chain.</p>
 </section>
-<section id="calibration" class="level3" data-number="32.7.2">
-<h3 data-number="32.7.2" class="anchored" data-anchor-id="calibration"><span class="header-section-number">32.7.2</span> Calibration</h3>
-<p>Benchmarks measure accuracy but not calibration. A model that is right 80% of the time and knows when it is wrong (expressing uncertainty on the 20% it gets wrong) is far more useful than a model that is right 80% of the time and is equally confident on all answers. Standard benchmark scoring does not distinguish these models.</p>
-</section>
-<section id="novel-task-formats" class="level3" data-number="32.7.3">
-<h3 data-number="32.7.3" class="anchored" data-anchor-id="novel-task-formats"><span class="header-section-number">32.7.3</span> Novel Task Formats</h3>
-<p>Benchmarks test performance on tasks in the format defined by the benchmark creators. Real users present tasks in idiosyncratic formats, with implicit context, ambiguous specifications, and novel combinations of requirements that no benchmark anticipated. A model’s generalization to novel task formats is not measured by any existing benchmark and requires the human evaluation.</p>
-</section>
-<section id="robustness" class="level3" data-number="32.7.4">
-<h3 data-number="32.7.4" class="anchored" data-anchor-id="robustness"><span class="header-section-number">32.7.4</span> Robustness</h3>
-<p>Benchmark scores reflect average performance on the test set. A model that achieves 85% accuracy by being correct on 85% of examples but completely wrong on 15% may be less useful than a model that achieves 80% accuracy by being approximately right on all examples. The distribution of errors including their severity, correlation with input features, or predictability matters enormously in deployment and is not captured by accuracy scores.</p>
+<section id="step-level-faithfulness-in-multi-hop" class="level3" data-number="37.6.2">
+<h3 data-number="37.6.2" class="anchored" data-anchor-id="step-level-faithfulness-in-multi-hop"><span class="header-section-number">37.6.2</span> Step-Level Faithfulness in Multi-Hop</h3>
+<p>For multi-hop RAG, faithfulness must be evaluated at each step: - Does the first retrieval find documents relevant to the first sub-question? - Does the model correctly extract the intermediate answer from those documents? - Does the second retrieval use the intermediate answer to find the right documents for the final question? - Does the final generation correctly synthesize both retrieved contexts?</p>
+<p>Errors can compound across steps: a correct first retrieval combined with an incorrect intermediate extraction leads to an incorrect second retrieval, which leads to an incorrect final answer. The error attribution requires step-level evaluation to identify which step in the chain failed.</p>
 <hr>
 </section>
 </section>
-<section id="key-takeaways" class="level2" data-number="32.8">
-<h2 data-number="32.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">32.8</span> Key Takeaways</h2>
+<section id="constructing-rag-evaluation-datasets" class="level2" data-number="37.7">
+<h2 data-number="37.7" class="anchored" data-anchor-id="constructing-rag-evaluation-datasets"><span class="header-section-number">37.7</span> Constructing RAG Evaluation Datasets</h2>
+<p>A persistent challenge in RAG evaluation is the absence of evaluation datasets specifically designed for retrieval-augmented settings. Most existing QA benchmarks provide only (question, answer) pairs without specifying the retrieval corpus or relevance judgments.</p>
+<section id="synthetic-evaluation-dataset-generation" class="level3" data-number="37.7.1">
+<h3 data-number="37.7.1" class="anchored" data-anchor-id="synthetic-evaluation-dataset-generation"><span class="header-section-number">37.7.1</span> Synthetic Evaluation Dataset Generation</h3>
+<p>RAGAS and similar frameworks support automatic generation of evaluation datasets from a document corpus:</p>
+<ol type="1">
+<li><strong>Document selection</strong>: sample documents from the target corpus</li>
+<li><strong>Question generation</strong>: prompt an LLM to generate questions that can be answered using the selected documents</li>
+<li><strong>Answer generation</strong>: prompt the LLM to generate reference answers using the documents</li>
+<li><strong>Negative document selection</strong>: include non-relevant documents that share topical similarity with the relevant ones (hard negatives for the retrieval system)</li>
+</ol>
+<p>The resulting dataset includes (question, relevant documents, reference answer, irrelevant documents) tuples that can evaluate both retrieval and generation. The limitation: LLM-generated questions and answers may not capture the full distribution of real user queries, and the generated evaluation set may be biased toward questions the LLM finds easy to pose.</p>
+</section>
+<section id="domain-specific-evaluation-sets" class="level3" data-number="37.7.2">
+<h3 data-number="37.7.2" class="anchored" data-anchor-id="domain-specific-evaluation-sets"><span class="header-section-number">37.7.2</span> Domain-Specific Evaluation Sets</h3>
+<p>For RAG systems deployed in specialized domains (medical, legal, financial), evaluation datasets should be constructed from domain-specific document corpora with domain expert annotation of relevance and answer correctness. Generic QA benchmarks built from Wikipedia are particularly inadequate for specialized domains, both because the knowledge base differs and because the query distribution differs substantially.</p>
+<p>A medical RAG system should be evaluated on clinical questions answered from medical literature, not on general knowledge questions answered from Wikipedia, even though the latter is more easily available. The evaluation should reflect deployment conditions as closely as possible.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="37.8">
+<h2 data-number="37.8" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">37.8</span> Key Takeaways</h2>
 <ul>
-<li>Benchmarks are fixed evaluation datasets with automated scoring that enable fast, reproducible, comparable measurement; their primary vice is that fixed public benchmarks can be optimized against, making scores reflect benchmark-specific performance rather than general capability.</li>
-<li>The saturation timeline for major benchmarks has shortened: HellaSwag, ARC, GSM8K, and HumanEval are saturated for frontier models; MMLU is approaching saturation; GPQA and SWE-bench remain discriminative as of
-<ol start="2024" type="1">
-<li></li>
-</ol></li>
-<li>Benchmark contamination — test examples appearing in training data — is the most serious validity threat; detection methods include n-gram overlap analysis, verbatim completion probing, and performance-difficulty correlation analysis.</li>
-<li>Format sensitivity produces 5–15 point performance differences from prompt wording alone; few-shot count, chain-of-thought, and answer format must all be specified and held constant for valid comparison.</li>
-<li>Log-probability scoring eliminates generation format sensitivity but introduces tokenization sensitivity; neither scoring method is universally superior.</li>
-<li>Benchmark leaderboard competition concentrates optimization pressure on benchmark scores, producing benchmark-specific fine-tuning, selective reporting, and hyperparameter selection on test sets — all of which inflate scores without improving deployment capability.</li>
-<li>Benchmarks systematically miss long-horizon tasks, calibration, novel task format generalization, and error distribution — all of which matter in deployment and require human evaluation or specialized instruments.</li>
-<li>Responsible benchmark use requires: multiple benchmarks, full reporting of all benchmarks run, contamination analysis, protocol specification, and complementary human evaluation for release decisions.</li>
-<li>The correct interpretation of a benchmark score is “performance on this specific fixed test set under this specific evaluation protocol” — never “general capability at the skill the benchmark was designed to measure.”</li>
+<li>RAG evaluation requires measuring both retrieval quality and generation quality separately, because conflating them in end-to-end evaluation prevents attribution of failures to the component responsible.</li>
+<li>Precision@k measures retrieval cleanliness (fraction of retrieved documents that are relevant); recall@k measures retrieval coverage (fraction of relevant documents that are retrieved); the optimal k depends on the generator’s robustness to irrelevant context.</li>
+<li>NDCG rewards ranking relevant documents highly; MAP summarizes precision at each rank where a relevant document appears; MRR is appropriate for single-answer queries where finding any relevant document counts as success.</li>
+<li>Retrieval evaluation requires relevance judgments — labels indicating which documents are relevant to each query — which are expensive to obtain; answer-derived relevance (does the document contain the answer string?) is the cheapest approximation but is imprecise.</li>
+<li>Context faithfulness measures whether the generated response is supported by the retrieved documents using atomic fact extraction and NLI verification; scores below 0.6 indicate substantial hallucination beyond retrieved context.</li>
+<li>Answer relevance measures whether the response addresses the query by reverse question generation: generate questions the response would answer and measure similarity to the original query.</li>
+<li>RAGAS provides four metrics — faithfulness, answer relevance, context precision, context recall — that together diagnose whether failures are in retrieval or generation; all four use LLMs internally, introducing evaluation biases and cost.</li>
+<li>Citation accuracy in RAG systems is surprisingly low: state-of-the-art systems achieve citation precision of 60–75%, meaning 25–40% of citations are incorrect or unsupported.</li>
+<li>Multi-hop RAG evaluation requires step-level quality measurement; errors compound across retrieval steps and end-to-end evaluation cannot identify which step in the chain failed.</li>
+<li>Generic QA benchmarks built on Wikipedia are inadequate for evaluating domain-specific RAG systems; domain-specific evaluation sets with expert annotation are required for meaningful measurement of specialized deployments.</li>
 </ul>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="32.9">
-<h2 data-number="32.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">32.9</span> Further Reading</h2>
+<section id="further-reading" class="level2" data-number="37.9">
+<h2 data-number="37.9" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">37.9</span> Further Reading</h2>
 <ul>
-<li><p>Hendrycks, D., Burns, C., Basart, S., Zou, A., Mazeika, M., Song, D., &amp; Steinhardt, J. (2021). <em>Measuring Massive Multitask Language Understanding.</em> ICLR. — Introduces MMLU; the 57-subject design rationale and the baseline analysis across model families establish the template for broad knowledge evaluation benchmarks.</p></li>
-<li><p>Srivastava, A., et al.&nbsp;(2022). <em>Beyond the Imitation Game: Quantifying and Extrapolating the Capabilities of Language Models.</em> TMLR. — BIG-Bench; the 204-task diversity, the emergent capability analysis, and the BIG-Bench Hard subset selection are the key contributions; the discussion of what tasks resist scaling is particularly valuable.</p></li>
-<li><p>Chen, M., et al.&nbsp;(2021). <em>Evaluating Large Language Models Trained on Code.</em> arXiv. — Introduces HumanEval and the pass@k metric; the functional correctness evaluation methodology and the analysis of temperature’s effect on pass@k are the key technical contributions.</p></li>
-<li><p>Jimenez, C. E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., &amp; Narasimhan, K. (2024). <em>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</em> ICLR. — Introduces SWE-bench; the real-world GitHub issue structure and the automated test suite evaluation are the key design contributions; the analysis of why existing models fail is the most informative section for practitioners.</p></li>
-<li><p>Golchin, S., &amp; Surdeanu, M. (2023). <em>Time Travel in LLMs: Tracing Data Contamination in Large Language Models.</em> ICLR. — Systematic contamination detection using completion probing; the methodology is the key contribution; the contamination rates reported across major models and benchmarks are sobering.</p></li>
-<li><p>Liang, P., et al.&nbsp;(2022). <em>Holistic Evaluation of Language Models.</em> TMLR. — HELM; the multi-scenario, multi-metric evaluation framework and the analysis of trade-offs between accuracy, calibration, and robustness are the key contributions; the selective reporting analysis documents how benchmark choice affects apparent rankings.</p></li>
-<li><p>Rein, D., et al.&nbsp;(2023). <em>GPQA: A Graduate-Level Google-Proof Q&amp;A Benchmark.</em> arXiv. — Introduces GPQA and the Google-proof design methodology; the expert versus non-expert performance gap and the analysis of what makes questions genuinely hard are the key contributions.</p></li>
-<li><p>Recht, B., Roelofs, R., Schmidt, L., &amp; Shankar, V. (2019). <em>Do ImageNet Classifiers Generalize to ImageNet?</em> ICML. — Though not an NLP paper, this is the clearest demonstration that held-out test sets degrade as proxies for general performance when the field optimizes against them; the methodology and conclusions transfer directly to language model benchmarking.</p></li>
+<li><p>Es, S., James, J., Espinosa-Anke, L., &amp; Schockaert, S. (2023). <em>RAGAS: Automated Evaluation of Retrieval Augmented Generation.</em> arXiv. — Introduces the RAGAS framework and its four component metrics; the reference-free context precision and answer relevance formulations are the key contributions for practitioners who cannot obtain human relevance judgments.</p></li>
+<li><p>Yang, Z., Qi, P., Zhang, S., Bengio, Y., Cohen, W., Salakhutdinov, R., &amp; Manning, C. D. (2018). <em>HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering.</em> EMNLP. — Introduces HotpotQA and the supporting facts evaluation metric; the multi-hop structure and the distractor passages make it the standard benchmark for evaluating multi-hop reasoning in RAG systems.</p></li>
+<li><p>Stelmakh, I., Luan, Y., Dhingra, B., &amp; Chang, M.-W. (2022). <em>ASQA: Factoid Questions Meet Long-Form Answers.</em> EMNLP. — Introduces ASQA and the combined EM and ROUGE-L evaluation for long-form multi-hop answers; the annotation procedure for identifying which facts in a long answer correspond to which sub-questions is the key methodological contribution.</p></li>
+<li><p>Gao, T., Yen, H., Yu, J., &amp; Chen, D. (2023). <em>Enabling Large Language Models to Generate Text with Citations.</em> EMNLP. — Evaluates citation accuracy in RAG systems across multiple tasks; the citation precision and recall metrics and the finding that state-of-the-art systems achieve only 60–75% citation precision are the key contributions.</p></li>
+<li><p>Karpukhin, V., Oğuz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D., &amp; Yih, W. (2020). <em>Dense Passage Retrieval for Open-Domain Question Answering.</em> EMNLP. — The DPR paper; the retrieval evaluation methodology on NQ and TriviaQA, including the answer-derived relevance labeling procedure, establishes the standard RAG retrieval evaluation protocol used in subsequent work.</p></li>
+<li><p>Kwiatkowski, T., Palomaki, J., Redfield, O., Collins, M., Parikh, A., Alberti, C., Epstein, D., Polosukhin, I., Devlin, J., Lee, K., Toutanova, K., Jones, L., Kelber, M., Chang, M.-W., Dai, A., Uszkoreit, J., Le, Q., &amp; Petrov, S. (2019). <em>Natural Questions: A Benchmark for Question Answering Research.</em> TACL. — Introduces Natural Questions and the distinction between short and long answer evaluation; the annotation procedure and the analysis of answer diversity are relevant for understanding RAG benchmark design.</p></li>
+<li><p>Saad-Falcon, J., Khattab, O., Potts, C., &amp; Zaharia, M. (2023). <em>ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems.</em> arXiv. — Introduces ARES, a framework that trains lightweight classifiers for RAG evaluation using synthetic data and a small number of human preference labels; the classifier-based approach reduces reliance on LLM-as-judge for component metrics.</p></li>
+<li><p>Min, S., Lyu, X., Holtzman, A., Artetxe, M., Lewis, M., Hajishirzi, H., &amp; Zettlemoyer, L. (2023). <em>FActScoring: Fine-Grained Atomic Evaluation of Factual Precision in Long Form Text Generation.</em> EMNLP. — Covered in Chapter 45 but directly relevant to RAG evaluation; the atomic decomposition approach and Wikipedia-based verification pipeline apply directly to measuring factual accuracy of RAG-generated long-form answers.</p></li>
 </ul>
 <hr>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
-<div id="ref-hendrycks2020measuring" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">D. Hendrycks <em>et al.</em>, <span>“Measuring massive multitask language understanding,”</span> <em>arXiv preprint arXiv:2009.03300</em>, 2020.</div>
+<div id="ref-es2024ragas" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">S. Es, J. James, L. E. Anke, and S. Schockaert, <span>“Ragas: Automated evaluation of retrieval augmented generation,”</span> in <em>Proceedings of the 18th conference of the european chapter of the association for computational linguistics: System demonstrations</em>, 2024, pp. 150–158.</div>
 </div>
-<div id="ref-rein2023gpqa" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">D. Rein <em>et al.</em>, <span>“Gpqa: A graduate-level google-proof q&amp;a benchmark,”</span> <em>arXiv preprint arXiv:2311.12022</em>, 2023.</div>
-</div>
-<div id="ref-clark2018think" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[3] </div><div class="csl-right-inline">P. Clark <em>et al.</em>, <span>“Think you have solved question answering? Try arc, the ai2 reasoning challenge,”</span> <em>arXiv preprint arXiv:1803.05457</em>, 2018.</div>
-</div>
-<div id="ref-hendrycks2021measuring" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[4] </div><div class="csl-right-inline">D. Hendrycks <em>et al.</em>, <span>“Measuring mathematical problem solving with the math dataset,”</span> <em>arXiv preprint arXiv:2103.03874</em>, 2021.</div>
-</div>
-<div id="ref-cobbe2021training" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[5] </div><div class="csl-right-inline"><span class="nocase">K. Cobbe <em>et al.</em></span>, <span>“Training verifiers to solve math word problems,”</span> <em>arXiv preprint arXiv:2110.14168</em>, 2021.</div>
-</div>
-<div id="ref-chen2021evaluating" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[6] </div><div class="csl-right-inline"><span class="nocase">M. Chen <em>et al.</em></span>, <span>“Evaluating large language models trained on code,”</span> <em>arXiv preprint arXiv:2107.03374</em>, 2021.</div>
-</div>
-<div id="ref-austin2021program" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[7] </div><div class="csl-right-inline"><span class="nocase">J. Austin <em>et al.</em></span>, <span>“Program synthesis with large language models,”</span> <em>arXiv preprint arXiv:2108.07732</em>, 2021.</div>
-</div>
-<div id="ref-jimenez2024swe" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[8] </div><div class="csl-right-inline">C. E. Jimenez <em>et al.</em>, <span>“Swe-bench: Can language models resolve real-world github issues?”</span> in <em>International conference on learning representations</em>, 2024, pp. 54107–54157.</div>
-</div>
-<div id="ref-wang2019superglue" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[9] </div><div class="csl-right-inline">A. Wang <em>et al.</em>, <span>“Superglue: A stickier benchmark for general-purpose language understanding systems,”</span> <em>Advances in neural information processing systems</em>, vol. 32, 2019.</div>
-</div>
-<div id="ref-srivastava2022beyond" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[10] </div><div class="csl-right-inline"><span class="nocase">A. Srivastava <em>et al.</em></span>, <span>“Beyond the imitation game: Quantifying and extrapolating the capabilities of language models,”</span> <em>arXiv preprint arXiv:2206.04615</em>, 2022.</div>
-</div>
-<div id="ref-zheng2023judging" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[11] </div><div class="csl-right-inline"><span class="nocase">L. Zheng <em>et al.</em></span>, <span>“Judging llm-as-a-judge with mt-bench and chatbot arena,”</span> <em>Advances in neural information processing systems</em>, vol. 36, pp. 46595–46623, 2023.</div>
-</div>
-<div id="ref-zhou2023instruction" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[12] </div><div class="csl-right-inline">J. Zhou <em>et al.</em>, <span>“Instruction-following evaluation for large language models,”</span> <em>arXiv preprint arXiv:2311.07911</em>, 2023.</div>
-</div>
-<div id="ref-golchin2024time" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[13] </div><div class="csl-right-inline">S. Golchin and M. Surdeanu, <span>“Time travel in llms: Tracing data contamination in large language models,”</span> in <em>International conference on learning representations</em>, 2024, pp. 43008–43029.</div>
+<div id="ref-yang2018hotpotqa" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">Z. Yang <em>et al.</em>, <span>“HotpotQA: A dataset for diverse, explainable multi-hop question answering,”</span> in <em>Proceedings of the 2018 conference on empirical methods in natural language processing</em>, 2018, pp. 2369–2380.</div>
 </div>
 </div>
 </section>
@@ -1400,14 +1335,11 @@ Figure&nbsp;32.1: The journey through the Model Mind.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part6/human_eval.html" class="pagination-link" aria-label="Human Evaluation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Human Evaluation</span></span>
+      <a href="../../book/part6/hallucination_metrics.html" class="pagination-link" aria-label="Hallucination Metrics">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Hallucination Metrics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part6/perplexity.html" class="pagination-link" aria-label="Perplexity">
-        <span class="nav-page-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Perplexity</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
