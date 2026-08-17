@@ -325,7 +325,7 @@ in the ground-truth answer can be attributed to at least one retrieved
 document.
 
 $$
-\text{Context Recall} = \frac{\text{# ground-truth sentences attributable to context}}{\text{# total ground-truth sentences}}
+\text{Context Recall} = \frac{\text{\# ground-truth sentences attributable to context}}{\text{\# total ground-truth sentences}}
 $$
 
 The four RAGAS metrics together diagnose the failure mode: low faithfulness
