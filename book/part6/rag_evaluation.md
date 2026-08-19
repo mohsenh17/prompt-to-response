@@ -277,7 +277,7 @@ these benchmarks is the clearest demonstration of RAG's core value.
 
 For questions requiring multi-sentence answers (ELI5, ASQA, QAMPARI),
 short answer metrics are insufficient. ROUGE-L and BERTScore are commonly
-used, with the same limitations described in Chapters previous chapters: they measure
+used, with the same limitations described in previous chapters: they measure
 similarity to reference answers, not factual accuracy, and are sensitive
 to paraphrase choices.
 
@@ -520,8 +520,7 @@ should reflect deployment conditions as closely as possible.
 
 - Min, S., Lyu, X., Holtzman, A., Artetxe, M., Lewis, M., Hajishirzi, H.,
   & Zettlemoyer, L. (2023). *FActScoring: Fine-Grained Atomic Evaluation
-  of Factual Precision in Long Form Text Generation.* EMNLP. — Covered
-  in Chapter 45 but directly relevant to RAG evaluation; the atomic
+  of Factual Precision in Long Form Text Generation.* EMNLP. — the atomic
   decomposition approach and Wikipedia-based verification pipeline apply
   directly to measuring factual accuracy of RAG-generated long-form answers.
 

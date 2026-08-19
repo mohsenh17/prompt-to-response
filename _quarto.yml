@@ -77,7 +77,8 @@ book:
         - book/part6/LLM_judge.md
 
     - part: "The Keepers of the Waking Engine"
-      chapters: []    
+      chapters: 
+        - book/part7/tool_function.md   
 # --------------------------------------------------
 # Output formats
 # --------------------------------------------------

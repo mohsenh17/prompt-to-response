@@ -429,8 +429,7 @@ LLM-as-a-Judge handling the high-agreement dimensions at scale.
 - Shen, T., Jin, R., Huang, Y., Liu, C., Dong, W., Guo, Z., Wu, X.,
   Liu, Y., & Xiong, D. (2023). *Large Language Model Alignment: A Survey.*
   arXiv. — Broader context for LLM-as-a-Judge within the alignment pipeline;
-  the RLAIF section connects LLM evaluation to the training signal discussion
-  in Chapter 36.
+  the RLAIF section connects LLM evaluation to the training signal discussion.
 
 - Ye, S., Kulshreshtha, S., Gao, S., Arous, I., & Faltings, B. (2024).
   *Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge.* arXiv.
