@@ -640,8 +640,21 @@ window.Quarto = {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">The Keepers of the Waking Engine</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">The Keepers of the Waking Engine</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part7/tool_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Tool Use and Function Calling</span></span></a>
+  </div>
+</li>
+      </ul>
   </li>
     </ul>
     </div>
@@ -819,7 +832,7 @@ Figure&nbsp;37.1: The journey through the Model Mind.
 </section>
 <section id="rouge-and-bertscore-for-long-form-answers" class="level3" data-number="37.4.2">
 <h3 data-number="37.4.2" class="anchored" data-anchor-id="rouge-and-bertscore-for-long-form-answers"><span class="header-section-number">37.4.2</span> ROUGE and BERTScore for Long-Form Answers</h3>
-<p>For questions requiring multi-sentence answers (ELI5, ASQA, QAMPARI), short answer metrics are insufficient. ROUGE-L and BERTScore are commonly used, with the same limitations described in Chapters previous chapters: they measure similarity to reference answers, not factual accuracy, and are sensitive to paraphrase choices.</p>
+<p>For questions requiring multi-sentence answers (ELI5, ASQA, QAMPARI), short answer metrics are insufficient. ROUGE-L and BERTScore are commonly used, with the same limitations described in previous chapters: they measure similarity to reference answers, not factual accuracy, and are sensitive to paraphrase choices.</p>
 </section>
 <section id="citation-accuracy" class="level3" data-number="37.4.3">
 <h3 data-number="37.4.3" class="anchored" data-anchor-id="citation-accuracy"><span class="header-section-number">37.4.3</span> Citation Accuracy</h3>
@@ -911,7 +924,7 @@ Figure&nbsp;37.1: The journey through the Model Mind.
 <li><p>Karpukhin, V., Oğuz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D., &amp; Yih, W. (2020). <em>Dense Passage Retrieval for Open-Domain Question Answering.</em> EMNLP. — The DPR paper; the retrieval evaluation methodology on NQ and TriviaQA, including the answer-derived relevance labeling procedure, establishes the standard RAG retrieval evaluation protocol used in subsequent work.</p></li>
 <li><p>Kwiatkowski, T., Palomaki, J., Redfield, O., Collins, M., Parikh, A., Alberti, C., Epstein, D., Polosukhin, I., Devlin, J., Lee, K., Toutanova, K., Jones, L., Kelber, M., Chang, M.-W., Dai, A., Uszkoreit, J., Le, Q., &amp; Petrov, S. (2019). <em>Natural Questions: A Benchmark for Question Answering Research.</em> TACL. — Introduces Natural Questions and the distinction between short and long answer evaluation; the annotation procedure and the analysis of answer diversity are relevant for understanding RAG benchmark design.</p></li>
 <li><p>Saad-Falcon, J., Khattab, O., Potts, C., &amp; Zaharia, M. (2023). <em>ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems.</em> arXiv. — Introduces ARES, a framework that trains lightweight classifiers for RAG evaluation using synthetic data and a small number of human preference labels; the classifier-based approach reduces reliance on LLM-as-judge for component metrics.</p></li>
-<li><p>Min, S., Lyu, X., Holtzman, A., Artetxe, M., Lewis, M., Hajishirzi, H., &amp; Zettlemoyer, L. (2023). <em>FActScoring: Fine-Grained Atomic Evaluation of Factual Precision in Long Form Text Generation.</em> EMNLP. — Covered in Chapter 45 but directly relevant to RAG evaluation; the atomic decomposition approach and Wikipedia-based verification pipeline apply directly to measuring factual accuracy of RAG-generated long-form answers.</p></li>
+<li><p>Min, S., Lyu, X., Holtzman, A., Artetxe, M., Lewis, M., Hajishirzi, H., &amp; Zettlemoyer, L. (2023). <em>FActScoring: Fine-Grained Atomic Evaluation of Factual Precision in Long Form Text Generation.</em> EMNLP. — the atomic decomposition approach and Wikipedia-based verification pipeline apply directly to measuring factual accuracy of RAG-generated long-form answers.</p></li>
 </ul>
 <hr>
 

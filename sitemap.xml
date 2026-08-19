@@ -114,7 +114,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/alignment.html</loc>
-    <lastmod>2026-08-17T19:37:19.519Z</lastmod>
+    <lastmod>2026-08-17T19:53:43.675Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part5/reasoning.html</loc>
@@ -142,7 +142,7 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part6/semantic_metrics.html</loc>
-    <lastmod>2026-08-17T18:52:56.111Z</lastmod>
+    <lastmod>2026-08-17T19:53:43.675Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part6/hallucination_metrics.html</loc>
@@ -150,18 +150,22 @@
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part6/rag_evaluation.html</loc>
-    <lastmod>2026-08-17T18:36:24.923Z</lastmod>
+    <lastmod>2026-08-19T17:53:47.048Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/book/part6/LLM_judge.html</loc>
-    <lastmod>2026-08-17T19:47:23.743Z</lastmod>
+    <lastmod>2026-08-19T17:52:47.660Z</lastmod>
+  </url>
+  <url>
+    <loc>https://llm.hosseini.work/book/part7/tool_function.html</loc>
+    <lastmod>2026-08-19T17:51:18.844Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.pdf</loc>
-    <lastmod>2026-08-17T19:49:24.279Z</lastmod>
+    <lastmod>2026-08-19T17:56:25.516Z</lastmod>
   </url>
   <url>
     <loc>https://llm.hosseini.work/From-Prompt-to-Response.epub</loc>
-    <lastmod>2026-08-17T19:49:33.547Z</lastmod>
+    <lastmod>2026-08-19T17:56:35.640Z</lastmod>
   </url>
 </urlset>
