@@ -80,6 +80,7 @@ book:
       chapters: 
         - book/part7/tool_function.md   
         - book/part7/agents.md
+        - book/part7/agent_memory.md
 # --------------------------------------------------
 # Output formats
 # --------------------------------------------------
