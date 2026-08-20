@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Quantization and Model Compression – From Prompt to Response</title>
+<title>40&nbsp; Agents and Multi-Agent Systems – From Prompt to Response</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,42 +23,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-</style>
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -68,8 +53,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../book/part3/decoding-and-sampling.html" rel="next">
-<link href="../../book/part3/gpu-execution.html" rel="prev">
+<link href="../../book/part7/tool_function.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,14 +98,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="9&nbsp; Quantization and Model Compression – From Prompt to Response">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="40&nbsp; Agents and Multi-Agent Systems – From Prompt to Response">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://llm.hosseini.work/book/part3/figures/ch3_2/journey.svg">
+<meta property="og:image" content="https://llm.hosseini.work/book/part7/figures/ch2/journey.svg">
 <meta property="og:site_name" content="From Prompt to Response">
-<meta name="twitter:title" content="9&nbsp; Quantization and Model Compression – From Prompt to Response">
+<meta name="twitter:title" content="40&nbsp; Agents and Multi-Agent Systems – From Prompt to Response">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://llm.hosseini.work/book/part3/figures/ch3_2/journey.svg">
+<meta name="twitter:image" content="https://llm.hosseini.work/book/part7/figures/ch2/journey.svg">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -296,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/quantization.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part7/tool_function.html">The Keepers of the Waking Engine</a></li><li class="breadcrumb-item"><a href="../../book/part7/agents.html"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -379,13 +392,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">The Labyrinth of Attention</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part3/transformer-architecture.html" class="sidebar-item-text sidebar-link">
@@ -412,7 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part3/quantization.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../book/part3/quantization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></span></a>
   </div>
 </li>
@@ -627,13 +640,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
  <span class="menu-text">The Keepers of the Waking Engine</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../book/part7/tool_function.html" class="sidebar-item-text sidebar-link">
@@ -642,7 +655,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../book/part7/agents.html" class="sidebar-item-text sidebar-link">
+  <a href="../../book/part7/agents.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></span></a>
   </div>
 </li>
@@ -658,19 +671,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul class="collapse">
-  <li><a href="#the-memory-problem" id="toc-the-memory-problem" class="nav-link active" data-scroll-target="#the-memory-problem"><span class="header-section-number">9.1</span> The memory problem</a></li>
-  <li><a href="#floating-point-formats" id="toc-floating-point-formats" class="nav-link" data-scroll-target="#floating-point-formats"><span class="header-section-number">9.2</span> Floating point formats</a></li>
-  <li><a href="#integer-quantization" id="toc-integer-quantization" class="nav-link" data-scroll-target="#integer-quantization"><span class="header-section-number">9.3</span> Integer quantization</a></li>
-  <li><a href="#the-outlier-problem" id="toc-the-outlier-problem" class="nav-link" data-scroll-target="#the-outlier-problem"><span class="header-section-number">9.4</span> The outlier problem</a></li>
-  <li><a href="#post-training-quantization-methods" id="toc-post-training-quantization-methods" class="nav-link" data-scroll-target="#post-training-quantization-methods"><span class="header-section-number">9.5</span> Post-training quantization methods</a></li>
-  <li><a href="#gguf-and-llama.cpp-quantization" id="toc-gguf-and-llama.cpp-quantization" class="nav-link" data-scroll-target="#gguf-and-llama.cpp-quantization"><span class="header-section-number">9.6</span> GGUF and llama.cpp quantization</a></li>
-  <li><a href="#quantization-aware-training" id="toc-quantization-aware-training" class="nav-link" data-scroll-target="#quantization-aware-training"><span class="header-section-number">9.7</span> Quantization-aware training</a></li>
-  <li><a href="#activation-quantization" id="toc-activation-quantization" class="nav-link" data-scroll-target="#activation-quantization"><span class="header-section-number">9.8</span> Activation quantization</a></li>
-  <li><a href="#structured-and-unstructured-sparsity" id="toc-structured-and-unstructured-sparsity" class="nav-link" data-scroll-target="#structured-and-unstructured-sparsity"><span class="header-section-number">9.9</span> Structured and unstructured sparsity</a></li>
-  <li><a href="#combining-quantization-techniques" id="toc-combining-quantization-techniques" class="nav-link" data-scroll-target="#combining-quantization-techniques"><span class="header-section-number">9.10</span> Combining quantization techniques</a></li>
-  <li><a href="#quality-evaluation-for-quantized-models" id="toc-quality-evaluation-for-quantized-models" class="nav-link" data-scroll-target="#quality-evaluation-for-quantized-models"><span class="header-section-number">9.11</span> Quality evaluation for quantized models</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">9.12</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9.13</span> Further reading</a></li>
+  <li><a href="#what-makes-a-system-an-agent" id="toc-what-makes-a-system-an-agent" class="nav-link active" data-scroll-target="#what-makes-a-system-an-agent"><span class="header-section-number">40.1</span> What Makes a System an Agent</a></li>
+  <li><a href="#the-react-pattern-reasoning-and-acting" id="toc-the-react-pattern-reasoning-and-acting" class="nav-link" data-scroll-target="#the-react-pattern-reasoning-and-acting"><span class="header-section-number">40.2</span> The ReAct Pattern: Reasoning and Acting</a></li>
+  <li><a href="#planning-architectures" id="toc-planning-architectures" class="nav-link" data-scroll-target="#planning-architectures"><span class="header-section-number">40.3</span> Planning Architectures</a></li>
+  <li><a href="#termination-and-loop-control" id="toc-termination-and-loop-control" class="nav-link" data-scroll-target="#termination-and-loop-control"><span class="header-section-number">40.4</span> Termination and Loop Control</a></li>
+  <li><a href="#multi-agent-systems" id="toc-multi-agent-systems" class="nav-link" data-scroll-target="#multi-agent-systems"><span class="header-section-number">40.5</span> Multi-Agent Systems</a></li>
+  <li><a href="#failure-modes-specific-to-multi-agent-systems" id="toc-failure-modes-specific-to-multi-agent-systems" class="nav-link" data-scroll-target="#failure-modes-specific-to-multi-agent-systems"><span class="header-section-number">40.6</span> Failure Modes Specific to Multi-Agent Systems</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">40.7</span> Key Takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">40.8</span> Further Reading</a></li>
   </ul>
 </nav>
     </div>
@@ -678,9 +686,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part3/transformer-architecture.html">The Labyrinth of Attention</a></li><li class="breadcrumb-item"><a href="../../book/part3/quantization.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../book/part7/tool_function.html">The Keepers of the Waking Engine</a></li><li class="breadcrumb-item"><a href="../../book/part7/agents.html"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Quantization and Model Compression</span></h1>
+<h1 class="title"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></h1>
 </div>
 
 
@@ -698,7 +706,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p><strong>The canonical question for this chapter:</strong> <em>A 70B parameter model in full precision requires 140 GB of GPU memory and costs a fortune to serve. How do you make it smaller, faster, and cheaper without making it useless?</em></p>
+<p><strong>The canonical question for this chapter:</strong> <em>What turns a language model with tools into an agent and why does adding more agents to a system often make it less reliable rather than more capable?</em></p>
 </blockquote>
 <hr>
 <div class="callout callout-style-simple callout-note no-icon">
@@ -711,345 +719,244 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3_2/journey.svg" class="img-fluid figure-img" style="width:80.0%">
+<img src="figures/ch2/journey.svg" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.1: The journey through the Model Mind.
+Figure&nbsp;40.1: The journey through the Model Mind.
 </figcaption>
 </figure>
 </div>
-<p>This chapter covers the numerical representation of the model itself: how reducing the precision of weights and activations affects memory, speed, and quality, and which techniques have become standard in production. Quantization is not an afterthought for most deployments, it is the difference between a model that fits and one that does not.</p>
+<p>This chapter covers what happens when tool use is embedded in a loop, when the model plans, acts, observes, and re-plans across many steps toward a goal, and when multiple such loops are composed together. This is where language model systems become agents.</p>
 </div>
 </div>
 </div>
 <hr>
-<section id="the-memory-problem" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="the-memory-problem"><span class="header-section-number">9.1</span> The memory problem</h2>
-<p>A language model’s parameters are floating-point numbers. The precision of those numbers (how many bits are used to represent each one) determines how much memory the model occupies.</p>
-<p>For a model with <code>N</code> parameters:</p>
-<pre><code>FP32 (4 bytes per parameter):   N × 4 bytes
-BF16 (2 bytes per parameter):   N × 2 bytes
-INT8 (1 byte per parameter):    N × 1 byte
-INT4 (0.5 bytes per parameter): N × 0.5 bytes</code></pre>
-<p>For a 70B parameter model:</p>
-<pre><code>FP32:  70B × 4  = 280 GB   -&gt; requires 4× H100s just for weights
-BF16:  70B × 2  = 140 GB   -&gt; requires 2× H100s
-INT8:  70B × 1  =  70 GB   -&gt; fits on 1× H100 with room for KV cache
-INT4:  70B × 0.5 =  35 GB  -&gt; fits on 1× H100 with substantial headroom</code></pre>
-<p>The difference between BF16 and INT8 is not just cost it is also whether a model can be served on a single GPU at all. INT4 opens models to consumer hardware: a 70B model at INT4 fits on a single 40 GB A100 or on two consumer RTX 4090s. This is the practical motivation for quantization and everything else follows from it.</p>
+<section id="what-makes-a-system-an-agent" class="level2" data-number="40.1">
+<h2 data-number="40.1" class="anchored" data-anchor-id="what-makes-a-system-an-agent"><span class="header-section-number">40.1</span> What Makes a System an Agent</h2>
+<p>A single tool call is not agentic. A model that receives a question, calls one tool, and generates a response is executing a fixed three-step pipeline which is useful, but not qualitatively different from a well-designed RAG system. Agency emerges from a specific architectural pattern: the model’s output at each step determines what happens next, and this determination continues across multiple steps until the model itself decides the task is complete.</p>
+<p>The defining property of an agent is that control flow is not fixed by the system designer but is determined dynamically by the model at runtime. A traditional program has a fixed sequence of operations: retrieve, then generate. An agent has a loop: observe the current state, decide on an action, take the action, observe the new state, decide on the next action, repeat until a termination condition is met. The number of iterations, which tools are called, in what order, and when to stop are all decided by the model during execution, not fixed in advance by the developer.</p>
+<p>This distinction matters because it changes the failure mode landscape entirely. A fixed pipeline fails in ways that are enumerable at design time, the retrieval step returns nothing, the generation step produces a bad response. An agent can fail in ways that only manifest at runtime: it can loop indefinitely, pursue a subgoal that diverges from the original task, accumulate errors across many steps, or terminate prematurely believing a partial solution is complete. Understanding and mitigating these dynamic failure modes is the central engineering challenge of agent system design.</p>
 <hr>
 </section>
-<section id="floating-point-formats" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="floating-point-formats"><span class="header-section-number">9.2</span> Floating point formats</h2>
-<p>Understanding quantization requires understanding the number formats involved.</p>
-<section id="ieee-754-floating-point" class="level3" data-number="9.2.1">
-<h3 data-number="9.2.1" class="anchored" data-anchor-id="ieee-754-floating-point"><span class="header-section-number">9.2.1</span> IEEE 754 floating point</h3>
-<p>Standard floating point represents numbers as:</p>
-<pre><code>value = (-1)^sign × mantissa × 2^exponent
+<section id="the-react-pattern-reasoning-and-acting" class="level2" data-number="40.2">
+<h2 data-number="40.2" class="anchored" data-anchor-id="the-react-pattern-reasoning-and-acting"><span class="header-section-number">40.2</span> The ReAct Pattern: Reasoning and Acting</h2>
+<p>ReAct <span class="citation" data-cites="yao2022react"><a href="#ref-yao2022react" role="doc-biblioref">[1]</a></span> is the foundational prompting pattern for agentic behavior in language models. It interleaves explicit reasoning with tool use, producing a trace that alternates between three components:</p>
+<p><strong>Thought</strong>: the model reasons about the current state and decides what to do next, expressed as natural language.</p>
+<p><strong>Action</strong>: the model specifies a tool call to execute, based on the preceding thought.</p>
+<p><strong>Observation</strong>: the tool’s result is returned and appended to the context.</p>
+<p>This cycle repeats until the model produces a final answer instead of another action:</p>
+<pre><code>Thought: The user wants to know the population of the capital of France.
+I need to first find the capital of France, then find its population.
 
-FP32 (float):  1 sign bit + 8 exponent bits + 23 mantissa bits = 32 bits
-               Range: ±3.4 × 10^38, precision: ~7 decimal digits
+Action: search("capital of France")
 
-FP16 (half):   1 sign bit + 5 exponent bits + 10 mantissa bits = 16 bits
-               Range: ±65,504, precision: ~3 decimal digits
+Observation: Paris is the capital of France.
 
-BF16:          1 sign bit + 8 exponent bits + 7 mantissa bits  = 16 bits
-               Range: same as FP32, precision: ~2 decimal digits</code></pre>
-<p>The key difference between FP16 and BF16: BF16 keeps FP32’s exponent range (8 bits) but reduces the mantissa. This matters for training, large language models encounter large gradient values that overflow FP16’s limited range (max ≈ 65,504) but fit comfortably in BF16’s range. BF16 became the standard training format for large models after FP16 was found to cause instability in very deep networks.</p>
-</section>
-<section id="fp8" class="level3" data-number="9.2.2">
-<h3 data-number="9.2.2" class="anchored" data-anchor-id="fp8"><span class="header-section-number">9.2.2</span> FP8</h3>
-<p>FP8 is a family of 8-bit floating point formats introduced with the H100 GPU:</p>
-<pre><code>E4M3: 1 sign + 4 exponent + 3 mantissa bits -&gt; more precision, less range
-E5M2: 1 sign + 5 exponent + 2 mantissa bits -&gt; more range, less precision</code></pre>
-<p>The H100’s Transformer Engine supports FP8 matrix multiplications natively, roughly doubling throughput compared to BF16 on the same hardware. FP8 is now the recommended training and inference format for frontier models on H100-class hardware.</p>
-<hr>
-</section>
-</section>
-<section id="integer-quantization" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="integer-quantization"><span class="header-section-number">9.3</span> Integer quantization</h2>
-<p>Integer formats represent numbers in a fundamentally different way, as scaled integers rather than floating point values.</p>
-<section id="the-quantization-mapping" class="level3" data-number="9.3.1">
-<h3 data-number="9.3.1" class="anchored" data-anchor-id="the-quantization-mapping"><span class="header-section-number">9.3.1</span> The quantization mapping</h3>
-<p>To quantize a floating point value to INT8:</p>
-<pre><code>1. Find the range of values to quantize: [x_min, x_max]
-2. Compute scale: s = (x_max - x_min) / 255
-3. Compute zero point: z = round(-x_min / s)
-4. Quantize: x_int8 = clip(round(x / s) + z, 0, 255)
-5. Dequantize: x_approx = s × (x_int8 - z)</code></pre>
-<p>The round-trip introduces quantization error: <code>x_approx ≈ x</code>, not <code>x_approx = x</code>. The magnitude of this error depends on the precision of the scale factor and the distribution of values being quantized.</p>
-<p>For INT8, values are mapped to the range [0, 255] (unsigned) or [-128, 127] (signed). For INT4, the range is [0, 15] or [-8, 7]. The smaller the integer range, the coarser the quantization, and the larger the potential error.</p>
-</section>
-<section id="symmetric-vs.-asymmetric-quantization" class="level3" data-number="9.3.2">
-<h3 data-number="9.3.2" class="anchored" data-anchor-id="symmetric-vs.-asymmetric-quantization"><span class="header-section-number">9.3.2</span> Symmetric vs.&nbsp;asymmetric quantization</h3>
-<p><strong>Symmetric</strong> quantization uses a single scale factor with zero point at 0:</p>
-<pre><code>x_int = round(x / s)</code></pre>
-<p>Simple and fast. Works well when the distribution is symmetric around zero.</p>
-<p><strong>Asymmetric</strong> quantization uses both scale and zero point, as shown above. More accurate for asymmetric distributions (e.g., activations after ReLU, which are always non-negative).</p>
-<hr>
-</section>
-</section>
-<section id="the-outlier-problem" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="the-outlier-problem"><span class="header-section-number">9.4</span> The outlier problem</h2>
-<p>LLM quantization is harder than quantizing small networks for edge deployment. The reason: outlier values.</p>
-<p>LLM activations (the values produced by the model’s hidden layers, not the weights) contain a small fraction of channels with values that are orders of magnitude larger than typical. In a layer where most activation values are in the range [-1, 1], a few channels may have values in the range [-100, 100].</p>
-<p>If you set the quantization scale based on these outlier channels, all the normal-range values are compressed into a tiny fraction of the integer range, losing most of their precision. If you clip the outlier channels, you introduce large errors for those specific values.</p>
-<p>This outlier phenomenon is a consistent property of large language models, it appears in GPT-3, LLaMA, and their successors. It is not a training bug but a structural feature of how the models represent information.</p>
-<p>The major INT8 and INT4 quantization schemes are largely distinguished by how they handle outliers.</p>
-<hr>
-</section>
-<section id="post-training-quantization-methods" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="post-training-quantization-methods"><span class="header-section-number">9.5</span> Post-training quantization methods</h2>
-<p>Post-training quantization (PTQ) quantizes a trained model without additional training. It uses a small calibration dataset to measure activation statistics and find optimal scale factors.</p>
-<section id="llm.int8" class="level3" data-number="9.5.1">
-<h3 data-number="9.5.1" class="anchored" data-anchor-id="llm.int8"><span class="header-section-number">9.5.1</span> LLM.int8()</h3>
-<p>Dettmers et al.&nbsp;(2022) introduced a mixed-precision decomposition specifically for LLM outliers:</p>
-<ol type="1">
-<li>Identify the small fraction of “outlier” feature dimensions (typically less than 1% of channels, but containing most of the activation magnitude)</li>
-<li>Extract those channels and compute them in full BF16 precision</li>
-<li>Quantize all remaining channels to INT8 and compute in INT8</li>
-<li>Sum the two partial results</li>
-</ol>
-<pre><code>W × X = W_outlier × X_outlier  (BF16)
-      + W_normal  × X_normal    (INT8)</code></pre>
-<p>This preserves accuracy in the outlier channels while achieving INT8 efficiency for the remaining 99%+ of computation. The memory savings are slightly less than pure INT8 (due to the BF16 outlier channels), but the quality preservation is close to BF16.</p>
-<p>LLM.int8() enabled serving 175B+ parameter models on a single GPU for the first time. It is integrated into HuggingFace Transformers as <code>load_in_8bit=True</code>.</p>
-</section>
-<section id="gptq" class="level3" data-number="9.5.2">
-<h3 data-number="9.5.2" class="anchored" data-anchor-id="gptq"><span class="header-section-number">9.5.2</span> GPTQ</h3>
-<p>Frantar et al.&nbsp;(2022) introduced GPTQ, a one-shot weight quantization method for INT4 quantization:</p>
-<ol type="1">
-<li>Process the weight matrix layer by layer</li>
-<li>For each column (output neuron), quantize the weights to INT4</li>
-<li>Compute the quantization error for this column</li>
-<li>Propagate the error to unquantized columns using the inverse Hessian of the weight matrix, updating them to compensate for the quantized column’s error</li>
-<li>Repeat for each column in sequence</li>
-</ol>
-<p>The Hessian-based error compensation is the key innovation. Instead of quantizing each weight independently, GPTQ adjusts remaining weights to compensate for already-quantized weights, minimizing cumulative error.</p>
-<p>GPTQ typically achieves INT4 quantization with perplexity degradation of less than 0.5 on standard benchmarks for models above 30B parameters. Below 30B, degradation is more noticeable. Larger models quantize more gracefully, a well-known empirical observation without a fully satisfying theoretical explanation.</p>
-<p>GPTQ requires a calibration dataset (typically 128–512 samples from the training data) and takes several hours to run for large models. The result is stored as INT4 weights with FP16/BF16 scale factors.</p>
-</section>
-<section id="awq" class="level3" data-number="9.5.3">
-<h3 data-number="9.5.3" class="anchored" data-anchor-id="awq"><span class="header-section-number">9.5.3</span> AWQ</h3>
-<p>Lin et al.&nbsp;(2023) introduced AWQ (Activation-aware Weight Quantization) with a different approach to the outlier problem: instead of handling outlier activations differently at inference time, AWQ identifies the weight channels that correspond to the most important activations and protects them during quantization.</p>
-<p>The insight: not all weights are equally important. Weights that multiply high-activation channels contribute more to the output than weights that multiply low-activation channels. Quantizing the important weights with less error and the unimportant weights with more error is better than treating all weights equally.</p>
-<p>AWQ achieves this through per-channel scaling: multiply important weight channels by a scale factor &gt; 1 before quantization (expanding their range relative to the quantization step size, reducing quantization error) and divide the corresponding activations by the same factor (maintaining the mathematical equivalence of the operation):</p>
-<pre><code>W × X = (W × s) × (X / s)   for any scale s</code></pre>
-<p>If <code>s &gt; 1</code> for the important channels, quantizing <code>W × s</code> to INT4 introduces less error in the important channels than quantizing <code>W</code> directly. The activation scaling by <code>1/s</code> is a free operation at inference time (absorbed into the previous layer’s output scaling).</p>
-<p>AWQ is faster to apply than GPTQ (minutes rather than hours), does not require Hessian computation, and achieves comparable or slightly better accuracy on most benchmarks. It has become the preferred method for INT4 quantization in many production pipelines.</p>
-<hr>
-</section>
-</section>
-<section id="gguf-and-llama.cpp-quantization" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="gguf-and-llama.cpp-quantization"><span class="header-section-number">9.6</span> GGUF and llama.cpp quantization</h2>
-<p>GGUF (GPT-Generated Unified Format) is a model format developed by the llama.cpp project, optimized for inference on consumer hardware, CPUs, Apple Silicon, and consumer GPUs. It supports a range of quantization schemes with different quality-size tradeoffs:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Quantization</th>
-<th>Bits per weight</th>
-<th>Memory (70B)</th>
-<th>Quality loss</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Q2_K</td>
-<td>~2.6</td>
-<td>~23 GB</td>
-<td>Significant</td>
-</tr>
-<tr class="even">
-<td>Q3_K_M</td>
-<td>~3.4</td>
-<td>~30 GB</td>
-<td>Moderate</td>
-</tr>
-<tr class="odd">
-<td>Q4_K_M</td>
-<td>~4.8</td>
-<td>~43 GB</td>
-<td>Small</td>
-</tr>
-<tr class="even">
-<td>Q5_K_M</td>
-<td>~5.7</td>
-<td>~50 GB</td>
-<td>Very small</td>
-</tr>
-<tr class="odd">
-<td>Q6_K</td>
-<td>~6.6</td>
-<td>~58 GB</td>
-<td>Minimal</td>
-</tr>
-<tr class="even">
-<td>Q8_0</td>
-<td>~8.5</td>
-<td>~75 GB</td>
-<td>Near-lossless</td>
-</tr>
-</tbody>
-</table>
-<p>The naming convention: Q4 = 4-bit quantization base, K = k-quants (a more accurate block quantization scheme), M = medium size variant.</p>
-<p>GGUF uses mixed-precision block quantization: weights are divided into blocks (typically 32 values), each block is quantized with its own scale factor, and additional “super-block” scale factors quantize the block scales themselves. This reduces the overhead of storing per-block scale factors while maintaining accuracy.</p>
-<p>GGUF is the dominant format for local inference with Ollama, LM Studio, and llama.cpp. It is not typically used in high-throughput serving (vLLM and TensorRT-LLM use their own formats), but it is how most self-hosted models run on consumer hardware.</p>
-<hr>
-</section>
-<section id="quantization-aware-training" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="quantization-aware-training"><span class="header-section-number">9.7</span> Quantization-aware training</h2>
-<p>Post-training quantization applies quantization after the fact, introducing error that cannot be corrected. Quantization-aware training (QAT) incorporates the quantization into the training process, allowing the model to adapt to quantization during training.</p>
-<section id="simulated-quantization" class="level3" data-number="9.7.1">
-<h3 data-number="9.7.1" class="anchored" data-anchor-id="simulated-quantization"><span class="header-section-number">9.7.1</span> Simulated quantization</h3>
-<p>QAT uses simulated quantization: during the forward pass, weights and activations are quantized to the target format; during the backward pass, gradients flow through as if the quantization had not occurred (the straight- through estimator). The model learns weight values that produce low loss even after quantization.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quantize_forward(w, bits<span class="op">=</span><span class="dv">8</span>):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Quantize weights for forward pass</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    scale <span class="op">=</span> w.<span class="bu">abs</span>().<span class="bu">max</span>() <span class="op">/</span> (<span class="dv">2</span><span class="op">**</span>(bits<span class="op">-</span><span class="dv">1</span>) <span class="op">-</span> <span class="dv">1</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    w_int <span class="op">=</span> torch.<span class="bu">round</span>(w <span class="op">/</span> scale).clamp(<span class="op">-</span>(<span class="dv">2</span><span class="op">**</span>(bits<span class="op">-</span><span class="dv">1</span>)), <span class="dv">2</span><span class="op">**</span>(bits<span class="op">-</span><span class="dv">1</span>) <span class="op">-</span> <span class="dv">1</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    w_quantized <span class="op">=</span> w_int <span class="op">*</span> scale  <span class="co"># Dequantize for computation</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Straight-through: gradient passes through as if w_quantized = w</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w <span class="op">+</span> (w_quantized <span class="op">-</span> w).detach()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The result: weights that, when quantized, produce minimal performance loss. QAT typically achieves better quality than PTQ at the same bit width, at the cost of requiring a full training run rather than a single post-processing step.</p>
-</section>
-<section id="qlora" class="level3" data-number="9.7.2">
-<h3 data-number="9.7.2" class="anchored" data-anchor-id="qlora"><span class="header-section-number">9.7.2</span> QLoRA</h3>
-<p>QLoRA (Dettmers et al., 2023) combines QAT with parameter-efficient fine-tuning:</p>
-<ol type="1">
-<li>Load the base model quantized to INT4 using NF4 (Normal Float 4, a 4-bit floating point format designed for normally distributed weights)</li>
-<li>Add trainable LoRA adapters in BF16</li>
-<li>Fine-tune only the LoRA adapters, with the quantized base model frozen</li>
-<li>Store gradients and optimizer states only for the adapter parameters</li>
-</ol>
-<p>QLoRA enables fine-tuning a 70B model on a single 48 GB GPU, something that would require multiple A100s with full-precision fine-tuning. It has become the standard approach for fine-tuning large models on limited hardware.</p>
-</section>
-<section id="nf4-the-normal-float-format" class="level3" data-number="9.7.3">
-<h3 data-number="9.7.3" class="anchored" data-anchor-id="nf4-the-normal-float-format"><span class="header-section-number">9.7.3</span> NF4: the normal float format</h3>
-<p>NF4 is a data type designed specifically for neural network weights. Unlike INT4 which maps values uniformly, NF4 maps values so that each quantization bin contains an equal fraction of weights from a normal distribution. Since pretrained model weights follow approximately normal distributions, NF4 minimizes quantization error for typical weight distributions:</p>
-<pre><code>INT4 bins (uniform):    [-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
-NF4 bins (non-uniform): denser near zero, sparser at extremes
-                        matches normal distribution of pretrained weights</code></pre>
-<p>NF4 typically outperforms INT4 for weight quantization at 4-bit precision because it allocates more precision where the weights actually are (clustered near zero) rather than allocating precision uniformly across the possible range.</p>
-<hr>
-</section>
-</section>
-<section id="activation-quantization" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="activation-quantization"><span class="header-section-number">9.8</span> Activation quantization</h2>
-<p>Weight quantization stores weights at reduced precision but typically performs the actual matrix multiplications in BF16 or FP16 (dequantizing first). Activation quantization goes further: both weights and activations are in reduced precision during computation, allowing the use of integer or FP8 arithmetic units that are faster than BF16 arithmetic.</p>
-<section id="smoothquant" class="level3" data-number="9.8.1">
-<h3 data-number="9.8.1" class="anchored" data-anchor-id="smoothquant"><span class="header-section-number">9.8.1</span> SmoothQuant</h3>
-<p>Xiao et al.&nbsp;(2023) introduced SmoothQuant to address the outlier problem for activation quantization. The key insight: quantization difficulty can be migrated between activations and weights.</p>
-<p>If activations have outlier channels (hard to quantize), and weights do not (easy to quantize), we can:</p>
-<ol type="1">
-<li>Scale down the outlier activation channels by a factor <code>s_j</code></li>
-<li>Scale up the corresponding weight rows by the same factor <code>s_j</code></li>
-<li>The matrix product is unchanged: <code>(X / s) × (W × s) = X × W</code></li>
-<li>The scaled activations have a more uniform distribution which is easy to quantize</li>
-<li>The scaled weights have larger values in specific rows and still quantizable</li>
-</ol>
-<p>The scale factors are computed from activation statistics gathered on a calibration dataset. The weight scaling is applied offline (absorbed into the stored weights) and the activation scaling is applied as a single per-channel multiply at inference time.</p>
-<p>SmoothQuant enables W8A8 (8-bit weights and activations) quantization with accuracy close to BF16, at roughly 1.5× the throughput of BF16 on hardware with INT8 tensor cores.</p>
-</section>
-<section id="fp8-inference" class="level3" data-number="9.8.2">
-<h3 data-number="9.8.2" class="anchored" data-anchor-id="fp8-inference"><span class="header-section-number">9.8.2</span> FP8 inference</h3>
-<p>FP8 (E4M3 and E5M2) is increasingly the preferred quantization format for high-throughput serving on H100-class hardware. Unlike INT8, FP8 is a floating point format with dynamic range, making it more robust to outliers without the outlier-handling complexity of LLM.int8() or SmoothQuant.</p>
-<p>The H100’s Transformer Engine supports FP8 matrix multiplications with automatic dynamic scaling: it monitors activation ranges during inference and adjusts the FP8 scale factors to minimize quantization error in real time. This makes FP8 practically zero-configuration compared to INT8 calibration.</p>
-<p>FP8 inference on H100 achieves approximately 2× the throughput of BF16, with quality typically within 0.5% of BF16 on standard benchmarks.</p>
-<hr>
-</section>
-</section>
-<section id="structured-and-unstructured-sparsity" class="level2" data-number="9.9">
-<h2 data-number="9.9" class="anchored" data-anchor-id="structured-and-unstructured-sparsity"><span class="header-section-number">9.9</span> Structured and unstructured sparsity</h2>
-<p>Quantization reduces the precision of each value. Sparsity takes a different approach: set some values to exactly zero and skip their computation entirely.</p>
-<section id="unstructured-sparsity" class="level3" data-number="9.9.1">
-<h3 data-number="9.9.1" class="anchored" data-anchor-id="unstructured-sparsity"><span class="header-section-number">9.9.1</span> Unstructured sparsity</h3>
-<p>Prune individual weights based on magnitude or importance:</p>
-<pre><code>W = [0.23, -0.91, 0.04, 0.67, -0.02, 0.88, ...]
-      keep   keep  zero  keep   zero   keep
+Thought: Now I need to find the population of Paris.
 
-50% sparse: approximately half the weights are zero</code></pre>
-<p>Unstructured sparsity requires sparse matrix arithmetic, computing only the multiplications where the weight is non-zero. In theory, 50% sparsity halves the computation. In practice, sparse arithmetic is harder to accelerate on GPU than dense arithmetic, and the speedup is often much less than 50%. Unstructured sparsity is difficult to exploit efficiently on current hardware.</p>
+Action: search("population of Paris")
+
+Observation: The population of Paris is approximately 2.1 million
+(city proper) as of 2023.
+
+Thought: I now have the information needed to answer the question.
+
+Final Answer: The capital of France is Paris, which has a population
+of approximately 2.1 million people.</code></pre>
+<section id="why-explicit-reasoning-improves-tool-use" class="level3" data-number="40.2.1">
+<h3 data-number="40.2.1" class="anchored" data-anchor-id="why-explicit-reasoning-improves-tool-use"><span class="header-section-number">40.2.1</span> Why Explicit Reasoning Improves Tool Use</h3>
+<p>The Thought step is not decorative. ReAct substantially outperforms both pure reasoning (chain-of-thought without tools) and pure acting (tool calls without explicit reasoning) on multi-step tasks. The mechanism parallels the working-memory argument for chain-of-thought: the Thought tokens serve as an explicit plan that conditions subsequent action selection, reducing the probability of an action that does not follow logically from the current state.</p>
+<p>Pure acting without reasoning is prone to a specific failure: the model selects a plausible-looking next action based on surface pattern matching to the immediate context, without considering whether that action serves the overall goal. Explicit reasoning forces the model to articulate the connection between the current state and the chosen action, which is both a planning aid and, importantly, a debugging aid, a human reviewing the trace can identify exactly where the model’s reasoning went wrong.</p>
 </section>
-<section id="structured-sparsity-nvidia" class="level3" data-number="9.9.2">
-<h3 data-number="9.9.2" class="anchored" data-anchor-id="structured-sparsity-nvidia"><span class="header-section-number">9.9.2</span> 2:4 structured sparsity (NVIDIA)</h3>
-<p>NVIDIA introduced 2:4 sparsity with the A100: in every group of 4 consecutive weights, exactly 2 must be zero. The non-zero pattern must be this specific structured form.</p>
-<pre><code>Dense: [w1, w2, w3, w4]
-2:4:   [w1,  0, w3,  0]  or  [w1, w2,  0,  0]  or  [0, w2, w3,  0]  ...</code></pre>
-<p>This specific structure allows the hardware to represent the sparse matrix compactly (store only the 2 non-zero values plus a 2-bit index indicating which positions they occupy) and compute sparse matrix multiplications at roughly 2× the throughput of dense computation with nearly no quality loss.</p>
-<p>Blackwell-generation GPUs (B100, B200) extend this to 2:4 sparsity combined with FP4 quantization, potentially achieving 4× throughput compared to BF16 dense computation.</p>
+<section id="react-failure-modes" class="level3" data-number="40.2.2">
+<h3 data-number="40.2.2" class="anchored" data-anchor-id="react-failure-modes"><span class="header-section-number">40.2.2</span> ReAct Failure Modes</h3>
+<p>ReAct traces reveal specific failure patterns that are otherwise invisible in a system that only shows final outputs:</p>
+<p><strong>Reasoning-action mismatch</strong>: the Thought correctly identifies what should happen next, but the generated Action does not match the model reasons correctly and then executes incorrectly, typically due to tool call formatting errors or the model losing track of the plan between the reasoning and action tokens.</p>
+<p><strong>Observation misreading</strong>: the model’s subsequent Thought misinterprets the Observation, leading the trace astray from an otherwise correct trajectory.</p>
+<p><strong>Repetitive looping</strong>: the model generates the same or a very similar action repeatedly, typically because the observation did not resolve the uncertainty that motivated the action, and the model has no mechanism to recognize this and try a different approach.</p>
+<p><strong>Premature termination</strong>: the model produces a Final Answer before gathering sufficient information, typically because it has partial information that resembles a complete answer closely enough to satisfy its own internal check.</p>
 <hr>
 </section>
 </section>
-<section id="combining-quantization-techniques" class="level2" data-number="9.10">
-<h2 data-number="9.10" class="anchored" data-anchor-id="combining-quantization-techniques"><span class="header-section-number">9.10</span> Combining quantization techniques</h2>
-<p>Production deployments typically combine multiple techniques:</p>
-<p><strong>Weight-only INT4 + BF16 compute</strong> (most common for serving): - Store weights as INT4 with per-group scales - Dequantize to BF16 on-the-fly before matrix multiplication - Compute in BF16 using tensor cores - Memory savings: 4× over BF16; throughput gain: primarily from reduced memory bandwidth for weight loading</p>
-<p><strong>FP8 weights + FP8 activations</strong> (H100 production): - Both weights and activations in FP8 - Compute using FP8 tensor cores (~2× throughput of BF16) - Dynamic scaling via Transformer Engine - Near-BF16 quality for most tasks</p>
-<p><strong>INT4 weights + 2:4 sparsity</strong> (Blackwell): - Weights quantized to INT4 and pruned to 2:4 sparsity - Compute using sparse FP4 tensor cores - Potential 4-8× throughput improvement over dense BF16 - Quality impact requires careful calibration</p>
-<p><strong>QLoRA for fine-tuning</strong>: - Base model in NF4 - Adapters in BF16 - Enables fine-tuning models 4× larger than would otherwise fit - Merge adapters back to BF16 for serving, or serve with adapters</p>
+<section id="planning-architectures" class="level2" data-number="40.3">
+<h2 data-number="40.3" class="anchored" data-anchor-id="planning-architectures"><span class="header-section-number">40.3</span> Planning Architectures</h2>
+<p>ReAct interleaves planning and execution at each step, the model decides one action at a time without an explicit overall plan. For complex, multi-step tasks, more structured planning architectures improve reliability by separating the planning phase from the execution phase.</p>
+<section id="plan-and-execute" class="level3" data-number="40.3.1">
+<h3 data-number="40.3.1" class="anchored" data-anchor-id="plan-and-execute"><span class="header-section-number">40.3.1</span> Plan-and-Execute</h3>
+<p>Plan-and-execute architectures generate a complete plan before beginning execution:</p>
+<ol type="1">
+<li><strong>Planning phase</strong>: given the task, generate a sequence of subtasks required to complete it</li>
+<li><strong>Execution phase</strong>: execute each subtask in order, using tools as needed</li>
+<li><strong>Replanning (optional)</strong>: if a subtask fails or produces unexpected results, regenerate the remaining plan based on the new information</li>
+</ol>
+<pre><code>Task: "Research the top 3 competitors to Company X and summarize their
+pricing strategies."
+
+Plan:
+1. Search for "Company X competitors"
+2. For each competitor identified, search for their pricing page
+3. Extract pricing information from each competitor's page
+4. Synthesize a comparison summary
+
+[Execute step 1] → competitors: [A, B, C]
+[Execute step 2 for A] → pricing page found
+[Execute step 2 for B] → pricing page found
+[Execute step 2 for C] → pricing page not found, alternative search needed
+[Replan step 2 for C] → search "Company C pricing" instead
+[Execute step 3] → extract pricing from all three
+[Execute step 4] → generate summary</code></pre>
+<p>Plan-and-execute reduces the reasoning burden at each step and the model does not need to reconsider the overall strategy at every action, only whether the current subtask is progressing as expected. This produces more coherent long-horizon behavior than pure ReAct, which can drift from the original goal across many interleaved reasoning-action cycles.</p>
+<p>The tradeoff: plans made before execution begins may not anticipate information discovered during execution. The replanning step addresses this but adds complexity meaning that the system must detect when replanning is needed (a subtask failure, an unexpected observation) and correctly incorporate the new information into a revised plan without discarding progress already made.</p>
+</section>
+<section id="tree-of-thoughts-and-deliberate-search" class="level3" data-number="40.3.2">
+<h3 data-number="40.3.2" class="anchored" data-anchor-id="tree-of-thoughts-and-deliberate-search"><span class="header-section-number">40.3.2</span> Tree of Thoughts and Deliberate Search</h3>
+<p>For tasks where a single linear plan is insufficient (problems requiring exploration of multiple candidate approaches) Tree of Thoughts <span class="citation" data-cites="yao2023tree"><a href="#ref-yao2023tree" role="doc-biblioref">[2]</a></span> structures the reasoning process as a search over a tree of partial solutions.</p>
+<p>At each node, the model generates multiple candidate next steps (branches), evaluates each candidate’s promise (using the model itself as an evaluator, or an external verifier), and expands the most promising branches while pruning unpromising ones.</p>
+<p>Tree of Thoughts is substantially more expensive than plan-and-execute or ReAct, generating and evaluating multiple candidates at each step multiplies the compute cost by the branching factor. It is appropriate for tasks with: - High stakes where getting the plan right matters more than speed - Genuine ambiguity about the best approach, where different strategies might succeed or fail unpredictably - Available verification (can candidate plans be scored reliably?)</p>
+<p>For most production agent systems, the cost of tree search is not justified; plan-and-execute with replanning captures most of the reliability benefit at a fraction of the compute cost.</p>
+</section>
+<section id="hierarchical-planning" class="level3" data-number="40.3.3">
+<h3 data-number="40.3.3" class="anchored" data-anchor-id="hierarchical-planning"><span class="header-section-number">40.3.3</span> Hierarchical Planning</h3>
+<p>For very complex tasks, hierarchical planning decomposes the problem into nested levels of abstraction: a high-level plan of major phases, each phase decomposed into a mid-level plan of subtasks, each subtask decomposed into low-level tool calls.</p>
+<pre><code>High-level: [Research phase] → [Analysis phase] → [Report generation phase]
+
+Research phase (mid-level):
+  [Identify sources] → [Gather data from each source] → [Verify data quality]
+
+Gather data from each source (low-level):
+  [search tool call] → [fetch tool call] → [extract tool call]</code></pre>
+<p>Hierarchical planning mirrors how humans decompose complex projects and allows different levels of the hierarchy to be handled by different model capabilities — a smaller, faster model might handle low-level tool call generation while a larger model handles high-level strategic planning. This connects to the model routing and cascade patterns covered in Chapter 53.</p>
 <hr>
 </section>
-<section id="quality-evaluation-for-quantized-models" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="quality-evaluation-for-quantized-models"><span class="header-section-number">9.11</span> Quality evaluation for quantized models</h2>
-<p>Quantization quality is measured on the same metrics as full-precision models, but the comparison requires care.</p>
-<p><strong>Perplexity</strong> on a held-out dataset is the most reliable automatic metric for quantization quality. A perplexity increase of less than 0.5 is typically imperceptible in generated text while increases above 1.0 are noticeable.</p>
-<p><strong>Downstream task benchmarks</strong> (MMLU, HellaSwag, HumanEval) catch task- specific degradation that perplexity may miss. Some tasks are more sensitive to quantization than others, math and code tend to degrade before general language.</p>
-<p><strong>Outlier-sensitive tasks</strong>: question answering tasks that require precise recall of specific facts tend to be more sensitive to quantization than open-ended generation. This is consistent with the outlier hypothesis, outlier channels may be important for retrieving specific facts.</p>
-<p><strong>Human evaluation</strong>: for the final quality gate before production, human preference evaluation (does this response feel worse?) is the most reliable signal. Perplexity improvements from aggressive quantization do not always translate to imperceptible quality in practice.</p>
-<section id="the-quantization-degradation-curve" class="level3" data-number="9.11.1">
-<h3 data-number="9.11.1" class="anchored" data-anchor-id="the-quantization-degradation-curve"><span class="header-section-number">9.11.1</span> The quantization degradation curve</h3>
-<p>Quantization quality degrades non-linearly with bit width and model size:</p>
-<pre><code>                     Quality (relative to BF16)
-                     ▲
-100% ──────────────────────────────────────── BF16
- 99% ──────────────────────────────── FP8
- 98% ──────────────────────────── INT8
- 96% ───────────────────────── INT4 (large models, e.g., 70B)
- 90% ────────────────── INT4 (medium models, e.g., 13B)
- 80% ──────── INT4 (small models, e.g., 7B)
- 60% ─── INT3 (typically unacceptable)
-      ──────────────────────────────────────→ bit width</code></pre>
-<p>Large models are more robust to quantization than small models. A 70B model at INT4 often outperforms a 7B model at BF16 while using similar memory. This is the primary argument for quantizing large models rather than serving small ones: you may get better quality at lower cost.</p>
-<hr>
 </section>
+<section id="termination-and-loop-control" class="level2" data-number="40.4">
+<h2 data-number="40.4" class="anchored" data-anchor-id="termination-and-loop-control"><span class="header-section-number">40.4</span> Termination and Loop Control</h2>
+<p>An agent that does not know when to stop is not useful regardless of how well it reasons and acts. Termination logic is an underappreciated but critical component of agent system design.</p>
+<section id="explicit-stopping-criteria" class="level3" data-number="40.4.1">
+<h3 data-number="40.4.1" class="anchored" data-anchor-id="explicit-stopping-criteria"><span class="header-section-number">40.4.1</span> Explicit Stopping Criteria</h3>
+<p>The most reliable termination approach: define explicit, checkable stopping criteria before the agent begins execution. For a research task: “stop when you have gathered pricing information for all three competitors.” For a coding task: “stop when all tests pass.” For an open-ended task: “stop when you believe the response fully addresses the user’s request, or after 10 tool calls, whichever comes first.”</p>
+<p>Explicit criteria are more reliable than relying on the model’s own judgment about task completion, because the model’s judgment is subject to the same biases described in <a href="../part6/LLM_judge.html" class="quarto-xref"><span>Chapter 38</span></a> including a tendency toward premature confidence.</p>
 </section>
-<section id="key-takeaways" class="level2" data-number="9.12">
-<h2 data-number="9.12" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">9.12</span> Key takeaways</h2>
+<section id="maximum-step-limits" class="level3" data-number="40.4.2">
+<h3 data-number="40.4.2" class="anchored" data-anchor-id="maximum-step-limits"><span class="header-section-number">40.4.2</span> Maximum Step Limits</h3>
+<p>Every production agent system must impose a hard maximum on the number of steps (tool calls, reasoning cycles) before forced termination. Without this limit, a looping agent can consume unbounded compute and cost.</p>
+<p>Typical limits range from 5–10 steps for simple tasks to 20–50 steps for complex research or coding tasks. The limit should be generous enough to allow legitimate multi-step tasks to complete but tight enough to bound the worst-case cost of a failure.</p>
+<p>When the step limit is reached without task completion, the agent should produce a partial result with an explicit statement that the task was not fully completed, rather than either fabricating a complete-looking answer or failing silently.</p>
+</section>
+<section id="loop-detection" class="level3" data-number="40.4.3">
+<h3 data-number="40.4.3" class="anchored" data-anchor-id="loop-detection"><span class="header-section-number">40.4.3</span> Loop Detection</h3>
+<p>Beyond a hard step limit, detecting repetitive behavior before it consumes the full step budget improves both cost and user experience. Loop detection compares recent actions for similarity:</p>
 <ul>
-<li>Quantization reduces parameter precision from BF16 (2 bytes) to INT8 (1 byte) or INT4 (0.5 bytes), directly halving or quartering memory requirements — the difference between serving a 70B model on 2 GPUs vs.&nbsp;1 GPU vs.&nbsp;a consumer card</li>
-<li>BF16 is the standard training format (matches FP32 range, handles gradient magnitudes that overflow FP16); FP8 on H100 is the emerging standard for inference (2× throughput with near-BF16 quality)</li>
-<li>The outlier problem — a small fraction of activation channels with very large values — is the core challenge of LLM quantization; LLM.int8(), AWQ, and SmoothQuant all address it differently</li>
-<li>GPTQ uses Hessian-based error compensation to minimize quantization error layer by layer; AWQ uses activation-aware weight scaling; both achieve near- lossless INT4 quantization for large models</li>
-<li>GGUF/llama.cpp quantization enables local inference on consumer hardware; Q4_K_M is the practical default for local deployment</li>
-<li>QLoRA combines INT4 base model quantization with BF16 LoRA adapters, enabling fine-tuning of 70B models on a single GPU — the standard approach for practitioners without datacenter hardware</li>
-<li>Larger models quantize more gracefully than smaller ones; a quantized 70B often outperforms a full-precision 13B while using similar memory</li>
-<li>2:4 structured sparsity enables ~2× throughput on A100/H100 without quality loss; combined with FP4 on Blackwell GPUs, this is the next frontier of inference efficiency</li>
+<li><strong>Exact repetition</strong>: the same tool call with the same arguments was made in the last <span class="math inline">\(k\)</span> steps</li>
+<li><strong>Semantic repetition</strong>: a tool call semantically very similar to a recent one (same tool, similar arguments) was made recently, without meaningful progress between them</li>
 </ul>
-<div id="fig-progress" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="figures/ch3_2/cheat_sheet.svg" class="img-fluid figure-img" style="width:90.0%">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.2: Cheat sheet.
-</figcaption>
-</figure>
-</div>
+<p>When a loop is detected, the system can: inject an explicit prompt asking the model to try a different approach, escalate to a different (typically more capable) model, or terminate with a partial result and an explanation that the agent was unable to make progress.</p>
+</section>
+<section id="human-in-the-loop-checkpoints" class="level3" data-number="40.4.4">
+<h3 data-number="40.4.4" class="anchored" data-anchor-id="human-in-the-loop-checkpoints"><span class="header-section-number">40.4.4</span> Human-in-the-Loop Checkpoints</h3>
+<p>For high-stakes or long-running tasks, periodic human checkpoints interrupt the agent’s execution to request confirmation or guidance before continuing. This is distinct from the confirm-before-execute pattern for individual irreversible tool calls from <a href="tool_function.html#sec-confirm-execute" class="quarto-xref"><span>Section 39.9.2</span></a>, checkpoint-based human-in-the-loop applies at the level of overall task progress, not individual actions.</p>
+<p>A checkpoint might present: “I’ve completed research on competitors A and B but am having difficulty finding pricing information for competitor C. Should I continue searching, use an estimate, or report this as unavailable?” This pattern trades autonomy for reliability, appropriate when task failure is costly and human oversight time is available.</p>
 <hr>
 </section>
-<section id="further-reading" class="level2" data-number="9.13">
-<h2 data-number="9.13" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">9.13</span> Further reading</h2>
+</section>
+<section id="multi-agent-systems" class="level2" data-number="40.5">
+<h2 data-number="40.5" class="anchored" data-anchor-id="multi-agent-systems"><span class="header-section-number">40.5</span> Multi-Agent Systems</h2>
+<p>A multi-agent system decomposes a task across multiple agent instances, each with a distinct role, that communicate to accomplish a shared goal. The motivation for multi-agent decomposition mirrors the motivation for modular software design: specialization, parallelism, and separation of concerns.</p>
+<section id="why-decompose-into-multiple-agents" class="level3" data-number="40.5.1">
+<h3 data-number="40.5.1" class="anchored" data-anchor-id="why-decompose-into-multiple-agents"><span class="header-section-number">40.5.1</span> Why Decompose Into Multiple Agents</h3>
+<p><strong>Specialization</strong>: different subtasks benefit from different system prompts, tool access, or even different underlying models. A “researcher” agent with web search access and a “writer” agent with no tool access but strong prose generation can each be optimized for their specific role, rather than requiring a single agent to excel at both research and writing simultaneously.</p>
+<p><strong>Context window management</strong>: a single agent handling a complex, long-running task accumulates a large context window of tool calls, observations, and reasoning traces. Decomposing into multiple agents, each with a bounded context relevant to its subtask, prevents any single agent’s context from growing unmanageably large.</p>
+<p><strong>Parallelism</strong>: independent subtasks can be assigned to separate agent instances running concurrently, reducing overall task latency in the same way that parallel tool calls reduce latency for independent tool invocations.</p>
+<p><strong>Verification and adversarial checking</strong>: a separate “critic” agent can review the output of a “worker” agent, catching errors that the worker would not catch reviewing its own output, the same self-verification limitation that motivates process reward models applies to agent output review.</p>
+</section>
+<section id="common-multi-agent-architectures" class="level3" data-number="40.5.2">
+<h3 data-number="40.5.2" class="anchored" data-anchor-id="common-multi-agent-architectures"><span class="header-section-number">40.5.2</span> Common Multi-Agent Architectures</h3>
+<p><strong>Orchestrator-worker</strong>: a central orchestrator agent decomposes the task, assigns subtasks to worker agents, collects their results, and synthesizes a final response. The orchestrator maintains the overall plan; workers execute bounded subtasks without visibility into the full task context.</p>
+<pre><code>Orchestrator: "Research competitor pricing" is decomposed into:
+  Worker 1: "Find and summarize Competitor A's pricing"
+  Worker 2: "Find and summarize Competitor B's pricing"
+  Worker 3: "Find and summarize Competitor C's pricing"
+
+[Workers execute in parallel]
+
+Orchestrator: Synthesizes the three summaries into a comparison report.</code></pre>
+<p>This is the most common production multi-agent pattern because it maps naturally onto parallelizable subtasks and keeps each worker’s context bounded and focused.</p>
+<p><strong>Debate and adversarial verification</strong>: two or more agents argue different positions or independently attempt the same task, with a judge (another agent or a human) evaluating the results. In practice, debate architectures are used for higher-reliability verification: two agents independently solve a problem, and disagreement between them flags the case for additional scrutiny.</p>
+<p><strong>Pipeline</strong>: agents are arranged in a fixed sequence, each processing the output of the previous one. A research agent produces raw findings, which a fact-checking agent verifies, which an editing agent refines for clarity, which a formatting agent structures for final presentation. Pipeline architectures are simpler to reason about than orchestrator-worker patterns because control flow is fixed, but they cannot adapt to unexpected intermediate results as flexibly.</p>
+</section>
+<section id="communication-protocols" class="level3" data-number="40.5.3">
+<h3 data-number="40.5.3" class="anchored" data-anchor-id="communication-protocols"><span class="header-section-number">40.5.3</span> Communication Protocols</h3>
+<p>Multi-agent systems require a communication protocol: how do agents exchange information? The two dominant approaches:</p>
+<p><strong>Shared context</strong>: all agents read from and write to a shared conversation or document. Simple to implement but does not bound any individual agent’s context growth, and all agents see all information regardless of relevance, reintroducing the context management problem multi-agent decomposition was meant to solve.</p>
+<p><strong>Structured message passing</strong>: agents communicate through explicit messages with defined schemas, similar to tool call schemas but between agents rather than between an agent and a tool. The orchestrator-worker pattern typically uses structured message passing: the orchestrator sends a task specification, the worker returns a structured result.</p>
+<p>Structured message passing is generally preferred in production systems because it bounds each agent’s context to only the information relevant to its role, and because structured schemas make the system’s behavior more predictable and easier to debug.</p>
+<hr>
+</section>
+</section>
+<section id="failure-modes-specific-to-multi-agent-systems" class="level2" data-number="40.6">
+<h2 data-number="40.6" class="anchored" data-anchor-id="failure-modes-specific-to-multi-agent-systems"><span class="header-section-number">40.6</span> Failure Modes Specific to Multi-Agent Systems</h2>
+<p>Multi-agent systems introduce failure modes beyond those of single-agent systems, arising from the interaction between agents.</p>
+<section id="error-propagation-and-amplification" class="level3" data-number="40.6.1">
+<h3 data-number="40.6.1" class="anchored" data-anchor-id="error-propagation-and-amplification"><span class="header-section-number">40.6.1</span> Error Propagation and Amplification</h3>
+<p>An error in one agent’s output becomes an input to downstream agents, which may compound rather than correct it. If a research agent misidentifies a competitor’s pricing (a factual error), a downstream summarization agent faithfully summarizes the wrong information, the summarization agent performed its task correctly, but the overall system produced a wrong result because it inherited an upstream error.</p>
+<p>This is structurally identical to the cascading errors problem in sequential tool calls, but at the agent level rather than the tool level. The mitigation is similar: verification steps between agents, where a downstream agent (or a dedicated verification agent) checks the upstream agent’s output before proceeding, rather than blindly trusting it.</p>
+</section>
+<section id="coordination-overhead" class="level3" data-number="40.6.2">
+<h3 data-number="40.6.2" class="anchored" data-anchor-id="coordination-overhead"><span class="header-section-number">40.6.2</span> Coordination Overhead</h3>
+<p>Communication between agents consumes tokens, latency, and cost. A multi-agent system with 5 agents each producing 1,000 tokens of intermediate output before the final synthesis has consumed 5,000 tokens of coordination overhead beyond what a single well-designed agent might require. For tasks that do not genuinely benefit from decomposition where a single agent with sufficient context could handle the task directly, multi-agent architectures add cost and latency without corresponding quality improvement.</p>
+<p>The decision to decompose into multiple agents should be justified by one of the specific benefits described above (specialization, context management, parallelism, verification), not applied by default to any task that seems complex.</p>
+</section>
+<section id="emergent-miscoordination" class="level3" data-number="40.6.3">
+<h3 data-number="40.6.3" class="anchored" data-anchor-id="emergent-miscoordination"><span class="header-section-number">40.6.3</span> Emergent Miscoordination</h3>
+<p>Agents that were each individually well-behaved can produce poor collective behavior when composed. A classic pattern: an orchestrator assigns overlapping or redundant subtasks to workers because it did not correctly partition the task; workers duplicate effort without either being aware of the redundancy. Or: a worker’s output format does not match what the orchestrator expects, and the orchestrator’s synthesis step silently misinterprets or discards useful information.</p>
+<p>These failures are difficult to anticipate from testing individual agents in isolation, they emerge only from the composed system’s behavior, which is why end-to-end evaluation of the full multi-agent pipeline is necessary in addition to component-level evaluation of each agent.</p>
+</section>
+<section id="cost-multiplication" class="level3" data-number="40.6.4">
+<h3 data-number="40.6.4" class="anchored" data-anchor-id="cost-multiplication"><span class="header-section-number">40.6.4</span> Cost Multiplication</h3>
+<p>Each agent in a multi-agent system incurs its own model inference cost. A task handled by a single agent making 5 tool calls costs roughly 5× the base inference cost. The same task handled by an orchestrator plus 3 workers, each making their own reasoning passes, can cost 4–8× the base inference cost even before accounting for the tool calls each worker makes and the multi-agent decomposition itself is not free.</p>
+<p>Production multi-agent systems must weigh this cost multiplication against the reliability and quality benefits. For tasks where a single well-designed agent achieves acceptable quality, the additional cost of multi-agent decomposition is not justified. For tasks where quality genuinely improves from specialization or verification, the cost may be worthwhile, but this should be validated empirically rather than assumed.</p>
+<hr>
+</section>
+</section>
+<section id="key-takeaways" class="level2" data-number="40.7">
+<h2 data-number="40.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">40.7</span> Key Takeaways</h2>
 <ul>
-<li>Dettmers et al.&nbsp;(2022). <em>LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale.</em> — The foundational paper on LLM quantization; identified the outlier problem and introduced mixed-precision decomposition.</li>
-<li>Frantar et al.&nbsp;(2022). <em>GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers.</em> — Hessian-based INT4 quantization; the first practical 4-bit quantization for models above 30B parameters.</li>
-<li>Lin et al.&nbsp;(2023). <em>AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration.</em> — Faster and often more accurate than GPTQ; now the preferred INT4 method in many production systems.</li>
-<li>Xiao et al.&nbsp;(2023). <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models.</em> — Migrating quantization difficulty from activations to weights for W8A8 quantization.</li>
-<li>Dettmers et al.&nbsp;(2023). <em>QLoRA: Efficient Finetuning of Quantized LLMs.</em> — NF4 quantization combined with LoRA for fine-tuning on consumer hardware; introduced the NF4 data type and double quantization.</li>
-<li>Mishra et al.&nbsp;(2021). <em>Accelerating Sparse Deep Neural Networks.</em> — NVIDIA’s 2:4 structured sparsity and the hardware support for it in A100 and later.</li>
-<li>NVIDIA (2024). <em>FP8 Formats for Deep Learning.</em> — Technical specification of E4M3 and E5M2 formats and the H100 Transformer Engine’s dynamic scaling.</li>
+<li>Agency emerges when control flow is determined dynamically by the model at runtime rather than fixed by the system designer; this shifts the failure mode landscape from enumerable design-time failures to dynamic runtime failures like looping, goal drift, and error accumulation.</li>
+<li>ReAct interleaves explicit reasoning (Thought) with tool use (Action) and result incorporation (Observation); the explicit reasoning step improves reliability by forcing the model to articulate why an action serves the current goal before taking it.</li>
+<li>Plan-and-execute architectures separate planning from execution, producing more coherent long-horizon behavior than step-by-step ReAct at the cost of requiring replanning logic when execution diverges from the plan.</li>
+<li>Tree of Thoughts and hierarchical planning address more complex tasks requiring exploration or nested decomposition, at substantially higher compute cost than linear planning approaches.</li>
+<li>Every production agent requires explicit termination logic: stopping criteria, maximum step limits, and loop detection; relying on the model’s own judgment of task completion inherits the premature-confidence bias documented in Chapter 47.</li>
+<li>Multi-agent decomposition is justified by four specific benefits — specialization, context window management, parallelism, and independent verification — and should not be adopted by default for tasks that seem complex without one of these benefits being present.</li>
+<li>The orchestrator-worker pattern is the dominant production multi-agent architecture, mapping naturally onto parallelizable subtasks with bounded context per worker; pipeline architectures are simpler but cannot adapt to unexpected intermediate results.</li>
+<li>Structured message passing between agents (defined schemas, similar to tool call schemas) is generally preferred over shared context, because it bounds each agent’s context and makes system behavior more predictable.</li>
+<li>Error propagation across agents compounds rather than self-corrects: a downstream agent that faithfully processes an upstream agent’s incorrect output produces a wrong result despite each individual agent behaving correctly in isolation.</li>
+<li>Multi-agent systems multiply inference cost — a 3-worker orchestrator pattern can cost 4–8× a single agent’s base cost — and this multiplication must be justified by measured quality or reliability improvement, not assumed.</li>
+</ul>
+<hr>
+</section>
+<section id="further-reading" class="level2" data-number="40.8">
+<h2 data-number="40.8" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">40.8</span> Further Reading</h2>
+<ul>
+<li><p>Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., &amp; Cao, Y. (2023). <em>ReAct: Synergizing Reasoning and Acting in Language Models.</em> ICLR. — The foundational agentic prompting paper; the thought-action-observation loop and its comparison to reasoning-only and acting-only baselines are the key contributions; the failure mode analysis in the appendix is directly useful for debugging agent traces.</p></li>
+<li><p>Yao, S., Yu, D., Zhao, J., Shafran, I., Griffiths, T. L., Cao, Y., &amp; Narasimhan, K. (2023). <em>Tree of Thoughts: Deliberate Problem Solving with Large Language Models.</em> NeurIPS. — Introduces tree-structured search over reasoning and planning steps; the comparison of search strategies (BFS, DFS) and the cost-quality tradeoff analysis are the key contributions for deciding when tree search is worth the expense.</p></li>
+<li><p>Wang, L., Ma, C., Feng, X., Zhang, Z., Yang, H., Zhang, J., Chen, Z., Tang, J., Chen, X., Lin, Y., Zhao, W. X., Wei, Z., &amp; Wen, J.-R. (2024). <em>A Survey on Large Language Model based Autonomous Agents.</em> Frontiers of Computer Science. — Comprehensive survey covering planning, memory, and action components of agent architectures; Section 4 on multi-agent systems provides a taxonomy of coordination patterns.</p></li>
+<li><p>Wu, Q., Bansal, G., Zhang, J., Wu, Y., Li, B., Zhu, E., Jiang, L., Zhang, X., Zhang, S., Liu, J., Awadallah, A. H., White, R. W., Burger, D., &amp; Wang, C. (2023). <em>AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation.</em> arXiv. — Introduces the AutoGen framework for multi-agent conversation; the conversable agent abstraction and the group chat coordination pattern are widely adopted in production multi-agent tooling.</p></li>
+<li><p>Irving, G., Christiano, P., &amp; Amodei, D. (2018). <em>AI Safety via Debate.</em> arXiv. — Proposes adversarial debate between agents as a mechanism for scalable oversight; the theoretical framing motivates the debate and adversarial verification multi-agent pattern described in this chapter.</p></li>
+<li><p>Park, J. S., O’Brien, J., Cai, C. J., Morris, M. R., Liang, P., &amp; Bernstein, M. S. (2023). <em>Generative Agents: Interactive Simulacra of Human Behavior.</em> UIST. — Demonstrates a large-scale multi-agent simulation with memory, planning, and reflection.</p></li>
+<li><p>Xi, Z., Chen, W., Guo, X., et al.&nbsp;(2023). <em>The Rise and Potential of Large Language Model Based Agents: A Survey.</em> arXiv. — Broad survey of agent capabilities including planning, tool use, and multi-agent coordination; the failure mode taxonomy in Section 5 is a useful complement to the failure modes discussed in this chapter.</p></li>
+<li><p>Zhuge, M., Wang, W., Kirsch, L., Faccio, F., Khizbullin, D., &amp; Schmidhuber, J. (2024). <em>Language Agents as Optimizable Graphs.</em> arXiv. — Formalizes multi-agent systems as computational graphs and proposes automatic optimization of agent topology; the graph-based framing is useful for reasoning systematically about coordination overhead and architecture selection.</p></li>
 </ul>
 <hr>
 
 
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-yao2022react" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">S. Yao <em>et al.</em>, <span>“React: Synergizing reasoning and acting in language models,”</span> <em>arXiv preprint arXiv:2210.03629</em>, 2022.</div>
+</div>
+<div id="ref-yao2023tree" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">S. Yao <em>et al.</em>, <span>“Tree of thoughts: Deliberate problem solving with large language models,”</span> <em>Advances in neural information processing systems</em>, vol. 36, pp. 11809–11822, 2023.</div>
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1468,14 +1375,11 @@ Figure&nbsp;9.2: Cheat sheet.
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../book/part3/gpu-execution.html" class="pagination-link" aria-label="GPU Execution">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">GPU Execution</span></span>
+      <a href="../../book/part7/tool_function.html" class="pagination-link" aria-label="Tool Use and Function Calling">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Tool Use and Function Calling</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../book/part3/decoding-and-sampling.html" class="pagination-link" aria-label="Decoding and Sampling">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Decoding and Sampling</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

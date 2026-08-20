@@ -88,6 +88,7 @@ div.csl-indent {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../book/part7/agents.html" rel="next">
 <link href="../../book/part6/LLM_judge.html" rel="prev">
 <link href="../../images/favicon.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -659,6 +660,12 @@ div.csl-indent {
  <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Tool Use and Function Calling</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../book/part7/agents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -1031,8 +1038,8 @@ generate plausible-sounding content extends to tool call arguments.</p>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A well-designed error message is actionable: it tells the model what went wrong, why it went wrong, and what to do next. A generic “error” response is not useful, the model cannot self-correct from “error” but can self-correct from “INVALID_LOCATION: provide a specific city name.”</p>
 </section>
-<section id="the-confirm-before-execute-pattern" class="level3" data-number="39.9.2">
-<h3 data-number="39.9.2" class="anchored" data-anchor-id="the-confirm-before-execute-pattern"><span class="header-section-number">39.9.2</span> The Confirm-Before-Execute Pattern</h3>
+<section id="sec-confirm-execute" class="level3" data-number="39.9.2">
+<h3 data-number="39.9.2" class="anchored" data-anchor-id="sec-confirm-execute"><span class="header-section-number">39.9.2</span> The Confirm-Before-Execute Pattern</h3>
 <p>For tools with irreversible effects, add an explicit confirmation step before execution:</p>
 <ol type="1">
 <li>Model generates tool call with <code>dry_run: true</code> parameter</li>
@@ -1593,6 +1600,9 @@ generate plausible-sounding content extends to tool call arguments.</p>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../../book/part7/agents.html" class="pagination-link" aria-label="Agents and Multi-Agent Systems">
+        <span class="nav-page-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Agents and Multi-Agent Systems</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
