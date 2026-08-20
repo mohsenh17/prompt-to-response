@@ -79,6 +79,7 @@ book:
     - part: "The Keepers of the Waking Engine"
       chapters: 
         - book/part7/tool_function.md   
+        - book/part7/agents.md
 # --------------------------------------------------
 # Output formats
 # --------------------------------------------------
