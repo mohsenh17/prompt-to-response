@@ -667,7 +667,7 @@ went wrong, why it went wrong, and what to do next. A generic "error"
 response is not useful, the model cannot self-correct from "error"
 but can self-correct from "INVALID_LOCATION: provide a specific city name."
 
-### The Confirm-Before-Execute Pattern
+### The Confirm-Before-Execute Pattern {#sec-confirm-execute}
 
 For tools with irreversible effects, add an explicit confirmation step
 before execution:
