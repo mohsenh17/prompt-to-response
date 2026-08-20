@@ -1,4 +1,4 @@
-# LLM-as-a-Judge
+# LLM-as-a-Judge {#sec-LLM-as-a-Judge}
 
 > **The canonical question for this chapter:**
 > *When you use a language model to evaluate another language model, what
